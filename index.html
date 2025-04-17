@@ -52,18 +52,22 @@
   </style>
 </head>
 <body>
-  <img src="logo.png" alt="Smart Affiliate Site Logo" style="height: 50px;">
-  <header style="background-color: #222; color: white; padding: 15px 30px;">
-  <div style="display: flex; justify-content: flex-end; align-items: center;">
+ <header style="background-color: #222; color: white; padding: 15px 30px;">
+  <div style="display: flex; justify-content: space-between; align-items: center;">
+    
+    <!-- Logo on the left -->
+    <img src="logo.png" alt="Logo" style="height: 50px;">
+
+    <!-- Search bar on the right -->
     <form onsubmit="searchProducts(); return false;" style="display: flex; align-items: center; gap: 10px;">
       <input type="text" id="searchInput" placeholder="Search products..." style="padding: 10px; border-radius: 5px; border: none; outline: none; width: 200px;">
       <button type="submit" style="padding: 10px 15px; background-color: #4CAF50; color: white; border: none; border-radius: 5px;">Search</button>
     </form>
+
   </div>
-  </header>
+ </header> 
   <header>
     <h1>Smart Affiliate Site</h1>
-    <p>Tech, Fashion & Health Deals</p>
   </header>
 
   <nav>
