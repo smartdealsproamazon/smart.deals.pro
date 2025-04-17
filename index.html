@@ -3,90 +3,97 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Top Deals - Tech, Fashion & Health</title>
+  <title>Smart Affiliate Site</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       margin: 0; padding: 0;
-      background-color: #f4f4f4;
+      background: #f5f5f5;
     }
     header {
-      background-color: #222;
-      color: #fff;
+      background: #333; color: white;
       padding: 20px;
       text-align: center;
+    }
+    nav {
+      background: #444; color: white;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      padding: 10px;
+    }
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
     }
     section {
       padding: 20px;
-      margin: 10px;
-      background: white;
-      border-radius: 8px;
     }
     h2 {
-      color: #333;
+      color: #222;
     }
     .product {
+      background: white;
+      padding: 15px;
       margin: 10px 0;
-    }
-    a {
-      color: blue;
-      text-decoration: none;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
     footer {
-      background: #222;
-      color: #fff;
+      background: #333; color: white;
       text-align: center;
-      padding: 10px;
+      padding: 15px;
       margin-top: 30px;
+    }
+    @media (max-width: 600px) {
+      nav { flex-direction: column; align-items: center; }
     }
   </style>
 </head>
 <body>
 
-<header>
-  <h1>Top Affiliate Picks</h1>
-  <p>Best in Tech, Fashion & Health</p>
-</header>
+  <header>
+    <h1>Smart Affiliate Site</h1>
+    <p>Tech, Fashion & Health Deals</p>
+  </header>
 
-<section>
-  <h2>Tech Deals</h2>
-  <div class="product">
-    <strong>Wireless Earbuds</strong><br>
-    <a href="#">Buy on Amazon</a>
-  </div>
-  <div class="product">
-    <strong>Smartwatch</strong><br>
-    <a href="#">Buy on Flipkart</a>
-  </div>
-</section>
+  <nav>
+    <a href="#tech">Tech</a>
+    <a href="#fashion">Fashion</a>
+    <a href="#health">Health</a>
+  </nav>
 
-<section>
-  <h2>Fashion Picks</h2>
-  <div class="product">
-    <strong>Stylish Sunglasses</strong><br>
-    <a href="#">Buy on Amazon</a>
-  </div>
-  <div class="product">
-    <strong>Trendy Sneakers</strong><br>
-    <a href="#">Buy on Myntra</a>
-  </div>
-</section>
+  <section id="tech">
+    <h2>Top Tech Products</h2>
+    <div class="product">
+      <h3>Smartphone XYZ</h3>
+      <p>Latest Android phone with great features.</p>
+      <a href="https://www.amazon.in/YOUR-AFFILIATE-LINK" target="_blank">Buy on Amazon</a>
+    </div>
+  </section>
 
-<section>
-  <h2>Health Essentials</h2>
-  <div class="product">
-    <strong>Protein Powder</strong><br>
-    <a href="#">Buy on Amazon</a>
-  </div>
-  <div class="product">
-    <strong>Yoga Mat</strong><br>
-    <a href="#">Buy on Flipkart</a>
-  </div>
-</section>
+  <section id="fashion">
+    <h2>Best Fashion Picks</h2>
+    <div class="product">
+      <h3>Stylish T-Shirt</h3>
+      <p>Comfortable and trendy design.</p>
+      <a href="https://www.amazon.in/YOUR-AFFILIATE-LINK" target="_blank">Buy on Amazon</a>
+    </div>
+  </section>
 
-<footer>
-  <p>Copyright © 2025 | Your Affiliate Brand</p>
-</footer>
+  <section id="health">
+    <h2>Top Health Products</h2>
+    <div class="product">
+      <h3>Fitness Tracker</h3>
+      <p>Track your steps, sleep, and more.</p>
+      <a href="https://www.amazon.in/YOUR-AFFILIATE-LINK" target="_blank">Buy on Amazon</a>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2025 Smart Affiliate Site</p>
+  </footer>
 
 </body>
-                                       </html>
+</html>
