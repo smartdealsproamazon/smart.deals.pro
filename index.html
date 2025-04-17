@@ -53,6 +53,14 @@
 </head>
 <body>
 
+  <header style="display: flex; justify-content: space-between; align-items: center; padding: 15px 30px; background-color: #222; color: white;">
+  <h1 style="font-size: 24px;">Smart Affiliate Site</h1>
+  <form onsubmit="searchProducts(); return false;" style="display: flex; align-items: center; gap: 10px;">
+    <input type="text" id="searchInput" placeholder="Search products..." style="padding: 10px; border-radius: 5px; border: none; outline: none; width: 200px;">
+    <button type="submit" style="padding: 10px 15px; background-color: #4CAF50; color: white; border: none; border-radius: 5px;">Search</button>
+  </form>
+  </header>
+  
   <header>
     <h1>Smart Affiliate Site</h1>
     <p>Tech, Fashion & Health Deals</p>
@@ -97,13 +105,19 @@
   <footer>
     <p>© 2025 Smart Affiliate Site</p>
   </footer>
-
-<header style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background-color: #333; color: white;">
-  <h1>Smart Affiliate Site</h1>
-  <form onsubmit="searchProducts(); return false;" style="display: flex;">
-    <input type="text" id="searchInput" placeholder="Search products..." style="padding: 5px;">
-    <button type="submit" style="padding: 5px; margin-left: 5px;">Search</button>
-  </form>
-</header>
+<script>
+  function searchProducts() {
+    const input = document.getElementById('searchInput').value.toLowerCase();
+    const products = document.querySelectorAll('.product');
+    products.forEach(product => {
+      const text = product.innerText.toLowerCase();
+      if (text.includes(input)) {
+        product.style.display = 'block';
+      } else {
+        product.style.display = 'none';
+      }
+    });
+  }
+                     </script>
 </body>
 </html>
