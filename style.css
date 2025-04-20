@@ -232,3 +232,34 @@ body {
   height: 40px;
   width: auto;
   }
+.search-bar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #232f3e;
+  padding: 10px;
+  gap: 5px;
+}
+
+.search-bar input[type="text"] {
+  width: 50%;
+  padding: 8px;
+  border: none;
+  border-radius: 2px;
+}
+
+.search-bar button {
+  padding: 8px 12px;
+  background-color: #febd69;
+  border: none;
+  cursor: pointer;
+  border-radius: 2px;
+}
+
+.category-select {
+  padding: 8px;
+  border: none;
+  background-color: #ddd;
+  border-radius: 2px;
+  width: 60px;
+  }
