@@ -1,127 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Smart Affiliate Site</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0; padding: 0;
-      background: #f5f5f5;
-    }
-    header {
-      background: #333; color: white;
-      padding: 20px;
-      text-align: center;
-    }
-    nav {
-      background: #444; color: white;
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-      padding: 10px;
-    }
-    nav a {
-      color: white;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    section {
-      padding: 20px;
-    }
-    h2 {
-      color: #222;
-    }
-    .product {
-      background: white;
-      padding: 15px;
-      margin: 10px 0;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-    footer {
-      background: #333; color: white;
-      text-align: center;
-      padding: 15px;
-      margin-top: 30px;
-    }
-    @media (max-width: 600px) {
-      nav { flex-direction: column; align-items: center; }
-    }
-  </style>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
- <header style="background-color: black; color: white; padding: 15px 30px;">
-  <div style="display: flex; justify-content: space-between; align-items: center;">
-    
-    <!-- Logo on the left -->
-    <img src="logo.png" alt="Smart Affiliate Site Logo" style="width: 80px;">
-
-    <!-- Search bar on the right -->
-    <form onsubmit="searchProducts(); return false;" style="display: flex; align-items: center; gap: 10px;">
-      <input type="text" id="searchInput" placeholder="Search products..." style="padding: 10px; border-radius: 5px; border: none; outline: none; width: 100px;">
-      <button type="submit" style="padding: 10px 15px; background-color: #4CAF50; color: white; border: none; border-radius: 5px;">Search</button>
-    </form>
-
-  </div>
- </header>
   <header>
     <h1>Smart Affiliate Site</h1>
+    <nav>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="privacy.html">Privacy</a></li>
+        <li><a href="disclaimer.html">Disclaimer</a></li>
+        <li><a href="terms.html">Terms</a></li>
+      </ul>
+    </nav>
   </header>
 
-  <nav>
-    <a href="#tech">Tech</a>
-    <a href="#fashion">Fashion</a>
-    <a href="#health">Health</a>
-  </nav>
+  <main>
+    <section class="hero">
+      <h2>Welcome to Smart Affiliate</h2>
+      <p>We bring you the best affiliate product reviews, tech gadgets, and digital tips to help you earn smartly.</p>
+    </section>
 
-  <section id="tech">
-    <h2>Top Tech Products</h2>
-<div class="product">
-  <img src="https://m.media-amazon.com/images/I/71D9ImsvEtL._AC_UL480_FMwebp_QL65_.jpg" alt="Smartphone" style="width:100%; max-width:300px; border-radius:10px;">
-  <h3>Smartphone XYZ</h3>
-  <p>Latest Android phone with great features.</p>
-  <a href="https://www.amazon.in/YOUR-AFFILIATE-LINK" target="_blank">Buy on Amazon</a>
-</div>
-  </section>
-
-  <section id="fashion">
-    <h2>Best Fashion Picks</h2>
-<div class="product">
-  <img src="https://m.media-amazon.com/images/I/61IBBVJvSDL._AC_UL480_FMwebp_QL65_.jpg" alt="T-shirt" style="width:100%; max-width:300px; border-radius:10px;">
-  <h3>Stylish T-Shirt</h3>
-  <p>Comfortable and trendy design.</p>
-  <a href="https://www.amazon.in/YOUR-AFFILIATE-LINK" target="_blank">Buy on Amazon</a>
-</div>
-  </section>
-
-  <section id="health">
-    <h2>Top Health Products</h2>
-<div class="product">
-  <img src="https://i.imgur.com/XC7ZgBZ.jpg" alt="Fitness Tracker" style="width:100%; max-width:300px; border-radius:10px;">
-  <h3>Fitness Tracker</h3>
-  <p>Track your steps, sleep, and heart rate daily.</p>
-  <a href="https://www.amazon.in/YOUR-AFFILIATE-LINK" target="_blank">Buy on Amazon</a>
-</div>
-  </section>
+    <section class="featured-posts">
+      <article>
+        <h3>Top 5 Budget Smartphones 2025</h3>
+        <p>Here’s our pick of the best smartphones under $300 with affiliate links.</p>
+        <a href="#">Read More</a>
+      </article>
+      <article>
+        <h3>Must-Have Tech Gadgets</h3>
+        <p>Check out the latest smartwatches and headphones in the market.</p>
+        <a href="#">Explore Now</a>
+      </article>
+    </section>
+  </main>
 
   <footer>
-    <p>© 2025 Smart Affiliate Site</p>
+    <p>&copy; 2025 Smart Affiliate Site. All rights reserved.</p>
   </footer>
-<script>
-  function searchProducts() {
-    const input = document.getElementById('searchInput').value.toLowerCase();
-    const products = document.querySelectorAll('.product');
-    products.forEach(product => {
-      const text = product.innerText.toLowerCase();
-      if (text.includes(input)) {
-        product.style.display = 'block';
-      } else {
-        product.style.display = 'none';
-      }
-    });
-  }
-                     </script>
 </body>
 </html>
