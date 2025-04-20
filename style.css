@@ -179,3 +179,39 @@ body {
 .cart i {
   font-size: 20px;
 }
+.main-header {
+  background-color: #131921;
+  padding: 10px 15px;
+  color: white;
+}
+
+.top-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.menu-icon,
+.cart-icon {
+  font-size: 22px;
+  color: white;
+  margin: 0 10px;
+}
+
+.site-logo {
+  height: 40px;
+  margin: 0 10px;
+  background-color: transparent;
+}
+
+.location {
+  font-size: 14px;
+  margin: 0 10px;
+}
+
+.sign-in {
+  margin: 0 10px;
+  color: white;
+  text-decoration: none;
+}
