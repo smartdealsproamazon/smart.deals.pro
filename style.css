@@ -215,3 +215,20 @@ body {
   color: white;
   text-decoration: none;
 }
+.main-header .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-logo img {
+  height: 40px;
+  width: auto;
+  }
