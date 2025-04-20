@@ -1,0 +1,49 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background-color: #f9f9f9;
+}
+
+header {
+  background-color: #2b2bff;
+  color: white;
+  padding: 20px;
+  text-align: center;
+}
+
+nav ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+nav a {
+  color: white;
+  text-decoration: none;
+}
+
+.hero {
+  padding: 30px;
+  text-align: center;
+  background-color: #fff;
+}
+
+.featured-posts {
+  padding: 20px;
+}
+
+.featured-posts article {
+  background-color: #fff;
+  padding: 15px;
+  margin-bottom: 20px;
+  box-shadow: 0 0 10px #ccc;
+  border-radius: 8px;
+}
+
+footer {
+  background-color: #ddd;
+  text-align: center;
+  padding: 15px;
+}
