@@ -117,3 +117,9 @@ footer {
   background-color: #232f3e;
   color: white;
     }
+.logo {
+  height: 45px;
+  background-color: #232f3e;
+  padding: 5px;
+  border-radius: 5px;
+}
