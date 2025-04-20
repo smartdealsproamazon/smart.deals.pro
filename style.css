@@ -246,13 +246,16 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap;
+  flex-wrap: nowrap; /* prevent items from jumping to next line */
+  gap: 20px;
 }
 
 .header-left {
   display: flex;
   align-items: center;
+  flex-grow: 1;
   gap: 15px;
+  min-width: 0;
 }
 
 .header-logo img {
