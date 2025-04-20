@@ -1,48 +1,119 @@
-.main-header {
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+/* HEADER */
+.amazon-header {
   background-color: #232f3e;
-  padding: 10px 20px;
   color: white;
 }
 
-.main-header .container {
+.top-nav {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding: 10px 15px;
 }
 
-.logo img {
-  height: 40px;
+.top-nav img.logo {
+  height: 35px;
 }
 
-.search-bar {
-  flex-grow: 1;
-  margin: 0 20px;
+.location {
   display: flex;
+  align-items: center;
+  font-size: 14px;
 }
 
-.search-bar input {
-  flex-grow: 1;
+.location i {
+  margin-right: 5px;
+}
+
+.sign-cart a {
+  color: white;
+  margin-left: 15px;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+/* SEARCH BAR */
+.search-bar {
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+  background-color: #37475a;
+}
+
+.search-bar select {
   padding: 8px;
   border: none;
   border-radius: 4px 0 0 4px;
+  font-size: 14px;
+}
+
+.search-bar input {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  font-size: 14px;
 }
 
 .search-bar button {
-  padding: 8px 12px;
+  background-color: #febd69;
   border: none;
-  background-color: orange;
-  color: white;
+  padding: 8px 15px;
   border-radius: 0 4px 4px 0;
   cursor: pointer;
 }
 
-.user-actions a {
-  color: white;
-  margin-left: 15px;
-  text-decoration: none;
-  font-weight: bold;
+.search-bar button i {
+  color: black;
 }
 
-.user-actions a:hover {
-  text-decoration: underline;
+/* CATEGORY MENU */
+.bottom-menu {
+  display: flex;
+  gap: 15px;
+  padding: 8px 15px;
+  background-color: #232f3e;
+  font-size: 14px;
 }
+
+.bottom-menu a {
+  color: white;
+  text-decoration: none;
+}
+
+/* BODY CONTENT */
+main {
+  padding: 20px;
+  background-color: #f2f2f2;
+}
+
+.hero {
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
+
+.featured-posts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.featured-posts article {
+  background-color: white;
+  padding: 15px;
+  border-radius: 5px;
+}
+
+/* FOOTER */
+footer {
+  text-align: center;
+  padding: 15px;
+  background-color: #232f3e;
+  color: white;
+    }
