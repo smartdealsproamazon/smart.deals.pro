@@ -226,7 +226,9 @@ body {
 .header-left {
   display: flex;
   align-items: center;
-  gap: 10px;
+  flex-grow: 1;
+  gap: 15px;
+  min-width: 0;
 }
 
 .header-logo img {
