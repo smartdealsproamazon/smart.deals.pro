@@ -187,9 +187,10 @@ body {
 
 .top-header {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  flex-wrap: wrap;
+  align-items: center;
+  flex-wrap: nowrap; /* prevent items from jumping to next line */
+  gap: 20px;
 }
 
 .menu-icon,
