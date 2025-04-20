@@ -143,3 +143,39 @@ body {
   padding-left: 10px;
   padding-right: 10px;
 }
+.header-flex {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 10px 0;
+}
+
+.menu-icon i,
+.location i,
+.cart i {
+  color: white;
+  font-size: 18px;
+}
+
+.logo img {
+  height: 45px;
+  background-color: #232f3e;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.location span {
+  color: white;
+  font-size: 14px;
+}
+
+.user-action a {
+  color: white;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.cart i {
+  font-size: 20px;
+}
