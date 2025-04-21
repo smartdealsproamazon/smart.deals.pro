@@ -133,20 +133,6 @@
 </head>
 <body>
 
-  <!-- Side Menu -->
-  <div id="sideMenu">
-    <ul>
-      <li><a href="index.html">Home</a></li>
-      <li class="dropdown-toggle" onclick="toggleSubMenu()">Categories <span>&#x25BC;</span></li>
-      <ul class="submenu" id="submenu">
-        <li><a href="#">Electronics</a></li>
-        <li><a href="#">Fashion</a></li>
-        <li><a href="#">Gadgets</a></li>
-      </ul>
-      <li><a href="about.html">About Us</a></li>
-      <li><a href="privacy.html">Privacy Policy</a></li>
-    </ul>
-  </div>
   <!-- HEADER -->
   <header class="main-header">
   <div class="top-header">
@@ -166,21 +152,7 @@
       <a href="#"><i class="fas fa-shopping-cart cart-icon"></i></a>
     </div>
   </div>
-<!-- SIDEBAR MENU -->
-<div class="side-menu" id="sideMenu">
-  <a href="index.html">Home</a>
-  
-  <div class="dropdown-toggle">Categories</div>
-  <div class="submenu">
-    <a href="#">Category 1</a>
-    <a href="#">Category 2</a>
-    <a href="#">Category 3</a>
-  </div>
 
-  <a href="about.html">About Us</a>
-  <a href="contact.html">Contact Us</a>
-  <a href="privacy-policy.html">Privacy Policy</a>
-</div>
   <div class="search-bar">
     <select class="category-select">
       <option value="all">All</option>
@@ -214,59 +186,6 @@
   <footer class="container">
     <p>&copy; 2025 Smart Affiliate Site. All rights reserved.</p>
   </footer>
-<script>
-  const menuIcon = document.querySelector(".menu-icon");
-  const sideMenu = document.getElementById("sideMenu");
-  const categoryToggle = document.querySelector(".dropdown-toggle");
-  const submenu = document.querySelector(".submenu");
 
-  menuIcon.addEventListener("click", () => {
-    sideMenu.classList.toggle("open");
-  });
-
-  categoryToggle.addEventListener("click", () => {
-    submenu.classList.toggle("open");
-  });
-</script>
-  <script>
-  const menuIcon = document.querySelector('.menu-icon');
-  const sideMenu = document.getElementById('sideMenu');
-  const submenu = document.getElementById('submenu');
-
-  menuIcon.addEventListener('click', () => {
-    sideMenu.classList.toggle('open');
-  });
-
-  function toggleSubMenu() {
-    submenu.classList.toggle('open');
-  }
-
-  // Optional: Close menu when clicking outside
-  document.addEventListener('click', function(e) {
-    if (!sideMenu.contains(e.target) && !menuIcon.contains(e.target)) {
-      sideMenu.classList.remove('open');
-    }
-  });
-  </script>
-  <nav class="side-menu" id="sideMenu">
-  <a href="index.html">Home</a>
-  <a href="#">Categories</a>
-  <div class="submenu" id="categoriesSubmenu">
-    <a href="#">Category 1</a>
-    <a href="#">Category 2</a>
-  </div>
-  <a href="about.html">About Us</a>
-  <a href="privacy.html">Privacy Policy</a>
-  </nav>
-  <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const menuIcon = document.querySelector('.menu-icon');
-    const sideMenu = document.getElementById('sideMenu');
-
-    menuIcon.addEventListener('click', function () {
-      sideMenu.classList.toggle('open');
-    });
-  });
-                              </script>
 </body>
   </html>
