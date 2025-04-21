@@ -201,6 +201,19 @@
   <footer class="container">
     <p>&copy; 2025 Smart Affiliate Site. All rights reserved.</p>
   </footer>
+<script>
+  const menuIcon = document.querySelector(".menu-icon");
+  const sideMenu = document.getElementById("sideMenu");
+  const categoryToggle = document.querySelector(".dropdown-toggle");
+  const submenu = document.querySelector(".submenu");
 
+  menuIcon.addEventListener("click", () => {
+    sideMenu.classList.toggle("open");
+  });
+
+  categoryToggle.addEventListener("click", () => {
+    submenu.classList.toggle("open");
+  });
+</script>
 </body>
   </html>
