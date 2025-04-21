@@ -228,5 +228,25 @@
     submenu.classList.toggle("open");
   });
 </script>
+  <script>
+  const menuIcon = document.querySelector('.menu-icon');
+  const sideMenu = document.getElementById('sideMenu');
+  const submenu = document.getElementById('submenu');
+
+  menuIcon.addEventListener('click', () => {
+    sideMenu.classList.toggle('open');
+  });
+
+  function toggleSubMenu() {
+    submenu.classList.toggle('open');
+  }
+
+  // Optional: Close menu when clicking outside
+  document.addEventListener('click', function(e) {
+    if (!sideMenu.contains(e.target) && !menuIcon.contains(e.target)) {
+      sideMenu.classList.remove('open');
+    }
+  });
+  </script>
 </body>
   </html>
