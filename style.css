@@ -349,3 +349,43 @@ body {
   padding-left: 40px;
   border: none;
   }
+/* Sidebar menu styles */
+.side-menu {
+  position: fixed;
+  top: 0;
+  left: -250px;
+  width: 250px;
+  height: 100%;
+  background-color: #232f3e;
+  padding: 20px;
+  transition: left 0.3s ease-in-out;
+  z-index: 1000;
+  overflow-y: auto;
+}
+
+.side-menu.open {
+  left: 0;
+}
+
+.side-menu a {
+  display: block;
+  color: white;
+  padding: 10px 0;
+  text-decoration: none;
+  font-size: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Submenu */
+.submenu {
+  display: none;
+  padding-left: 15px;
+}
+
+.submenu.open {
+  display: block;
+}
+
+.side-menu a:hover {
+  background-color: #37475a;
+}
