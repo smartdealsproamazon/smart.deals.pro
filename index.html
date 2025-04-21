@@ -248,5 +248,25 @@
     }
   });
   </script>
+  <nav class="side-menu" id="sideMenu">
+  <a href="index.html">Home</a>
+  <a href="#">Categories</a>
+  <div class="submenu" id="categoriesSubmenu">
+    <a href="#">Category 1</a>
+    <a href="#">Category 2</a>
+  </div>
+  <a href="about.html">About Us</a>
+  <a href="privacy.html">Privacy Policy</a>
+  </nav>
+  <script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const menuIcon = document.querySelector('.menu-icon');
+    const sideMenu = document.getElementById('sideMenu');
+
+    menuIcon.addEventListener('click', function () {
+      sideMenu.classList.toggle('open');
+    });
+  });
+                              </script>
 </body>
   </html>
