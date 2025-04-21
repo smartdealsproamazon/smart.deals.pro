@@ -306,3 +306,46 @@ body {
   cursor: pointer;
   border-radius: 2px;
   }
+/* SIDEBAR MENU */
+.side-menu {
+  position: fixed;
+  top: 0;
+  left: -250px;
+  width: 220px;
+  height: 100%;
+  background-color: #232f3e;
+  padding-top: 60px;
+  transition: 0.3s ease;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+}
+
+.side-menu a,
+.dropdown-toggle {
+  padding: 12px 20px;
+  text-decoration: none;
+  color: white;
+  font-size: 14px;
+  border-bottom: 1px solid #37475a;
+  cursor: pointer;
+}
+
+.side-menu.open {
+  left: 0;
+}
+
+.submenu {
+  display: none;
+  flex-direction: column;
+  background-color: #37475a;
+}
+
+.submenu.open {
+  display: flex;
+}
+
+.submenu a {
+  padding-left: 40px;
+  border: none;
+  }
