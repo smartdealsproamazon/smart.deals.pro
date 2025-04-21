@@ -389,3 +389,33 @@ body {
 .side-menu a:hover {
   background-color: #37475a;
 }
+/* Sidebar menu styles */
+.side-menu {
+  position: fixed;
+  top: 0;
+  left: -250px;
+  width: 250px;
+  height: 100%;
+  background-color: #232f3e;
+  padding: 20px;
+  transition: left 0.3s ease-in-out;
+  z-index: 1000;
+  overflow-y: auto;
+}
+
+.side-menu.open {
+  left: 0;
+}
+
+.side-menu a {
+  display: block;
+  color: white;
+  padding: 10px 0;
+  text-decoration: none;
+  font-size: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.side-menu a:hover {
+  background-color: #37475a;
+}
