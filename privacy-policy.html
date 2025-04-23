@@ -1,19 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Privacy Policy</title>
+  
+  <!-- Font Awesome -->
   <link
-  rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-/>
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+  />
+
+  <!-- External Stylesheet -->
   <link rel="stylesheet" href="style.css">
+
+  <!-- Inline Styles for Page Specific Layout -->
   <style>
     body {
+      margin: 0;
       font-family: Arial, sans-serif;
-      padding: 20px;
       background-color: #f9f9f9;
     }
+
     .container {
       max-width: 800px;
       margin: auto;
@@ -21,42 +29,158 @@
       padding: 30px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-    h1 {
-      text-align: center;
+
+    h1, h2 {
       color: #333;
+    }
+
+    header.main-header {
+      background-color: #232f3e;
+      color: white;
+    }
+
+    .top-header, .search-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 15px;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+    }
+
+    .header-logo img {
+      height: 35px;
+      margin-right: 10px;
+    }
+
+    .location {
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+      color: white;
+    }
+
+    .location i {
+      margin-right: 5px;
+    }
+
+    .header-right a {
+      color: white;
+      margin-left: 15px;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .search-bar {
+      background-color: #37475a;
+    }
+
+    .search-bar select,
+    .search-bar input,
+    .search-bar button {
+      padding: 8px;
+      border: none;
+      font-size: 14px;
+    }
+
+    .search-bar select {
+      border-radius: 4px 0 0 4px;
+    }
+
+    .search-bar input {
+      flex: 1;
+    }
+
+    .search-bar button {
+      background-color: #febd69;
+      border-radius: 0 4px 4px 0;
+      cursor: pointer;
+    }
+
+    .search-bar button i {
+      color: black;
+    }
+
+    footer {
+      text-align: center;
+      padding: 15px;
+      background-color: #232f3e;
+      color: white;
+      margin-top: 40px;
+    }
+
+    footer a {
+      color: white;
+      text-decoration: none;
+      margin: 0 10px;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 600px) {
+      .top-header,
+      .search-bar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .header-right {
+        margin-top: 10px;
+      }
+
+      .search-bar {
+        width: 100%;
+      }
+
+      .search-bar input {
+        width: 100%;
+        margin: 5px 0;
+      }
+
+      .container {
+        padding: 20px;
+      }
     }
   </style>
 </head>
 <body>
+
   <!-- HEADER -->
-<header class="main-header">
-  <div class="top-header">
-    <div class="header-left">
-      <a href="index.html">
-        <i class="fas fa-home" style="font-size: 22px; color: white; margin-right: 10px;"></i>
-      </a>
-      <div class="header-logo">
-        <img src="logo.png" alt="Site Logo" />
+  <header class="main-header">
+    <div class="top-header">
+      <div class="header-left">
+        <a href="index.html">
+          <i class="fas fa-home" style="font-size: 22px; color: white; margin-right: 10px;"></i>
+        </a>
+        <div class="header-logo">
+          <img src="logo.png" alt="Site Logo" />
+        </div>
+        <div class="location">
+          <i class="fas fa-map-marker-alt"></i> Deliver to Pakistan
+        </div>
       </div>
-      <div class="location">
-        <i class="fas fa-map-marker-alt"></i> Deliver to Pakistan
+
+      <div class="header-right">
+        <a href="#" class="sign-in">Sign In</a>
+        <a href="#"><i class="fas fa-shopping-cart cart-icon"></i></a>
       </div>
     </div>
 
-    <div class="header-right">
-      <a href="#" class="sign-in">Sign In</a>
-      <a href="#"><i class="fas fa-shopping-cart cart-icon"></i></a>
-    </div>
-  </div>
+    <div class="search-bar">
+      <select class="category-select">
+        <option value="all">All</option>
+      </select>
+      <input type="text" placeholder="Search products" />
+      <button type="submit"><i class="fas fa-search"></i></button>
+    </div> 
+  </header>
 
-  <div class="search-bar">
-    <select class="category-select">
-      <option value="all">All</option>
-    </select>
-    <input type="text" placeholder="Search products" />
-    <button type="submit"><i class="fas fa-search"></i></button>
-  </div> 
-</header>
+  <!-- MAIN CONTENT -->
   <div class="container">
     <h1>Privacy Policy</h1>
     <p>Your privacy is important to us. This Privacy Policy explains how we collect, use, and protect your information.</p>
@@ -75,13 +199,15 @@
 
     <p>By using our site, you agree to the terms of this Privacy Policy.</p>
   </div>
-  <footer class="container">
-  <div style="margin-bottom: 10px;">
-    <a href="about.html" style="color: white; text-decoration: none; margin: 0 10px;">About</a> |
-    <a href="contact.html" style="color: white; text-decoration: none; margin: 0 10px;">Contact</a> |
-    <a href="privacy-policy.html" style="color: white; text-decoration: none; margin: 0 10px;">Privacy Policy</a>
-  </div>
-  <p>&copy; 2025 Smart Affiliate Site. All rights reserved.</p>
+
+  <!-- FOOTER -->
+  <footer>
+    <div style="margin-bottom: 10px;">
+      <a href="about.html">About</a> |
+      <a href="contact.html">Contact</a> |
+      <a href="privacy-policy.html">Privacy Policy</a>
+    </div>
+    <p>&copy; 2025 Smart Affiliate Site. All rights reserved.</p>
   </footer>
 </body>
-</html>
+    </html>
