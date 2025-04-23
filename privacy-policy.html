@@ -16,7 +16,7 @@
 
   <!-- Inline Styles for Page Specific Layout -->
   <style>
-    body {
+body {
   margin: 0;
   font-family: Arial, sans-serif;
   background-color: #f9f9f9;
@@ -76,7 +76,7 @@ header.main-header {
 
 .search-bar {
   background-color: #37475a;
-  display: flex;  /* Ensure this stays as a row (horizontal) */
+  display: flex;
   align-items: center;
   justify-content: space-between;
 }
@@ -125,9 +125,11 @@ footer a:hover {
   text-decoration: underline;
 }
 
-/* Media query (no column layout for search bar) */
+/* Mobile responsiveness */
 @media (max-width: 600px) {
-  .top-header {
+  /* Make sure the header adjusts well */
+  .top-header,
+  .search-bar {
     flex-direction: column;
     align-items: flex-start;
   }
@@ -136,20 +138,37 @@ footer a:hover {
     margin-top: 10px;
   }
 
-  /* Remove the unnecessary width settings for search bar */
   .search-bar {
     width: 100%;
-    justify-content: space-between; /* Keeps items spaced out in row */
+    justify-content: space-between;
   }
 
   .search-bar input {
-    width: auto; /* Let it adjust itself based on content */
+    width: auto;
   }
 
+  /* Adjust the container for smaller screens */
   .container {
     padding: 20px;
+    width: 100%;
   }
+
+  /* Make sure headings adjust well */
+  h1 {
+    font-size: 24px;
+    text-align: center;
   }
+
+  h2 {
+    font-size: 20px;
+  }
+
+  /* Adjust the content padding for mobile */
+  .container p {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+    }
   </style>
 </head>
 <body>
