@@ -79,15 +79,19 @@
       <h2 style="text-align: center;">Contact Us</h2>
       <p style="text-align: center;">We’d love to hear from you! Fill out the form below:</p>
 
-      <form>
+      <form action="https://formsubmit.co/mrazwan0310@gmail.com" method="POST">
         <label for="name">Your Name</label>
-        <input type="text" id="name" placeholder="Enter your name" required />
+        <input type="text" id="name" name="name" placeholder="Enter your name" required />
 
         <label for="email">Your Email</label>
-        <input type="email" id="email" placeholder="Enter your email" required />
+        <input type="email" id="email" name="email" placeholder="Enter your email" required />
 
         <label for="message">Your Message</label>
-        <textarea id="message" rows="5" placeholder="Write your message here" required></textarea>
+        <textarea id="message" name="message" rows="5" placeholder="Write your message here" required></textarea>
+
+        <!-- Optional: Redirect after form submission -->
+        <input type="hidden" name="_next" value="https://rizwan-10html.github.io/Smart--affiliate---site/thank-you.html">
+        <input type="hidden" name="_captcha" value="false">
 
         <button type="submit">Send Message</button>
       </form>
@@ -105,4 +109,4 @@
   </footer>
 
 </body>
-</html>
+        </html>
