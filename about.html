@@ -1,217 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>About Us</title>
   <link
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
   />
-  <link rel="stylesheet" href="style.css">
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: #f9f9f9;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    /* HEADER */
-    header.main-header {
-      background-color: #232f3e;
-      color: white;
-    }
-
-    .top-header, .search-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 10px 15px;
-      flex-wrap: wrap;
-    }
-
-    .header-left {
-      display: flex;
-      align-items: center;
-    }
-
-    .header-logo img {
-      height: 35px;
-      margin-right: 10px;
-    }
-
-    .location {
-      display: flex;
-      align-items: center;
-      font-size: 14px;
-      color: white;
-    }
-
-    .location i {
-      margin-right: 5px;
-    }
-
-    .header-right a {
-      color: white;
-      margin-left: 15px;
-      text-decoration: none;
-      font-size: 14px;
-    }
-
-    .search-bar {
-      background-color: #37475a;
-      gap: 5px;
-    }
-
-    .search-bar select,
-    .search-bar input,
-    .search-bar button {
-      padding: 8px;
-      border: none;
-      font-size: 14px;
-    }
-
-    .search-bar select {
-      border-radius: 4px 0 0 4px;
-    }
-
-    .search-bar input {
-      flex: 1;
-    }
-
-    .search-bar button {
-      background-color: #febd69;
-      border-radius: 0 4px 4px 0;
-      cursor: pointer;
-    }
-
-    .search-bar button i {
-      color: black;
-    }
-
-    /* BODY CONTENT */
-    .container {
-      width: 95%;
-      max-width: 600px;
-      margin: 20px auto;
-      background: white;
-      padding: 20px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      flex-grow: 1;
-      box-sizing: border-box;
-    }
-
-    h1 {
-      text-align: center;
-      color: #333;
-      font-size: 22px;
-    }
-
-    p {
-      font-size: 15px;
-      line-height: 1.6;
-    }
-
-    footer {
-      text-align: center;
-      padding: 15px;
-      background-color: #232f3e;
-      color: white;
-    }
-
-    footer a {
-      color: white;
-      text-decoration: none;
-      margin: 0 10px;
-    }
-
-    footer a:hover {
-      text-decoration: underline;
-    }
-
-    @media (max-width: 600px) {
-      .top-header,
-      .search-bar {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .header-right {
-        margin-top: 10px;
-      }
-
-      .search-bar input {
-        width: 100%;
-        margin: 5px 0;
-      }
-
-      .container {
-        width: 90%;
-        padding: 15px;
-      }
-
-      h1 {
-        font-size: 20px;
-      }
-
-      p {
-        font-size: 14px;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
   <!-- HEADER -->
-<header class="main-header">
-  <div class="top-header">
-    <div class="header-left">
-      <a href="index.html">
-        <i class="fas fa-home" style="font-size: 22px; color: white; margin-right: 10px;"></i>
-      </a>
-      <div class="header-logo">
-        <img src="logo.png" alt="Site Logo" />
+  <header class="amazon-header">
+    <div class="top-nav">
+      <div class="header-left">
+        <a href="index.html">
+          <i class="fas fa-home" style="font-size: 22px; color: white; margin-right: 10px;"></i>
+        </a>
+        <img src="logo.png" alt="Site Logo" class="logo" />
+        <div class="location">
+          <i class="fas fa-map-marker-alt"></i> Deliver to Pakistan
+        </div>
       </div>
-      <div class="location">
-        <i class="fas fa-map-marker-alt"></i> Deliver to Pakistan
+
+      <div class="sign-cart">
+        <a href="#">Sign In</a>
+        <a href="#"><i class="fas fa-shopping-cart cart-icon"></i></a>
       </div>
     </div>
 
-    <div class="header-right">
-      <a href="#" class="sign-in">Sign In</a>
-      <a href="#"><i class="fas fa-shopping-cart cart-icon"></i></a>
+    <div class="search-bar">
+      <select class="category-select">
+        <option value="all">All</option>
+      </select>
+      <input type="text" placeholder="Search products" />
+      <button type="submit"><i class="fas fa-search"></i></button>
     </div>
-  </div>
+  </header>
 
-  <div class="search-bar">
-    <select class="category-select">
-      <option value="all">All</option>
-    </select>
-    <input type="text" placeholder="Search products" />
-    <button type="submit"><i class="fas fa-search"></i></button>
-  </div>
-</header>
-
-  <!-- CONTENT -->
-<div class="container">
-  <h1>About Us</h1>
-  <p>Welcome to Smart Affiliate Site!</p>
-  <p>We are passionate about helping people find the best tech gadgets, accessories, and deals through our detailed reviews and curated affiliate listings.</p>
-  <p>Our mission is to simplify your online shopping experience by guiding you to quality products at the best prices.</p>
-  <p>Thanks for visiting and trusting us!</p>
-</div>
+  <!-- ABOUT CONTENT -->
+  <main style="padding: 16px; background-color: #f2f2f2;">
+    <section style="background-color: white; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+      <h2 style="text-align: center;">About Us</h2>
+      <p>Welcome to Smart Affiliate Site!</p>
+      <p>We are passionate about helping people find the best tech gadgets, accessories, and deals through our detailed reviews and curated affiliate listings.</p>
+      <p>Our mission is to simplify your online shopping experience by guiding you to quality products at the best prices.</p>
+      <p>Thanks for visiting and trusting us!</p>
+    </section>
+  </main>
 
   <!-- FOOTER -->
-<footer>
-  <div style="margin-bottom: 10px;">
-    <a href="about.html">About</a> |
-    <a href="contact.html">Contact</a> |
-    <a href="privacy-policy.html">Privacy Policy</a>
-  </div>
-  <p>&copy; 2025 Smart Affiliate Site. All rights reserved.</p>
-</footer>
+  <footer>
+    <div style="margin-bottom: 10px;">
+      <a href="about.html">About</a> |
+      <a href="contact.html">Contact</a> |
+      <a href="privacy-policy.html">Privacy Policy</a>
+    </div>
+    <p>&copy; 2025 Smart Affiliate Site. All rights reserved.</p>
+  </footer>
 
 </body>
 </html>
