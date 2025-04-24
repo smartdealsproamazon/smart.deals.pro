@@ -4,11 +4,31 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>About Us</title>
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-  />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
   <link rel="stylesheet" href="style.css" />
+  <style>
+    .about-container {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    footer {
+      background-color: #232f3e;
+      color: white;
+      text-align: center;
+      padding: 20px 0;
+    }
+
+    footer a {
+      color: white;
+      margin: 0 10px;
+      text-decoration: none;
+    }
+  </style>
 </head>
 <body>
 
@@ -24,7 +44,6 @@
           <i class="fas fa-map-marker-alt"></i> Deliver to Pakistan
         </div>
       </div>
-
       <div class="sign-cart">
         <a href="#">Sign In</a>
         <a href="#"><i class="fas fa-shopping-cart cart-icon"></i></a>
@@ -40,20 +59,24 @@
     </div>
   </header>
 
-  <!-- ABOUT CONTENT -->
-  <main style="padding: 16px; background-color: #f2f2f2;">
-    <section style="background-color: white; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
-      <h2 style="text-align: center;">About Us</h2>
-      <p>Welcome to Smart Affiliate Site!</p>
-      <p>We are passionate about helping people find the best tech gadgets, accessories, and deals through our detailed reviews and curated affiliate listings.</p>
-      <p>Our mission is to simplify your online shopping experience by guiding you to quality products at the best prices.</p>
-      <p>Thanks for visiting and trusting us!</p>
+  <!-- MAIN CONTENT -->
+  <main style="padding: 16px; background-color: #f2f2f2; min-height: 100vh;">
+    <section class="about-container">
+      <h2 style="text-align: center;">About Smart Affiliate Site</h2>
+      <p>
+        Welcome to Smart Affiliate Site! We help you find the best deals and products on Amazon through our affiliate links.
+        Our goal is to make your shopping experience smarter and easier by curating top-rated items and useful comparisons.
+      </p>
+      <p>
+        Whether you're shopping for electronics, home goods, or the latest gadgets, our website provides reliable product suggestions
+        so you can shop with confidence.
+      </p>
     </section>
   </main>
 
   <!-- FOOTER -->
   <footer>
-    <div style="margin-bottom: 10px;">
+    <div>
       <a href="about.html">About</a> |
       <a href="contact.html">Contact</a> |
       <a href="privacy-policy.html">Privacy Policy</a>
