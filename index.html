@@ -157,11 +157,12 @@
   </div>
 
   <div class="search-bar">
-    <select class="category-select" id="categorySelect" onchange="handleCategoryChange()">
-  <option value="index.html">All</option>
+   <select class="category-select">
+  <option value="all">All</option>
   <option value="smartwatches.html">Smartwatches</option>
   <option value="fashion.html">Fashion</option>
-    </select>
+  <option value="small-electrical.html">Small Electrical</option>
+   </select> 
     <input type="text" id="searchInput" placeholder="Search products" />
 <button type="button" onclick="searchProduct()"><i class="fas fa-search"></i></button>
   </div> 
@@ -208,12 +209,10 @@
 
   // Products with their page links
   const products = [
-    { name: "Echo Dot (5th Gen) – Smart Speaker with Alexa", link: "product-echo-dot.html" },
-    { name: "Fire-Boltt Ninja Smartwatch", link: "product-fire-boltt.html" },
-    { name: "Noise ColorFit Ultra Smartwatch", link: "product-noise-colorfit.html" },
-    { name: "Men’s Casual Jacket", link: "product-jacket.html" },
-    { name: "Women’s Handbag Set", link: "product-handbag.html" }
-  ];
+  { name: "Echo Dot", link: "small-electrical.html" },
+  { name: "Echo Dot (5th Gen)", link: "small-electrical.html" },
+  // add more small electrical product names here
+];
 
   // Search and open product page
   function searchProduct() {
