@@ -217,15 +217,14 @@
 
   // Search and open product page
   function searchProduct() {
-    const input = document.getElementById("searchInput").value.toLowerCase();
-    const match = products.find(p => p.name.toLowerCase().includes(input));
+  const input = document.getElementById("searchInput").value.toLowerCase();
+  const match = products.find(p => p.name.toLowerCase().includes(input));
 
-    if (match) {
-      window.location.href = match.link;
-    } else {
-      const resultArea = document.getElementById("searchResults");
-      resultArea.innerHTML = "<li>No products found</li>";
-    }
+  if (match) {
+    window.location.href = match.link;
+  } else {
+    window.location.href = "no-results.html";
+  }
   }
 </script>
 </body>
