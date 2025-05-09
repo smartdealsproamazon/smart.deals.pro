@@ -157,13 +157,13 @@
   </div>
 
   <div class="search-bar">
-    <select class="category-select">
-      <option value="all">All</option>
-      <option value="smartwatches.html">Smartwatches</option>
-<option value="fashion.html">Fashion</option>
+    <select class="category-select" id="categorySelect" onchange="handleCategoryChange()">
+  <option value="index.html">All</option>
+  <option value="smartwatches.html">Smartwatches</option>
+  <option value="fashion.html">Fashion</option>
     </select>
-    <input type="text" placeholder="Search products" />
-    <button type="submit"><i class="fas fa-search"></i></button>
+    <input type="text" id="searchInput" placeholder="Search products" />
+<button type="button" onclick="searchProduct()"><i class="fas fa-search"></i></button>
   </div> 
   </header>
   <!-- MAIN CONTENT -->
@@ -179,6 +179,7 @@
 
     <section class="featured-posts">
   <article>
+    <ul id="searchResults" style="margin-top: 20px; list-style-type: disc; padding-left: 20px;"></ul>
     <img src="https://m.media-amazon.com/images/I/61XO4bORHUL._AC_SL1000_.jpg" alt="Echo Dot (5th Gen)" style="width:100%; border-radius: 5px;">
     <h3>Echo Dot (5th Gen) – Smart Speaker with Alexa</h3>
     <p>Compact smart speaker with improved sound and Alexa built-in.</p>
@@ -199,6 +200,38 @@
   </p>
    <p>&copy; 2025 Smart Affiliate Site. All rights reserved.</p>
   </footer>
+<script>
+  // Dropdown Navigation
+  function handleCategoryChange() {
+    const selected = document.getElementById("categorySelect").value;
+    window.location.href = selected;
+  }
 
+  // Product Search
+  const products = [
+    "Echo Dot (5th Gen) – Smart Speaker with Alexa",
+    "Fire-Boltt Ninja Smartwatch",
+    "Noise ColorFit Ultra Smartwatch",
+    "Men’s Casual Jacket",
+    "Women’s Handbag Set"
+  ];
+
+  function searchProduct() {
+    const input = document.getElementById("searchInput").value.toLowerCase();
+    const resultArea = document.getElementById("searchResults");
+    resultArea.innerHTML = "";
+
+    const matches = products.filter(p => p.toLowerCase().includes(input));
+    if (matches.length > 0) {
+      matches.forEach(item => {
+        const li = document.createElement("li");
+        li.textContent = item;
+        resultArea.appendChild(li);
+      });
+    } else {
+      resultArea.innerHTML = "<li>No products found</li>";
+    }
+  }
+</script>
 </body>
-  </html>
+ </html>
