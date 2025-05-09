@@ -206,28 +206,24 @@
     window.location.href = selected;
   }
 
-  // Product Search
+  // Products with their page links
   const products = [
-    "Echo Dot (5th Gen) – Smart Speaker with Alexa",
-    "Fire-Boltt Ninja Smartwatch",
-    "Noise ColorFit Ultra Smartwatch",
-    "Men’s Casual Jacket",
-    "Women’s Handbag Set"
+    { name: "Echo Dot (5th Gen) – Smart Speaker with Alexa", link: "product-echo-dot.html" },
+    { name: "Fire-Boltt Ninja Smartwatch", link: "product-fire-boltt.html" },
+    { name: "Noise ColorFit Ultra Smartwatch", link: "product-noise-colorfit.html" },
+    { name: "Men’s Casual Jacket", link: "product-jacket.html" },
+    { name: "Women’s Handbag Set", link: "product-handbag.html" }
   ];
 
+  // Search and open product page
   function searchProduct() {
     const input = document.getElementById("searchInput").value.toLowerCase();
-    const resultArea = document.getElementById("searchResults");
-    resultArea.innerHTML = "";
+    const match = products.find(p => p.name.toLowerCase().includes(input));
 
-    const matches = products.filter(p => p.toLowerCase().includes(input));
-    if (matches.length > 0) {
-      matches.forEach(item => {
-        const li = document.createElement("li");
-        li.textContent = item;
-        resultArea.appendChild(li);
-      });
+    if (match) {
+      window.location.href = match.link;
     } else {
+      const resultArea = document.getElementById("searchResults");
       resultArea.innerHTML = "<li>No products found</li>";
     }
   }
