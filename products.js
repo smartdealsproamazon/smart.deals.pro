@@ -35,4 +35,10 @@ const products = [
     link: "https://your-affiliate-link.com/electric2",
     category: "electrical"
   },
+  {
+  name: "Amazon Echo Frames (newest model), Smart glasses with Alexa, Square frames in Classic Black with polarized sunglass lenses",
+  image: "https://m.media-amazon.com/images/I/51--HroHUCL._AC_SL1000_.jpg", // Better to use a direct image link from Amazon's CDN
+  link: "https://amzn.to/3FakN1A",
+  category: "fashion"
+  }
 ];
