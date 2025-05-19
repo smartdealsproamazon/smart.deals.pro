@@ -36,7 +36,7 @@ const products = [
     category: "electrical"
   },
   {
-  title: "Amazon Echo Frames (3rd Gen) – Smart Glasses with Alexa, Square Frames in Classic Black with Polarized Sunglass Lenses",
+  name: "Amazon Echo Frames (3rd Gen) – Smart Glasses with Alexa, Square Frames in Classic Black with Polarized Sunglass Lenses",
   link: "https://amzn.to/3EXEABm",
   image: "https://m.media-amazon.com/images/I/61+3R7+XcUL._AC_SL1500_.jpg",
   category: "fashion"
