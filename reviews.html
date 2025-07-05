@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Reviews & Expert Opinions - SmartDeals Pro</title>
+  <meta name="description" content="Read honest product reviews, expert opinions, and detailed comparisons to make informed purchasing decisions. Trusted reviews from real users.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Header -->
+  <header class="main-header">
+    <div class="container">
+      <div class="header-content">
+        <div class="header-left">
+          <a href="index.html" class="logo-link">
+            <img src="logo.png" alt="SmartDeals Pro Logo" class="logo" />
+            <span class="logo-text">SmartDeals Pro</span>
+          </a>
+        </div>
+        
+        <nav class="main-nav">
+          <ul>
+            <li><a href="index.html" class="nav-link">Home</a></li>
+            <li class="dropdown">
+              <a href="#" class="nav-link dropdown-toggle">Categories <i class="fas fa-chevron-down"></i></a>
+              <ul class="dropdown-menu">
+                <li><a href="smartwatches.html">Smartwatches</a></li>
+                <li><a href="fashion.html">Fashion</a></li>
+                <li><a href="small-electrical.html">Electronics</a></li>
+                <li><a href="gaming.html">Gaming</a></li>
+                <li><a href="home-garden.html">Home & Garden</a></li>
+              </ul>
+            </li>
+            <li><a href="reviews.html" class="nav-link active">Reviews</a></li>
+            <li><a href="deals.html" class="nav-link">Hot Deals</a></li>
+            <li><a href="about.html" class="nav-link">About</a></li>
+            <li><a href="contact.html" class="nav-link">Contact</a></li>
+          </ul>
+        </nav>
+
+        <div class="header-right">
+          <div class="search-container">
+            <input type="text" id="headerSearch" placeholder="Search reviews..." class="search-input">
+            <button class="search-btn" onclick="searchReviews()">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+          <a href="sign-in.html" class="btn btn-outline">Sign In</a>
+          <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+            <i class="fas fa-bars"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu-content">
+      <a href="index.html">Home</a>
+      <a href="smartwatches.html">Smartwatches</a>
+      <a href="fashion.html">Fashion</a>
+      <a href="small-electrical.html">Electronics</a>
+      <a href="gaming.html">Gaming</a>
+      <a href="home-garden.html">Home & Garden</a>
+      <a href="reviews.html">Reviews</a>
+      <a href="deals.html">Hot Deals</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+    </div>
+  </div>
+
+  <!-- Hero Section -->
+  <section class="reviews-hero">
+    <div class="container">
+      <div class="reviews-hero-content">
+        <h1 class="reviews-title">Expert Product Reviews</h1>
+        <p class="reviews-subtitle">In-depth, honest reviews to help you make the best purchasing decisions</p>
+        <div class="reviews-stats">
+          <div class="review-stat">
+            <span class="stat-number">500+</span>
+            <span class="stat-label">Products Reviewed</span>
+          </div>
+          <div class="review-stat">
+            <span class="stat-number">98%</span>
+            <span class="stat-label">Accuracy Rating</span>
+          </div>
+          <div class="review-stat">
+            <span class="stat-number">10K+</span>
+            <span class="stat-label">Trusted Reviews</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Review -->
+  <section class="featured-review">
+    <div class="container">
+      <div class="featured-review-card">
+        <div class="featured-review-badge">
+          <i class="fas fa-star"></i>
+          <span>Editor's Pick</span>
+        </div>
+        <div class="featured-review-content">
+          <div class="featured-review-image">
+            <img src="https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?w=400&h=300&fit=crop" alt="Apple Watch Series 9">
+          </div>
+          <div class="featured-review-info">
+            <h2>Apple Watch Series 9 GPS - Comprehensive Review</h2>
+            <div class="review-rating">
+              <div class="stars">
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+              </div>
+              <span class="rating-score">4.8/5</span>
+            </div>
+            <p class="review-excerpt">After extensive testing, the Apple Watch Series 9 stands out as the best smartwatch for iPhone users. The new S9 chip delivers incredible performance...</p>
+            <div class="review-highlights">
+              <div class="highlight pros">
+                <h4>Pros</h4>
+                <ul>
+                  <li>Excellent build quality</li>
+                  <li>Outstanding battery life</li>
+                  <li>Comprehensive health features</li>
+                </ul>
+              </div>
+              <div class="highlight cons">
+                <h4>Cons</h4>
+                <ul>
+                  <li>Expensive price point</li>
+                  <li>Limited Android compatibility</li>
+                </ul>
+              </div>
+            </div>
+            <a href="#" class="btn btn-primary">Read Full Review</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Review Categories -->
+  <section class="review-categories">
+    <div class="container">
+      <h2 class="section-title">Browse Reviews by Category</h2>
+      <div class="categories-grid">
+        <div class="category-card" onclick="filterReviews('smartwatch')">
+          <div class="category-icon">
+            <i class="fas fa-clock"></i>
+          </div>
+          <h3>Smartwatches</h3>
+          <p>45 Reviews</p>
+        </div>
+        <div class="category-card" onclick="filterReviews('electrical')">
+          <div class="category-icon">
+            <i class="fas fa-mobile-alt"></i>
+          </div>
+          <h3>Electronics</h3>
+          <p>120 Reviews</p>
+        </div>
+        <div class="category-card" onclick="filterReviews('fashion')">
+          <div class="category-icon">
+            <i class="fas fa-tshirt"></i>
+          </div>
+          <h3>Fashion</h3>
+          <p>80 Reviews</p>
+        </div>
+        <div class="category-card" onclick="filterReviews('gaming')">
+          <div class="category-icon">
+            <i class="fas fa-gamepad"></i>
+          </div>
+          <h3>Gaming</h3>
+          <p>65 Reviews</p>
+        </div>
+        <div class="category-card" onclick="filterReviews('home-garden')">
+          <div class="category-icon">
+            <i class="fas fa-home"></i>
+          </div>
+          <h3>Home & Garden</h3>
+          <p>95 Reviews</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Latest Reviews -->
+  <section class="latest-reviews">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Latest Reviews</h2>
+        <div class="filter-controls">
+          <select id="reviewFilter" onchange="filterReviews(this.value)">
+            <option value="all">All Categories</option>
+            <option value="smartwatch">Smartwatches</option>
+            <option value="electrical">Electronics</option>
+            <option value="fashion">Fashion</option>
+            <option value="gaming">Gaming</option>
+            <option value="home-garden">Home & Garden</option>
+          </select>
+        </div>
+      </div>
+      <div class="reviews-grid" id="reviewsGrid">
+        <!-- Reviews will be populated by JavaScript -->
+      </div>
+    </div>
+  </section>
+
+  <!-- How We Review -->
+  <section class="how-we-review">
+    <div class="container">
+      <h2 class="section-title">How We Review Products</h2>
+      <div class="review-process">
+        <div class="process-step">
+          <div class="step-icon">
+            <i class="fas fa-search"></i>
+          </div>
+          <h3>Research</h3>
+          <p>We thoroughly research each product's specifications, features, and user feedback before testing.</p>
+        </div>
+        <div class="process-step">
+          <div class="step-icon">
+            <i class="fas fa-vial"></i>
+          </div>
+          <h3>Testing</h3>
+          <p>Products are tested in real-world conditions by our expert team for weeks to ensure accuracy.</p>
+        </div>
+        <div class="process-step">
+          <div class="step-icon">
+            <i class="fas fa-balance-scale"></i>
+          </div>
+          <h3>Evaluation</h3>
+          <p>We evaluate products based on performance, value, design, and user experience.</p>
+        </div>
+        <div class="process-step">
+          <div class="step-icon">
+            <i class="fas fa-pen"></i>
+          </div>
+          <h3>Review</h3>
+          <p>Our experts write comprehensive, unbiased reviews with clear pros, cons, and recommendations.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="main-footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>SmartDeals Pro</h3>
+          <p>Your trusted source for the best affiliate deals and product reviews. We help you shop smarter and save money.</p>
+          <div class="social-links">
+            <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+            <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+          </div>
+        </div>
+        <div class="footer-section">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="reviews.html">Reviews</a></li>
+            <li><a href="deals.html">Hot Deals</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Categories</h4>
+          <ul>
+            <li><a href="smartwatches.html">Smartwatches</a></li>
+            <li><a href="fashion.html">Fashion</a></li>
+            <li><a href="small-electrical.html">Electronics</a></li>
+            <li><a href="gaming.html">Gaming</a></li>
+            <li><a href="home-garden.html">Home & Garden</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="privacy-policy.html">Privacy Policy</a></li>
+            <li><a href="terms.html">Terms of Service</a></li>
+            <li><a href="affiliate-disclosure.html">Affiliate Disclosure</a></li>
+            <li><a href="cookies.html">Cookie Policy</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 SmartDeals Pro. All rights reserved.</p>
+        <p class="affiliate-disclaimer">This site contains affiliate links. We may earn a commission when you purchase through links on our site — at no extra cost to you.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="products.js"></script>
+  <script src="render.js"></script>
+  <script>
+    // Mobile menu toggle
+    function toggleMobileMenu() {
+      const mobileMenu = document.getElementById('mobileMenu');
+      mobileMenu.classList.toggle('active');
+    }
+
+    // Search reviews
+    function searchReviews() {
+      const query = document.getElementById('headerSearch').value;
+      if (query) {
+        renderSearchResults(query);
+      }
+    }
+
+    // Filter reviews
+    function filterReviews(category) {
+      if (category === 'all') {
+        renderReviews();
+      } else {
+        renderReviews(category);
+      }
+    }
+
+    // Render reviews
+    function renderReviews(category = null) {
+      const reviews = category ? getProductsByCategory(category) : products;
+      renderReviewsGrid(reviews);
+    }
+
+    // Render reviews grid
+    function renderReviewsGrid(reviews) {
+      const container = document.getElementById('reviewsGrid');
+      container.innerHTML = '';
+      
+      if (reviews.length === 0) {
+        container.innerHTML = `
+          <div class="no-reviews">
+            <i class="fas fa-star" style="font-size: 3rem; color: #9ca3af; margin-bottom: 1rem;"></i>
+            <h3>No reviews found</h3>
+            <p>Check back later for more product reviews!</p>
+          </div>
+        `;
+        return;
+      }
+      
+      reviews.slice(0, 12).forEach(product => {
+        const reviewCard = createReviewCard(product);
+        container.appendChild(reviewCard);
+      });
+    }
+
+    // Create review card
+    function createReviewCard(product) {
+      const div = document.createElement("div");
+      div.className = "review-card";
+      
+      const stars = generateStars(product.rating);
+      
+      div.innerHTML = `
+        <div class="review-image">
+          <img src="${product.image}" alt="${product.name}" loading="lazy">
+        </div>
+        <div class="review-content">
+          <h3 class="review-title">${product.name}</h3>
+          <div class="review-rating">
+            <div class="stars">${stars}</div>
+            <span class="rating-score">${product.rating}/5</span>
+          </div>
+          <p class="review-excerpt">${product.description}</p>
+          <div class="review-meta">
+            <span class="review-date">January 15, 2025</span>
+            <span class="review-author">By SmartDeals Expert</span>
+          </div>
+          <div class="review-actions">
+            <a href="#" class="btn btn-outline btn-small">Read Review</a>
+            <a href="${product.link}" target="_blank" class="btn btn-primary btn-small">Buy Now</a>
+          </div>
+        </div>
+      `;
+      
+      return div;
+    }
+
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', function() {
+      renderReviews();
+    });
+  </script>
+
+  <style>
+    .reviews-hero {
+      background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+      color: white;
+      padding: 4rem 0;
+      text-align: center;
+    }
+
+    .reviews-title {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      font-weight: 700;
+    }
+
+    .reviews-subtitle {
+      font-size: 1.25rem;
+      margin-bottom: 2rem;
+      opacity: 0.9;
+    }
+
+    .reviews-stats {
+      display: flex;
+      justify-content: center;
+      gap: 3rem;
+    }
+
+    .review-stat {
+      text-align: center;
+    }
+
+    .featured-review {
+      padding: 4rem 0;
+      background-color: white;
+    }
+
+    .featured-review-card {
+      background-color: #f8fafc;
+      border-radius: 1rem;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .featured-review-badge {
+      position: absolute;
+      top: 2rem;
+      right: 2rem;
+      background-color: #fbbf24;
+      color: #1f2937;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      z-index: 10;
+    }
+
+    .featured-review-content {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 2rem;
+      padding: 2rem;
+    }
+
+    .featured-review-image img {
+      width: 100%;
+      height: auto;
+      border-radius: 0.5rem;
+    }
+
+    .review-highlights {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    .highlight {
+      background-color: white;
+      padding: 1rem;
+      border-radius: 0.5rem;
+    }
+
+    .highlight h4 {
+      margin-bottom: 0.5rem;
+      font-size: 1rem;
+    }
+
+    .pros h4 {
+      color: #10b981;
+    }
+
+    .cons h4 {
+      color: #ef4444;
+    }
+
+    .highlight ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .highlight li {
+      padding: 0.25rem 0;
+      font-size: 0.9rem;
+    }
+
+    .pros li::before {
+      content: "✓ ";
+      color: #10b981;
+      font-weight: bold;
+    }
+
+    .cons li::before {
+      content: "✗ ";
+      color: #ef4444;
+      font-weight: bold;
+    }
+
+    .review-categories {
+      padding: 4rem 0;
+      background-color: #f8fafc;
+    }
+
+    .review-categories .categories-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .review-categories .category-card {
+      background-color: white;
+      padding: 2rem;
+      border-radius: 1rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+    }
+
+    .review-categories .category-card:hover {
+      transform: translateY(-5px);
+      border-color: #3b82f6;
+    }
+
+    .category-icon {
+      font-size: 2rem;
+      color: #3b82f6;
+      margin-bottom: 1rem;
+    }
+
+    .latest-reviews {
+      padding: 4rem 0;
+      background-color: white;
+    }
+
+    .latest-reviews .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 3rem;
+    }
+
+    .filter-controls select {
+      padding: 0.5rem 1rem;
+      border: 1px solid #d1d5db;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+    }
+
+    .reviews-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 2rem;
+    }
+
+    .review-card {
+      background-color: white;
+      border-radius: 1rem;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .review-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .review-image {
+      height: 200px;
+      overflow: hidden;
+    }
+
+    .review-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .review-content {
+      padding: 1.5rem;
+    }
+
+    .review-title {
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+      color: #1f2937;
+    }
+
+    .review-rating {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .rating-score {
+      font-weight: 600;
+      color: #1f2937;
+    }
+
+    .review-excerpt {
+      color: #6b7280;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .review-meta {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+      font-size: 0.8rem;
+      color: #9ca3af;
+    }
+
+    .review-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .how-we-review {
+      padding: 4rem 0;
+      background-color: #f8fafc;
+    }
+
+    .review-process {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2rem;
+    }
+
+    .process-step {
+      text-align: center;
+      background-color: white;
+      padding: 2rem;
+      border-radius: 1rem;
+    }
+
+    .step-icon {
+      font-size: 2.5rem;
+      color: #3b82f6;
+      margin-bottom: 1rem;
+    }
+
+    .process-step h3 {
+      margin-bottom: 1rem;
+      color: #1f2937;
+    }
+
+    .process-step p {
+      color: #6b7280;
+      line-height: 1.6;
+    }
+
+    .no-reviews {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 4rem 2rem;
+      color: #6b7280;
+    }
+
+    @media (max-width: 768px) {
+      .reviews-title {
+        font-size: 2rem;
+      }
+      
+      .reviews-stats {
+        flex-direction: column;
+        gap: 1rem;
+      }
+      
+      .featured-review-content {
+        grid-template-columns: 1fr;
+      }
+      
+      .review-highlights {
+        grid-template-columns: 1fr;
+      }
+      
+      .latest-reviews .section-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+      }
+      
+      .reviews-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</body>
+</html>
