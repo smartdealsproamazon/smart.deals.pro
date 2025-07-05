@@ -1,208 +1,560 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Privacy Policy</title>
-  
-  <!-- Font Awesome -->
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-  />
-
-  <!-- External Stylesheet -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy - SmartDeals Pro | Data Protection & Privacy</title>
+  <meta name="description" content="Learn how SmartDeals Pro collects, uses, and protects your personal information. Read our comprehensive privacy policy.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Header -->
+  <header class="main-header">
+    <div class="container">
+      <div class="header-content">
+        <div class="header-left">
+          <a href="index.html" class="logo-link">
+            <img src="logo.png" alt="SmartDeals Pro Logo" class="logo" />
+            <span class="logo-text">SmartDeals Pro</span>
+          </a>
+        </div>
+        
+        <nav class="main-nav">
+          <ul>
+            <li><a href="index.html" class="nav-link">Home</a></li>
+            <li class="dropdown">
+              <a href="#" class="nav-link dropdown-toggle">Categories <i class="fas fa-chevron-down"></i></a>
+              <ul class="dropdown-menu">
+                <li><a href="smartwatches.html">Smartwatches</a></li>
+                <li><a href="fashion.html">Fashion</a></li>
+                <li><a href="small-electrical.html">Electronics</a></li>
+                <li><a href="gaming.html">Gaming</a></li>
+                <li><a href="home-garden.html">Home & Garden</a></li>
+              </ul>
+            </li>
+            <li><a href="reviews.html" class="nav-link">Reviews</a></li>
+            <li><a href="deals.html" class="nav-link">Hot Deals</a></li>
+            <li><a href="about.html" class="nav-link">About</a></li>
+            <li><a href="contact.html" class="nav-link">Contact</a></li>
+          </ul>
+        </nav>
 
-  <!-- Inline Styles for Page Specific Layout -->
-  <style>
- 
-content: space-between;
-body {
-      margin: 0;
-      font-family: Arial, sans-serif;
+        <div class="header-right">
+          <div class="search-container">
+            <input type="text" id="headerSearch" placeholder="Search products..." class="search-input">
+            <button class="search-btn" onclick="performSearch()">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+          <a href="sign-in.html" class="btn btn-outline">Sign In</a>
+          <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+            <i class="fas fa-bars"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu-content">
+      <a href="index.html">Home</a>
+      <a href="smartwatches.html">Smartwatches</a>
+      <a href="fashion.html">Fashion</a>
+      <a href="small-electrical.html">Electronics</a>
+      <a href="gaming.html">Gaming</a>
+      <a href="home-garden.html">Home & Garden</a>
+      <a href="reviews.html">Reviews</a>
+      <a href="deals.html">Hot Deals</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+    </div>
+  </div>
+
+  <!-- Privacy Policy Hero -->
+  <section class="privacy-hero">
+    <div class="container">
+      <div class="privacy-hero-content">
+        <h1 class="privacy-title">Privacy Policy</h1>
+        <p class="privacy-subtitle">Your privacy is important to us. Learn how we collect, use, and protect your information.</p>
+        <p class="last-updated">Last updated: January 1, 2025</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Privacy Policy Content -->
+  <section class="privacy-content">
+    <div class="container">
+      <div class="privacy-layout">
+        <!-- Table of Contents -->
+        <aside class="privacy-sidebar">
+          <h3>Table of Contents</h3>
+          <nav class="toc">
+            <a href="#introduction">Introduction</a>
+            <a href="#information-we-collect">Information We Collect</a>
+            <a href="#how-we-use-information">How We Use Information</a>
+            <a href="#information-sharing">Information Sharing</a>
+            <a href="#cookies">Cookies & Tracking</a>
+            <a href="#affiliate-disclosure">Affiliate Disclosure</a>
+            <a href="#data-security">Data Security</a>
+            <a href="#your-rights">Your Rights</a>
+            <a href="#third-party-links">Third-Party Links</a>
+            <a href="#children-privacy">Children's Privacy</a>
+            <a href="#changes">Policy Changes</a>
+            <a href="#contact-privacy">Contact Us</a>
+          </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="privacy-main">
+          <section id="introduction" class="privacy-section">
+            <h2>1. Introduction</h2>
+            <p>Welcome to SmartDeals Pro ("we," "our," or "us"). This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website or use our services. Please read this privacy policy carefully. If you do not agree with the terms of this privacy policy, please do not access the site.</p>
+            <p>We reserve the right to make changes to this Privacy Policy at any time and for any reason. We will alert you about any changes by updating the "Last updated" date of this Privacy Policy.</p>
+          </section>
+
+          <section id="information-we-collect" class="privacy-section">
+            <h2>2. Information We Collect</h2>
+            <h3>Personal Data</h3>
+            <p>We may collect the following types of personal information:</p>
+            <ul>
+              <li><strong>Contact Information:</strong> Name, email address, phone number</li>
+              <li><strong>Communication Data:</strong> Messages you send us through contact forms</li>
+              <li><strong>Account Information:</strong> Username, password (if you create an account)</li>
+              <li><strong>Preference Data:</strong> Product preferences, shopping history, wishlist items</li>
+            </ul>
+
+            <h3>Automatically Collected Data</h3>
+            <p>When you visit our website, we automatically collect certain information:</p>
+            <ul>
+              <li><strong>Device Information:</strong> IP address, browser type, operating system</li>
+              <li><strong>Usage Data:</strong> Pages visited, time spent on site, click-through rates</li>
+              <li><strong>Location Data:</strong> General geographic location based on IP address</li>
+              <li><strong>Referral Data:</strong> Information about how you found our site</li>
+            </ul>
+          </section>
+
+          <section id="how-we-use-information" class="privacy-section">
+            <h2>3. How We Use Your Information</h2>
+            <p>We use the information we collect for the following purposes:</p>
+            <ul>
+              <li><strong>Service Provision:</strong> To provide and maintain our services</li>
+              <li><strong>Communication:</strong> To respond to your inquiries and send important updates</li>
+              <li><strong>Personalization:</strong> To customize your experience and show relevant deals</li>
+              <li><strong>Analytics:</strong> To understand how users interact with our site</li>
+              <li><strong>Marketing:</strong> To send promotional content (with your consent)</li>
+              <li><strong>Legal Compliance:</strong> To comply with applicable laws and regulations</li>
+              <li><strong>Security:</strong> To protect against fraud and ensure site security</li>
+            </ul>
+          </section>
+
+          <section id="information-sharing" class="privacy-section">
+            <h2>4. Information Sharing and Disclosure</h2>
+            <p>We do not sell, trade, or otherwise transfer your personal information to third parties except in the following circumstances:</p>
+            <ul>
+              <li><strong>Service Providers:</strong> We may share information with trusted third parties who assist us in operating our website and conducting our business</li>
+              <li><strong>Legal Requirements:</strong> We may disclose information when required by law or to protect our rights</li>
+              <li><strong>Business Transfers:</strong> In the event of a merger, acquisition, or sale of all or part of our assets</li>
+              <li><strong>Consent:</strong> When you have given us explicit consent to share your information</li>
+            </ul>
+          </section>
+
+          <section id="cookies" class="privacy-section">
+            <h2>5. Cookies and Tracking Technologies</h2>
+            <p>We use cookies and similar tracking technologies to enhance your browsing experience:</p>
+            <h3>Types of Cookies We Use:</h3>
+            <ul>
+              <li><strong>Essential Cookies:</strong> Necessary for the website to function properly</li>
+              <li><strong>Analytics Cookies:</strong> Help us understand how visitors use our site</li>
+              <li><strong>Advertising Cookies:</strong> Used to deliver relevant ads and track their effectiveness</li>
+              <li><strong>Functional Cookies:</strong> Remember your preferences and settings</li>
+            </ul>
+            <p>You can control cookies through your browser settings, but disabling certain cookies may limit website functionality.</p>
+          </section>
+
+          <section id="affiliate-disclosure" class="privacy-section">
+            <h2>6. Affiliate Disclosure</h2>
+            <div class="disclosure-box">
+              <h3>Important Notice About Affiliate Links</h3>
+              <p>SmartDeals Pro participates in affiliate marketing programs. This means we may earn a commission when you click on affiliate links and make a purchase. Here's what you need to know:</p>
+              <ul>
+                <li>Affiliate links are clearly marked when possible</li>
+                <li>You pay the same price whether you use our link or not</li>
+                <li>We only recommend products we believe provide value</li>
+                <li>Our reviews remain honest and unbiased</li>
+                <li>Commission earnings help us maintain and improve our services</li>
+              </ul>
+              <p><strong>Affiliate Partners Include:</strong> Amazon Associates, and other retailer affiliate programs.</p>
+            </div>
+          </section>
+
+          <section id="data-security" class="privacy-section">
+            <h2>7. Data Security</h2>
+            <p>We implement appropriate technical and organizational security measures to protect your personal information:</p>
+            <ul>
+              <li><strong>Encryption:</strong> Data transmission is encrypted using SSL/TLS protocols</li>
+              <li><strong>Access Controls:</strong> Limited access to personal data on a need-to-know basis</li>
+              <li><strong>Regular Updates:</strong> Security systems are regularly updated and monitored</li>
+              <li><strong>Incident Response:</strong> Procedures in place to respond to security breaches</li>
+            </ul>
+            <p>However, no method of transmission over the internet is 100% secure, and we cannot guarantee absolute security.</p>
+          </section>
+
+          <section id="your-rights" class="privacy-section">
+            <h2>8. Your Privacy Rights</h2>
+            <p>Depending on your location, you may have the following rights regarding your personal data:</p>
+            <ul>
+              <li><strong>Access:</strong> Request access to your personal data</li>
+              <li><strong>Correction:</strong> Request correction of inaccurate data</li>
+              <li><strong>Deletion:</strong> Request deletion of your personal data</li>
+              <li><strong>Portability:</strong> Request transfer of your data</li>
+              <li><strong>Objection:</strong> Object to processing of your data</li>
+              <li><strong>Withdraw Consent:</strong> Withdraw consent for data processing</li>
+            </ul>
+            <p>To exercise these rights, please contact us using the information provided in the "Contact Us" section.</p>
+          </section>
+
+          <section id="third-party-links" class="privacy-section">
+            <h2>9. Third-Party Links</h2>
+            <p>Our website contains links to third-party websites and services. We are not responsible for the privacy practices or content of these external sites. We encourage you to review the privacy policies of any third-party sites you visit.</p>
+            <p><strong>Third-party services we may link to include:</strong></p>
+            <ul>
+              <li>Amazon and other e-commerce platforms</li>
+              <li>Social media platforms</li>
+              <li>Payment processors</li>
+              <li>Analytics services (Google Analytics)</li>
+            </ul>
+          </section>
+
+          <section id="children-privacy" class="privacy-section">
+            <h2>10. Children's Privacy</h2>
+            <p>Our services are not intended for children under the age of 13. We do not knowingly collect personal information from children under 13. If you are a parent or guardian and believe your child has provided us with personal information, please contact us immediately.</p>
+          </section>
+
+          <section id="changes" class="privacy-section">
+            <h2>11. Changes to This Privacy Policy</h2>
+            <p>We may update this Privacy Policy from time to time. When we make changes, we will:</p>
+            <ul>
+              <li>Update the "Last updated" date at the top of this policy</li>
+              <li>Notify users of material changes via email (if applicable)</li>
+              <li>Post a notice on our website highlighting the changes</li>
+            </ul>
+            <p>Continued use of our services after changes constitute acceptance of the updated policy.</p>
+          </section>
+
+          <section id="contact-privacy" class="privacy-section">
+            <h2>12. Contact Us About Privacy</h2>
+            <p>If you have questions or concerns about this Privacy Policy or our data practices, please contact us:</p>
+            <div class="contact-info-box">
+              <p><strong>Email:</strong> <a href="mailto:privacy@smartdealspro.com">privacy@smartdealspro.com</a></p>
+              <p><strong>General Contact:</strong> <a href="mailto:mrazwan0310@gmail.com">mrazwan0310@gmail.com</a></p>
+              <p><strong>Contact Form:</strong> <a href="contact.html">Visit our contact page</a></p>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="main-footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>SmartDeals Pro</h3>
+          <p>Your trusted source for the best affiliate deals and product reviews. We help you shop smarter and save money.</p>
+          <div class="social-links">
+            <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+            <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+          </div>
+        </div>
+        <div class="footer-section">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="reviews.html">Reviews</a></li>
+            <li><a href="deals.html">Hot Deals</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Categories</h4>
+          <ul>
+            <li><a href="smartwatches.html">Smartwatches</a></li>
+            <li><a href="fashion.html">Fashion</a></li>
+            <li><a href="small-electrical.html">Electronics</a></li>
+            <li><a href="gaming.html">Gaming</a></li>
+            <li><a href="home-garden.html">Home & Garden</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="privacy-policy.html">Privacy Policy</a></li>
+            <li><a href="terms.html">Terms of Service</a></li>
+            <li><a href="affiliate-disclosure.html">Affiliate Disclosure</a></li>
+            <li><a href="cookies.html">Cookie Policy</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 SmartDeals Pro. All rights reserved.</p>
+        <p class="affiliate-disclaimer">This site contains affiliate links. We may earn a commission when you purchase through links on our site — at no extra cost to you.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script>
+    // Mobile menu toggle
+    function toggleMobileMenu() {
+      const mobileMenu = document.getElementById('mobileMenu');
+      mobileMenu.classList.toggle('active');
     }
 
-    /* HEADER */
-    .amazon-header {
-      background-color: #232f3e;
-      color: white;
+    // Search functionality
+    function performSearch() {
+      const query = document.getElementById('headerSearch').value.toLowerCase();
+      if (query.includes('watch') || query.includes('smart')) {
+        window.location.href = 'smartwatches.html';
+      } else if (query.includes('fashion') || query.includes('clothing')) {
+        window.location.href = 'fashion.html';
+      } else if (query.includes('electronic') || query.includes('gadget')) {
+        window.location.href = 'small-electrical.html';
+      } else if (query.includes('gaming') || query.includes('game')) {
+        window.location.href = 'gaming.html';
+      } else if (query.includes('home') || query.includes('garden')) {
+        window.location.href = 'home-garden.html';
+      } else {
+        window.location.href = 'deals.html';
+      }
     }
 
-    .top-nav {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 10px 15px;
-    }
-
-    .top-nav img.logo {
-      height: 35px;
-    }
-
-    .location {
-      display: flex;
-      align-items: center;
-      font-size: 14px;
-    }
-
-    .location i {
-      margin-right: 5px;
-    }
-
-    .sign-cart a {
-      color: white;
-      margin-left: 15px;
-      text-decoration: none;
-      font-size: 14px;
-    }
-
-    /* SEARCH BAR */
-    .search-bar {
-      display: flex;
-      align-items: center;
-      padding: 10px 15px;
-      background-color: #37475a;
-    }
-
-    .search-bar select {
-      padding: 8px;
-      border: none;
-      border-radius: 4px 0 0 4px;
-      font-size: 14px;
-    }
-
-    .search-bar input {
-      flex: 1;
-      padding: 8px;
-      border: none;
-      font-size: 14px;
-    }
-
-    .search-bar button {
-      background-color: #febd69;
-      border: none;
-      padding: 8px 15px;
-      border-radius: 0 4px 4px 0;
-      cursor: pointer;
-    }
-
-    .search-bar button i {
-      color: black;
-    }
-
-    /* CATEGORY MENU */
-    .bottom-menu {
-      display: flex;
-      gap: 15px;
-      padding: 8px 15px;
-      background-color: #232f3e;
-      font-size: 14px;
-    }
-
-    .bottom-menu a {
-      color: white;
-      text-decoration: none;
-    }
-
-    /* BODY CONTENT */
-    main {
-      padding: 20px;
-      background-color: #f2f2f2;
-    }
-
-    .hero {
-      background-color: white;
-      padding: 20px;
-      border-radius: 5px;
-      margin-bottom: 20px;
-    }
-
-    .featured-posts {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
-    }
-
-    .featured-posts article {
-      background-color: white;
-      padding: 15px;
-      border-radius: 5px;
-    }
-
-    /* FOOTER */
-    footer {
-      text-align: center;
-      padding: 15px;
-      background-color: #232f3e;
-      color: white;
+    // Smooth scrolling for table of contents
+    document.querySelectorAll('.toc a').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
-    footer a {
-  color: white;
-  text-decoration: none;
-  margin: 0 10px;
+      });
+    });
+
+    // Highlight current section in TOC
+    window.addEventListener('scroll', function() {
+      const sections = document.querySelectorAll('.privacy-section');
+      const tocLinks = document.querySelectorAll('.toc a');
+      
+      let current = '';
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop - 100;
+        if (window.pageYOffset >= sectionTop) {
+          current = section.getAttribute('id');
+        }
+      });
+
+      tocLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === '#' + current) {
+          link.classList.add('active');
+        }
+      });
+    });
+  </script>
+
+  <style>
+    .privacy-hero {
+      background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+      color: white;
+      padding: 3rem 0;
+      text-align: center;
+    }
+
+    .privacy-title {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      font-weight: 700;
+    }
+
+    .privacy-subtitle {
+      font-size: 1.1rem;
+      margin-bottom: 1rem;
+      opacity: 0.9;
+    }
+
+    .last-updated {
+      font-size: 0.9rem;
+      opacity: 0.8;
+      font-style: italic;
+    }
+
+    .privacy-content {
+      padding: 4rem 0;
+      background-color: #f8fafc;
+    }
+
+    .privacy-layout {
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      gap: 3rem;
+      align-items: start;
+    }
+
+    .privacy-sidebar {
+      position: sticky;
+      top: 120px;
+      background: white;
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .privacy-sidebar h3 {
+      margin-bottom: 1rem;
+      color: #1a202c;
+      font-size: 1.1rem;
+    }
+
+    .toc {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .toc a {
+      color: #6b7280;
+      text-decoration: none;
+      padding: 0.5rem;
+      border-radius: 0.375rem;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+    }
+
+    .toc a:hover,
+    .toc a.active {
+      background-color: #3b82f6;
+      color: white;
+    }
+
+    .privacy-main {
+      background: white;
+      padding: 3rem;
+      border-radius: 1rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .privacy-section {
+      margin-bottom: 3rem;
+      scroll-margin-top: 120px;
+    }
+
+    .privacy-section h2 {
+      color: #1a202c;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid #e5e7eb;
+    }
+
+    .privacy-section h3 {
+      color: #374151;
+      margin: 1.5rem 0 1rem 0;
+    }
+
+    .privacy-section p {
+      color: #6b7280;
+      line-height: 1.7;
+      margin-bottom: 1rem;
+    }
+
+    .privacy-section ul {
+      color: #6b7280;
+      line-height: 1.7;
+      margin-bottom: 1rem;
+      padding-left: 2rem;
+    }
+
+    .privacy-section li {
+      margin-bottom: 0.5rem;
+    }
+
+    .disclosure-box {
+      background: #fef3c7;
+      border: 1px solid #f59e0b;
+      border-radius: 0.5rem;
+      padding: 1.5rem;
+      margin: 1rem 0;
+    }
+
+    .disclosure-box h3 {
+      color: #92400e;
+      margin-top: 0;
+    }
+
+    .contact-info-box {
+      background: #f0f9ff;
+      border: 1px solid #3b82f6;
+      border-radius: 0.5rem;
+      padding: 1.5rem;
+      margin: 1rem 0;
+    }
+
+    .contact-info-box p {
+      margin-bottom: 0.5rem;
+    }
+
+    .contact-info-box a {
+      color: #3b82f6;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .contact-info-box a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 1024px) {
+      .privacy-layout {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+
+      .privacy-sidebar {
+        position: static;
+      }
+
+      .toc {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 0.25rem;
+      }
+
+      .toc a {
+        font-size: 0.8rem;
+        padding: 0.375rem 0.75rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .privacy-title {
+        font-size: 2rem;
+      }
+
+      .privacy-main {
+        padding: 1.5rem;
+      }
+
+      .privacy-section {
+        margin-bottom: 2rem;
       }
     }
   </style>
-</head>
-<body>
-
-  <!-- HEADER -->
-<header class="amazon-header">
-  <div class="top-nav">
-    <div class="header-left">
-      <a href="index.html">
-        <i class="fas fa-home" style="font-size: 22px; color: white; margin-right: 10px;"></i>
-      </a>
-      <img src="logo.png" alt="Site Logo" class="logo" />
-      <div class="location">
-        <i class="fas fa-map-marker-alt"></i> Deliver to Pakistan
-      </div>
-    </div>
-
-    <div class="sign-cart">
-      <a href="#">Sign In</a>
-      <a href="#"><i class="fas fa-shopping-cart cart-icon"></i></a>
-    </div>
-  </div>
-
-  <div class="search-bar">
-    <select class="category-select">
-      <option value="all">All</option>
-    </select>
-    <input type="text" placeholder="Search products" />
-    <button type="submit"><i class="fas fa-search"></i></button>
-  </div>
-</header>
-
-  <!-- MAIN CONTENT -->
-  <div class="container">
-    <h1>Privacy Policy</h1>
-    <p>Your privacy is important to us. This Privacy Policy explains how we collect, use, and protect your information.</p>
-
-    <h2>Information We Collect</h2>
-    <p>We may collect information such as your name, email address, and browsing behavior when you interact with our website.</p>
-
-    <h2>How We Use Information</h2>
-    <p>We use the collected information to improve our content, personalize user experience, and manage affiliate partnerships.</p>
-
-    <h2>Third-Party Links</h2>
-    <p>Our site may contain links to other websites. We are not responsible for the privacy practices of these external sites.</p>
-
-    <h2>Affiliate Disclosure</h2>
-    <p>Some links on this site are affiliate links. This means we may earn a commission if you click through and make a purchase — at no extra cost to you.</p>
-
-    <p>By using our site, you agree to the terms of this Privacy Policy.</p>
-  </div>
-
-  <!-- FOOTER -->
-  <footer>
-    <div style="margin-bottom: 10px;">
-      <a href="about.html">About</a> |
-      <a href="contact.html">Contact</a> |
-      <a href="privacy-policy.html">Privacy Policy</a>
-    </div>
-    <p>&copy; 2025 Smart Affiliate Site. All rights reserved.</p>
-  </footer>
 </body>
-    </html>
+</html>

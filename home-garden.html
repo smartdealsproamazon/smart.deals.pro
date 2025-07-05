@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Small Electronics & Electrical Products - SmartDeals Pro</title>
-  <meta name="description" content="Discover the best deals on small electronics and electrical products. From smart speakers to phone accessories, find top-rated gadgets at unbeatable prices.">
+  <title>Home & Garden Products - SmartDeals Pro</title>
+  <meta name="description" content="Transform your home and garden with our curated selection of tools, decor, and outdoor essentials. Find the best deals on home improvement products.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -75,25 +75,62 @@
     </div>
   </div>
 
-  <!-- Electronics Hero Section -->
-  <section class="electronics-hero">
+  <!-- Home & Garden Hero Section -->
+  <section class="home-garden-hero">
     <div class="container">
-      <div class="electronics-hero-content">
-        <h1 class="electronics-title">Small Electronics & Electrical Products</h1>
-        <p class="electronics-subtitle">Discover cutting-edge gadgets and essential electronics at unbeatable prices</p>
+      <div class="home-garden-hero-content">
+        <h1 class="home-garden-title">Home & Garden Essentials</h1>
+        <p class="home-garden-subtitle">Transform your living space with premium home improvement and garden products</p>
         <div class="hero-stats">
           <div class="stat">
-            <span class="stat-number">200+</span>
+            <span class="stat-number">300+</span>
             <span class="stat-label">Products</span>
           </div>
           <div class="stat">
-            <span class="stat-number">4.8★</span>
+            <span class="stat-number">4.7★</span>
             <span class="stat-label">Avg Rating</span>
           </div>
           <div class="stat">
-            <span class="stat-number">50%</span>
+            <span class="stat-number">40%</span>
             <span class="stat-label">Savings</span>
           </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Category Showcase -->
+  <section class="category-showcase">
+    <div class="container">
+      <h2 class="section-title">Shop by Category</h2>
+      <div class="category-grid">
+        <div class="category-item" onclick="filterByCategory('tools')">
+          <div class="category-icon">
+            <i class="fas fa-tools"></i>
+          </div>
+          <h3>Tools & Hardware</h3>
+          <p>Power tools, hand tools, and hardware essentials</p>
+        </div>
+        <div class="category-item" onclick="filterByCategory('garden')">
+          <div class="category-icon">
+            <i class="fas fa-seedling"></i>
+          </div>
+          <h3>Garden & Outdoor</h3>
+          <p>Gardening tools, planters, and outdoor furniture</p>
+        </div>
+        <div class="category-item" onclick="filterByCategory('storage')">
+          <div class="category-icon">
+            <i class="fas fa-box"></i>
+          </div>
+          <h3>Storage & Organization</h3>
+          <p>Storage solutions and organization systems</p>
+        </div>
+        <div class="category-item" onclick="filterByCategory('kitchen')">
+          <div class="category-icon">
+            <i class="fas fa-utensils"></i>
+          </div>
+          <h3>Kitchen & Dining</h3>
+          <p>Kitchen appliances and dining essentials</p>
         </div>
       </div>
     </div>
@@ -106,22 +143,22 @@
         <div class="filter-group">
           <label for="categoryFilter">Category:</label>
           <select id="categoryFilter" onchange="filterProducts()">
-            <option value="all">All Electronics</option>
-            <option value="audio">Audio & Speakers</option>
-            <option value="charging">Charging & Cables</option>
-            <option value="smart-home">Smart Home</option>
-            <option value="phone-accessories">Phone Accessories</option>
-            <option value="portable">Portable Electronics</option>
+            <option value="all">All Categories</option>
+            <option value="tools">Tools & Hardware</option>
+            <option value="garden">Garden & Outdoor</option>
+            <option value="storage">Storage & Organization</option>
+            <option value="kitchen">Kitchen & Dining</option>
+            <option value="decor">Home Decor</option>
           </select>
         </div>
         <div class="filter-group">
           <label for="priceFilter">Price Range:</label>
           <select id="priceFilter" onchange="filterProducts()">
             <option value="all">All Prices</option>
-            <option value="under-25">Under $25</option>
-            <option value="25-50">$25 - $50</option>
+            <option value="under-50">Under $50</option>
             <option value="50-100">$50 - $100</option>
-            <option value="over-100">Over $100</option>
+            <option value="100-200">$100 - $200</option>
+            <option value="over-200">Over $200</option>
           </select>
         </div>
         <div class="filter-group">
@@ -138,232 +175,232 @@
   </section>
 
   <!-- Products Section -->
-  <section class="electronics-products">
+  <section class="home-garden-products">
     <div class="container">
       <div class="products-grid" id="productsGrid">
         
-        <!-- Audio & Speakers -->
-        <div class="product-card" data-category="audio" data-price="50">
+        <!-- Tools & Hardware -->
+        <div class="product-card" data-category="tools" data-price="89">
           <div class="product-image-container">
-            <img src="https://m.media-amazon.com/images/I/61XO4bORHUL._AC_SL1000_.jpg" alt="Echo Dot 5th Gen" class="product-image">
-            <div class="discount-badge">30% OFF</div>
-            <div class="product-overlay">
-              <button class="quick-view-btn" onclick="quickView('echo-dot')">
-                <i class="fas fa-eye"></i> Quick View
-              </button>
-            </div>
-          </div>
-          <div class="product-info">
-            <h3 class="product-title">Amazon Echo Dot (5th Gen)</h3>
-            <div class="product-rating">
-              <div class="stars">★★★★★</div>
-              <span class="rating-text">(15,234 reviews)</span>
-            </div>
-            <div class="product-price">
-              <span class="original-price">$49.99</span>
-              <span class="current-price">$34.99</span>
-            </div>
-            <p class="product-description">Smart speaker with improved sound quality and Alexa built-in</p>
-            <div class="product-features">
-              <span class="feature-tag">Alexa Built-in</span>
-              <span class="feature-tag">WiFi</span>
-              <span class="feature-tag">Voice Control</span>
-            </div>
-            <div class="product-buttons">
-              <a href="https://amzn.to/4cQcFQj" target="_blank" class="btn btn-primary">
-                <i class="fas fa-shopping-cart"></i> Buy on Amazon
-              </a>
-              <button class="btn btn-secondary btn-small" onclick="addToWishlist('echo-dot')">
-                <i class="fas fa-heart"></i>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Charging & Cables -->
-        <div class="product-card" data-category="charging" data-price="25">
-          <div class="product-image-container">
-            <img src="https://m.media-amazon.com/images/I/61Nn6XPzrJL._AC_SL1500_.jpg" alt="Anker PowerPort III" class="product-image">
-            <div class="discount-badge">40% OFF</div>
-            <div class="product-overlay">
-              <button class="quick-view-btn" onclick="quickView('anker-charger')">
-                <i class="fas fa-eye"></i> Quick View
-              </button>
-            </div>
-          </div>
-          <div class="product-info">
-            <h3 class="product-title">Anker PowerPort III 65W Charger</h3>
-            <div class="product-rating">
-              <div class="stars">★★★★★</div>
-              <span class="rating-text">(8,456 reviews)</span>
-            </div>
-            <div class="product-price">
-              <span class="original-price">$39.99</span>
-              <span class="current-price">$23.99</span>
-            </div>
-            <p class="product-description">Fast charging USB-C charger with GaN technology</p>
-            <div class="product-features">
-              <span class="feature-tag">USB-C</span>
-              <span class="feature-tag">65W</span>
-              <span class="feature-tag">GaN Tech</span>
-            </div>
-            <div class="product-buttons">
-              <a href="https://amzn.to/anker65w" target="_blank" class="btn btn-primary">
-                <i class="fas fa-shopping-cart"></i> Buy on Amazon
-              </a>
-              <button class="btn btn-secondary btn-small" onclick="addToWishlist('anker-charger')">
-                <i class="fas fa-heart"></i>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Smart Home -->
-        <div class="product-card" data-category="smart-home" data-price="80">
-          <div class="product-image-container">
-            <img src="https://m.media-amazon.com/images/I/51Z8XwCO-DL._AC_SL1000_.jpg" alt="TP-Link Kasa Smart Plug" class="product-image">
-            <div class="discount-badge">25% OFF</div>
-            <div class="product-overlay">
-              <button class="quick-view-btn" onclick="quickView('smart-plug')">
-                <i class="fas fa-eye"></i> Quick View
-              </button>
-            </div>
-          </div>
-          <div class="product-info">
-            <h3 class="product-title">TP-Link Kasa Smart Plug (4-Pack)</h3>
-            <div class="product-rating">
-              <div class="stars">★★★★☆</div>
-              <span class="rating-text">(12,890 reviews)</span>
-            </div>
-            <div class="product-price">
-              <span class="original-price">$29.99</span>
-              <span class="current-price">$22.49</span>
-            </div>
-            <p class="product-description">WiFi smart plugs with voice control and scheduling</p>
-            <div class="product-features">
-              <span class="feature-tag">WiFi</span>
-              <span class="feature-tag">Alexa Compatible</span>
-              <span class="feature-tag">4-Pack</span>
-            </div>
-            <div class="product-buttons">
-              <a href="https://amzn.to/tplink-plug" target="_blank" class="btn btn-primary">
-                <i class="fas fa-shopping-cart"></i> Buy on Amazon
-              </a>
-              <button class="btn btn-secondary btn-small" onclick="addToWishlist('smart-plug')">
-                <i class="fas fa-heart"></i>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Phone Accessories -->
-        <div class="product-card" data-category="phone-accessories" data-price="30">
-          <div class="product-image-container">
-            <img src="https://m.media-amazon.com/images/I/71Y0RZaWNpL._AC_SL1500_.jpg" alt="Wireless Phone Stand" class="product-image">
+            <img src="https://m.media-amazon.com/images/I/81T8n8pKr+L._AC_SL1500_.jpg" alt="Cordless Drill Set" class="product-image">
             <div class="discount-badge">35% OFF</div>
             <div class="product-overlay">
-              <button class="quick-view-btn" onclick="quickView('wireless-stand')">
+              <button class="quick-view-btn" onclick="quickView('drill-set')">
                 <i class="fas fa-eye"></i> Quick View
               </button>
             </div>
           </div>
           <div class="product-info">
-            <h3 class="product-title">Wireless Charging Stand with Fan</h3>
+            <h3 class="product-title">BLACK+DECKER 20V MAX Cordless Drill</h3>
             <div class="product-rating">
               <div class="stars">★★★★★</div>
-              <span class="rating-text">(6,742 reviews)</span>
+              <span class="rating-text">(12,456 reviews)</span>
             </div>
             <div class="product-price">
-              <span class="original-price">$45.99</span>
-              <span class="current-price">$29.99</span>
+              <span class="original-price">$129.99</span>
+              <span class="current-price">$84.99</span>
             </div>
-            <p class="product-description">15W fast wireless charging with cooling fan</p>
+            <p class="product-description">Cordless drill with 30-piece accessory set</p>
             <div class="product-features">
-              <span class="feature-tag">15W Fast Charge</span>
-              <span class="feature-tag">Cooling Fan</span>
-              <span class="feature-tag">Qi Compatible</span>
+              <span class="feature-tag">20V Battery</span>
+              <span class="feature-tag">30 Accessories</span>
+              <span class="feature-tag">LED Light</span>
             </div>
             <div class="product-buttons">
-              <a href="https://amzn.to/wireless-stand" target="_blank" class="btn btn-primary">
+              <a href="https://amzn.to/blackdecker-drill" target="_blank" class="btn btn-primary">
                 <i class="fas fa-shopping-cart"></i> Buy on Amazon
               </a>
-              <button class="btn btn-secondary btn-small" onclick="addToWishlist('wireless-stand')">
+              <button class="btn btn-secondary btn-small" onclick="addToWishlist('drill-set')">
                 <i class="fas fa-heart"></i>
               </button>
             </div>
           </div>
         </div>
 
-        <!-- Portable Electronics -->
-        <div class="product-card" data-category="portable" data-price="120">
+        <!-- Garden & Outdoor -->
+        <div class="product-card" data-category="garden" data-price="45">
           <div class="product-image-container">
-            <img src="https://m.media-amazon.com/images/I/81Km3KxnPPL._AC_SL1500_.jpg" alt="Portable Power Bank" class="product-image">
-            <div class="discount-badge">20% OFF</div>
+            <img src="https://m.media-amazon.com/images/I/71xTsKgPM7L._AC_SL1500_.jpg" alt="Garden Tool Set" class="product-image">
+            <div class="discount-badge">30% OFF</div>
             <div class="product-overlay">
-              <button class="quick-view-btn" onclick="quickView('power-bank')">
+              <button class="quick-view-btn" onclick="quickView('garden-tools')">
                 <i class="fas fa-eye"></i> Quick View
               </button>
             </div>
           </div>
           <div class="product-info">
-            <h3 class="product-title">Anker PowerCore 26800 Power Bank</h3>
+            <h3 class="product-title">11-Piece Garden Tool Set</h3>
+            <div class="product-rating">
+              <div class="stars">★★★★☆</div>
+              <span class="rating-text">(8,234 reviews)</span>
+            </div>
+            <div class="product-price">
+              <span class="original-price">$64.99</span>
+              <span class="current-price">$44.99</span>
+            </div>
+            <p class="product-description">Complete gardening kit with carrying tote</p>
+            <div class="product-features">
+              <span class="feature-tag">11 Tools</span>
+              <span class="feature-tag">Stainless Steel</span>
+              <span class="feature-tag">Carrying Tote</span>
+            </div>
+            <div class="product-buttons">
+              <a href="https://amzn.to/garden-tool-set" target="_blank" class="btn btn-primary">
+                <i class="fas fa-shopping-cart"></i> Buy on Amazon
+              </a>
+              <button class="btn btn-secondary btn-small" onclick="addToWishlist('garden-tools')">
+                <i class="fas fa-heart"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Storage & Organization -->
+        <div class="product-card" data-category="storage" data-price="75">
+          <div class="product-image-container">
+            <img src="https://m.media-amazon.com/images/I/91H+ZuFo9HL._AC_SL1500_.jpg" alt="Storage Organizer" class="product-image">
+            <div class="discount-badge">25% OFF</div>
+            <div class="product-overlay">
+              <button class="quick-view-btn" onclick="quickView('storage-organizer')">
+                <i class="fas fa-eye"></i> Quick View
+              </button>
+            </div>
+          </div>
+          <div class="product-info">
+            <h3 class="product-title">4-Tier Storage Rack with Wheels</h3>
             <div class="product-rating">
               <div class="stars">★★★★★</div>
-              <span class="rating-text">(9,283 reviews)</span>
+              <span class="rating-text">(6,789 reviews)</span>
+            </div>
+            <div class="product-price">
+              <span class="original-price">$99.99</span>
+              <span class="current-price">$74.99</span>
+            </div>
+            <p class="product-description">Rolling storage cart for kitchen or garage</p>
+            <div class="product-features">
+              <span class="feature-tag">4 Tiers</span>
+              <span class="feature-tag">Rolling Wheels</span>
+              <span class="feature-tag">Metal Frame</span>
+            </div>
+            <div class="product-buttons">
+              <a href="https://amzn.to/storage-rack" target="_blank" class="btn btn-primary">
+                <i class="fas fa-shopping-cart"></i> Buy on Amazon
+              </a>
+              <button class="btn btn-secondary btn-small" onclick="addToWishlist('storage-organizer')">
+                <i class="fas fa-heart"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Kitchen & Dining -->
+        <div class="product-card" data-category="kitchen" data-price="120">
+          <div class="product-image-container">
+            <img src="https://m.media-amazon.com/images/I/61uNv9eJ5iL._AC_SL1500_.jpg" alt="Air Fryer" class="product-image">
+            <div class="discount-badge">40% OFF</div>
+            <div class="product-overlay">
+              <button class="quick-view-btn" onclick="quickView('air-fryer')">
+                <i class="fas fa-eye"></i> Quick View
+              </button>
+            </div>
+          </div>
+          <div class="product-info">
+            <h3 class="product-title">COSORI Air Fryer 5.8QT</h3>
+            <div class="product-rating">
+              <div class="stars">★★★★★</div>
+              <span class="rating-text">(15,567 reviews)</span>
+            </div>
+            <div class="product-price">
+              <span class="original-price">$199.99</span>
+              <span class="current-price">$119.99</span>
+            </div>
+            <p class="product-description">Digital air fryer with 11 presets and app control</p>
+            <div class="product-features">
+              <span class="feature-tag">5.8QT Capacity</span>
+              <span class="feature-tag">11 Presets</span>
+              <span class="feature-tag">App Control</span>
+            </div>
+            <div class="product-buttons">
+              <a href="https://amzn.to/cosori-airfryer" target="_blank" class="btn btn-primary">
+                <i class="fas fa-shopping-cart"></i> Buy on Amazon
+              </a>
+              <button class="btn btn-secondary btn-small" onclick="addToWishlist('air-fryer')">
+                <i class="fas fa-heart"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Home Decor -->
+        <div class="product-card" data-category="decor" data-price="35">
+          <div class="product-image-container">
+            <img src="https://m.media-amazon.com/images/I/71CBmfVY0bL._AC_SL1500_.jpg" alt="LED String Lights" class="product-image">
+            <div class="discount-badge">50% OFF</div>
+            <div class="product-overlay">
+              <button class="quick-view-btn" onclick="quickView('string-lights')">
+                <i class="fas fa-eye"></i> Quick View
+              </button>
+            </div>
+          </div>
+          <div class="product-info">
+            <h3 class="product-title">Outdoor LED String Lights 48FT</h3>
+            <div class="product-rating">
+              <div class="stars">★★★★☆</div>
+              <span class="rating-text">(4,321 reviews)</span>
             </div>
             <div class="product-price">
               <span class="original-price">$69.99</span>
-              <span class="current-price">$55.99</span>
+              <span class="current-price">$34.99</span>
             </div>
-            <p class="product-description">High-capacity portable charger with 3 USB ports</p>
+            <p class="product-description">Waterproof patio lights with remote control</p>
             <div class="product-features">
-              <span class="feature-tag">26800mAh</span>
-              <span class="feature-tag">3 USB Ports</span>
-              <span class="feature-tag">Fast Charge</span>
+              <span class="feature-tag">48FT Length</span>
+              <span class="feature-tag">Waterproof</span>
+              <span class="feature-tag">Remote Control</span>
             </div>
             <div class="product-buttons">
-              <a href="https://amzn.to/anker-powercore" target="_blank" class="btn btn-primary">
+              <a href="https://amzn.to/led-string-lights" target="_blank" class="btn btn-primary">
                 <i class="fas fa-shopping-cart"></i> Buy on Amazon
               </a>
-              <button class="btn btn-secondary btn-small" onclick="addToWishlist('power-bank')">
+              <button class="btn btn-secondary btn-small" onclick="addToWishlist('string-lights')">
                 <i class="fas fa-heart"></i>
               </button>
             </div>
           </div>
         </div>
 
-        <!-- Audio Accessories -->
-        <div class="product-card" data-category="audio" data-price="15">
+        <!-- Garden Equipment -->
+        <div class="product-card" data-category="garden" data-price="180">
           <div class="product-image-container">
-            <img src="https://m.media-amazon.com/images/I/51KquJx9LhL._AC_SL1000_.jpg" alt="Bluetooth Earbuds" class="product-image">
-            <div class="discount-badge">45% OFF</div>
+            <img src="https://m.media-amazon.com/images/I/81QjHhWk59L._AC_SL1500_.jpg" alt="Pressure Washer" class="product-image">
+            <div class="discount-badge">20% OFF</div>
             <div class="product-overlay">
-              <button class="quick-view-btn" onclick="quickView('earbuds')">
+              <button class="quick-view-btn" onclick="quickView('pressure-washer')">
                 <i class="fas fa-eye"></i> Quick View
               </button>
             </div>
           </div>
           <div class="product-info">
-            <h3 class="product-title">Wireless Bluetooth Earbuds</h3>
+            <h3 class="product-title">Electric Pressure Washer 2100 PSI</h3>
             <div class="product-rating">
-              <div class="stars">★★★★☆</div>
-              <span class="rating-text">(4,567 reviews)</span>
+              <div class="stars">★★★★★</div>
+              <span class="rating-text">(9,876 reviews)</span>
             </div>
             <div class="product-price">
-              <span class="original-price">$29.99</span>
-              <span class="current-price">$16.49</span>
+              <span class="original-price">$229.99</span>
+              <span class="current-price">$179.99</span>
             </div>
-            <p class="product-description">True wireless earbuds with charging case</p>
+            <p class="product-description">Powerful electric pressure washer for patios and driveways</p>
             <div class="product-features">
-              <span class="feature-tag">Bluetooth 5.0</span>
-              <span class="feature-tag">24H Battery</span>
-              <span class="feature-tag">Waterproof</span>
+              <span class="feature-tag">2100 PSI</span>
+              <span class="feature-tag">5 Nozzles</span>
+              <span class="feature-tag">25FT Hose</span>
             </div>
             <div class="product-buttons">
-              <a href="https://amzn.to/wireless-earbuds" target="_blank" class="btn btn-primary">
+              <a href="https://amzn.to/pressure-washer" target="_blank" class="btn btn-primary">
                 <i class="fas fa-shopping-cart"></i> Buy on Amazon
               </a>
-              <button class="btn btn-secondary btn-small" onclick="addToWishlist('earbuds')">
+              <button class="btn btn-secondary btn-small" onclick="addToWishlist('pressure-washer')">
                 <i class="fas fa-heart"></i>
               </button>
             </div>
@@ -381,12 +418,53 @@
     </div>
   </section>
 
+  <!-- Seasonal Section -->
+  <section class="seasonal-section">
+    <div class="container">
+      <h2 class="section-title">Seasonal Essentials</h2>
+      <div class="seasonal-grid">
+        <div class="seasonal-card">
+          <div class="seasonal-image">
+            <i class="fas fa-snowflake"></i>
+          </div>
+          <h3>Winter Prep</h3>
+          <p>Snow shovels, ice melt, and winter garden protection</p>
+          <a href="#" class="btn btn-outline">Shop Winter</a>
+        </div>
+        <div class="seasonal-card">
+          <div class="seasonal-image">
+            <i class="fas fa-sun"></i>
+          </div>
+          <h3>Spring Garden</h3>
+          <p>Seeds, planters, and gardening tools for spring</p>
+          <a href="#" class="btn btn-outline">Shop Spring</a>
+        </div>
+        <div class="seasonal-card">
+          <div class="seasonal-image">
+            <i class="fas fa-umbrella-beach"></i>
+          </div>
+          <h3>Summer Outdoor</h3>
+          <p>Patio furniture, grills, and outdoor entertainment</p>
+          <a href="#" class="btn btn-outline">Shop Summer</a>
+        </div>
+        <div class="seasonal-card">
+          <div class="seasonal-image">
+            <i class="fas fa-leaf"></i>
+          </div>
+          <h3>Fall Cleanup</h3>
+          <p>Leaf blowers, rakes, and autumn garden care</p>
+          <a href="#" class="btn btn-outline">Shop Fall</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Newsletter Section -->
   <section class="newsletter-section">
     <div class="container">
       <div class="newsletter-content">
-        <h2>Get Exclusive Electronics Deals</h2>
-        <p>Subscribe to receive the latest deals on electronics and gadgets delivered to your inbox.</p>
+        <h2>Get Home & Garden Inspiration</h2>
+        <p>Subscribe for DIY tips, seasonal guides, and exclusive deals on home improvement products.</p>
         <form class="newsletter-form" onsubmit="subscribeNewsletter(event)">
           <input type="email" placeholder="Enter your email address" required>
           <button type="submit" class="btn btn-primary">Subscribe</button>
@@ -473,6 +551,13 @@
       }
     }
 
+    // Filter by category from showcase
+    function filterByCategory(category) {
+      document.getElementById('categoryFilter').value = category;
+      filterProducts();
+      document.getElementById('productsGrid').scrollIntoView({ behavior: 'smooth' });
+    }
+
     // Filter products
     function filterProducts() {
       const categoryFilter = document.getElementById('categoryFilter').value;
@@ -494,17 +579,17 @@
         if (priceFilter !== 'all' && showProduct) {
           const productPrice = parseInt(product.getAttribute('data-price'));
           switch (priceFilter) {
-            case 'under-25':
-              if (productPrice >= 25) showProduct = false;
-              break;
-            case '25-50':
-              if (productPrice < 25 || productPrice > 50) showProduct = false;
+            case 'under-50':
+              if (productPrice >= 50) showProduct = false;
               break;
             case '50-100':
               if (productPrice < 50 || productPrice > 100) showProduct = false;
               break;
-            case 'over-100':
-              if (productPrice <= 100) showProduct = false;
+            case '100-200':
+              if (productPrice < 100 || productPrice > 200) showProduct = false;
+              break;
+            case 'over-200':
+              if (productPrice <= 200) showProduct = false;
               break;
           }
         }
@@ -526,7 +611,6 @@
           case 'price-high':
             return parseInt(b.getAttribute('data-price')) - parseInt(a.getAttribute('data-price'));
           case 'rating':
-            // For demo purposes, random sort
             return Math.random() - 0.5;
           default:
             return 0;
@@ -580,23 +664,64 @@
   </script>
 
   <style>
-    .electronics-hero {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    .home-garden-hero {
+      background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
       color: white;
       padding: 4rem 0;
       text-align: center;
     }
 
-    .electronics-title {
+    .home-garden-title {
       font-size: 2.5rem;
       margin-bottom: 1rem;
       font-weight: 700;
     }
 
-    .electronics-subtitle {
+    .home-garden-subtitle {
       font-size: 1.2rem;
       margin-bottom: 2rem;
       opacity: 0.9;
+    }
+
+    .category-showcase {
+      padding: 4rem 0;
+      background: white;
+    }
+
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+    }
+
+    .category-item {
+      text-align: center;
+      padding: 2rem;
+      border-radius: 1rem;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border: 2px solid #e5e7eb;
+    }
+
+    .category-item:hover {
+      transform: translateY(-5px);
+      border-color: #22c55e;
+      box-shadow: 0 10px 25px rgba(34, 197, 94, 0.15);
+    }
+
+    .category-icon {
+      font-size: 3rem;
+      color: #22c55e;
+      margin-bottom: 1rem;
+    }
+
+    .category-item h3 {
+      margin-bottom: 0.5rem;
+      color: #1a202c;
+    }
+
+    .category-item p {
+      color: #6b7280;
     }
 
     .filter-section {
@@ -630,9 +755,50 @@
       background: white;
     }
 
-    .electronics-products {
+    .home-garden-products {
       padding: 4rem 0;
       background: #f8fafc;
+    }
+
+    .seasonal-section {
+      padding: 4rem 0;
+      background: white;
+    }
+
+    .seasonal-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+    }
+
+    .seasonal-card {
+      text-align: center;
+      padding: 2rem;
+      background: #f8fafc;
+      border-radius: 1rem;
+      border: 2px solid #e5e7eb;
+      transition: all 0.3s ease;
+    }
+
+    .seasonal-card:hover {
+      transform: translateY(-3px);
+      border-color: #22c55e;
+    }
+
+    .seasonal-image {
+      font-size: 3rem;
+      color: #22c55e;
+      margin-bottom: 1rem;
+    }
+
+    .seasonal-card h3 {
+      margin-bottom: 0.5rem;
+      color: #1a202c;
+    }
+
+    .seasonal-card p {
+      color: #6b7280;
+      margin-bottom: 1.5rem;
     }
 
     .notification {
@@ -653,7 +819,7 @@
     }
 
     @media (max-width: 768px) {
-      .electronics-title {
+      .home-garden-title {
         font-size: 2rem;
       }
 
@@ -664,6 +830,14 @@
 
       .filter-group {
         width: 100%;
+      }
+
+      .category-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .seasonal-grid {
+        grid-template-columns: 1fr;
       }
     }
   </style>
