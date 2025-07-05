@@ -1,91 +1,706 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>About Us</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-  <link rel="stylesheet" href="style.css" />
-  <style>
-    .about-container {
-      max-width: 800px;
-      margin: 0 auto;
-      background-color: white;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-
-    footer {
-      background-color: #232f3e;
-      color: white;
-      text-align: center;
-      padding: 20px 0;
-    }
-
-    footer a {
-      color: white;
-      margin: 0 10px;
-      text-decoration: none;
-    }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Us - SmartDeals Pro | Your Trusted Affiliate Marketing Partner</title>
+  <meta name="description" content="Learn about SmartDeals Pro - your trusted partner for finding the best affiliate deals and honest product reviews. Discover our mission, values, and expert team.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <!-- Header -->
+  <header class="main-header">
+    <div class="container">
+      <div class="header-content">
+        <div class="header-left">
+          <a href="index.html" class="logo-link">
+            <img src="logo.png" alt="SmartDeals Pro Logo" class="logo" />
+            <span class="logo-text">SmartDeals Pro</span>
+          </a>
+        </div>
+        
+        <nav class="main-nav">
+          <ul>
+            <li><a href="index.html" class="nav-link">Home</a></li>
+            <li class="dropdown">
+              <a href="#" class="nav-link dropdown-toggle">Categories <i class="fas fa-chevron-down"></i></a>
+              <ul class="dropdown-menu">
+                <li><a href="smartwatches.html">Smartwatches</a></li>
+                <li><a href="fashion.html">Fashion</a></li>
+                <li><a href="small-electrical.html">Electronics</a></li>
+                <li><a href="gaming.html">Gaming</a></li>
+                <li><a href="home-garden.html">Home & Garden</a></li>
+              </ul>
+            </li>
+            <li><a href="reviews.html" class="nav-link">Reviews</a></li>
+            <li><a href="deals.html" class="nav-link">Hot Deals</a></li>
+            <li><a href="about.html" class="nav-link active">About</a></li>
+            <li><a href="contact.html" class="nav-link">Contact</a></li>
+          </ul>
+        </nav>
 
-  <!-- HEADER -->
-  <header class="amazon-header">
-    <div class="top-nav">
-      <div class="header-left">
-        <a href="index.html">
-          <i class="fas fa-home" style="font-size: 22px; color: white; margin-right: 10px;"></i>
-        </a>
-        <img src="logo.png" alt="Site Logo" class="logo" />
-        <div class="location">
-          <i class="fas fa-map-marker-alt"></i> Deliver to Pakistan
+        <div class="header-right">
+          <div class="search-container">
+            <input type="text" id="headerSearch" placeholder="Search products..." class="search-input">
+            <button class="search-btn" onclick="performSearch()">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+          <a href="sign-in.html" class="btn btn-outline">Sign In</a>
+          <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+            <i class="fas fa-bars"></i>
+          </button>
         </div>
       </div>
-      <div class="sign-cart">
-        <a href="#">Sign In</a>
-        <a href="#"><i class="fas fa-shopping-cart cart-icon"></i></a>
-      </div>
-    </div>
-
-    <div class="search-bar">
-      <select class="category-select">
-        <option value="all">All</option>
-      </select>
-      <input type="text" placeholder="Search products" />
-      <button type="submit"><i class="fas fa-search"></i></button>
     </div>
   </header>
 
-  <!-- MAIN CONTENT -->
-  <main style="padding: 16px; background-color: #f2f2f2; min-height: 100vh;">
-    <section class="about-container">
-      <h2 style="text-align: center;">About Smart Affiliate Site</h2>
-      <p>
-        Welcome to Smart Affiliate Site! We help you find the best deals and products on Amazon through our affiliate links.
-        Our goal is to make your shopping experience smarter and easier by curating top-rated items and useful comparisons.
-      </p>
-      <p>
-        Whether you're shopping for electronics, home goods, or the latest gadgets, our website provides reliable product suggestions
-        so you can shop with confidence.
-      </p>
-    </section>
-  </main>
-
-  <!-- FOOTER -->
-  <footer>
-    <div>
-      <a href="about.html">About</a> |
-      <a href="contact.html">Contact</a> |
-      <a href="privacy-policy.html">Privacy Policy</a>
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu-content">
+      <a href="index.html">Home</a>
+      <a href="smartwatches.html">Smartwatches</a>
+      <a href="fashion.html">Fashion</a>
+      <a href="small-electrical.html">Electronics</a>
+      <a href="gaming.html">Gaming</a>
+      <a href="home-garden.html">Home & Garden</a>
+      <a href="reviews.html">Reviews</a>
+      <a href="deals.html">Hot Deals</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
     </div>
-    <p style="max-width: 90%; margin: 10px auto; font-size: 14px;">
-    This site contains affiliate links. We may earn a commission when you purchase through links on our site — at no extra cost to you.
-    </p>
-    <p>&copy; 2025 Smart Affiliate Site. All rights reserved.</p>
+  </div>
+
+  <!-- About Hero Section -->
+  <section class="about-hero">
+    <div class="container">
+      <div class="about-hero-content">
+        <h1 class="about-title">About SmartDeals Pro</h1>
+        <p class="about-subtitle">Empowering smart shoppers with trusted reviews and unbeatable deals since 2020</p>
+        <div class="about-stats">
+          <div class="about-stat">
+            <span class="stat-number">10M+</span>
+            <span class="stat-label">Happy Customers</span>
+          </div>
+          <div class="about-stat">
+            <span class="stat-number">5K+</span>
+            <span class="stat-label">Products Reviewed</span>
+          </div>
+          <div class="about-stat">
+            <span class="stat-number">98%</span>
+            <span class="stat-label">Customer Satisfaction</span>
+          </div>
+          <div class="about-stat">
+            <span class="stat-number">50+</span>
+            <span class="stat-label">Brand Partners</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Mission Section -->
+  <section class="mission-section">
+    <div class="container">
+      <div class="mission-content">
+        <div class="mission-text">
+          <h2>Our Mission</h2>
+          <p class="mission-description">At SmartDeals Pro, we believe everyone deserves access to honest product reviews and genuine savings. Our mission is to bridge the gap between consumers and quality products by providing transparent, unbiased reviews and exclusive affiliate deals.</p>
+          <p>We're committed to helping you make informed purchasing decisions while saving money on products you love. Every review is crafted with care, every deal is verified, and every recommendation is backed by our team's expertise.</p>
+          <div class="mission-highlights">
+            <div class="highlight-item">
+              <i class="fas fa-shield-alt"></i>
+              <span>100% Honest Reviews</span>
+            </div>
+            <div class="highlight-item">
+              <i class="fas fa-handshake"></i>
+              <span>Trusted Partnerships</span>
+            </div>
+            <div class="highlight-item">
+              <i class="fas fa-clock"></i>
+              <span>24/7 Deal Updates</span>
+            </div>
+          </div>
+        </div>
+        <div class="mission-image">
+          <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=500&h=400&fit=crop" alt="Our Mission" loading="lazy">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Values Section -->
+  <section class="values-section">
+    <div class="container">
+      <h2 class="section-title">Our Core Values</h2>
+      <div class="values-grid">
+        <div class="value-card">
+          <div class="value-icon">
+            <i class="fas fa-star"></i>
+          </div>
+          <h3>Quality First</h3>
+          <p>We only recommend products that meet our high standards for quality, performance, and value.</p>
+        </div>
+        <div class="value-card">
+          <div class="value-icon">
+            <i class="fas fa-heart"></i>
+          </div>
+          <h3>Customer Focused</h3>
+          <p>Every decision we make is guided by what's best for our customers and their shopping experience.</p>
+        </div>
+        <div class="value-card">
+          <div class="value-icon">
+            <i class="fas fa-lightbulb"></i>
+          </div>
+          <h3>Innovation</h3>
+          <p>We continuously improve our platform and processes to provide the best possible service.</p>
+        </div>
+        <div class="value-card">
+          <div class="value-icon">
+            <i class="fas fa-leaf"></i>
+          </div>
+          <h3>Sustainability</h3>
+          <p>We promote eco-friendly products and sustainable shopping practices whenever possible.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Team Section -->
+  <section class="team-section">
+    <div class="container">
+      <h2 class="section-title">Meet Our Expert Team</h2>
+      <div class="team-grid">
+        <div class="team-member">
+          <div class="member-image">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop&crop=face" alt="Alex Johnson" loading="lazy">
+          </div>
+          <div class="member-info">
+            <h3>Alex Johnson</h3>
+            <p class="member-role">Founder & CEO</p>
+            <p class="member-description">Tech enthusiast with 10+ years in e-commerce and affiliate marketing. Passionate about helping consumers find the best deals.</p>
+            <div class="member-social">
+              <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+              <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+            </div>
+          </div>
+        </div>
+        <div class="team-member">
+          <div class="member-image">
+            <img src="https://images.unsplash.com/photo-1494790108755-2616c9421a05?w=300&h=300&fit=crop&crop=face" alt="Sarah Chen" loading="lazy">
+          </div>
+          <div class="member-info">
+            <h3>Sarah Chen</h3>
+            <p class="member-role">Head of Product Reviews</p>
+            <p class="member-description">Former tech journalist with expertise in consumer electronics and gadget testing. Ensures all our reviews are thorough and unbiased.</p>
+            <div class="member-social">
+              <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+              <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+            </div>
+          </div>
+        </div>
+        <div class="team-member">
+          <div class="member-image">
+            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=300&fit=crop&crop=face" alt="Mike Rodriguez" loading="lazy">
+          </div>
+          <div class="member-info">
+            <h3>Mike Rodriguez</h3>
+            <p class="member-role">Deals & Partnerships Manager</p>
+            <p class="member-description">Negotiates exclusive deals and maintains relationships with top brands to bring you the best savings opportunities.</p>
+            <div class="member-social">
+              <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+              <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Timeline Section -->
+  <section class="timeline-section">
+    <div class="container">
+      <h2 class="section-title">Our Journey</h2>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-year">2020</div>
+          <div class="timeline-content">
+            <h3>The Beginning</h3>
+            <p>SmartDeals Pro was founded with a simple mission: help people find better deals on quality products.</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-year">2021</div>
+          <div class="timeline-content">
+            <h3>Growing Community</h3>
+            <p>Reached our first 100,000 satisfied customers and expanded our product review categories.</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-year">2022</div>
+          <div class="timeline-content">
+            <h3>Expert Team</h3>
+            <p>Built a dedicated team of product experts and established partnerships with major brands.</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-year">2023</div>
+          <div class="timeline-content">
+            <h3>Innovation Focus</h3>
+            <p>Launched advanced comparison tools and personalized recommendation engine.</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-year">2024</div>
+          <div class="timeline-content">
+            <h3>Global Expansion</h3>
+            <p>Expanded internationally and reached 10 million happy customers worldwide.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="about-cta">
+    <div class="container">
+      <div class="cta-content">
+        <h2>Ready to Start Saving?</h2>
+        <p>Join millions of smart shoppers who trust SmartDeals Pro for the best deals and honest reviews.</p>
+        <div class="cta-buttons">
+          <a href="deals.html" class="btn btn-primary">Browse Deals</a>
+          <a href="contact.html" class="btn btn-outline">Get in Touch</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="main-footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>SmartDeals Pro</h3>
+          <p>Your trusted source for the best affiliate deals and product reviews. We help you shop smarter and save money.</p>
+          <div class="social-links">
+            <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+            <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+          </div>
+        </div>
+        <div class="footer-section">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="reviews.html">Reviews</a></li>
+            <li><a href="deals.html">Hot Deals</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Categories</h4>
+          <ul>
+            <li><a href="smartwatches.html">Smartwatches</a></li>
+            <li><a href="fashion.html">Fashion</a></li>
+            <li><a href="small-electrical.html">Electronics</a></li>
+            <li><a href="gaming.html">Gaming</a></li>
+            <li><a href="home-garden.html">Home & Garden</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="privacy-policy.html">Privacy Policy</a></li>
+            <li><a href="terms.html">Terms of Service</a></li>
+            <li><a href="affiliate-disclosure.html">Affiliate Disclosure</a></li>
+            <li><a href="cookies.html">Cookie Policy</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 SmartDeals Pro. All rights reserved.</p>
+        <p class="affiliate-disclaimer">This site contains affiliate links. We may earn a commission when you purchase through links on our site — at no extra cost to you.</p>
+      </div>
+    </div>
   </footer>
 
+  <!-- Scripts -->
+  <script>
+    // Mobile menu toggle
+    function toggleMobileMenu() {
+      const mobileMenu = document.getElementById('mobileMenu');
+      mobileMenu.classList.toggle('active');
+    }
+
+    // Search functionality
+    function performSearch() {
+      const query = document.getElementById('headerSearch').value.toLowerCase();
+      if (query.includes('watch') || query.includes('smart')) {
+        window.location.href = 'smartwatches.html';
+      } else if (query.includes('fashion') || query.includes('clothing')) {
+        window.location.href = 'fashion.html';
+      } else if (query.includes('electronic') || query.includes('gadget')) {
+        window.location.href = 'small-electrical.html';
+      } else if (query.includes('gaming') || query.includes('game')) {
+        window.location.href = 'gaming.html';
+      } else if (query.includes('home') || query.includes('garden')) {
+        window.location.href = 'home-garden.html';
+      } else {
+        window.location.href = 'deals.html';
+      }
+    }
+
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
+  </script>
+
+  <style>
+    .about-hero {
+      background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+      color: white;
+      padding: 4rem 0;
+      text-align: center;
+    }
+
+    .about-title {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      font-weight: 700;
+    }
+
+    .about-subtitle {
+      font-size: 1.25rem;
+      margin-bottom: 3rem;
+      opacity: 0.9;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .about-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2rem;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .about-stat {
+      text-align: center;
+    }
+
+    .mission-section {
+      padding: 4rem 0;
+      background-color: white;
+    }
+
+    .mission-content {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+
+    .mission-text h2 {
+      font-size: 2.5rem;
+      margin-bottom: 2rem;
+      color: #1f2937;
+    }
+
+    .mission-description {
+      font-size: 1.1rem;
+      line-height: 1.8;
+      color: #4b5563;
+      margin-bottom: 2rem;
+    }
+
+    .mission-highlights {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .highlight-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .highlight-item i {
+      color: #3b82f6;
+      font-size: 1.2rem;
+    }
+
+    .highlight-item span {
+      font-weight: 500;
+      color: #1f2937;
+    }
+
+    .mission-image img {
+      width: 100%;
+      height: auto;
+      border-radius: 1rem;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .values-section {
+      padding: 4rem 0;
+      background-color: #f8fafc;
+    }
+
+    .values-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+    }
+
+    .value-card {
+      background-color: white;
+      padding: 2rem;
+      border-radius: 1rem;
+      text-align: center;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+    }
+
+    .value-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .value-icon {
+      font-size: 2.5rem;
+      color: #3b82f6;
+      margin-bottom: 1rem;
+    }
+
+    .value-card h3 {
+      margin-bottom: 1rem;
+      color: #1f2937;
+    }
+
+    .value-card p {
+      color: #6b7280;
+      line-height: 1.6;
+    }
+
+    .team-section {
+      padding: 4rem 0;
+      background-color: white;
+    }
+
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+
+    .team-member {
+      background-color: #f8fafc;
+      padding: 2rem;
+      border-radius: 1rem;
+      text-align: center;
+    }
+
+    .member-image {
+      margin-bottom: 1.5rem;
+    }
+
+    .member-image img {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid white;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .member-info h3 {
+      margin-bottom: 0.5rem;
+      color: #1f2937;
+    }
+
+    .member-role {
+      color: #3b82f6;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .member-description {
+      color: #6b7280;
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+    }
+
+    .member-social {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+    }
+
+    .member-social a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      background-color: #3b82f6;
+      color: white;
+      border-radius: 50%;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .member-social a:hover {
+      background-color: #2563eb;
+      transform: translateY(-2px);
+    }
+
+    .timeline-section {
+      padding: 4rem 0;
+      background-color: #f8fafc;
+    }
+
+    .timeline {
+      position: relative;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background-color: #3b82f6;
+      transform: translateX(-50%);
+    }
+
+    .timeline-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 3rem;
+      position: relative;
+    }
+
+    .timeline-item:nth-child(odd) {
+      flex-direction: row;
+    }
+
+    .timeline-item:nth-child(even) {
+      flex-direction: row-reverse;
+    }
+
+    .timeline-year {
+      background-color: #3b82f6;
+      color: white;
+      padding: 1rem 1.5rem;
+      border-radius: 2rem;
+      font-weight: 600;
+      min-width: 120px;
+      text-align: center;
+      position: relative;
+      z-index: 2;
+    }
+
+    .timeline-content {
+      background-color: white;
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      flex: 1;
+      margin: 0 2rem;
+    }
+
+    .timeline-content h3 {
+      margin-bottom: 0.5rem;
+      color: #1f2937;
+    }
+
+    .timeline-content p {
+      color: #6b7280;
+      line-height: 1.6;
+    }
+
+    .about-cta {
+      padding: 4rem 0;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      text-align: center;
+    }
+
+    .cta-content h2 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .cta-content p {
+      font-size: 1.1rem;
+      margin-bottom: 2rem;
+      opacity: 0.9;
+    }
+
+    .cta-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+    }
+
+    @media (max-width: 768px) {
+      .about-title {
+        font-size: 2rem;
+      }
+      
+      .about-stats {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+      }
+      
+      .mission-content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+      
+      .timeline::before {
+        left: 30px;
+      }
+      
+      .timeline-item {
+        flex-direction: row !important;
+        padding-left: 60px;
+      }
+      
+      .timeline-year {
+        position: absolute;
+        left: 0;
+        min-width: 80px;
+        font-size: 0.9rem;
+      }
+      
+      .timeline-content {
+        margin: 0;
+      }
+      
+      .cta-buttons {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+  </style>
 </body>
 </html>
