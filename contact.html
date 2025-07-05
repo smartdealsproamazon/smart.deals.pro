@@ -1,115 +1,485 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Contact Us</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-  <link rel="stylesheet" href="style.css" />
-  <style>
-    .contact-container {
-      max-width: 600px;
-      margin: 0 auto;
-      background-color: white;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    .contact-container input,
-    .contact-container textarea {
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-    }
-    .contact-container button {
-      background-color: #f0c14b;
-      border: 1px solid #a88734;
-      padding: 10px 20px;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    footer {
-      background-color: #232f3e;
-      color: white;
-      text-align: center;
-      padding: 20px 0;
-      margin-top: 40px;
-    }
-    footer a {
-      color: white;
-      margin: 0 10px;
-      text-decoration: none;
-    }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Us - SmartDeals Pro | Get in Touch</title>
+  <meta name="description" content="Contact SmartDeals Pro for support, partnerships, or questions about our affiliate deals and product reviews.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <!-- Header -->
+  <header class="main-header">
+    <div class="container">
+      <div class="header-content">
+        <div class="header-left">
+          <a href="index.html" class="logo-link">
+            <img src="logo.png" alt="SmartDeals Pro Logo" class="logo" />
+            <span class="logo-text">SmartDeals Pro</span>
+          </a>
+        </div>
+        
+        <nav class="main-nav">
+          <ul>
+            <li><a href="index.html" class="nav-link">Home</a></li>
+            <li class="dropdown">
+              <a href="#" class="nav-link dropdown-toggle">Categories <i class="fas fa-chevron-down"></i></a>
+              <ul class="dropdown-menu">
+                <li><a href="smartwatches.html">Smartwatches</a></li>
+                <li><a href="fashion.html">Fashion</a></li>
+                <li><a href="small-electrical.html">Electronics</a></li>
+                <li><a href="gaming.html">Gaming</a></li>
+                <li><a href="home-garden.html">Home & Garden</a></li>
+              </ul>
+            </li>
+            <li><a href="reviews.html" class="nav-link">Reviews</a></li>
+            <li><a href="deals.html" class="nav-link">Hot Deals</a></li>
+            <li><a href="about.html" class="nav-link">About</a></li>
+            <li><a href="contact.html" class="nav-link active">Contact</a></li>
+          </ul>
+        </nav>
 
-  <!-- HEADER -->
-  <header class="amazon-header">
-    <div class="top-nav">
-      <div class="header-left">
-        <a href="index.html">
-          <i class="fas fa-home" style="font-size: 22px; color: white; margin-right: 10px;"></i>
-        </a>
-        <img src="logo.png" alt="Site Logo" class="logo" />
-        <div class="location">
-          <i class="fas fa-map-marker-alt"></i> Deliver to Pakistan
+        <div class="header-right">
+          <div class="search-container">
+            <input type="text" id="headerSearch" placeholder="Search products..." class="search-input">
+            <button class="search-btn" onclick="performSearch()">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+          <a href="sign-in.html" class="btn btn-outline">Sign In</a>
+          <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+            <i class="fas fa-bars"></i>
+          </button>
         </div>
       </div>
-      <div class="sign-cart">
-        <a href="#">Sign In</a>
-        <a href="#"><i class="fas fa-shopping-cart cart-icon"></i></a>
-      </div>
-    </div>
-
-    <div class="search-bar">
-      <select class="category-select">
-        <option value="all">All</option>
-      </select>
-      <input type="text" placeholder="Search products" />
-      <button type="submit"><i class="fas fa-search"></i></button>
     </div>
   </header>
 
-  <!-- CONTACT FORM CONTENT -->
-  <main style="padding: 16px; background-color: #f2f2f2; min-height: 100vh;">
-    <section class="contact-container">
-      <h2 style="text-align: center;">Contact Us</h2>
-      <p style="text-align: center;">We’d love to hear from you! Fill out the form below:</p>
-
-      <form action="https://formsubmit.co/mrazwan0310@gmail.com" method="POST">
-        <label for="name">Your Name</label>
-        <input type="text" id="name" name="name" placeholder="Enter your name" required />
-
-        <label for="email">Your Email</label>
-        <input type="email" id="email" name="email" placeholder="Enter your email" required />
-
-        <label for="message">Your Message</label>
-        <textarea id="message" name="message" rows="5" placeholder="Write your message here" required></textarea>
-
-        <!-- Optional: Redirect after form submission -->
-        <input type="hidden" name="_next" value="https://rizwan-10html.github.io/Smart--affiliate---site/thank-you.html">
-        <input type="hidden" name="_captcha" value="false">
-
-        <button type="submit">Send Message</button>
-      </form>
-    </section>
-  </main>
-
-  <!-- FOOTER -->
-  <footer>
-    <div>
-      <a href="about.html">About</a> |
-      <a href="contact.html">Contact</a> |
-      <a href="privacy-policy.html">Privacy Policy</a>
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu-content">
+      <a href="index.html">Home</a>
+      <a href="smartwatches.html">Smartwatches</a>
+      <a href="fashion.html">Fashion</a>
+      <a href="small-electrical.html">Electronics</a>
+      <a href="gaming.html">Gaming</a>
+      <a href="home-garden.html">Home & Garden</a>
+      <a href="reviews.html">Reviews</a>
+      <a href="deals.html">Hot Deals</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
     </div>
-    <p style="max-width: 90%; margin: 10px auto; font-size: 14px;">
-    This site contains affiliate links. We may earn a commission when you purchase through links on our site — at no extra cost to you.
-    </p>
-    <p>&copy; 2025 Smart Affiliate Site. All rights reserved.</p>
+  </div>
+
+  <!-- Contact Hero Section -->
+  <section class="contact-hero">
+    <div class="container">
+      <div class="contact-hero-content">
+        <h1 class="contact-title">Get in Touch</h1>
+        <p class="contact-subtitle">Have questions about our deals or need support? We're here to help!</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Content -->
+  <section class="contact-content">
+    <div class="container">
+      <div class="contact-grid">
+        <!-- Contact Form -->
+        <div class="contact-form-container">
+          <h2>Send Us a Message</h2>
+          <form action="https://formsubmit.co/mrazwan0310@gmail.com" method="POST" class="contact-form">
+            <div class="form-group">
+              <label for="name">Full Name *</label>
+              <input type="text" id="name" name="name" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="email">Email Address *</label>
+              <input type="email" id="email" name="email" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="subject">Subject *</label>
+              <select id="subject" name="subject" required>
+                <option value="">Select a topic...</option>
+                <option value="General Inquiry">General Inquiry</option>
+                <option value="Partnership">Partnership Opportunity</option>
+                <option value="Product Review Request">Product Review Request</option>
+                <option value="Technical Support">Technical Support</option>
+                <option value="Feedback">Feedback & Suggestions</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="message">Message *</label>
+              <textarea id="message" name="message" rows="6" required placeholder="Please provide details about your inquiry..."></textarea>
+            </div>
+            
+            <!-- Hidden FormSubmit fields -->
+            <input type="hidden" name="_next" value="https://rizwan-10html.github.io/Smart--affiliate---site/thank-you.html">
+            <input type="hidden" name="_captcha" value="false">
+            <input type="hidden" name="_template" value="table">
+            
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-paper-plane"></i>
+              Send Message
+            </button>
+          </form>
+        </div>
+
+        <!-- Contact Information -->
+        <div class="contact-info">
+          <h2>Other Ways to Reach Us</h2>
+          
+          <div class="contact-method">
+            <div class="contact-icon">
+              <i class="fas fa-envelope"></i>
+            </div>
+            <div class="contact-details">
+              <h3>Email Support</h3>
+              <p>For general inquiries and support</p>
+              <a href="mailto:mrazwan0310@gmail.com">mrazwan0310@gmail.com</a>
+            </div>
+          </div>
+
+          <div class="contact-method">
+            <div class="contact-icon">
+              <i class="fas fa-handshake"></i>
+            </div>
+            <div class="contact-details">
+              <h3>Partnership Inquiries</h3>
+              <p>Interested in working with us?</p>
+              <a href="mailto:partnerships@smartdealspro.com">partnerships@smartdealspro.com</a>
+            </div>
+          </div>
+
+          <div class="contact-method">
+            <div class="contact-icon">
+              <i class="fas fa-clock"></i>
+            </div>
+            <div class="contact-details">
+              <h3>Response Time</h3>
+              <p>We typically respond within</p>
+              <span>24-48 hours</span>
+            </div>
+          </div>
+
+          <div class="contact-method">
+            <div class="contact-icon">
+              <i class="fas fa-globe"></i>
+            </div>
+            <div class="contact-details">
+              <h3>Social Media</h3>
+              <p>Follow us for the latest deals</p>
+              <div class="social-links">
+                <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="faq-section">
+    <div class="container">
+      <h2 class="section-title">Frequently Asked Questions</h2>
+      <div class="faq-grid">
+        <div class="faq-item">
+          <h3>How do affiliate links work?</h3>
+          <p>When you click on our affiliate links and make a purchase, we may earn a small commission at no extra cost to you. This helps us keep our site running and continue providing valuable content.</p>
+        </div>
+        <div class="faq-item">
+          <h3>Are your product reviews honest?</h3>
+          <p>Absolutely! We pride ourselves on providing honest, unbiased reviews. Our recommendations are based on thorough research and real user experiences.</p>
+        </div>
+        <div class="faq-item">
+          <h3>How often do you update deals?</h3>
+          <p>We update our deals daily and monitor price changes continuously to ensure you're getting the best offers available.</p>
+        </div>
+        <div class="faq-item">
+          <h3>Can I request a product review?</h3>
+          <p>Yes! We welcome product review requests. Please use the contact form above with "Product Review Request" as the subject.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="main-footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>SmartDeals Pro</h3>
+          <p>Your trusted source for the best affiliate deals and product reviews. We help you shop smarter and save money.</p>
+          <div class="social-links">
+            <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+            <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+          </div>
+        </div>
+        <div class="footer-section">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="reviews.html">Reviews</a></li>
+            <li><a href="deals.html">Hot Deals</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Categories</h4>
+          <ul>
+            <li><a href="smartwatches.html">Smartwatches</a></li>
+            <li><a href="fashion.html">Fashion</a></li>
+            <li><a href="small-electrical.html">Electronics</a></li>
+            <li><a href="gaming.html">Gaming</a></li>
+            <li><a href="home-garden.html">Home & Garden</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="privacy-policy.html">Privacy Policy</a></li>
+            <li><a href="terms.html">Terms of Service</a></li>
+            <li><a href="affiliate-disclosure.html">Affiliate Disclosure</a></li>
+            <li><a href="cookies.html">Cookie Policy</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 SmartDeals Pro. All rights reserved.</p>
+        <p class="affiliate-disclaimer">This site contains affiliate links. We may earn a commission when you purchase through links on our site — at no extra cost to you.</p>
+      </div>
+    </div>
   </footer>
 
+  <!-- Scripts -->
+  <script>
+    // Mobile menu toggle
+    function toggleMobileMenu() {
+      const mobileMenu = document.getElementById('mobileMenu');
+      mobileMenu.classList.toggle('active');
+    }
+
+    // Search functionality
+    function performSearch() {
+      const query = document.getElementById('headerSearch').value.toLowerCase();
+      if (query.includes('watch') || query.includes('smart')) {
+        window.location.href = 'smartwatches.html';
+      } else if (query.includes('fashion') || query.includes('clothing')) {
+        window.location.href = 'fashion.html';
+      } else if (query.includes('electronic') || query.includes('gadget')) {
+        window.location.href = 'small-electrical.html';
+      } else if (query.includes('gaming') || query.includes('game')) {
+        window.location.href = 'gaming.html';
+      } else if (query.includes('home') || query.includes('garden')) {
+        window.location.href = 'home-garden.html';
+      } else {
+        window.location.href = 'deals.html';
+      }
+    }
+
+    // Form validation
+    document.querySelector('.contact-form').addEventListener('submit', function(e) {
+      const requiredFields = this.querySelectorAll('[required]');
+      let isValid = true;
+      
+      requiredFields.forEach(field => {
+        if (!field.value.trim()) {
+          isValid = false;
+          field.style.borderColor = '#ef4444';
+        } else {
+          field.style.borderColor = '#d1d5db';
+        }
+      });
+      
+      if (!isValid) {
+        e.preventDefault();
+        alert('Please fill in all required fields.');
+      }
+    });
+  </script>
+
+  <style>
+    .contact-hero {
+      background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+      color: white;
+      padding: 3rem 0;
+      text-align: center;
+    }
+
+    .contact-title {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      font-weight: 700;
+    }
+
+    .contact-subtitle {
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+
+    .contact-content {
+      padding: 4rem 0;
+      background-color: #f8fafc;
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 4rem;
+      align-items: start;
+    }
+
+    .contact-form-container {
+      background: white;
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .contact-form-container h2 {
+      margin-bottom: 2rem;
+      color: #1a202c;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: #374151;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border: 2px solid #d1d5db;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+      transition: border-color 0.3s ease;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #3b82f6;
+    }
+
+    .contact-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .contact-info h2 {
+      color: #1a202c;
+      margin-bottom: 1rem;
+    }
+
+    .contact-method {
+      display: flex;
+      gap: 1rem;
+      background: white;
+      padding: 1.5rem;
+      border-radius: 1rem;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .contact-icon {
+      flex-shrink: 0;
+      width: 50px;
+      height: 50px;
+      background: #3b82f6;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+
+    .contact-details h3 {
+      margin-bottom: 0.5rem;
+      color: #1a202c;
+    }
+
+    .contact-details p {
+      color: #6b7280;
+      margin-bottom: 0.5rem;
+    }
+
+    .contact-details a {
+      color: #3b82f6;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .contact-details a:hover {
+      text-decoration: underline;
+    }
+
+    .faq-section {
+      padding: 4rem 0;
+      background: white;
+    }
+
+    .faq-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+
+    .faq-item {
+      padding: 1.5rem;
+      background: #f8fafc;
+      border-radius: 1rem;
+      border-left: 4px solid #3b82f6;
+    }
+
+    .faq-item h3 {
+      color: #1a202c;
+      margin-bottom: 0.5rem;
+    }
+
+    .faq-item p {
+      color: #6b7280;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 768px) {
+      .contact-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+
+      .contact-title {
+        font-size: 2rem;
+      }
+
+      .faq-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </body>
-        </html>
+</html>
