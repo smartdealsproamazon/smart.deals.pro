@@ -33,6 +33,11 @@ function createProductCard(product) {
   const div = document.createElement("div");
   div.className = "product-card";
   
+  // Add data attributes so existing filters on some pages work
+  div.setAttribute('data-category', product.category || '');
+  const numericPrice = parseFloat((product.price || '').toString().replace('$','')) || 0;
+  div.setAttribute('data-price', numericPrice);
+  
   const discountBadge = product.discount > 0 ? 
     `<div class="discount-badge">-${product.discount}%</div>` : '';
   
