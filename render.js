@@ -321,6 +321,11 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
+// Re-render automatically once the product catalogue finishes loading
+document.addEventListener('products-ready', function () {
+  autoRenderProducts();
+});
+
 // Export functions for use in other files
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = {
