@@ -44,9 +44,13 @@ function loadFirebase(callback) {
 function initProducts() {
   // TODO: Replace the placeholder values with your own Firebase project credentials
   const firebaseConfig = {
-    apiKey: 'YOUR_API_KEY',
-    authDomain: 'YOUR_PROJECT_ID.firebaseapp.com',
-    projectId: 'YOUR_PROJECT_ID'
+    apiKey: "AIzaSyBJqBEWDdBlfv5xAjgcvqput1KC1NzKvlU",
+    authDomain: "smart-deals-pro.firebaseapp.com",
+    projectId: "smart-deals-pro",
+    storageBucket: "smart-deals-pro.firebasestorage.app",
+    messagingSenderId: "680016915696",
+    appId: "1:680016915696:web:4b3721313ea0e2e3342635",
+    measurementId: "G-HV5N0LQJTG"
   };
 
   if (!firebase.apps.length) {
