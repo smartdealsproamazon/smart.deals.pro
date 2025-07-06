@@ -123,59 +123,134 @@
     <p id="emptyState" class="empty" style="display: none;">No products submitted yet.</p>
   </div>
 
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  
   <script>
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyBJqBEWDdBlfv5xAjgcvqput1KC1NzKvlU",
+      authDomain: "smart-deals-pro.firebaseapp.com",
+      projectId: "smart-deals-pro",
+      storageBucket: "smart-deals-pro.firebasestorage.app",
+      messagingSenderId: "680016915696",
+      appId: "1:680016915696:web:4b3721313ea0e2e3342635",
+      measurementId: "G-HV5N0LQJTG"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
     document.addEventListener("DOMContentLoaded", function () {
       const listEl = document.getElementById("productList");
       const emptyState = document.getElementById("emptyState");
 
-      const products = JSON.parse(localStorage.getItem("products") || "[]");
+      // Function to render products
+      function renderProducts(products) {
+        listEl.innerHTML = ''; // Clear existing content
+        
+        if (!products.length) {
+          emptyState.style.display = "block";
+          return;
+        }
 
-      if (!products.length) {
-        emptyState.style.display = "block";
-        return;
+        emptyState.style.display = "none";
+        
+        products
+          .sort((a, b) => b.createdAt - a.createdAt)
+          .forEach((prod) => {
+            const card = document.createElement("div");
+            card.className = "card";
+
+            const img = document.createElement("img");
+            img.src = prod.imageData;
+            img.alt = prod.title;
+
+            const content = document.createElement("div");
+            content.className = "card-content";
+
+            const title = document.createElement("h3");
+            title.textContent = prod.title;
+
+            const price = document.createElement("div");
+            price.className = "price";
+            price.textContent = `$${parseFloat(prod.price).toFixed(2)}`;
+
+            const desc = document.createElement("p");
+            desc.className = "description";
+            desc.textContent = prod.description;
+
+            const link = document.createElement("a");
+            link.href = prod.link;
+            link.target = "_blank";
+            link.rel = "noopener noreferrer";
+            link.className = "link-btn";
+            link.textContent = "Visit Product";
+
+            content.appendChild(title);
+            content.appendChild(price);
+            content.appendChild(desc);
+            content.appendChild(link);
+
+            card.appendChild(img);
+            card.appendChild(content);
+
+            listEl.appendChild(card);
+          });
       }
 
-      products
-        .sort((a, b) => b.createdAt - a.createdAt)
-        .forEach((prod) => {
-          const card = document.createElement("div");
-          card.className = "card";
+      // Load products from Firebase first, then fallback to localStorage
+      async function loadProducts() {
+        try {
+          console.log("Loading products from Firebase...");
+          
+          // Try to load from Firebase with timeout
+          const snapshot = await Promise.race([
+            db.collection("products").orderBy("createdAt", "desc").get(),
+            new Promise((_, reject) => 
+              setTimeout(() => reject(new Error("Firebase timeout")), 10000)
+            )
+          ]);
 
-          const img = document.createElement("img");
-          img.src = prod.imageData;
-          img.alt = prod.title;
+          const firebaseProducts = [];
+          snapshot.forEach((doc) => {
+            firebaseProducts.push({
+              id: doc.id,
+              ...doc.data()
+            });
+          });
 
-          const content = document.createElement("div");
-          content.className = "card-content";
+          console.log(`Loaded ${firebaseProducts.length} products from Firebase`);
+          
+          // Update localStorage with Firebase data
+          localStorage.setItem("products", JSON.stringify(firebaseProducts));
+          
+          renderProducts(firebaseProducts);
 
-          const title = document.createElement("h3");
-          title.textContent = prod.title;
+        } catch (error) {
+          console.error("Failed to load from Firebase:", error);
+          console.log("Falling back to localStorage...");
+          
+          // Fallback to localStorage
+          const localProducts = JSON.parse(localStorage.getItem("products") || "[]");
+          console.log(`Loaded ${localProducts.length} products from localStorage`);
+          
+          renderProducts(localProducts);
+          
+          // Show offline indicator if using localStorage
+          if (localProducts.length > 0) {
+            const offlineMsg = document.createElement("div");
+            offlineMsg.style.cssText = "background: #fff3cd; color: #856404; padding: 1rem; border-radius: 4px; margin-bottom: 1rem; text-align: center;";
+            offlineMsg.textContent = "⚠️ Showing offline data. Some products may not be visible to other users.";
+            listEl.parentNode.insertBefore(offlineMsg, listEl);
+          }
+        }
+      }
 
-          const price = document.createElement("div");
-          price.className = "price";
-          price.textContent = `$${parseFloat(prod.price).toFixed(2)}`;
-
-          const desc = document.createElement("p");
-          desc.className = "description";
-          desc.textContent = prod.description;
-
-          const link = document.createElement("a");
-          link.href = prod.link;
-          link.target = "_blank";
-          link.rel = "noopener noreferrer";
-          link.className = "link-btn";
-          link.textContent = "Visit Product";
-
-          content.appendChild(title);
-          content.appendChild(price);
-          content.appendChild(desc);
-          content.appendChild(link);
-
-          card.appendChild(img);
-          card.appendChild(content);
-
-          listEl.appendChild(card);
-        });
+      // Start loading products
+      loadProducts();
     });
   </script>
 </body>
