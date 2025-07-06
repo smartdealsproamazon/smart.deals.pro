@@ -99,6 +99,43 @@
       margin-top: 0.25rem;
       font-size: 0.9rem;
     }
+    .progress-bar {
+      width: 100%;
+      height: 4px;
+      background: #e5e7eb;
+      border-radius: 2px;
+      overflow: hidden;
+      margin: 1rem 0;
+    }
+    .progress-fill {
+      height: 100%;
+      background: #2563eb;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+    .status-message {
+      text-align: center;
+      margin: 1rem 0;
+      padding: 0.75rem;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+    .status-message.info {
+      background: #e0f2fe;
+      color: #0277bd;
+    }
+    .status-message.success {
+      background: #e8f5e8;
+      color: #2e7d32;
+    }
+    .status-message.error {
+      background: #ffebee;
+      color: #c62828;
+    }
+    .status-message.warning {
+      background: #fff8e1;
+      color: #ef6c00;
+    }
     @media (max-width: 480px) {
       body {
         padding: 1rem 0.5rem;
@@ -165,11 +202,6 @@
   <div class="card">
     <h1>Product Submission</h1>
     
-    <!-- Debug Info (remove in production) -->
-    <div id="debugInfo" style="background: #f3f4f6; padding: 0.5rem; border-radius: 4px; margin-bottom: 1rem; font-size: 0.8rem; color: #6b7280;">
-      <strong>Debug Info:</strong> <span id="debugStatus">Initializing...</span>
-    </div>
-    
     <form id="productForm" novalidate>
       <div class="form-group">
         <label for="productTitle">Product Title</label>
@@ -178,7 +210,7 @@
       </div>
 
       <div class="form-group">
-        <label for="productImage">Image Upload</label>
+        <label for="productImage">Image Upload (Max 5MB)</label>
         <input type="file" id="productImage" accept="image/*" required />
         <span class="error" id="imageError"></span>
       </div>
@@ -222,7 +254,14 @@
       </div>
 
       <button type="submit" class="btn" id="submitBtn">Submit Product</button>
-      <div id="submitStatus" style="margin-top: 1rem; text-align: center; display: none;"></div>
+      
+      <!-- Progress Bar -->
+      <div class="progress-bar" id="progressBar" style="display: none;">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      
+      <!-- Status Message -->
+      <div id="statusMessage" class="status-message" style="display: none;"></div>
     </form>
   </div>
 
@@ -230,7 +269,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
   <script>
-    // TODO: Replace with your Firebase credentials
+    // Firebase configuration
     const firebaseConfig = {
       apiKey: "AIzaSyBJqBEWDdBlfv5xAjgcvqput1KC1NzKvlU",
       authDomain: "smart-deals-pro.firebaseapp.com",
@@ -240,40 +279,126 @@
       appId: "1:680016915696:web:4b3721313ea0e2e3342635",
       measurementId: "G-HV5N0LQJTG"
     };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+
+    let db;
+    let isSubmitting = false;
     
-    // Test Firebase connection
-    console.log("Firebase initialized successfully");
-    console.log("Firebase app:", firebase.app());
-    console.log("Firestore instance:", db);
-    
-    // Update debug info
-    const debugStatus = document.getElementById("debugStatus");
-    if (debugStatus) {
-      debugStatus.textContent = "Firebase initialized ✓";
+    // Initialize Firebase with error handling
+    function initializeFirebase() {
+      return new Promise((resolve, reject) => {
+        try {
+          if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+          }
+          db = firebase.firestore();
+          console.log("Firebase initialized successfully");
+          resolve();
+        } catch (error) {
+          console.error("Firebase initialization failed:", error);
+          reject(error);
+        }
+      });
+    }
+
+    // Timeout wrapper for promises
+    function withTimeout(promise, ms) {
+      return new Promise((resolve, reject) => {
+        const timeoutId = setTimeout(() => {
+          reject(new Error(`Operation timed out after ${ms}ms`));
+        }, ms);
+        
+        promise.then(
+          (result) => {
+            clearTimeout(timeoutId);
+            resolve(result);
+          },
+          (error) => {
+            clearTimeout(timeoutId);
+            reject(error);
+          }
+        );
+      });
+    }
+
+    // Update progress bar
+    function updateProgress(percentage) {
+      const progressBar = document.getElementById('progressBar');
+      const progressFill = document.getElementById('progressFill');
+      
+      if (percentage > 0) {
+        progressBar.style.display = 'block';
+        progressFill.style.width = percentage + '%';
+      } else {
+        progressBar.style.display = 'none';
+        progressFill.style.width = '0%';
+      }
+    }
+
+    // Show status message
+    function showStatus(message, type = 'info') {
+      const statusElement = document.getElementById('statusMessage');
+      statusElement.textContent = message;
+      statusElement.className = `status-message ${type}`;
+      statusElement.style.display = 'block';
+    }
+
+    // Hide status message
+    function hideStatus() {
+      const statusElement = document.getElementById('statusMessage');
+      statusElement.style.display = 'none';
+    }
+
+    // Reset form state
+    function resetFormState() {
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Submit Product';
+      updateProgress(0);
+      isSubmitting = false;
+    }
+
+    // Process image with timeout and size check
+    function processImage(file) {
+      return new Promise((resolve, reject) => {
+        // Check file size (max 5MB)
+        if (file.size > 5 * 1024 * 1024) {
+          reject(new Error('Image size must be less than 5MB'));
+          return;
+        }
+
+        const reader = new FileReader();
+        const timeout = setTimeout(() => {
+          reader.abort();
+          reject(new Error('Image processing timed out'));
+        }, 30000); // 30 second timeout
+
+        reader.onload = function() {
+          clearTimeout(timeout);
+          resolve(reader.result);
+        };
+
+        reader.onerror = function() {
+          clearTimeout(timeout);
+          reject(new Error('Failed to read image file'));
+        };
+
+        reader.readAsDataURL(file);
+      });
     }
   </script>
 
-  <!-- Validation Script -->
+  <!-- Form Handling Script -->
   <script>
+    // Initialize on page load
     document.addEventListener("DOMContentLoaded", function () {
-      console.log("DOM loaded, initializing form");
       const form = document.getElementById("productForm");
       const allowedEmail = "mrazwan0310@gmail.com";
       
-      if (!form) {
-        console.error("Form not found!");
-        return;
-      }
-      
-      console.log("Form found, setting up event listeners");
-      
-      // Update debug info
-      const debugStatus = document.getElementById("debugStatus");
-      if (debugStatus) {
-        debugStatus.textContent = "Firebase initialized ✓, Form ready ✓";
-      }
+      // Initialize Firebase
+      initializeFirebase().catch(error => {
+        console.error("Firebase initialization failed:", error);
+        showStatus("Warning: Connection issues detected. Products will be saved locally.", "warning");
+      });
 
       const errors = {
         title: document.getElementById("titleError"),
@@ -289,96 +414,98 @@
         Object.values(errors).forEach((el) => (el.textContent = ""));
       }
 
-      form.addEventListener("submit", function (e) {
+      form.addEventListener("submit", async function (e) {
         e.preventDefault();
+        
+        if (isSubmitting) {
+          return; // Prevent double submission
+        }
+
+        isSubmitting = true;
         clearErrors();
+        hideStatus();
 
         const submitBtn = document.getElementById("submitBtn");
-        const submitStatus = document.getElementById("submitStatus");
-        
-        // Show loading state
         submitBtn.disabled = true;
         submitBtn.textContent = "Submitting...";
-        submitStatus.style.display = "block";
-        submitStatus.style.color = "#2563eb";
-        submitStatus.textContent = "Processing your submission...";
+        
+        showStatus("Validating form data...", "info");
+        updateProgress(10);
 
-        const title = document.getElementById("productTitle").value.trim();
-        const imageInput = document.getElementById("productImage");
-        const price = document.getElementById("price").value.trim();
-        const description = document.getElementById("description").value.trim();
-        const link = document.getElementById("productLink").value.trim();
-        const email = document.getElementById("email").value.trim();
-        const category = document.getElementById("category").value;
+        try {
+          // Get form values
+          const title = document.getElementById("productTitle").value.trim();
+          const imageInput = document.getElementById("productImage");
+          const price = document.getElementById("price").value.trim();
+          const description = document.getElementById("description").value.trim();
+          const link = document.getElementById("productLink").value.trim();
+          const email = document.getElementById("email").value.trim();
+          const category = document.getElementById("category").value;
 
-        let valid = true;
+          let valid = true;
 
-        if (!title) {
-          errors.title.textContent = "Product title is required.";
-          valid = false;
-        }
-
-        if (!imageInput.files[0]) {
-          errors.image.textContent = "Please upload an image.";
-          valid = false;
-        }
-
-        if (!price || isNaN(price) || parseFloat(price) <= 0) {
-          errors.price.textContent = "Please enter a valid price greater than 0.";
-          valid = false;
-        }
-
-        if (!description) {
-          errors.description.textContent = "Description is required.";
-          valid = false;
-        }
-
-        if (!link) {
-          errors.link.textContent = "Product link is required.";
-          valid = false;
-        } else {
-          try {
-            new URL(link);
-          } catch {
-            errors.link.textContent = "Please enter a valid URL.";
+          // Validation
+          if (!title) {
+            errors.title.textContent = "Product title is required.";
             valid = false;
           }
-        }
 
-        if (email !== allowedEmail) {
-          errors.email.textContent = "Invalid email address.";
-          valid = false;
-        }
+          if (!imageInput.files[0]) {
+            errors.image.textContent = "Please upload an image.";
+            valid = false;
+          }
 
-        if (!category) {
-          errors.category.textContent = "Please select a category.";
-          valid = false;
-        }
+          if (!price || isNaN(price) || parseFloat(price) <= 0) {
+            errors.price.textContent = "Please enter a valid price greater than 0.";
+            valid = false;
+          }
 
-        if (!valid) {
-          // Reset button state
-          submitBtn.disabled = false;
-          submitBtn.textContent = "Submit Product";
-          submitStatus.style.display = "none";
-          return;
-        }
+          if (!description) {
+            errors.description.textContent = "Description is required.";
+            valid = false;
+          }
 
-        const file = imageInput.files[0];
-        
-        // Check file size (max 5MB)
-        if (file.size > 5 * 1024 * 1024) {
-          errors.image.textContent = "Image size should be less than 5MB.";
-          submitBtn.disabled = false;
-          submitBtn.textContent = "Submit Product";
-          submitStatus.style.display = "none";
-          return;
-        }
+          if (!link) {
+            errors.link.textContent = "Product link is required.";
+            valid = false;
+          } else {
+            try {
+              new URL(link);
+            } catch {
+              errors.link.textContent = "Please enter a valid URL.";
+              valid = false;
+            }
+          }
 
-        const reader = new FileReader();
+          if (email !== allowedEmail) {
+            errors.email.textContent = "Invalid email address.";
+            valid = false;
+          }
 
-        reader.onload = function () {
-          const imageData = reader.result; // base64 encoded image
+          if (!category) {
+            errors.category.textContent = "Please select a category.";
+            valid = false;
+          }
 
+          if (!valid) {
+            showStatus("Please fix the validation errors above.", "error");
+            resetFormState();
+            return;
+          }
+
+          updateProgress(30);
+          showStatus("Processing image...", "info");
+
+          // Process image with timeout
+          const imageData = await withTimeout(
+            processImage(imageInput.files[0]),
+            30000
+          );
+
+          updateProgress(60);
+          showStatus("Submitting to server...", "info");
+
+          // Create product object
           const product = {
             title,
             imageData,
@@ -393,65 +520,55 @@
             submittedBy: email
           };
 
-          console.log("Submitting product:", product);
+          // Try to submit to Firebase with timeout
+          let docRef;
+          try {
+            docRef = await withTimeout(
+              db.collection("products").add(product),
+              15000
+            );
+            console.log("Product submitted successfully:", docRef.id);
+            
+            // Update local storage
+            const existing = JSON.parse(localStorage.getItem("products") || "[]");
+            existing.push({ ...product, id: docRef.id });
+            localStorage.setItem("products", JSON.stringify(existing));
 
-          db.collection("products")
-            .add(product)
-            .then((docRef) => {
-              console.log("Product submitted successfully:", docRef.id);
-              
-              // Keep a local copy for offline support
+            updateProgress(100);
+            showStatus("Product submitted successfully! Redirecting...", "success");
+
+            // Redirect after success
+            setTimeout(() => {
+              window.location.href = "products.html";
+            }, 2000);
+
+          } catch (firebaseError) {
+            console.error("Firebase submission failed:", firebaseError);
+            
+            // Fallback to local storage
+            try {
               const existing = JSON.parse(localStorage.getItem("products") || "[]");
-              existing.push({ ...product, id: docRef.id });
+              existing.push({ ...product, id: 'local_' + Date.now() });
               localStorage.setItem("products", JSON.stringify(existing));
-
-              // Show success message
-              submitStatus.style.color = "#10b981";
-              submitStatus.textContent = "Product submitted successfully! Redirecting...";
               
-              // Redirect to the product list page after a delay
+              updateProgress(100);
+              showStatus("Saved locally. Will sync when connection is restored.", "warning");
+              
               setTimeout(() => {
                 window.location.href = "products.html";
               }, 2000);
-            })
-            .catch((err) => {
-              console.error("Failed to submit product:", err);
               
-              // Show error message
-              submitStatus.style.color = "#dc2626";
-              submitStatus.textContent = "Failed to submit product. Please try again.";
-              
-              // Reset button state
-              submitBtn.disabled = false;
-              submitBtn.textContent = "Submit Product";
-              
-              // Try to save locally as fallback
-              try {
-                const existing = JSON.parse(localStorage.getItem("products") || "[]");
-                existing.push({ ...product, id: 'local_' + Date.now() });
-                localStorage.setItem("products", JSON.stringify(existing));
-                
-                submitStatus.style.color = "#f59e0b";
-                submitStatus.textContent = "Saved locally. Will sync when connection is restored.";
-                
-                setTimeout(() => {
-                  window.location.href = "products.html";
-                }, 2000);
-              } catch (localErr) {
-                console.error("Failed to save locally:", localErr);
-              }
-            });
-        };
+            } catch (localError) {
+              console.error("Local storage failed:", localError);
+              throw new Error("Failed to save product. Please try again.");
+            }
+          }
 
-        reader.onerror = function() {
-          console.error("Failed to read file");
-          errors.image.textContent = "Failed to read image file. Please try again.";
-          submitBtn.disabled = false;
-          submitBtn.textContent = "Submit Product";
-          submitStatus.style.display = "none";
-        };
-
-        reader.readAsDataURL(file);
+        } catch (error) {
+          console.error("Submission error:", error);
+          showStatus(`Error: ${error.message}`, "error");
+          resetFormState();
+        }
       });
     });
   </script>
