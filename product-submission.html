@@ -183,6 +183,23 @@
     </form>
   </div>
 
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script>
+    // TODO: Replace with your Firebase credentials
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT_ID.appspot.com",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+  </script>
+
   <!-- Validation Script -->
   <script>
     document.addEventListener("DOMContentLoaded", function () {
@@ -275,12 +292,21 @@
             createdAt: Date.now(),
           };
 
-          const existing = JSON.parse(localStorage.getItem("products") || "[]");
-          existing.push(product);
-          localStorage.setItem("products", JSON.stringify(existing));
+          db.collection("products")
+            .add(product)
+            .then(() => {
+              // Keep a local copy for offline support
+              const existing = JSON.parse(localStorage.getItem("products") || "[]");
+              existing.push(product);
+              localStorage.setItem("products", JSON.stringify(existing));
 
-          // Redirect to the product list page
-          window.location.href = "products.html";
+              // Redirect to the product list page
+              window.location.href = "products.html";
+            })
+            .catch((err) => {
+              console.error("Failed to submit product:", err);
+              alert("Sorry, we couldn't save your product right now. Please try again later.");
+            });
         };
 
         reader.readAsDataURL(file);
