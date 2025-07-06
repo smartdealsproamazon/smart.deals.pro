@@ -49,11 +49,14 @@
     input[type="url"],
     input[type="number"],
     input[type="email"],
-    textarea {
+    textarea,
+    select {
       padding: 0.55rem 0.75rem;
       border: 1px solid #ccc;
       border-radius: 4px;
       font-size: 1rem;
+      width: 100%;
+      box-sizing: border-box;
     }
     textarea {
       resize: vertical;
@@ -74,17 +77,50 @@
       cursor: pointer;
       transition: background 0.2s ease;
     }
-    .btn:hover {
+    .btn:hover:not(:disabled) {
       background: #1d4ed8;
+    }
+    .btn:disabled {
+      background: #9ca3af;
+      cursor: not-allowed;
     }
     .error {
       color: #dc2626;
       margin-top: 0.25rem;
       font-size: 0.9rem;
     }
+    .success {
+      color: #10b981;
+      margin-top: 0.25rem;
+      font-size: 0.9rem;
+    }
+    .warning {
+      color: #f59e0b;
+      margin-top: 0.25rem;
+      font-size: 0.9rem;
+    }
     @media (max-width: 480px) {
+      body {
+        padding: 1rem 0.5rem;
+      }
       .card {
         padding: 1.5rem 1rem;
+        margin: 0;
+      }
+      h1 {
+        font-size: 1.5rem;
+      }
+      .main-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        background: white;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+      body {
+        margin-top: 80px;
       }
     }
   </style>
@@ -128,6 +164,12 @@
   <!-- Submission Form -->
   <div class="card">
     <h1>Product Submission</h1>
+    
+    <!-- Debug Info (remove in production) -->
+    <div id="debugInfo" style="background: #f3f4f6; padding: 0.5rem; border-radius: 4px; margin-bottom: 1rem; font-size: 0.8rem; color: #6b7280;">
+      <strong>Debug Info:</strong> <span id="debugStatus">Initializing...</span>
+    </div>
+    
     <form id="productForm" novalidate>
       <div class="form-group">
         <label for="productTitle">Product Title</label>
@@ -179,7 +221,8 @@
         <span class="error" id="emailError"></span>
       </div>
 
-      <button type="submit" class="btn">Submit Product</button>
+      <button type="submit" class="btn" id="submitBtn">Submit Product</button>
+      <div id="submitStatus" style="margin-top: 1rem; text-align: center; display: none;"></div>
     </form>
   </div>
 
@@ -199,13 +242,38 @@
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
+    
+    // Test Firebase connection
+    console.log("Firebase initialized successfully");
+    console.log("Firebase app:", firebase.app());
+    console.log("Firestore instance:", db);
+    
+    // Update debug info
+    const debugStatus = document.getElementById("debugStatus");
+    if (debugStatus) {
+      debugStatus.textContent = "Firebase initialized ✓";
+    }
   </script>
 
   <!-- Validation Script -->
   <script>
     document.addEventListener("DOMContentLoaded", function () {
+      console.log("DOM loaded, initializing form");
       const form = document.getElementById("productForm");
       const allowedEmail = "mrazwan0310@gmail.com";
+      
+      if (!form) {
+        console.error("Form not found!");
+        return;
+      }
+      
+      console.log("Form found, setting up event listeners");
+      
+      // Update debug info
+      const debugStatus = document.getElementById("debugStatus");
+      if (debugStatus) {
+        debugStatus.textContent = "Firebase initialized ✓, Form ready ✓";
+      }
 
       const errors = {
         title: document.getElementById("titleError"),
@@ -224,6 +292,16 @@
       form.addEventListener("submit", function (e) {
         e.preventDefault();
         clearErrors();
+
+        const submitBtn = document.getElementById("submitBtn");
+        const submitStatus = document.getElementById("submitStatus");
+        
+        // Show loading state
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Submitting...";
+        submitStatus.style.display = "block";
+        submitStatus.style.color = "#2563eb";
+        submitStatus.textContent = "Processing your submission...";
 
         const title = document.getElementById("productTitle").value.trim();
         const imageInput = document.getElementById("productImage");
@@ -245,8 +323,8 @@
           valid = false;
         }
 
-        if (!price) {
-          errors.price.textContent = "Please enter a price.";
+        if (!price || isNaN(price) || parseFloat(price) <= 0) {
+          errors.price.textContent = "Please enter a valid price greater than 0.";
           valid = false;
         }
 
@@ -258,6 +336,13 @@
         if (!link) {
           errors.link.textContent = "Product link is required.";
           valid = false;
+        } else {
+          try {
+            new URL(link);
+          } catch {
+            errors.link.textContent = "Please enter a valid URL.";
+            valid = false;
+          }
         }
 
         if (email !== allowedEmail) {
@@ -271,10 +356,24 @@
         }
 
         if (!valid) {
+          // Reset button state
+          submitBtn.disabled = false;
+          submitBtn.textContent = "Submit Product";
+          submitStatus.style.display = "none";
           return;
         }
 
         const file = imageInput.files[0];
+        
+        // Check file size (max 5MB)
+        if (file.size > 5 * 1024 * 1024) {
+          errors.image.textContent = "Image size should be less than 5MB.";
+          submitBtn.disabled = false;
+          submitBtn.textContent = "Submit Product";
+          submitStatus.style.display = "none";
+          return;
+        }
+
         const reader = new FileReader();
 
         reader.onload = function () {
@@ -283,7 +382,7 @@
           const product = {
             title,
             imageData,
-            price,
+            price: parseFloat(price),
             description,
             link,
             category,
@@ -291,23 +390,65 @@
             reviews: 0,
             featured: true,
             createdAt: Date.now(),
+            submittedBy: email
           };
+
+          console.log("Submitting product:", product);
 
           db.collection("products")
             .add(product)
-            .then(() => {
+            .then((docRef) => {
+              console.log("Product submitted successfully:", docRef.id);
+              
               // Keep a local copy for offline support
               const existing = JSON.parse(localStorage.getItem("products") || "[]");
-              existing.push(product);
+              existing.push({ ...product, id: docRef.id });
               localStorage.setItem("products", JSON.stringify(existing));
 
-              // Redirect to the product list page
-              window.location.href = "products.html";
+              // Show success message
+              submitStatus.style.color = "#10b981";
+              submitStatus.textContent = "Product submitted successfully! Redirecting...";
+              
+              // Redirect to the product list page after a delay
+              setTimeout(() => {
+                window.location.href = "products.html";
+              }, 2000);
             })
             .catch((err) => {
               console.error("Failed to submit product:", err);
-              alert("Sorry, we couldn't save your product right now. Please try again later.");
+              
+              // Show error message
+              submitStatus.style.color = "#dc2626";
+              submitStatus.textContent = "Failed to submit product. Please try again.";
+              
+              // Reset button state
+              submitBtn.disabled = false;
+              submitBtn.textContent = "Submit Product";
+              
+              // Try to save locally as fallback
+              try {
+                const existing = JSON.parse(localStorage.getItem("products") || "[]");
+                existing.push({ ...product, id: 'local_' + Date.now() });
+                localStorage.setItem("products", JSON.stringify(existing));
+                
+                submitStatus.style.color = "#f59e0b";
+                submitStatus.textContent = "Saved locally. Will sync when connection is restored.";
+                
+                setTimeout(() => {
+                  window.location.href = "products.html";
+                }, 2000);
+              } catch (localErr) {
+                console.error("Failed to save locally:", localErr);
+              }
             });
+        };
+
+        reader.onerror = function() {
+          console.error("Failed to read file");
+          errors.image.textContent = "Failed to read image file. Please try again.";
+          submitBtn.disabled = false;
+          submitBtn.textContent = "Submit Product";
+          submitStatus.style.display = "none";
         };
 
         reader.readAsDataURL(file);
