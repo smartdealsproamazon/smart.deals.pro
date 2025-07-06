@@ -841,5 +841,16 @@
       }
     }
   </style>
+  <script src="products.js"></script>
+  <script src="render.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const grid = document.getElementById('productsGrid');
+      if (grid) {
+        grid.innerHTML = '';
+        renderProducts('home-garden', 'productsGrid');
+      }
+    });
+  </script>
 </body>
 </html>

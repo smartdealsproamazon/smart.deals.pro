@@ -147,6 +147,20 @@
         <span class="error" id="priceError"></span>
       </div>
 
+      <!-- Category Selection -->
+      <div class="form-group">
+        <label for="category">Category</label>
+        <select id="category" required>
+          <option value="">Select Category</option>
+          <option value="smartwatch">Smartwatches</option>
+          <option value="fashion">Fashion</option>
+          <option value="electrical">Electronics</option>
+          <option value="gaming">Gaming</option>
+          <option value="home-garden">Home & Garden</option>
+        </select>
+        <span class="error" id="categoryError"></span>
+      </div>
+
       <div class="form-group">
         <label for="description">Description</label>
         <textarea id="description" required></textarea>
@@ -179,6 +193,7 @@
         title: document.getElementById("titleError"),
         image: document.getElementById("imageError"),
         price: document.getElementById("priceError"),
+        category: document.getElementById("categoryError"),
         description: document.getElementById("descriptionError"),
         link: document.getElementById("linkError"),
         email: document.getElementById("emailError"),
@@ -198,6 +213,7 @@
         const description = document.getElementById("description").value.trim();
         const link = document.getElementById("productLink").value.trim();
         const email = document.getElementById("email").value.trim();
+        const category = document.getElementById("category").value;
 
         let valid = true;
 
@@ -231,6 +247,11 @@
           valid = false;
         }
 
+        if (!category) {
+          errors.category.textContent = "Please select a category.";
+          valid = false;
+        }
+
         if (!valid) {
           return;
         }
@@ -247,6 +268,10 @@
             price,
             description,
             link,
+            category,
+            rating: 5,
+            reviews: 0,
+            featured: true,
             createdAt: Date.now(),
           };
 
