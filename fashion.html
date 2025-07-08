@@ -3,33 +3,331 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Fashion Deals</title>
-  <meta name="description" content="Discover the best fashion deals including clothing, accessories, and more.">
+  <title>Fashion - Best Deals & Reviews | SmartDeals Pro</title>
+  <meta name="description" content="Discover the latest fashion trends with the best deals on clothing, accessories, and style essentials for 2025.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="style.css" />
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; }
-    h1 { color: #8e44ad; }
-    a.button {
-      display: inline-block;
-      margin-top: 20px;
-      background-color: #9b59b6;
+    body { 
+      font-family: 'Inter', sans-serif; 
+      margin: 0;
+      padding: 0;
+    }
+    
+    .fashion-hero {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
       color: white;
-      padding: 10px 20px;
-      text-decoration: none;
-      border-radius: 6px;
+      padding: 4rem 0;
+      text-align: center;
+    }
+    
+    .fashion-title {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      font-weight: 700;
+    }
+    
+    .fashion-subtitle {
+      font-size: 1.25rem;
+      opacity: 0.9;
+      margin-bottom: 2rem;
+    }
+    
+    .products-section {
+      padding: 4rem 0;
+    }
+    
+    .section-title {
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 3rem;
+      color: #2c3e50;
+    }
+    
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+    
+    .no-products {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: #6b7280;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 4rem 0;
+      color: #6b7280;
+    }
+    
+    @media (max-width: 768px) {
+      .fashion-title {
+        font-size: 2rem;
+      }
+      
+      .products-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1rem;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>Latest Fashion Offers</h1>
-  <ul>
-    <li><strong>Men’s Casual Jacket</strong> – Trendy & warm. <a href="#">See Deal</a></li>
-    <li><strong>Women’s Handbag Set</strong> – Elegant combo. <a href="#">Buy Now</a></li>
-    <li><strong>Unisex Sunglasses</strong> – UV protection & style. <a href="#">Check Price</a></li>
-  </ul>
-  <div id="product-container" class="product-grid"></div>
-  <a class="button" href="index.html">Back to Home</a>
+  <!-- Header -->
+  <header class="main-header">
+    <div class="container">
+      <div class="header-content">
+        <div class="header-left">
+          <a href="index.html" class="logo-link">
+            <img src="logo.png" alt="SmartDeals Pro Logo" class="logo" />
+            <span class="logo-text">SmartDeals Pro</span>
+          </a>
+        </div>
+        
+        <nav class="main-nav">
+          <ul>
+            <li><a href="index.html" class="nav-link">Home</a></li>
+            <li class="dropdown">
+              <a href="#" class="nav-link dropdown-toggle active">Categories <i class="fas fa-chevron-down"></i></a>
+              <ul class="dropdown-menu">
+                <li><a href="smartwatches.html">Smartwatches</a></li>
+                <li><a href="fashion.html">Fashion</a></li>
+                <li><a href="small-electrical.html">Electronics</a></li>
+                <li><a href="gaming.html">Gaming</a></li>
+                <li><a href="home-garden.html">Home & Garden</a></li>
+                <li><a href="product-submission.html">Submit Product</a></li>
+              </ul>
+            </li>
+            <li><a href="reviews.html" class="nav-link">Reviews</a></li>
+            <li><a href="deals.html" class="nav-link">Hot Deals</a></li>
+            <li><a href="about.html" class="nav-link">About</a></li>
+            <li><a href="contact.html" class="nav-link">Contact</a></li>
+          </ul>
+        </nav>
+
+        <div class="header-right">
+          <div class="search-container">
+            <input type="text" id="headerSearch" placeholder="Search fashion..." class="search-input">
+            <button class="search-btn" onclick="searchFashion()">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+          <a href="sign-in.html" class="btn btn-outline">Sign In</a>
+          <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+            <i class="fas fa-bars"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu-content">
+      <a href="index.html">Home</a>
+      <a href="smartwatches.html">Smartwatches</a>
+      <a href="fashion.html">Fashion</a>
+      <a href="small-electrical.html">Electronics</a>
+      <a href="gaming.html">Gaming</a>
+      <a href="home-garden.html">Home & Garden</a>
+      <a href="reviews.html">Reviews</a>
+      <a href="deals.html">Hot Deals</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+      <a href="product-submission.html">Submit Product</a>
+    </div>
+  </div>
+
+  <!-- Hero Section -->
+  <section class="fashion-hero">
+    <div class="container">
+      <h1 class="fashion-title">👗 Fashion & Style Deals</h1>
+      <p class="fashion-subtitle">Discover trendy clothing, accessories, and fashion essentials at unbeatable prices</p>
+    </div>
+  </section>
+
+  <!-- Products Section -->
+  <section class="products-section">
+    <div class="container">
+      <h2 class="section-title">Featured Fashion Products</h2>
+      <div id="loadingMessage" class="loading">
+        <i class="fas fa-spinner fa-spin"></i> Loading fashion products...
+      </div>
+      <div class="products-grid" id="product-container">
+        <!-- Products will be populated by JavaScript -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="main-footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>SmartDeals Pro</h3>
+          <p>Your trusted source for the best affiliate deals and product reviews. We help you shop smarter and save money.</p>
+          <div class="social-links">
+            <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+            <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+          </div>
+        </div>
+        <div class="footer-section">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="reviews.html">Reviews</a></li>
+            <li><a href="deals.html">Hot Deals</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Categories</h4>
+          <ul>
+            <li><a href="smartwatches.html">Smartwatches</a></li>
+            <li><a href="fashion.html">Fashion</a></li>
+            <li><a href="small-electrical.html">Electronics</a></li>
+            <li><a href="gaming.html">Gaming</a></li>
+            <li><a href="home-garden.html">Home & Garden</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="privacy-policy.html">Privacy Policy</a></li>
+            <li><a href="terms.html">Terms of Service</a></li>
+            <li><a href="affiliate-disclosure.html">Affiliate Disclosure</a></li>
+            <li><a href="cookies.html">Cookie Policy</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 SmartDeals Pro. All rights reserved.</p>
+        <p class="affiliate-disclaimer">This site contains affiliate links. We may earn a commission when you purchase through links on our site — at no extra cost to you.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
   <script src="products.js"></script>
-<script src="render.js"></script>
+  <script src="render.js"></script>
+  <script>
+    // Mobile menu toggle
+    function toggleMobileMenu() {
+      const mobileMenu = document.getElementById('mobileMenu');
+      mobileMenu.classList.toggle('active');
+    }
+
+    // Search fashion products
+    function searchFashion() {
+      const query = document.getElementById('headerSearch').value;
+      if (query) {
+        const fashionProducts = getProductsByCategory('fashion');
+        const results = fashionProducts.filter(product => 
+          product.name.toLowerCase().includes(query.toLowerCase()) ||
+          product.description.toLowerCase().includes(query.toLowerCase())
+        );
+        renderFashionGrid(results);
+      }
+    }
+
+    // Render fashion products
+    function renderFashionProducts() {
+      const fashionProducts = getProductsByCategory('fashion');
+      console.log('Fashion products found:', fashionProducts.length);
+      renderFashionGrid(fashionProducts);
+    }
+
+    // Render fashion grid
+    function renderFashionGrid(products) {
+      const container = document.getElementById('product-container');
+      const loadingMessage = document.getElementById('loadingMessage');
+      
+      // Hide loading message
+      if (loadingMessage) {
+        loadingMessage.style.display = 'none';
+      }
+      
+      container.innerHTML = '';
+      
+      if (products.length === 0) {
+        container.innerHTML = `
+          <div class="no-products">
+            <i class="fas fa-tshirt" style="font-size: 3rem; color: #9ca3af; margin-bottom: 1rem;"></i>
+            <h3>No fashion products found</h3>
+            <p>Check back later for more fashion deals or try submitting a product!</p>
+            <a href="product-submission.html" class="btn btn-primary" style="margin-top: 1rem;">Submit a Fashion Product</a>
+          </div>
+        `;
+        return;
+      }
+      
+      products.forEach(product => {
+        const productCard = createProductCard(product);
+        container.appendChild(productCard);
+      });
+    }
+
+    // Initialize page when products are ready
+    function initializeFashion() {
+      console.log('Initializing fashion page...');
+      console.log('Total products loaded:', window.products ? window.products.length : 0);
+      
+      // Force render fashion products
+      renderFashionProducts();
+    }
+
+    // Initialize when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('DOM loaded, checking for products...');
+      
+      // If products are already loaded
+      if (window.products && window.products.length > 0) {
+        initializeFashion();
+      }
+    });
+
+    // Listen for products ready event
+    document.addEventListener('products-ready', function() {
+      console.log('Products ready event received');
+      initializeFashion();
+    });
+
+    // Fallback - check for products every 500ms for up to 10 seconds
+    let checkCount = 0;
+    const maxChecks = 20;
+    const checkInterval = setInterval(() => {
+      checkCount++;
+      console.log(`Checking for products (attempt ${checkCount})...`);
+      
+      if (window.products && window.products.length > 0) {
+        console.log('Products found, initializing...');
+        clearInterval(checkInterval);
+        initializeFashion();
+      } else if (checkCount >= maxChecks) {
+        console.log('Max checks reached, stopping...');
+        clearInterval(checkInterval);
+        // Show message that no products were found
+        const loadingMessage = document.getElementById('loadingMessage');
+        if (loadingMessage) {
+          loadingMessage.innerHTML = '<p>Unable to load products. Please try refreshing the page.</p>';
+        }
+      }
+    }, 500);
+  </script>
 </body>
 </html>

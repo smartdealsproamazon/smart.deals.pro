@@ -3,20 +3,45 @@
 // Main function to render products with enhanced features
 function renderProducts(filterCategory = null, containerId = 'product-container') {
   const container = document.getElementById(containerId);
-  if (!container) return;
+  if (!container) {
+    console.log(`Container with ID "${containerId}" not found`);
+    return;
+  }
   
   container.innerHTML = "";
 
+  // Ensure we have products array
+  if (!window.products) {
+    console.log('Products array not available');
+    container.innerHTML = `
+      <div class="no-products">
+        <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: #9ca3af; margin-bottom: 1rem;"></i>
+        <h3>Loading products...</h3>
+        <p>Please wait while we load the latest deals.</p>
+      </div>
+    `;
+    return;
+  }
+
+  console.log(`Filtering products by category: ${filterCategory}`);
+  console.log('Available products:', window.products.length);
+  
   const filteredProducts = filterCategory
-    ? products.filter(p => p.category === filterCategory)
-    : products;
+    ? window.products.filter(p => {
+        console.log(`Product "${p.name}" has category: "${p.category}"`);
+        return p.category === filterCategory;
+      })
+    : window.products;
+
+  console.log(`Filtered products count: ${filteredProducts.length}`);
 
   if (filteredProducts.length === 0) {
     container.innerHTML = `
       <div class="no-products">
         <i class="fas fa-search" style="font-size: 3rem; color: #9ca3af; margin-bottom: 1rem;"></i>
         <h3>No products found</h3>
-        <p>Try adjusting your search or browse our categories.</p>
+        <p>No products available in this category yet. Try submitting a product or check back later!</p>
+        <a href="product-submission.html" class="btn btn-primary" style="margin-top: 1rem;">Submit a Product</a>
       </div>
     `;
     return;
@@ -26,6 +51,8 @@ function renderProducts(filterCategory = null, containerId = 'product-container'
     const productCard = createProductCard(product);
     container.appendChild(productCard);
   });
+  
+  console.log(`Rendered ${filteredProducts.length} products in ${containerId}`);
 }
 
 // Function to create enhanced product card
@@ -286,27 +313,89 @@ function autoRenderProducts() {
   const path = window.location.pathname;
   const filename = path.split('/').pop();
   
+  console.log(`Auto-rendering for page: ${filename}`);
+  console.log('Products available:', window.products ? window.products.length : 0);
+  
+  // Log all available categories for debugging
+  if (window.products && window.products.length > 0) {
+    const categories = [...new Set(window.products.map(p => p.category))];
+    console.log('Available categories:', categories);
+  }
+  
   if (filename.includes('smartwatch')) {
+    console.log('Rendering smartwatch products');
     renderProducts('smartwatch');
   } else if (filename.includes('fashion')) {
+    console.log('Rendering fashion products');
     renderProducts('fashion');
   } else if (filename.includes('small-electrical') || filename.includes('electronic')) {
+    console.log('Rendering electrical products');
     renderProducts('electrical');
   } else if (filename.includes('gaming')) {
+    console.log('Rendering gaming products');
     renderProducts('gaming');
   } else if (filename.includes('home-garden')) {
+    console.log('Rendering home-garden products');
     renderProducts('home-garden');
   } else if (filename.includes('index') || filename === '' || filename === '/') {
+    console.log('Rendering featured products for homepage');
     // Homepage - render featured products
     if (document.getElementById('featuredProductsGrid')) {
       renderFeaturedProducts();
     }
+  } else {
+    console.log(`No specific rendering rule for page: ${filename}`);
   }
+}
+
+// Enhanced initialization with retry mechanism
+function initializeRenderer() {
+  console.log('Initializing renderer...');
+  
+  // Immediate check
+  if (window.products && window.products.length > 0) {
+    console.log('Products already available, rendering immediately');
+    autoRenderProducts();
+    return;
+  }
+  
+  // Set up retry mechanism
+  let retryCount = 0;
+  const maxRetries = 20; // 10 seconds total
+  const retryInterval = 500; // 500ms between retries
+  
+  const retryTimer = setInterval(() => {
+    retryCount++;
+    console.log(`Retry ${retryCount}/${maxRetries} - checking for products...`);
+    
+    if (window.products && window.products.length > 0) {
+      console.log('Products found on retry, rendering...');
+      clearInterval(retryTimer);
+      autoRenderProducts();
+    } else if (retryCount >= maxRetries) {
+      console.log('Max retries reached, stopping...');
+      clearInterval(retryTimer);
+      
+      // Show fallback message
+      const container = document.getElementById('product-container');
+      if (container) {
+        container.innerHTML = `
+          <div class="no-products">
+            <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #f59e0b; margin-bottom: 1rem;"></i>
+            <h3>Unable to load products</h3>
+            <p>Please check your internet connection and try refreshing the page.</p>
+            <button onclick="window.location.reload()" class="btn btn-primary" style="margin-top: 1rem;">Refresh Page</button>
+          </div>
+        `;
+      }
+    }
+  }, retryInterval);
 }
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-  autoRenderProducts();
+  console.log('DOM loaded, initializing renderer...');
+  initializeRenderer();
   
   // Add search functionality
   const searchForm = document.querySelector('.search-form');
@@ -323,6 +412,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Re-render automatically once the product catalogue finishes loading
 document.addEventListener('products-ready', function () {
+  console.log('Products ready event received, auto-rendering...');
   autoRenderProducts();
 });
 
