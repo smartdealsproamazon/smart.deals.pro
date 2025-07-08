@@ -1,84 +1,14 @@
-<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" fill="none">
   <defs>
-    <!-- Primary gradient matching site design -->
-    <linearGradient id="primaryGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#3b82f6"/>
-      <stop offset="100%" style="stop-color:#8b5cf6"/>
-    </linearGradient>
-    
-    <!-- Secondary gradient for accent -->
-    <linearGradient id="accentGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#fbbf24"/>
-      <stop offset="100%" style="stop-color:#f59e0b"/>
-    </linearGradient>
-    
-    <!-- Subtle shadow -->
-    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="2" dy="4" stdDeviation="3" flood-color="#1a202c" flood-opacity="0.3"/>
-    </filter>
+    <radialGradient id="bluePurpleGradient" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#3b82f6" />
+      <stop offset="100%" stop-color="#8b5cf6" />
+    </radialGradient>
   </defs>
-  
-  <!-- Background circle -->
-  <circle cx="100" cy="100" r="90" fill="url(#primaryGradient)" filter="url(#shadow)"/>
-  
-  <!-- Shopping cart body -->
-  <rect x="45" y="75" width="35" height="25" rx="3" fill="white" opacity="0.9"/>
-  
-  <!-- Shopping cart handle -->
-  <path d="M 40 75 L 45 75 L 48 60 L 85 60" stroke="white" stroke-width="3" fill="none" stroke-linecap="round"/>
-  
-  <!-- Cart wheels -->
-  <circle cx="50" cy="110" r="4" fill="white"/>
-  <circle cx="70" cy="110" r="4" fill="white"/>
-  
-  <!-- Smart/Tech elements - Circuit pattern -->
-  <g stroke="url(#accentGradient)" stroke-width="2" fill="none" opacity="0.8">
-    <!-- Horizontal lines -->
-    <line x1="110" y1="50" x2="140" y2="50"/>
-    <line x1="115" y1="70" x2="135" y2="70"/>
-    <line x1="120" y1="130" x2="150" y2="130"/>
-    <line x1="115" y1="150" x2="145" y2="150"/>
-    
-    <!-- Vertical connections -->
-    <line x1="125" y1="50" x2="125" y2="70"/>
-    <line x1="135" y1="130" x2="135" y2="150"/>
-    
-    <!-- Circuit nodes -->
-    <circle cx="140" cy="50" r="2" fill="url(#accentGradient)"/>
-    <circle cx="115" cy="70" r="2" fill="url(#accentGradient)"/>
-    <circle cx="135" cy="70" r="2" fill="url(#accentGradient)"/>
-    <circle cx="150" cy="130" r="2" fill="url(#accentGradient)"/>
-    <circle cx="115" cy="150" r="2" fill="url(#accentGradient)"/>
-  </g>
-  
-  <!-- Deal/Discount tag -->
-  <g transform="translate(120, 85)">
-    <!-- Tag background -->
-    <path d="M 0 0 L 25 0 L 30 8 L 25 16 L 0 16 Z" fill="url(#accentGradient)"/>
-    <!-- Tag hole -->
-    <circle cx="6" cy="8" r="2" fill="white"/>
-    <!-- Percentage symbol -->
-    <text x="17" y="12" font-family="Inter, sans-serif" font-size="8" font-weight="bold" fill="white" text-anchor="middle">%</text>
-  </g>
-  
-  <!-- Smart brain/lightbulb element -->
-  <g transform="translate(60, 40)">
-    <!-- Lightbulb shape -->
-    <ellipse cx="10" cy="12" rx="6" ry="8" fill="url(#accentGradient)" opacity="0.9"/>
-    <!-- Lightbulb base -->
-    <rect x="7" y="18" width="6" height="3" rx="1" fill="url(#accentGradient)" opacity="0.9"/>
-    <!-- Light rays -->
-    <g stroke="url(#accentGradient)" stroke-width="1.5" opacity="0.7">
-      <line x1="2" y1="8" x2="0" y2="6"/>
-      <line x1="18" y1="8" x2="20" y2="6"/>
-      <line x1="2" y1="16" x2="0" y2="18"/>
-      <line x1="18" y1="16" x2="20" y2="18"/>
-    </g>
-  </g>
-  
-  <!-- Connecting lines for cohesion -->
-  <g stroke="white" stroke-width="1" opacity="0.4" fill="none">
-    <path d="M 75 85 Q 95 75 115 85"/>
-    <path d="M 80 95 Q 100 105 120 95"/>
-  </g>
+  <circle cx="100" cy="100" r="90" fill="url(#bluePurpleGradient)" />
+
+  <!-- Shopping Cart Icon -->
+  <path d="M65 70h5l15 50h60l10-30H90" stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="90" cy="130" r="6" fill="white"/>
+  <circle cx="130" cy="130" r="6" fill="white"/>
 </svg>
