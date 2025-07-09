@@ -11,15 +11,21 @@ function renderProducts(filterCategory = null, containerId = 'product-container'
   container.innerHTML = "";
 
   // Ensure we have products array
-  if (!window.products) {
-    console.log('Products array not available');
+  if (!window.products || window.products.length === 0) {
+    console.log('Products array not available, showing loading state');
     container.innerHTML = `
       <div class="no-products">
         <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: #9ca3af; margin-bottom: 1rem;"></i>
         <h3>Loading products...</h3>
-        <p>Please wait while we load the latest deals.</p>
+        <p>Getting the latest deals for you...</p>
+        <div class="loading-progress">
+          <div class="progress-bar" id="loadingProgress"></div>
+        </div>
       </div>
     `;
+    
+    // Start progress animation
+    animateLoadingProgress();
     return;
   }
 
@@ -47,12 +53,38 @@ function renderProducts(filterCategory = null, containerId = 'product-container'
     return;
   }
 
-  filteredProducts.forEach(product => {
+  // Animate products appearing
+  filteredProducts.forEach((product, index) => {
     const productCard = createProductCard(product);
+    productCard.style.opacity = '0';
+    productCard.style.transform = 'translateY(20px)';
     container.appendChild(productCard);
+    
+    // Stagger animation
+    setTimeout(() => {
+      productCard.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+      productCard.style.opacity = '1';
+      productCard.style.transform = 'translateY(0)';
+    }, index * 50);
   });
   
   console.log(`Rendered ${filteredProducts.length} products in ${containerId}`);
+}
+
+// Function to animate loading progress
+function animateLoadingProgress() {
+  const progressBar = document.getElementById('loadingProgress');
+  if (!progressBar) return;
+  
+  let width = 0;
+  const interval = setInterval(() => {
+    width += Math.random() * 10;
+    if (width >= 90) {
+      width = 90;
+      clearInterval(interval);
+    }
+    progressBar.style.width = width + '%';
+  }, 100);
 }
 
 // Function to create enhanced product card
@@ -146,15 +178,33 @@ function renderFeaturedProducts() {
   
   container.innerHTML = '';
   
-  featuredProducts.forEach(product => {
+  if (!window.products || window.products.length === 0) {
+    container.innerHTML = `
+      <div class="no-products">
+        <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: #9ca3af; margin-bottom: 1rem;"></i>
+        <h3>Loading featured products...</h3>
+      </div>
+    `;
+    return;
+  }
+  
+  featuredProducts.forEach((product, index) => {
     const productCard = createProductCard(product);
+    productCard.style.opacity = '0';
+    productCard.style.transform = 'translateY(20px)';
     container.appendChild(productCard);
+    
+    setTimeout(() => {
+      productCard.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+      productCard.style.opacity = '1';
+      productCard.style.transform = 'translateY(0)';
+    }, index * 100);
   });
 }
 
 // Function to show product details in modal
 function showProductDetails(productId) {
-  const product = products.find(p => p.id === productId);
+  const product = window.products.find(p => p.id === productId);
   if (!product) return;
   
   const modal = document.createElement('div');
@@ -221,7 +271,7 @@ function closeModal() {
 
 // Function to add product to wishlist
 function addToWishlist(productId) {
-  const product = products.find(p => p.id === productId);
+  const product = window.products.find(p => p.id === productId);
   if (!product) return;
   
   let wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
@@ -274,7 +324,7 @@ function trackClick(productName, category) {
 // Function to search products
 function searchProducts(query) {
   const searchTerm = query.toLowerCase();
-  return products.filter(product => 
+  return window.products.filter(product => 
     product.name.toLowerCase().includes(searchTerm) ||
     product.description.toLowerCase().includes(searchTerm) ||
     product.features.some(feature => feature.toLowerCase().includes(searchTerm)) ||
@@ -348,21 +398,21 @@ function autoRenderProducts() {
   }
 }
 
-// Enhanced initialization with retry mechanism
+// Enhanced initialization with immediate rendering
 function initializeRenderer() {
   console.log('Initializing renderer...');
   
-  // Immediate check
+  // Try to render immediately if products are available
   if (window.products && window.products.length > 0) {
     console.log('Products already available, rendering immediately');
     autoRenderProducts();
     return;
   }
   
-  // Set up retry mechanism
+  // Set up faster retry mechanism
   let retryCount = 0;
-  const maxRetries = 20; // 10 seconds total
-  const retryInterval = 500; // 500ms between retries
+  const maxRetries = 30; // 15 seconds total
+  const retryInterval = 200; // 200ms between retries - much faster
   
   const retryTimer = setInterval(() => {
     retryCount++;
@@ -373,18 +423,20 @@ function initializeRenderer() {
       clearInterval(retryTimer);
       autoRenderProducts();
     } else if (retryCount >= maxRetries) {
-      console.log('Max retries reached, stopping...');
+      console.log('Max retries reached, showing error state...');
       clearInterval(retryTimer);
       
-      // Show fallback message
-      const container = document.getElementById('product-container');
+      // Show helpful error message
+      const container = document.getElementById('product-container') || document.getElementById('featuredProductsGrid');
       if (container) {
         container.innerHTML = `
           <div class="no-products">
-            <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #f59e0b; margin-bottom: 1rem;"></i>
-            <h3>Unable to load products</h3>
-            <p>Please check your internet connection and try refreshing the page.</p>
-            <button onclick="window.location.reload()" class="btn btn-primary" style="margin-top: 1rem;">Refresh Page</button>
+            <i class="fas fa-wifi" style="font-size: 3rem; color: #f59e0b; margin-bottom: 1rem;"></i>
+            <h3>Connection Issue</h3>
+            <p>Having trouble loading products. Please check your internet connection.</p>
+            <button onclick="window.location.reload()" class="btn btn-primary" style="margin-top: 1rem;">
+              <i class="fas fa-redo"></i> Try Again
+            </button>
           </div>
         `;
       }
