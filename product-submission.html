@@ -268,6 +268,10 @@
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  
+  <!-- Facebook Integration -->
+  <script src="facebook-config.js"></script>
+  <script src="facebook-integration.js"></script>
   <script>
     // Firebase configuration
     const firebaseConfig = {
@@ -533,6 +537,28 @@
             const existing = JSON.parse(localStorage.getItem("products") || "[]");
             existing.push({ ...product, id: docRef.id });
             localStorage.setItem("products", JSON.stringify(existing));
+
+            updateProgress(90);
+            showStatus("Product submitted successfully! Posting to Facebook...", "success");
+
+            // Auto-post to Facebook
+            try {
+              if (window.FacebookIntegration) {
+                const productData = {
+                  title: product.title,
+                  price: product.price,
+                  description: product.description,
+                  link: product.link,
+                  category: product.category,
+                  imageUrl: product.imageData
+                };
+                
+                await window.FacebookIntegration.autoPostProduct(productData);
+              }
+            } catch (facebookError) {
+              console.error("Facebook posting failed:", facebookError);
+              // Don't fail the entire submission if Facebook fails
+            }
 
             updateProgress(100);
             showStatus("Product submitted successfully! Redirecting...", "success");
