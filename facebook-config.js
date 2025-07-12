@@ -10,6 +10,7 @@ const FACEBOOK_CONFIG = {
     hashtagsEnabled: true,
     includeAffiliateDisclosure: true,
     includeWebsiteLink: true,
+    useDirectAmazonLink: true, // Post will redirect directly to Amazon product page
     defaultHashtags: [
       '#SmartDeals', '#BestDeals', '#AffiliateMarketing', '#OnlineDeals',
       '#TechDeals', '#ShopSmart', '#ProductReviews', '#BestPrice'
@@ -69,7 +70,8 @@ class FacebookPoster {
     // Build post content
     let postContent = `🔥 NEW DEAL ALERT! 🔥\n\n`;
     postContent += `${title}\n\n`;
-    postContent += `💰 Price: $${price}\n\n`;
+    postContent += `💰 Special Price: $${price}\n`;
+    postContent += `🚀 Click to buy directly on Amazon!\n\n`;
     postContent += `${description}\n\n`;
     
     // Add affiliate disclosure (Amazon compliance)
@@ -82,10 +84,11 @@ class FacebookPoster {
       postContent += allHashtags.slice(0, 10).join(' ') + '\n\n';
     }
     
-    // Add website link
+    // Add direct Amazon product link
     if (this.config.postTemplate.includeWebsiteLink) {
-      postContent += `🛒 Shop Now: ${link}\n`;
-      postContent += `🌐 Visit our website: https://smartdealspro.com`;
+      postContent += `🛒 BUY NOW ON AMAZON - Limited Time Offer!\n`;
+      postContent += `⚡ Fast shipping with Prime!\n`;
+      postContent += `🌐 More exclusive deals: https://smartdealspro.com`;
     }
     
     return postContent;
@@ -104,9 +107,10 @@ class FacebookPoster {
       const imageResponse = await this.uploadImage(imageData);
       
       if (imageResponse && imageResponse.id) {
-        // Create post with image
+        // Create post with image and direct Amazon link
         const postData = {
           message: postContent,
+          link: productData.link, // Direct Amazon product link
           attached_media: [{
             media_fbid: imageResponse.id
           }]
@@ -115,9 +119,10 @@ class FacebookPoster {
         const response = await this.makePostRequest(postData);
         return response;
       } else {
-        // Post without image
+        // Post without image but with direct Amazon link
         const postData = {
-          message: postContent
+          message: postContent,
+          link: productData.link // Direct Amazon product link
         };
         
         const response = await this.makePostRequest(postData);
