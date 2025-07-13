@@ -268,6 +268,13 @@
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  
+  <!-- Facebook SDK -->
+  <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
+  
+  <!-- Facebook Configuration -->
+  <script src="facebook-config.js"></script>
+  
   <script>
     // Firebase configuration
     const firebaseConfig = {
@@ -282,19 +289,26 @@
 
     let db;
     let isSubmitting = false;
+    let facebookPoster;
     
-    // Initialize Firebase with error handling
-    function initializeFirebase() {
+    // Initialize Facebook and Firebase
+    function initializeServices() {
       return new Promise((resolve, reject) => {
         try {
+          // Initialize Firebase
           if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
           }
           db = firebase.firestore();
           console.log("Firebase initialized successfully");
+          
+          // Initialize Facebook Poster
+          facebookPoster = new FacebookPoster();
+          console.log("Facebook Poster initialized");
+          
           resolve();
         } catch (error) {
-          console.error("Firebase initialization failed:", error);
+          console.error("Service initialization failed:", error);
           reject(error);
         }
       });
@@ -385,6 +399,30 @@
         reader.readAsDataURL(file);
       });
     }
+
+    // Post to Facebook
+    async function postToFacebook(productData, imageData) {
+      try {
+        console.log('Attempting to post to Facebook...');
+        showStatus("Posting to Facebook...", "info");
+        
+        const facebookResponse = await facebookPoster.postToFacebookPage(productData, imageData);
+        
+        if (facebookResponse && facebookResponse.id) {
+          console.log('Facebook post successful:', facebookResponse.id);
+          showStatus("Successfully posted to Facebook!", "success");
+          return true;
+        } else {
+          console.warn('Facebook post failed:', facebookResponse);
+          showStatus("Facebook post failed, but product was saved.", "warning");
+          return false;
+        }
+      } catch (error) {
+        console.error('Facebook posting error:', error);
+        showStatus("Facebook posting failed: " + error.message, "warning");
+        return false;
+      }
+    }
   </script>
 
   <!-- Form Handling Script -->
@@ -394,9 +432,9 @@
       const form = document.getElementById("productForm");
       const allowedEmail = "mrazwan0310@gmail.com";
       
-      // Initialize Firebase
-      initializeFirebase().catch(error => {
-        console.error("Firebase initialization failed:", error);
+      // Initialize Services
+      initializeServices().catch(error => {
+        console.error("Service initialization failed:", error);
         showStatus("Warning: Connection issues detected. Products will be saved locally.", "warning");
       });
 
@@ -534,13 +572,23 @@
             existing.push({ ...product, id: docRef.id });
             localStorage.setItem("products", JSON.stringify(existing));
 
+            updateProgress(80);
+            showStatus("Product saved successfully! Now posting to Facebook...", "success");
+
+            // Post to Facebook
+            const facebookSuccess = await postToFacebook(product, imageData);
+            
             updateProgress(100);
-            showStatus("Product submitted successfully! Redirecting...", "success");
+            if (facebookSuccess) {
+              showStatus("Product submitted and posted to Facebook! Redirecting...", "success");
+            } else {
+              showStatus("Product submitted successfully! Facebook posting failed but product is saved. Redirecting...", "warning");
+            }
 
             // Redirect after success
             setTimeout(() => {
               window.location.href = "products.html";
-            }, 2000);
+            }, 3000);
 
           } catch (firebaseError) {
             console.error("Firebase submission failed:", firebaseError);
@@ -551,12 +599,22 @@
               existing.push({ ...product, id: 'local_' + Date.now() });
               localStorage.setItem("products", JSON.stringify(existing));
               
+              updateProgress(80);
+              showStatus("Saved locally. Now posting to Facebook...", "warning");
+              
+              // Still try to post to Facebook
+              const facebookSuccess = await postToFacebook(product, imageData);
+              
               updateProgress(100);
-              showStatus("Saved locally. Will sync when connection is restored.", "warning");
+              if (facebookSuccess) {
+                showStatus("Product saved locally and posted to Facebook! Will sync when connection is restored.", "success");
+              } else {
+                showStatus("Product saved locally. Facebook posting failed. Will sync when connection is restored.", "warning");
+              }
               
               setTimeout(() => {
                 window.location.href = "products.html";
-              }, 2000);
+              }, 3000);
               
             } catch (localError) {
               console.error("Local storage failed:", localError);
