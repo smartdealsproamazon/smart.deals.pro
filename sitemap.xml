@@ -4,13 +4,114 @@
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
             http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
-<!-- created with Free Online Sitemap Generator www.xml-sitemaps.com -->
 
-
+<!-- Homepage -->
 <url>
   <loc>https://rizwan-10html.github.io/Smart--affiliate---site/</loc>
-  <lastmod>2025-04-17T17:10:26+00:00</lastmod>
+  <lastmod>2025-01-27T12:00:00+00:00</lastmod>
+  <changefreq>daily</changefreq>
+  <priority>1.0</priority>
 </url>
 
+<!-- Category Pages -->
+<url>
+  <loc>https://rizwan-10html.github.io/Smart--affiliate---site/smartwatches.html</loc>
+  <lastmod>2025-01-27T12:00:00+00:00</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.8</priority>
+</url>
+
+<url>
+  <loc>https://rizwan-10html.github.io/Smart--affiliate---site/fashion.html</loc>
+  <lastmod>2025-01-27T12:00:00+00:00</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.8</priority>
+</url>
+
+<url>
+  <loc>https://rizwan-10html.github.io/Smart--affiliate---site/small-electrical.html</loc>
+  <lastmod>2025-01-27T12:00:00+00:00</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.8</priority>
+</url>
+
+<url>
+  <loc>https://rizwan-10html.github.io/Smart--affiliate---site/gaming.html</loc>
+  <lastmod>2025-01-27T12:00:00+00:00</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.8</priority>
+</url>
+
+<url>
+  <loc>https://rizwan-10html.github.io/Smart--affiliate---site/home-garden.html</loc>
+  <lastmod>2025-01-27T12:00:00+00:00</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.8</priority>
+</url>
+
+<!-- Important Pages -->
+<url>
+  <loc>https://rizwan-10html.github.io/Smart--affiliate---site/reviews.html</loc>
+  <lastmod>2025-01-27T12:00:00+00:00</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.7</priority>
+</url>
+
+<url>
+  <loc>https://rizwan-10html.github.io/Smart--affiliate---site/deals.html</loc>
+  <lastmod>2025-01-27T12:00:00+00:00</lastmod>
+  <changefreq>daily</changefreq>
+  <priority>0.9</priority>
+</url>
+
+<url>
+  <loc>https://rizwan-10html.github.io/Smart--affiliate---site/about.html</loc>
+  <lastmod>2025-01-27T12:00:00+00:00</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.6</priority>
+</url>
+
+<url>
+  <loc>https://rizwan-10html.github.io/Smart--affiliate---site/contact.html</loc>
+  <lastmod>2025-01-27T12:00:00+00:00</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.6</priority>
+</url>
+
+<url>
+  <loc>https://rizwan-10html.github.io/Smart--affiliate---site/product-submission.html</loc>
+  <lastmod>2025-01-27T12:00:00+00:00</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.5</priority>
+</url>
+
+<!-- Legal Pages -->
+<url>
+  <loc>https://rizwan-10html.github.io/Smart--affiliate---site/privacy-policy.html</loc>
+  <lastmod>2025-01-27T12:00:00+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.3</priority>
+</url>
+
+<url>
+  <loc>https://rizwan-10html.github.io/Smart--affiliate---site/terms.html</loc>
+  <lastmod>2025-01-27T12:00:00+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.3</priority>
+</url>
+
+<url>
+  <loc>https://rizwan-10html.github.io/Smart--affiliate---site/cookies.html</loc>
+  <lastmod>2025-01-27T12:00:00+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.3</priority>
+</url>
+
+<url>
+  <loc>https://rizwan-10html.github.io/Smart--affiliate---site/affiliate-disclosure.html</loc>
+  <lastmod>2025-01-27T12:00:00+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.3</priority>
+</url>
 
 </urlset>

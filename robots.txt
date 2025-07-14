@@ -1,0 +1,25 @@
+User-agent: *
+Allow: /
+
+# Important pages to crawl
+Allow: /index.html
+Allow: /smartwatches.html
+Allow: /fashion.html
+Allow: /gaming.html
+Allow: /small-electrical.html
+Allow: /home-garden.html
+Allow: /deals.html
+Allow: /reviews.html
+Allow: /about.html
+Allow: /contact.html
+
+# Disallow admin/temp files
+Disallow: /*.md$
+Disallow: /temp/
+Disallow: /backup/
+
+# Sitemap location
+Sitemap: https://rizwan-10html.github.io/Smart--affiliate---site/sitemap.xml
+
+# Crawl delay for polite crawling
+Crawl-delay: 1
