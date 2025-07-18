@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://smartdealspro.com/sitemap.xml
+
+# Additional crawl directives
+Crawl-delay: 1
