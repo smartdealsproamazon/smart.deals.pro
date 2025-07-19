@@ -40,17 +40,17 @@ I have comprehensively reviewed and optimized your entire SmartDeals Pro website
 
 ### Step 1: Submit Your Sitemap
 1. Go to Google Search Console → Sitemaps
-2. Submit: `https://smartdealspro.com/sitemap.xml`
+2. Submit: `https://rizwan-10html.github.io/Smart--affiliate---site/sitemap.xml`
 3. Wait for Google to process (24-48 hours)
 
 ### Step 2: Request Indexing for Priority Pages
 Use the URL Inspection tool to request indexing for:
-- `https://smartdealspro.com/` (Homepage)
-- `https://smartdealspro.com/products.html`
-- `https://smartdealspro.com/smartwatches.html`
-- `https://smartdealspro.com/fashion.html`
-- `https://smartdealspro.com/gaming.html`
-- `https://smartdealspro.com/about.html`
+- `https://rizwan-10html.github.io/Smart--affiliate---site/` (Homepage)
+- `https://rizwan-10html.github.io/Smart--affiliate---site/products.html`
+- `https://rizwan-10html.github.io/Smart--affiliate---site/smartwatches.html`
+- `https://rizwan-10html.github.io/Smart--affiliate---site/fashion.html`
+- `https://rizwan-10html.github.io/Smart--affiliate---site/gaming.html`
+- `https://rizwan-10html.github.io/Smart--affiliate---site/about.html`
 
 ### Step 3: Monitor Results
 - Check "Page Indexing" report in 1-2 weeks
@@ -102,7 +102,7 @@ Use the URL Inspection tool to request indexing for:
    - Core Web Vitals
 
 2. **Search Visibility**
-   - Use `site:smartdealspro.com` to check indexed pages
+   - Use `site:rizwan-10html.github.io/Smart--affiliate---site` to check indexed pages
    - Monitor keyword rankings
    - Track organic traffic growth
 

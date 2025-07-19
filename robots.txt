@@ -2,7 +2,7 @@ User-agent: *
 Allow: /
 
 # Sitemap location
-Sitemap: https://smartdealspro.com/sitemap.xml
+Sitemap: https://rizwan-10html.github.io/Smart--affiliate---site/sitemap.xml
 
 # Additional crawl directives
 Crawl-delay: 1

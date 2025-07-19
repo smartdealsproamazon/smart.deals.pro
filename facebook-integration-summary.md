@@ -56,7 +56,7 @@ I've successfully implemented automatic Facebook posting functionality for your 
 
    🛒 BUY NOW ON AMAZON - Limited Time Offer!
    ⚡ Fast shipping with Prime!
-   🌐 More exclusive deals: https://smartdealspro.com
+   🌐 More exclusive deals: https://rizwan-10html.github.io/Smart--affiliate---site
    ```
 
    **🎯 Direct Amazon Integration**: When customers click anywhere on the post, they go directly to the Amazon product page!

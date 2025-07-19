@@ -31,17 +31,17 @@ I've analyzed your website and implemented critical optimizations to improve Goo
 
 2. **Submit Sitemap in Google Search Console**
    - Go to Google Search Console → Sitemaps
-   - Submit: `https://smartdealspro.com/sitemap.xml`
+   - Submit: `https://rizwan-10html.github.io/Smart--affiliate---site/sitemap.xml`
    - Wait for Google to process (can take 24-48 hours)
 
 3. **Request Indexing for Key Pages**
    - Go to URL Inspection tool in Search Console
    - Test these URLs and request indexing:
-     - `https://smartdealspro.com/`
-     - `https://smartdealspro.com/products.html`
-     - `https://smartdealspro.com/deals.html`
-     - `https://smartdealspro.com/smartwatches.html`
-     - `https://smartdealspro.com/about.html`
+     - `https://rizwan-10html.github.io/Smart--affiliate---site/`
+     - `https://rizwan-10html.github.io/Smart--affiliate---site/products.html`
+     - `https://rizwan-10html.github.io/Smart--affiliate---site/deals.html`
+     - `https://rizwan-10html.github.io/Smart--affiliate---site/smartwatches.html`
+     - `https://rizwan-10html.github.io/Smart--affiliate---site/about.html`
 
 ### Monitor Progress (Next 1-2 Weeks):
 
@@ -62,7 +62,7 @@ User-agent: *
 Allow: /
 
 # Sitemap location
-Sitemap: https://smartdealspro.com/sitemap.xml
+Sitemap: https://rizwan-10html.github.io/Smart--affiliate---site/sitemap.xml
 
 # Additional crawl directives
 Crawl-delay: 1
@@ -119,7 +119,7 @@ Crawl-delay: 1
 - **Sitemaps**: Verify sitemap submission success
 
 ### External Tools:
-- Use `site:smartdealspro.com` in Google to check indexed pages
+- Use `site:rizwan-10html.github.io/Smart--affiliate---site` in Google to check indexed pages
 - Monitor with tools like Google Analytics for traffic
 
 ## 📞 Support
