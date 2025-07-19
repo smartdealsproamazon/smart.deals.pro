@@ -21,15 +21,15 @@ This guide will help you set up automatic Facebook posting for your SmartDeals P
 ## Step 2: Configure App Settings
 
 1. In your app dashboard, go to "Settings" → "Basic"
-2. Add your website URL: `https://smartdealspro.com`
-3. Add App Domains: `smartdealspro.com`
+2. Add your website URL: `https://rizwan-10html.github.io/Smart--affiliate---site`
+3. Add App Domains: `rizwan-10html.github.io/Smart--affiliate---site`
 4. Save changes
 
 ## Step 3: Set Up Facebook Login
 
 1. Go to "Products" and add "Facebook Login"
 2. In Facebook Login settings:
-   - Valid OAuth Redirect URIs: `https://smartdealspro.com/`
+   - Valid OAuth Redirect URIs: `https://rizwan-10html.github.io/Smart--affiliate---site/`
    - Web OAuth Login: Enable
    - Enforce HTTPS: Enable
 

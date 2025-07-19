@@ -88,7 +88,7 @@ class FacebookPoster {
     if (this.config.postTemplate.includeWebsiteLink) {
       postContent += `🛒 BUY NOW ON AMAZON - Limited Time Offer!\n`;
       postContent += `⚡ Fast shipping with Prime!\n`;
-      postContent += `🌐 More exclusive deals: https://smartdealspro.com`;
+      postContent += `🌐 More exclusive deals: https://rizwan-10html.github.io/Smart--affiliate---site/`;
     }
     
     return postContent;
