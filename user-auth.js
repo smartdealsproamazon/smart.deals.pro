@@ -23,12 +23,18 @@ class SmartDealsAuth {
   updateHeaderUI() {
     const signInLink = document.querySelector('a[href="sign-in.html"]');
     if (!signInLink) return;
+    
+    // Remove any existing user menu first
+    const existingUserMenu = document.querySelector('.user-menu');
+    if (existingUserMenu) {
+      existingUserMenu.remove();
+    }
 
     if (this.currentUser) {
       // User is logged in - show user menu
       signInLink.outerHTML = `
         <div class="user-menu">
-          <button class="user-menu-toggle" onclick="toggleUserMenu()">
+          <button class="user-menu-toggle" id="userMenuToggle">
             <i class="fas fa-user"></i>
             <span>${this.currentUser.name}</span>
             <i class="fas fa-chevron-down"></i>
@@ -55,6 +61,42 @@ class SmartDealsAuth {
           </div>
         </div>
       `;
+      
+      // Add event listener to the toggle button with multiple fallback approaches
+      setTimeout(() => {
+        // Method 1: Direct ID-based event listener
+        const toggleButton = document.getElementById('userMenuToggle');
+        if (toggleButton) {
+          toggleButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            this.toggleUserMenu();
+          });
+        }
+        
+        // Method 2: Class-based fallback
+        const toggleByClass = document.querySelector('.user-menu-toggle');
+        if (toggleByClass && !toggleByClass.id) {
+          toggleByClass.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            this.toggleUserMenu();
+          });
+        }
+      }, 100);
+    }
+  }
+
+  toggleUserMenu() {
+    const dropdown = document.getElementById('userMenuDropdown');
+    if (dropdown) {
+      dropdown.classList.toggle('active');
+    } else {
+      // Try fallback
+      const dropdownByClass = document.querySelector('.user-menu-dropdown');
+      if (dropdownByClass) {
+        dropdownByClass.classList.toggle('active');
+      }
     }
   }
 
@@ -333,8 +375,9 @@ class SmartDealsAuth {
 
 // Global functions for UI interactions
 function toggleUserMenu() {
-  const dropdown = document.getElementById('userMenuDropdown');
-  dropdown.classList.toggle('active');
+  if (window.smartDealsAuth) {
+    window.smartDealsAuth.toggleUserMenu();
+  }
 }
 
 function showUserProfile() {
@@ -370,11 +413,22 @@ document.addEventListener('DOMContentLoaded', function() {
   window.smartDealsAuth = new SmartDealsAuth();
 });
 
+// Global event delegation for user menu toggle (fallback)
+document.addEventListener('click', function(e) {
+  if (e.target.closest('.user-menu-toggle')) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (window.smartDealsAuth) {
+      window.smartDealsAuth.toggleUserMenu();
+    }
+  }
+});
+
 // Close user menu when clicking outside
 document.addEventListener('click', function(e) {
   if (!e.target.closest('.user-menu')) {
     const dropdown = document.getElementById('userMenuDropdown');
-    if (dropdown) {
+    if (dropdown && dropdown.classList.contains('active')) {
       dropdown.classList.remove('active');
     }
   }
