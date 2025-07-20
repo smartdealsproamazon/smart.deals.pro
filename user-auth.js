@@ -7,22 +7,39 @@ class SmartDealsAuth {
   }
 
   init() {
+    console.log('SmartDealsAuth init() called');
     this.loadCurrentUser();
     this.updateHeaderUI();
     this.setupNotifications();
     this.checkDailyNotifications();
+    console.log('SmartDealsAuth init() completed');
   }
 
   loadCurrentUser() {
     const userData = localStorage.getItem('smartdeals_currentUser');
+    console.log('Loading current user from localStorage:', !!userData);
+    
     if (userData) {
-      this.currentUser = JSON.parse(userData);
+      try {
+        this.currentUser = JSON.parse(userData);
+        console.log('Current user loaded:', this.currentUser.name, this.currentUser.email);
+      } catch (e) {
+        console.error('Error parsing user data from localStorage:', e);
+        localStorage.removeItem('smartdeals_currentUser');
+        this.currentUser = null;
+      }
+    } else {
+      console.log('No current user found in localStorage');
+      this.currentUser = null;
     }
   }
 
   updateHeaderUI() {
     const signInLink = document.querySelector('a[href="sign-in.html"]');
-    if (!signInLink) return;
+    if (!signInLink) {
+      console.log('Sign-in link not found');
+      return;
+    }
     
     // Remove any existing user menu first
     const existingUserMenu = document.querySelector('.user-menu');
@@ -31,8 +48,10 @@ class SmartDealsAuth {
     }
 
     if (this.currentUser) {
+      console.log('Updating header UI for user:', this.currentUser.name);
+      
       // User is logged in - show user menu
-      signInLink.outerHTML = `
+      const userMenuHTML = `
         <div class="user-menu">
           <button class="user-menu-toggle" id="userMenuToggle">
             <i class="fas fa-user"></i>
@@ -62,40 +81,73 @@ class SmartDealsAuth {
         </div>
       `;
       
-      // Add event listener to the toggle button with multiple fallback approaches
+      signInLink.outerHTML = userMenuHTML;
+      
+      // Add event listener to the toggle button with multiple approaches
       setTimeout(() => {
-        // Method 1: Direct ID-based event listener
-        const toggleButton = document.getElementById('userMenuToggle');
-        if (toggleButton) {
-          toggleButton.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            this.toggleUserMenu();
-          });
-        }
-        
-        // Method 2: Class-based fallback
-        const toggleByClass = document.querySelector('.user-menu-toggle');
-        if (toggleByClass && !toggleByClass.id) {
-          toggleByClass.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            this.toggleUserMenu();
-          });
-        }
+        this.attachUserMenuEvents();
       }, 100);
+      
+      // Also try immediately
+      this.attachUserMenuEvents();
+    } else {
+      console.log('No current user, keeping sign-in link');
+    }
+  }
+
+  attachUserMenuEvents() {
+    const toggleButton = document.getElementById('userMenuToggle');
+    const dropdown = document.getElementById('userMenuDropdown');
+    
+    console.log('Attaching events - Toggle button:', !!toggleButton, 'Dropdown:', !!dropdown);
+    
+    if (toggleButton && !toggleButton.hasAttribute('data-listener-attached')) {
+      console.log('Adding click listener to user menu toggle');
+      
+      // Mark as having listener to avoid duplicates
+      toggleButton.setAttribute('data-listener-attached', 'true');
+      
+      toggleButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('User menu toggle clicked');
+        this.toggleUserMenu();
+      });
+    }
+    
+    // Alternative approach - direct onclick
+    if (toggleButton && !toggleButton.onclick) {
+      toggleButton.onclick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('User menu toggle clicked via onclick');
+        this.toggleUserMenu();
+      };
     }
   }
 
   toggleUserMenu() {
+    console.log('toggleUserMenu called');
+    
     const dropdown = document.getElementById('userMenuDropdown');
+    console.log('Dropdown element found:', !!dropdown);
+    
     if (dropdown) {
+      const wasActive = dropdown.classList.contains('active');
       dropdown.classList.toggle('active');
+      const isActive = dropdown.classList.contains('active');
+      console.log('Menu toggled from', wasActive, 'to', isActive);
     } else {
+      console.log('Trying fallback selector');
       // Try fallback
       const dropdownByClass = document.querySelector('.user-menu-dropdown');
+      console.log('Fallback dropdown found:', !!dropdownByClass);
+      
       if (dropdownByClass) {
+        const wasActive = dropdownByClass.classList.contains('active');
         dropdownByClass.classList.toggle('active');
+        const isActive = dropdownByClass.classList.contains('active');
+        console.log('Fallback menu toggled from', wasActive, 'to', isActive);
       }
     }
   }
@@ -410,16 +462,23 @@ function closeModal() {
 
 // Initialize the authentication system
 document.addEventListener('DOMContentLoaded', function() {
+  console.log('DOM loaded, initializing SmartDealsAuth');
   window.smartDealsAuth = new SmartDealsAuth();
+  console.log('SmartDealsAuth initialized:', !!window.smartDealsAuth);
 });
 
 // Global event delegation for user menu toggle (fallback)
 document.addEventListener('click', function(e) {
-  if (e.target.closest('.user-menu-toggle')) {
+  const userMenuToggle = e.target.closest('.user-menu-toggle');
+  if (userMenuToggle) {
     e.preventDefault();
     e.stopPropagation();
+    console.log('Global click handler - user menu toggle clicked');
+    
     if (window.smartDealsAuth) {
       window.smartDealsAuth.toggleUserMenu();
+    } else {
+      console.log('smartDealsAuth not available in global handler');
     }
   }
 });
@@ -429,7 +488,15 @@ document.addEventListener('click', function(e) {
   if (!e.target.closest('.user-menu')) {
     const dropdown = document.getElementById('userMenuDropdown');
     if (dropdown && dropdown.classList.contains('active')) {
+      console.log('Closing user menu - clicked outside');
       dropdown.classList.remove('active');
+    }
+    
+    // Also try fallback
+    const dropdownByClass = document.querySelector('.user-menu-dropdown.active');
+    if (dropdownByClass) {
+      console.log('Closing user menu (fallback) - clicked outside');
+      dropdownByClass.classList.remove('active');
     }
   }
 });
