@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hot Deals & Discounts - SmartDeals Pro</title>
-  <meta name="description" content="Discover the hottest deals and biggest discounts on tech gadgets, electronics, fashion, and more. Limited time offers with up to 70% off!">
+  <title>All Products - SmartDeals Pro</title>
+  <meta name="description" content="Browse all products available on SmartDeals Pro. Discover the latest gadgets, fashion, electronics, and more.">
   <link rel="canonical" href="https://rizwan-10html.github.io/Smart--affiliate---site/deals.html">
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -81,22 +81,8 @@
   <section class="deals-hero">
     <div class="container">
       <div class="deals-hero-content">
-        <h1 class="deals-title">🔥 Hot Deals & Discounts</h1>
-        <p class="deals-subtitle">Save up to 70% on premium products. Limited time offers that won't last long!</p>
-        <div class="deals-stats">
-          <div class="deal-stat">
-            <span class="stat-number">50+</span>
-            <span class="stat-label">Active Deals</span>
-          </div>
-          <div class="deal-stat">
-            <span class="stat-number">70%</span>
-            <span class="stat-label">Max Discount</span>
-          </div>
-          <div class="deal-stat">
-            <span class="stat-number">24hrs</span>
-            <span class="stat-label">Updated</span>
-          </div>
-        </div>
+        <h1 class="deals-title">🛒 All Products</h1>
+        <p class="deals-subtitle">Browse our complete collection of top-rated products and the latest arrivals.</p>
       </div>
     </div>
   </section>
@@ -105,18 +91,18 @@
   <section class="deals-filters">
     <div class="container">
       <div class="filter-controls">
-        <h3>Filter Deals</h3>
+        <h3>Filter Products</h3>
         <div class="filter-buttons">
-          <button class="filter-btn active" onclick="filterDeals('all')">All Deals</button>
-          <button class="filter-btn" onclick="filterDeals('electronics')">Electronics</button>
-          <button class="filter-btn" onclick="filterDeals('fashion')">Fashion</button>
-          <button class="filter-btn" onclick="filterDeals('gaming')">Gaming</button>
-          <button class="filter-btn" onclick="filterDeals('home-garden')">Home & Garden</button>
+          <button class="filter-btn active" onclick="filterProducts('all')">All Products</button>
+          <button class="filter-btn" onclick="filterProducts('electronics')">Electronics</button>
+          <button class="filter-btn" onclick="filterProducts('fashion')">Fashion</button>
+          <button class="filter-btn" onclick="filterProducts('gaming')">Gaming</button>
+          <button class="filter-btn" onclick="filterProducts('home-garden')">Home & Garden</button>
         </div>
         <div class="sort-controls">
-          <label for="sortDeals">Sort by:</label>
-          <select id="sortDeals" onchange="sortDeals(this.value)">
-            <option value="discount">Highest Discount</option>
+          <label for="sortProducts">Sort by:</label>
+          <select id="sortProducts" onchange="sortProducts(this.value)">
+            <option value="newest">Newest</option>
             <option value="price-low">Price: Low to High</option>
             <option value="price-high">Price: High to Low</option>
             <option value="rating">Highest Rated</option>
@@ -152,8 +138,8 @@
   <!-- Deals Grid -->
   <section class="deals-section">
     <div class="container">
-      <div class="deals-grid" id="dealsGrid">
-        <!-- Deals will be populated by JavaScript -->
+      <div class="products-grid" id="allProductsGrid">
+        <!-- Products will be populated by JavaScript -->
       </div>
     </div>
   </section>
@@ -238,69 +224,61 @@
       }
     }
 
-    // Filter deals
-    function filterDeals(category) {
+    // Filter products
+    function filterProducts(category) {
       const buttons = document.querySelectorAll('.filter-btn');
       buttons.forEach(btn => btn.classList.remove('active'));
       event.target.classList.add('active');
-      
       if (category === 'all') {
-        renderDeals();
+        renderAllProducts();
       } else {
-        renderDeals(category);
+        renderAllProducts(category);
       }
     }
 
-    // Sort deals
-    function sortDeals(sortBy) {
-      const deals = getProductsOnSale();
-      let sortedDeals;
-      
+    // Sort products
+    function sortProducts(sortBy) {
+      let products = window.products ? [...window.products] : [];
       switch(sortBy) {
-        case 'discount':
-          sortedDeals = deals.sort((a, b) => b.discount - a.discount);
+        case 'newest':
+          products = products.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
           break;
         case 'price-low':
-          sortedDeals = deals.sort((a, b) => parseFloat(a.price.replace('$', '')) - parseFloat(b.price.replace('$', '')));
+          products = products.sort((a, b) => parseFloat(a.price.replace('$', '')) - parseFloat(b.price.replace('$', '')));
           break;
         case 'price-high':
-          sortedDeals = deals.sort((a, b) => parseFloat(b.price.replace('$', '')) - parseFloat(a.price.replace('$', '')));
+          products = products.sort((a, b) => parseFloat(b.price.replace('$', '')) - parseFloat(a.price.replace('$', '')));
           break;
         case 'rating':
-          sortedDeals = deals.sort((a, b) => b.rating - a.rating);
+          products = products.sort((a, b) => b.rating - a.rating);
           break;
         default:
-          sortedDeals = deals;
+          break;
       }
-      
-      renderDealsGrid(sortedDeals);
+      renderAllProducts(null, products);
     }
 
-    // Render deals
-    function renderDeals(category = null) {
-      const deals = category ? getProductsByCategory(category).filter(p => p.discount > 0) : getProductsOnSale();
-      renderDealsGrid(deals);
-    }
-
-    // Render deals grid
-    function renderDealsGrid(deals) {
-      const container = document.getElementById('dealsGrid');
+    // Render all products
+    function renderAllProducts(category = null, productsList = null) {
+      const container = document.getElementById('allProductsGrid');
+      let products = productsList || (window.products ? [...window.products] : []);
+      if (category && category !== 'all') {
+        products = products.filter(p => p.category === category);
+      }
       container.innerHTML = '';
-      
-      if (deals.length === 0) {
+      if (products.length === 0) {
         container.innerHTML = `
-          <div class="no-deals">
-            <i class="fas fa-tag" style="font-size: 3rem; color: #9ca3af; margin-bottom: 1rem;"></i>
-            <h3>No deals found</h3>
-            <p>Check back later for more amazing deals!</p>
+          <div class="no-products">
+            <i class="fas fa-box-open" style="font-size: 3rem; color: #9ca3af; margin-bottom: 1rem;"></i>
+            <h3>No products found</h3>
+            <p>Check back later for more amazing products!</p>
           </div>
         `;
         return;
       }
-      
-      deals.forEach(deal => {
-        const dealCard = createProductCard(deal);
-        container.appendChild(dealCard);
+      products.forEach(product => {
+        const productCard = createProductCard(product);
+        container.appendChild(productCard);
       });
     }
 
@@ -343,7 +321,7 @@
 
     // Initialize page
     document.addEventListener('DOMContentLoaded', function() {
-      renderDeals();
+      renderAllProducts();
       startCountdown();
     });
   </script>
@@ -467,13 +445,20 @@
       background-color: #f8fafc;
     }
 
-    .deals-grid {
+    .products-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
       gap: 2rem;
     }
 
     .no-deals {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 4rem 2rem;
+      color: #6b7280;
+    }
+
+    .no-products {
       grid-column: 1 / -1;
       text-align: center;
       padding: 4rem 2rem;

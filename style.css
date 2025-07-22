@@ -1661,3 +1661,58 @@ h4 { font-size: 1.25rem; }
     padding: 0.5rem;
   }
 }
+
+/* Remove max-width: 100% for desktop to allow proper grid layouts */
+@media (min-width: 1025px) {
+  *, *::before, *::after {
+    max-width: unset;
+  }
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+  .products-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2.5rem;
+  }
+  .categories-grid {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 2rem;
+  }
+  .testimonials-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
+  .main-header {
+    padding: 1.5rem 0;
+  }
+  .footer-content {
+    gap: 3rem;
+  }
+  .section-title, .hero-title {
+    font-size: 2.5rem;
+  }
+  .section-subtitle, .hero-subtitle {
+    font-size: 1.25rem;
+  }
+  .product-card, .category-card, .testimonial-card {
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    border-radius: 1rem;
+    background: #fff;
+    transition: box-shadow 0.2s;
+  }
+  .product-card:hover, .category-card:hover, .testimonial-card:hover {
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+  }
+  .main-header, .main-footer {
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+  .main-nav ul {
+    gap: 2.5rem;
+  }
+  .btn, .btn-primary, .btn-outline {
+    font-size: 1.1rem;
+    padding: 1rem 2rem;
+  }
+}

@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Fashion - Best Deals & Reviews | SmartDeals Pro</title>
-  <meta name="description" content="Discover the latest fashion trends with the best affiliate deals and offers for 2025. Expert reviews on clothing, accessories, and fashion items at unbeatable prices.">
-  <meta name="keywords" content="fashion deals, clothing, accessories, fashion trends, style, apparel, fashion reviews">
+  <title>Girls Fashion - Best Deals & Reviews | SmartDeals Pro</title>
+  <meta name="description" content="Discover the latest girls fashion trends with the best affiliate deals and offers for 2025. Expert reviews on girls clothing, accessories, and fashion items at unbeatable prices.">
+  <meta name="keywords" content="girls fashion deals, girls clothing, girls accessories, girls fashion trends, girls style, girls apparel, girls fashion reviews">
   <link rel="canonical" href="https://rizwan-10html.github.io/Smart--affiliate---site/fashion.html">
   
   <!-- Favicon -->
@@ -13,8 +13,8 @@
   <link rel="apple-touch-icon" sizes="180x180" href="logo.png">
   
   <!-- Open Graph Meta Tags -->
-  <meta property="og:title" content="Fashion - Best Deals & Reviews | SmartDeals Pro">
-  <meta property="og:description" content="Discover the latest fashion trends with the best affiliate deals and offers for 2025. Expert reviews on clothing, accessories, and fashion items at unbeatable prices.">
+  <meta property="og:title" content="Girls Fashion - Best Deals & Reviews | SmartDeals Pro">
+  <meta property="og:description" content="Discover the latest girls fashion trends with the best affiliate deals and offers for 2025. Expert reviews on girls clothing, accessories, and fashion items at unbeatable prices.">
   <meta property="og:image" content="https://rizwan-10html.github.io/Smart--affiliate---site/logo-social.png">
   <meta property="og:url" content="https://rizwan-10html.github.io/Smart--affiliate---site/fashion.html">
   <meta property="og:type" content="website">
@@ -22,8 +22,8 @@
   
   <!-- Twitter Card Meta Tags -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Fashion - Best Deals & Reviews | SmartDeals Pro">
-  <meta name="twitter:description" content="Discover the latest fashion trends with the best affiliate deals and offers for 2025. Expert reviews on clothing, accessories, and fashion items at unbeatable prices.">
+  <meta name="twitter:title" content="Girls Fashion - Best Deals & Reviews | SmartDeals Pro">
+  <meta name="twitter:description" content="Discover the latest girls fashion trends with the best affiliate deals and offers for 2025. Expert reviews on girls clothing, accessories, and fashion items at unbeatable prices.">
   <meta name="twitter:image" content="https://rizwan-10html.github.io/Smart--affiliate---site/logo-social.png">
   
   <!-- Additional SEO Meta Tags -->
@@ -107,6 +107,20 @@
       }
     }
   </style>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "Girls Fashion - Best Deals & Reviews",
+    "description": "Top girls fashion with expert reviews and best deals for 2025",
+    "url": "https://rizwan-10html.github.io/Smart--affiliate---site/fashion.html",
+    "mainEntity": {
+      "@type": "ItemList",
+      "name": "Best Girls Fashion",
+      "description": "Curated collection of the best girls fashion and accessories"
+    }
+  }
+  </script>
 </head>
 <body>
   <!-- Header -->
@@ -127,7 +141,7 @@
               <a href="#" class="nav-link dropdown-toggle active">Categories <i class="fas fa-chevron-down"></i></a>
               <ul class="dropdown-menu">
                 <li><a href="smartwatches.html">Smartwatches</a></li>
-                <li><a href="fashion.html">Fashion</a></li>
+                <li><a href="fashion.html">Girls Fashion</a></li>
                 <li><a href="small-electrical.html">Electronics</a></li>
                 <li><a href="gaming.html">Gaming</a></li>
                 <li><a href="home-garden.html">Home & Garden</a></li>
@@ -162,7 +176,7 @@
     <div class="mobile-menu-content">
       <a href="index.html">Home</a>
       <a href="smartwatches.html">Smartwatches</a>
-      <a href="fashion.html">Fashion</a>
+      <a href="fashion.html">Girls Fashion</a>
       <a href="small-electrical.html">Electronics</a>
       <a href="gaming.html">Gaming</a>
       <a href="home-garden.html">Home & Garden</a>
@@ -177,17 +191,17 @@
   <!-- Hero Section -->
   <section class="fashion-hero">
     <div class="container">
-      <h1 class="fashion-title">👗 Fashion & Style Deals</h1>
-      <p class="fashion-subtitle">Discover trendy clothing, accessories, and fashion essentials at unbeatable prices</p>
+      <h1 class="fashion-title">👧 Girls Fashion & Style Deals</h1>
+      <p class="fashion-subtitle">Discover trendy clothing, accessories, and fashion essentials for girls at unbeatable prices</p>
     </div>
   </section>
 
   <!-- Products Section -->
   <section class="products-section">
     <div class="container">
-      <h2 class="section-title">Featured Fashion Products</h2>
+      <h2 class="section-title">Featured Girls Fashion Products</h2>
       <div id="loadingMessage" class="loading">
-        <i class="fas fa-spinner fa-spin"></i> Loading fashion products...
+        <i class="fas fa-spinner fa-spin"></i> Loading girls fashion products...
       </div>
       <div class="products-grid" id="product-container">
         <!-- Products will be populated by JavaScript -->
@@ -219,7 +233,7 @@
           <h4>Categories</h4>
           <ul>
             <li><a href="smartwatches.html">Smartwatches</a></li>
-            <li><a href="fashion.html">Fashion</a></li>
+            <li><a href="fashion.html">Girls Fashion</a></li>
             <li><a href="small-electrical.html">Electronics</a></li>
             <li><a href="gaming.html">Gaming</a></li>
             <li><a href="home-garden.html">Home & Garden</a></li>
@@ -257,8 +271,8 @@
     function searchFashion() {
       const query = document.getElementById('headerSearch').value;
       if (query) {
-        const fashionProducts = getProductsByCategory('fashion');
-        const results = fashionProducts.filter(product => 
+        const girlsFashionProducts = getProductsByCategory('girls-fashion');
+        const results = girlsFashionProducts.filter(product => 
           product.name.toLowerCase().includes(query.toLowerCase()) ||
           product.description.toLowerCase().includes(query.toLowerCase())
         );
@@ -268,9 +282,9 @@
 
     // Render fashion products
     function renderFashionProducts() {
-      const fashionProducts = getProductsByCategory('fashion');
-      console.log('Fashion products found:', fashionProducts.length);
-      renderFashionGrid(fashionProducts);
+      const girlsFashionProducts = getProductsByCategory('girls-fashion');
+      console.log('Girls fashion products found:', girlsFashionProducts.length);
+      renderFashionGrid(girlsFashionProducts);
     }
 
     // Render fashion grid
@@ -288,10 +302,10 @@
       if (products.length === 0) {
         container.innerHTML = `
           <div class="no-products">
-            <i class="fas fa-tshirt" style="font-size: 3rem; color: #9ca3af; margin-bottom: 1rem;"></i>
-            <h3>No fashion products found</h3>
-            <p>Check back later for more fashion deals or try submitting a product!</p>
-            <a href="product-submission.html" class="btn btn-primary" style="margin-top: 1rem;">Submit a Fashion Product</a>
+            <i class="fas fa-female" style="font-size: 3rem; color: #9ca3af; margin-bottom: 1rem;"></i>
+            <h3>No girls fashion products found</h3>
+            <p>Check back later for more girls fashion deals or try submitting a product!</p>
+            <a href="product-submission.html" class="btn btn-primary" style="margin-top: 1rem;">Submit a Girls Fashion Product</a>
           </div>
         `;
         return;

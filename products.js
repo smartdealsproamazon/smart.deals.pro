@@ -165,7 +165,8 @@ function getProductsByCategory(category) {
 }
 
 function getFeaturedProducts() {
-  return (window.products || []).filter(p => p.featured || p.rating >= 4.7).slice(0, 6);
+  // Return the 6 most recently added products
+  return (window.products || []).slice(0, 6);
 }
 
 function getProductsOnSale() {
