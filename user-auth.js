@@ -4,6 +4,7 @@ class SmartDealsAuth {
   constructor() {
     this.currentUser = null;
     this.init();
+    this.observeUserMenu(); // Add observer for user menu
   }
 
   init() {
@@ -422,6 +423,16 @@ class SmartDealsAuth {
     if (modal) {
       modal.remove();
     }
+  }
+
+  observeUserMenu() {
+    // MutationObserver to watch for user menu injection
+    const headerRight = document.querySelector('.header-right');
+    if (!headerRight) return;
+    const observer = new MutationObserver(() => {
+      this.attachUserMenuEvents();
+    });
+    observer.observe(headerRight, { childList: true, subtree: true });
   }
 }
 
