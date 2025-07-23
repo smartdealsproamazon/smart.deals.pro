@@ -60,6 +60,9 @@ class SmartDealsAuth {
             <i class="fas fa-chevron-down"></i>
           </button>
           <div class="user-menu-dropdown" id="userMenuDropdown">
+            <button class="user-menu-close" id="userMenuClose" aria-label="Close user menu" tabindex="0">
+              <i class="fas fa-times"></i>
+            </button>
             <div class="user-info">
               <h4>${this.currentUser.name}</h4>
               <p>${this.currentUser.email}</p>
@@ -125,6 +128,32 @@ class SmartDealsAuth {
         this.toggleUserMenu();
       };
     }
+
+    // Add close button event
+    const closeButton = document.getElementById('userMenuClose');
+    if (closeButton && !closeButton.hasAttribute('data-listener-attached')) {
+      closeButton.setAttribute('data-listener-attached', 'true');
+      closeButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.closeUserMenu();
+      });
+      // Keyboard accessibility
+      closeButton.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          this.closeUserMenu();
+        }
+      });
+    }
+
+    // Close menu when clicking outside
+    document.addEventListener('mousedown', this._userMenuOutsideHandler = (e) => {
+      const dropdown = document.getElementById('userMenuDropdown');
+      if (dropdown && dropdown.classList.contains('active') && !dropdown.contains(e.target) && !toggleButton.contains(e.target)) {
+        this.closeUserMenu();
+      }
+    });
   }
 
   toggleUserMenu() {
@@ -150,6 +179,13 @@ class SmartDealsAuth {
         const isActive = dropdownByClass.classList.contains('active');
         console.log('Fallback menu toggled from', wasActive, 'to', isActive);
       }
+    }
+  }
+
+  closeUserMenu() {
+    const dropdown = document.getElementById('userMenuDropdown');
+    if (dropdown) {
+      dropdown.classList.remove('active');
     }
   }
 

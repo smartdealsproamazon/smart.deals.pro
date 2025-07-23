@@ -1272,25 +1272,45 @@ h4 { font-size: 1.25rem; }
 }
 
 .user-menu-dropdown {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  background: white;
-  border: 1px solid #e0e0e0;
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-  min-width: 250px;
-  z-index: 1000;
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(-10px);
-  transition: all 0.3s ease;
+  max-height: 320px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #f0c14b #f8fafc;
+  position: relative;
+  padding-top: 2.2rem;
 }
-
-.user-menu-dropdown.active {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
+.user-menu-dropdown::-webkit-scrollbar {
+  width: 7px;
+}
+.user-menu-dropdown::-webkit-scrollbar-thumb {
+  background: #f0c14b;
+  border-radius: 6px;
+}
+.user-menu-dropdown::-webkit-scrollbar-track {
+  background: #f8fafc;
+}
+.user-menu-close {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  color: #888;
+  font-size: 1.1rem;
+  cursor: pointer;
+  z-index: 2;
+  padding: 4px 6px;
+  border-radius: 50%;
+  transition: background 0.2s, color 0.2s;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.user-menu-close:hover, .user-menu-close:focus {
+  background: #f0c14b;
+  color: #222;
+  outline: none;
 }
 
 .user-info {
@@ -1715,4 +1735,35 @@ h4 { font-size: 1.25rem; }
     font-size: 1.1rem;
     padding: 1rem 2rem;
   }
+}
+
+/* Modern timer for USA Flash Sale products */
+.modern-timer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  background: linear-gradient(90deg, #ff416c 0%, #ff4b2b 100%);
+  color: #fff;
+  border-radius: 24px;
+  padding: 8px 18px;
+  margin: 12px 0 0 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(255, 65, 108, 0.12);
+  gap: 10px;
+}
+.modern-timer .timer-label {
+  font-size: 0.95em;
+  font-weight: 400;
+  margin-right: 8px;
+  opacity: 0.85;
+}
+.modern-timer .timer-value {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 1.2em;
+  letter-spacing: 1px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 8px;
+  padding: 2px 10px;
+  font-weight: 700;
 }

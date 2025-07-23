@@ -330,31 +330,38 @@
       }
     }
 
-    // Render reviews
+    // Render reviews for all products, grouped by product
     function renderReviews(category = null) {
-      const reviews = category ? getProductsByCategory(category) : products;
-      renderReviewsGrid(reviews);
-    }
-
-    // Render reviews grid
-    function renderReviewsGrid(reviews) {
-      const container = document.getElementById('reviewsGrid');
-      container.innerHTML = '';
-      
-      if (reviews.length === 0) {
-        container.innerHTML = `
-          <div class="no-reviews">
-            <i class="fas fa-star" style="font-size: 3rem; color: #9ca3af; margin-bottom: 1rem;"></i>
-            <h3>No reviews found</h3>
-            <p>Check back later for more product reviews!</p>
-          </div>
-        `;
+      const reviewsGrid = document.getElementById('reviewsGrid');
+      reviewsGrid.innerHTML = '';
+      let productsToShow = window.products;
+      if (category && category !== 'all') {
+        productsToShow = getProductsByCategory(category);
+      }
+      if (!productsToShow || productsToShow.length === 0) {
+        reviewsGrid.innerHTML = `<div class="no-reviews"><i class="fas fa-star" style="font-size: 3rem; color: #9ca3af; margin-bottom: 1rem;"></i><h3>No reviews found</h3><p>Check back later for more product reviews!</p></div>`;
         return;
       }
-      
-      reviews.slice(0, 12).forEach(product => {
-        const reviewCard = createReviewCard(product);
-        container.appendChild(reviewCard);
+      productsToShow.forEach(product => {
+        const section = document.createElement('section');
+        section.className = 'product-reviews-section';
+        section.id = `product-${product.id}`;
+        section.innerHTML = `
+          <div class="product-review-header">
+            <img src="${product.image}" alt="${product.name}" class="review-product-image" />
+            <h3 class="review-product-title">${product.name}</h3>
+          </div>
+          <div class="product-reviews-list">
+            ${(product.productReviews || []).map(r => `
+              <div class="single-review">
+                <div class="reviewer-name"><i class='fas fa-user'></i> ${r.name}</div>
+                <div class="review-date">${r.date}</div>
+                <div class="review-text">${r.text}</div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+        reviewsGrid.appendChild(section);
       });
     }
 
@@ -677,6 +684,56 @@
       text-align: center;
       padding: 4rem 2rem;
       color: #6b7280;
+    }
+
+    .product-reviews-section {
+      background: #fff;
+      border-radius: 1rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+      margin-bottom: 2.5rem;
+      padding: 2rem 1.5rem;
+    }
+    .product-review-header {
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+      margin-bottom: 1.2rem;
+    }
+    .review-product-image {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 0.5rem;
+      border: 2px solid #f0c14b;
+    }
+    .review-product-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: #1f2937;
+    }
+    .product-reviews-list {
+      margin-top: 0.5rem;
+    }
+    .single-review {
+      background: #f8fafc;
+      border-radius: 0.5rem;
+      padding: 1rem 1.2rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    }
+    .reviewer-name {
+      font-weight: 500;
+      color: #3b82f6;
+      margin-bottom: 0.2rem;
+    }
+    .review-date {
+      font-size: 0.9rem;
+      color: #9ca3af;
+      margin-bottom: 0.4rem;
+    }
+    .review-text {
+      color: #374151;
+      font-size: 1rem;
     }
 
     @media (max-width: 768px) {

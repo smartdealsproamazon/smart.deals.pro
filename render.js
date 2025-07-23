@@ -108,12 +108,27 @@ function createProductCard(product) {
   const features = product.features ? 
     product.features.slice(0, 3).map(feature => `<span class="feature-tag">${feature}</span>`).join('') : '';
 
+  // Modern timer for USA Flash Sale products
+  let timerHTML = '';
+  if (product.category === 'usa-flash-sale' && product.timer && product.createdAt) {
+    const timerId = `timer-${product.id}`;
+    timerHTML = `
+      <div class="modern-timer" id="${timerId}">
+        <span class="timer-label">Flash Sale Ends In:</span>
+        <span class="timer-value">--:--:--</span>
+      </div>
+    `;
+    setTimeout(() => {
+      startProductTimer(timerId, product.createdAt, product.timer, div);
+    }, 0);
+  }
+
   div.innerHTML = `
     ${discountBadge}
     <div class="product-image-container">
       <img src="${product.image}" alt="${product.name}" class="product-image" loading="lazy">
       <div class="product-overlay">
-        <button class="quick-view-btn" onclick="showProductDetails(${product.id})">
+        <button class="quick-view-btn" onclick="showProductDetails('${String(product.id)}')">
           <i class="fas fa-eye"></i> Quick View
         </button>
       </div>
@@ -132,6 +147,7 @@ function createProductCard(product) {
         ${originalPrice}
         <span class="current-price">${product.price}</span>
       </div>
+      ${timerHTML}
       <div class="product-buttons">
         <a href="${product.link}" target="_blank" class="btn btn-primary btn-small" onclick="trackClick('${product.name}', '${product.category}')">
           <i class="fas fa-shopping-cart"></i> Buy Now
@@ -139,11 +155,55 @@ function createProductCard(product) {
         <button class="btn btn-outline btn-small" onclick="addToWishlist(${product.id})">
           <i class="fas fa-heart"></i> Save
         </button>
+        <a href="reviews.html#product-${product.id}" class="btn btn-secondary btn-small read-reviews-btn">
+          <i class="fas fa-star"></i> Read Reviews
+        </a>
       </div>
     </div>
   `;
   
   return div;
+}
+
+// Modern timer logic for each product
+function startProductTimer(timerId, createdAt, timerMinutes, productCardDiv) {
+  const timerElem = document.getElementById(timerId);
+  if (!timerElem) return;
+  const timerValueElem = timerElem.querySelector('.timer-value');
+  const endTime = createdAt + timerMinutes * 60 * 1000;
+  function updateTimer() {
+    const now = Date.now();
+    const diff = endTime - now;
+    if (diff <= 0) {
+      // Hide product card when timer expires
+      if (productCardDiv && productCardDiv.parentNode) {
+        productCardDiv.parentNode.removeChild(productCardDiv);
+      }
+      return;
+    }
+    const totalSeconds = Math.floor(diff / 1000);
+    const days = Math.floor(totalSeconds / (60 * 60 * 24));
+    const hours = Math.floor((totalSeconds % (60 * 60 * 24)) / (60 * 60));
+    const minutes = Math.floor((totalSeconds % (60 * 60)) / 60);
+    const seconds = totalSeconds % 60;
+    let display = '';
+    if (days > 0) {
+      display = `${days}d ${hours.toString().padStart(2, '0')}:${minutes
+        .toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    } else {
+      display = `${hours.toString().padStart(2, '0')}:${minutes
+        .toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+    timerValueElem.textContent = display;
+  }
+  updateTimer();
+  const interval = setInterval(() => {
+    if (!document.body.contains(timerElem)) {
+      clearInterval(interval);
+      return;
+    }
+    updateTimer();
+  }, 1000);
 }
 
 // Function to generate star ratings
@@ -204,7 +264,7 @@ function renderFeaturedProducts() {
 
 // Function to show product details in modal
 function showProductDetails(productId) {
-  const product = window.products.find(p => p.id === productId);
+  const product = window.products.find(p => String(p.id) === String(productId));
   if (!product) return;
   
   const modal = document.createElement('div');
@@ -271,7 +331,7 @@ function closeModal() {
 
 // Function to add product to wishlist
 function addToWishlist(productId) {
-  const product = window.products.find(p => p.id === productId);
+  const product = window.products.find(p => String(p.id) === String(productId));
   if (!product) return;
   
   let wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
