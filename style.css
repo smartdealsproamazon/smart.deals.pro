@@ -1272,25 +1272,45 @@ h4 { font-size: 1.25rem; }
 }
 
 .user-menu-dropdown {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  background: white;
-  border: 1px solid #e0e0e0;
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-  min-width: 250px;
-  z-index: 1000;
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(-10px);
-  transition: all 0.3s ease;
+  max-height: 320px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #f0c14b #f8fafc;
+  position: relative;
+  padding-top: 2.2rem;
 }
-
-.user-menu-dropdown.active {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
+.user-menu-dropdown::-webkit-scrollbar {
+  width: 7px;
+}
+.user-menu-dropdown::-webkit-scrollbar-thumb {
+  background: #f0c14b;
+  border-radius: 6px;
+}
+.user-menu-dropdown::-webkit-scrollbar-track {
+  background: #f8fafc;
+}
+.user-menu-close {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  color: #888;
+  font-size: 1.1rem;
+  cursor: pointer;
+  z-index: 2;
+  padding: 4px 6px;
+  border-radius: 50%;
+  transition: background 0.2s, color 0.2s;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.user-menu-close:hover, .user-menu-close:focus {
+  background: #f0c14b;
+  color: #222;
+  outline: none;
 }
 
 .user-info {
