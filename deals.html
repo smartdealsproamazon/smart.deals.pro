@@ -39,7 +39,7 @@
               </ul>
             </li>
             <li><a href="reviews.html" class="nav-link">Reviews</a></li>
-            <li><a href="deals.html" class="nav-link active">Hot Deals</a></li>
+            <li><a href="deals.html" class="nav-link active">All Products</a></li>
             <li><a href="about.html" class="nav-link">About</a></li>
             <li><a href="contact.html" class="nav-link">Contact</a></li>
           </ul>
@@ -71,7 +71,7 @@
       <a href="gaming.html">Gaming</a>
       <a href="home-garden.html">Home & Garden</a>
       <a href="reviews.html">Reviews</a>
-      <a href="deals.html">Hot Deals</a>
+      <a href="deals.html">All Products</a>
       <a href="about.html">About</a>
       <a href="contact.html">Contact</a>
     </div>
@@ -107,29 +107,6 @@
             <option value="price-high">Price: High to Low</option>
             <option value="rating">Highest Rated</option>
           </select>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Flash Deals Timer -->
-  <section class="flash-deals">
-    <div class="container">
-      <div class="flash-deals-header">
-        <h2>⚡ Flash Deals</h2>
-        <div class="countdown-timer" id="flashTimer">
-          <div class="timer-unit">
-            <span id="hours">12</span>
-            <label>Hours</label>
-          </div>
-          <div class="timer-unit">
-            <span id="minutes">34</span>
-            <label>Minutes</label>
-          </div>
-          <div class="timer-unit">
-            <span id="seconds">56</span>
-            <label>Seconds</label>
-          </div>
         </div>
       </div>
     </div>
@@ -176,7 +153,7 @@
             <li><a href="about.html">About Us</a></li>
             <li><a href="contact.html">Contact</a></li>
             <li><a href="reviews.html">Reviews</a></li>
-            <li><a href="deals.html">Hot Deals</a></li>
+            <li><a href="deals.html">All Products</a></li>
           </ul>
         </div>
         <div class="footer-section">
@@ -289,40 +266,9 @@
       event.target.reset();
     }
 
-    // Flash deals countdown timer
-    function startCountdown() {
-      const hoursEl = document.getElementById('hours');
-      const minutesEl = document.getElementById('minutes');
-      const secondsEl = document.getElementById('seconds');
-      
-      let hours = 12;
-      let minutes = 34;
-      let seconds = 56;
-      
-      setInterval(() => {
-        seconds--;
-        if (seconds < 0) {
-          seconds = 59;
-          minutes--;
-          if (minutes < 0) {
-            minutes = 59;
-            hours--;
-            if (hours < 0) {
-              hours = 23;
-            }
-          }
-        }
-        
-        hoursEl.textContent = hours.toString().padStart(2, '0');
-        minutesEl.textContent = minutes.toString().padStart(2, '0');
-        secondsEl.textContent = seconds.toString().padStart(2, '0');
-      }, 1000);
-    }
-
     // Initialize page
     document.addEventListener('DOMContentLoaded', function() {
       renderAllProducts();
-      startCountdown();
     });
   </script>
 
@@ -404,42 +350,6 @@
       border-radius: 0.25rem;
     }
 
-    .flash-deals {
-      background-color: #fef3c7;
-      padding: 2rem 0;
-    }
-
-    .flash-deals-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .countdown-timer {
-      display: flex;
-      gap: 1rem;
-    }
-
-    .timer-unit {
-      text-align: center;
-      background-color: #1f2937;
-      color: white;
-      padding: 1rem;
-      border-radius: 0.5rem;
-      min-width: 80px;
-    }
-
-    .timer-unit span {
-      display: block;
-      font-size: 1.5rem;
-      font-weight: 700;
-    }
-
-    .timer-unit label {
-      font-size: 0.8rem;
-      opacity: 0.8;
-    }
-
     .deals-section {
       padding: 3rem 0;
       background-color: #f8fafc;
@@ -478,15 +388,6 @@
       .filter-controls {
         flex-direction: column;
         align-items: stretch;
-      }
-      
-      .flash-deals-header {
-        flex-direction: column;
-        gap: 1rem;
-      }
-      
-      .countdown-timer {
-        justify-content: center;
       }
     }
   </style>
