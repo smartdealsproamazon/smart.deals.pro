@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>USA Flash Sale | SmartDeals Pro</title>
+  <meta name="description" content="Exclusive discounts for USA shoppers! Limited-time deals, flash sales, and special offers for American visitors only.">
+  <link rel="canonical" href="https://rizwan-10html.github.io/Smart--affiliate---site/usa-discount.html">
+  <meta name="robots" content="index, follow">
+  <meta name="geo.region" content="US" />
+  <meta name="geo.placename" content="United States" />
+  <meta name="geo.position" content="39.78373;-100.445882" />
+  <meta name="ICBM" content="39.78373, -100.445882" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .usa-hero {
+      background: linear-gradient(135deg, #1e3a8a 0%, #f59e42 100%);
+      color: white;
+      padding: 4rem 0 2rem 0;
+      text-align: center;
+    }
+    .usa-hero img {
+      max-width: 120px;
+      margin-bottom: 1rem;
+    }
+    .usa-timer-section {
+      background: #fff7ed;
+      padding: 2rem 0;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .usa-timer-header {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #ea580c;
+      margin-bottom: 1rem;
+    }
+    .usa-countdown {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      font-size: 1.5rem;
+    }
+    .usa-timer-unit {
+      background: #1e293b;
+      color: #fff;
+      padding: 1rem 2rem;
+      border-radius: 0.5rem;
+      min-width: 80px;
+    }
+    .usa-timer-unit span {
+      display: block;
+      font-size: 2rem;
+      font-weight: 700;
+    }
+    .usa-timer-unit label {
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+    .usa-products-section {
+      padding: 2rem 0 4rem 0;
+      background: #f8fafc;
+    }
+    .usa-products-title {
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 2rem;
+      color: #1e293b;
+    }
+    .usa-products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .usa-product-card {
+      background: #fff;
+      border-radius: 1rem;
+      box-shadow: 0 2px 12px rgba(30,41,59,0.08);
+      padding: 1.5rem;
+      text-align: center;
+      transition: box-shadow 0.2s;
+    }
+    .usa-product-card:hover {
+      box-shadow: 0 4px 24px rgba(30,41,59,0.16);
+    }
+    .usa-product-image {
+      max-width: 100%;
+      border-radius: 0.5rem;
+      margin-bottom: 1rem;
+      height: 180px;
+      object-fit: cover;
+    }
+    .usa-product-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: #1e293b;
+    }
+    .usa-product-price {
+      color: #ea580c;
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+    .usa-product-desc {
+      color: #64748b;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+    }
+    .usa-product-btn {
+      background: #ea580c;
+      color: #fff;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .usa-product-btn:hover {
+      background: #c2410c;
+    }
+  </style>
+</head>
+<body>
+  <header class="main-header">
+    <div class="container">
+      <div class="header-content">
+        <div class="header-left">
+          <a href="index.html" class="logo-link">
+            <img src="logo.svg" alt="SmartDeals Pro Logo" class="logo" />
+            <span class="logo-text">SmartDeals Pro</span>
+          </a>
+        </div>
+        <nav class="main-nav">
+          <ul>
+            <li><a href="index.html" class="nav-link">Home</a></li>
+            <li><a href="deals.html" class="nav-link">All Products</a></li>
+            <li><a href="usa-discount.html" class="nav-link active">USA Flash Sale</a></li>
+            <li><a href="about.html" class="nav-link">About</a></li>
+            <li><a href="contact.html" class="nav-link">Contact</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <section class="usa-hero">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/a/a4/Flag_of_the_United_States.svg" alt="USA Flag">
+    <h1>🇺🇸 USA Flash Sale</h1>
+    <p>Special limited-time offers for our American shoppers! Grab your deal before the timer runs out.</p>
+  </section>
+
+  <section class="usa-timer-section">
+    <div class="usa-timer-header">Flash Sale Ends In:</div>
+    <div class="usa-countdown" id="usaCountdown">
+      <div class="usa-timer-unit">
+        <span id="usaHours">12</span>
+        <label>Hours</label>
+      </div>
+      <div class="usa-timer-unit">
+        <span id="usaMinutes">34</span>
+        <label>Minutes</label>
+      </div>
+      <div class="usa-timer-unit">
+        <span id="usaSeconds">56</span>
+        <label>Seconds</label>
+      </div>
+    </div>
+  </section>
+
+  <section class="usa-products-section">
+    <h2 class="usa-products-title">USA-Only Discounted Products</h2>
+    <div class="products-grid" id="usaProductsGrid"></div>
+  </section>
+
+  <footer class="main-footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>SmartDeals Pro</h3>
+          <p>Your trusted source for the best affiliate deals and product reviews. We help you shop smarter and save money.</p>
+        </div>
+        <div class="footer-section">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="deals.html">All Products</a></li>
+            <li><a href="usa-discount.html">USA Flash Sale</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Categories</h4>
+          <ul>
+            <li><a href="smartwatches.html">Boys Fashion</a></li>
+            <li><a href="fashion.html">Girls Fashion</a></li>
+            <li><a href="small-electrical.html">Electronics</a></li>
+            <li><a href="gaming.html">Gaming</a></li>
+            <li><a href="home-garden.html">Home & Garden</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="privacy-policy.html">Privacy Policy</a></li>
+            <li><a href="terms.html">Terms of Service</a></li>
+            <li><a href="affiliate-disclosure.html">Affiliate Disclosure</a></li>
+            <li><a href="cookies.html">Cookie Policy</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 SmartDeals Pro. All rights reserved.</p>
+        <p class="affiliate-disclaimer">This site contains affiliate links. We may earn a commission when you purchase through links on our site — at no extra cost to you.</p>
+      </div>
+    </div>
+  </footer>
+  <script src="products.js"></script>
+  <script src="render.js"></script>
+  <script>
+    // USA Timer Countdown
+    function startUSACountdown() {
+      let hours = 12;
+      let minutes = 34;
+      let seconds = 56;
+      const hoursEl = document.getElementById('usaHours');
+      const minutesEl = document.getElementById('usaMinutes');
+      const secondsEl = document.getElementById('usaSeconds');
+      setInterval(() => {
+        seconds--;
+        if (seconds < 0) {
+          seconds = 59;
+          minutes--;
+          if (minutes < 0) {
+            minutes = 59;
+            hours--;
+            if (hours < 0) {
+              hours = 23;
+            }
+          }
+        }
+        hoursEl.textContent = hours.toString().padStart(2, '0');
+        minutesEl.textContent = minutes.toString().padStart(2, '0');
+        secondsEl.textContent = seconds.toString().padStart(2, '0');
+      }, 1000);
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+      startUSACountdown();
+      renderProducts('usa-flash-sale', 'usaProductsGrid');
+    });
+  </script>
+</body>
+</html>
