@@ -32,7 +32,8 @@ function normalizeProduct(prod, idx = 0) {
     description: prod.description || '',
     features: prod.features || [],
     discount: prod.discount || 0,
-    featured: Boolean(prod.featured)
+    featured: Boolean(prod.featured),
+    productReviews: prod.productReviews || generateRandomReviews(prod.title || prod.name)
   };
 }
 
@@ -112,6 +113,7 @@ function initProducts() {
       );
 
       window.products = uniqueProducts.map((p, idx) => normalizeProduct(p, idx));
+      persistProductReviews();
 
       // Save to localStorage for next time
       localStorage.setItem('products', JSON.stringify(uniqueProducts));
@@ -157,6 +159,56 @@ if (cachedProducts.length === 0 || shouldRefreshCache()) {
   loadFirebase(initProducts);
 } else {
   console.log('Using fresh cached data, skipping Firebase load');
+}
+
+// Helper: Generate random reviews for a product
+function generateRandomReviews(productName) {
+  const names = [
+    'Emily Johnson', 'Michael Smith', 'Jessica Brown', 'David Miller', 'Ashley Wilson',
+    'James Anderson', 'Sarah Lee', 'John Davis', 'Amanda Clark', 'Daniel Martinez',
+    'Olivia Harris', 'Matthew Lewis', 'Sophia Young', 'Benjamin Hall', 'Ava King',
+    'William Wright', 'Mia Scott', 'Ethan Green', 'Isabella Adams', 'Alexander Baker'
+  ];
+  const reviewTemplates = [
+    `Absolutely love my {product}! Highly recommended for anyone in the USA!`,
+    `Great value for money. {product} exceeded my expectations!`,
+    `Fast shipping and the quality is top-notch. Will buy again.`,
+    `I was skeptical at first, but {product} is worth every penny.`,
+    `Customer service was excellent and the product works perfectly.`,
+    `This is the best {product} I've ever used.`,
+    `My family and friends are impressed with my new {product}.`,
+    `Five stars! Will recommend to everyone.`,
+    `The design and features are amazing.`,
+    `Perfect for my needs. Thank you!`
+  ];
+  const reviewCount = Math.floor(Math.random() * 2) + 3; // 3 or 4 reviews
+  const usedNames = [];
+  const reviews = [];
+  for (let i = 0; i < reviewCount; i++) {
+    let name;
+    do {
+      name = names[Math.floor(Math.random() * names.length)];
+    } while (usedNames.includes(name));
+    usedNames.push(name);
+    const template = reviewTemplates[Math.floor(Math.random() * reviewTemplates.length)];
+    reviews.push({
+      name,
+      text: template.replace('{product}', productName),
+      date: new Date(Date.now() - Math.floor(Math.random() * 10000000000)).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+    });
+  }
+  return reviews;
+}
+
+// After window.products is set/updated, persist reviews for all products
+function persistProductReviews() {
+  if (!window.products) return;
+  const products = JSON.parse(localStorage.getItem('products') || '[]');
+  window.products.forEach((p, idx) => {
+    if (!products[idx]) return;
+    products[idx].productReviews = p.productReviews;
+  });
+  localStorage.setItem('products', JSON.stringify(products));
 }
 
 // ----------------- Existing helper APIs (still required by the rest of the code) --------------

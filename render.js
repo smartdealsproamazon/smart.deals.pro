@@ -155,6 +155,9 @@ function createProductCard(product) {
         <button class="btn btn-outline btn-small" onclick="addToWishlist(${product.id})">
           <i class="fas fa-heart"></i> Save
         </button>
+        <a href="reviews.html#product-${product.id}" class="btn btn-secondary btn-small read-reviews-btn">
+          <i class="fas fa-star"></i> Read Reviews
+        </a>
       </div>
     </div>
   `;
