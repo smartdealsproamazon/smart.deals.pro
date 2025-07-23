@@ -128,7 +128,7 @@ function createProductCard(product) {
     <div class="product-image-container">
       <img src="${product.image}" alt="${product.name}" class="product-image" loading="lazy">
       <div class="product-overlay">
-        <button class="quick-view-btn" onclick="showProductDetails(${product.id})">
+        <button class="quick-view-btn" onclick="showProductDetails('${String(product.id)}')">
           <i class="fas fa-eye"></i> Quick View
         </button>
       </div>
@@ -264,7 +264,7 @@ function renderFeaturedProducts() {
 
 // Function to show product details in modal
 function showProductDetails(productId) {
-  const product = window.products.find(p => p.id === productId);
+  const product = window.products.find(p => String(p.id) === String(productId));
   if (!product) return;
   
   const modal = document.createElement('div');
@@ -331,7 +331,7 @@ function closeModal() {
 
 // Function to add product to wishlist
 function addToWishlist(productId) {
-  const product = window.products.find(p => p.id === productId);
+  const product = window.products.find(p => String(p.id) === String(productId));
   if (!product) return;
   
   let wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
