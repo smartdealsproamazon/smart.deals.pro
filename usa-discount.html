@@ -180,36 +180,7 @@
 
   <section class="usa-products-section">
     <h2 class="usa-products-title">USA-Only Discounted Products</h2>
-    <div class="usa-products-grid">
-      <div class="usa-product-card">
-        <img src="https://images.unsplash.com/photo-1519125323398-675f0ddb6308?w=400&h=300&fit=crop" alt="Boys Fashion USA" class="usa-product-image">
-        <div class="usa-product-title">Boys Fashion Watch</div>
-        <div class="usa-product-price">$29.99 <span style="text-decoration:line-through;color:#64748b;font-size:0.9rem;">$49.99</span></div>
-        <div class="usa-product-desc">Trendy boys' digital watch, exclusive USA discount.</div>
-        <a href="#" class="usa-product-btn">Shop Now</a>
-      </div>
-      <div class="usa-product-card">
-        <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&h=300&fit=crop" alt="Girls Fashion USA" class="usa-product-image">
-        <div class="usa-product-title">Girls Summer Dress</div>
-        <div class="usa-product-price">$19.99 <span style="text-decoration:line-through;color:#64748b;font-size:0.9rem;">$39.99</span></div>
-        <div class="usa-product-desc">Beautiful summer dress for girls, limited-time USA offer.</div>
-        <a href="#" class="usa-product-btn">Shop Now</a>
-      </div>
-      <div class="usa-product-card">
-        <img src="https://images.unsplash.com/photo-1498049794561-7780e7231661?w=400&h=300&fit=crop" alt="Electronics USA" class="usa-product-image">
-        <div class="usa-product-title">Wireless Earbuds</div>
-        <div class="usa-product-price">$49.99 <span style="text-decoration:line-through;color:#64748b;font-size:0.9rem;">$79.99</span></div>
-        <div class="usa-product-desc">Top-rated wireless earbuds, special price for USA visitors.</div>
-        <a href="#" class="usa-product-btn">Shop Now</a>
-      </div>
-      <div class="usa-product-card">
-        <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=300&fit=crop" alt="Home & Garden USA" class="usa-product-image">
-        <div class="usa-product-title">Garden Tool Set</div>
-        <div class="usa-product-price">$34.99 <span style="text-decoration:line-through;color:#64748b;font-size:0.9rem;">$59.99</span></div>
-        <div class="usa-product-desc">Complete garden tool set, exclusive for USA shoppers.</div>
-        <a href="#" class="usa-product-btn">Shop Now</a>
-      </div>
-    </div>
+    <div class="products-grid" id="usaProductsGrid"></div>
   </section>
 
   <footer class="main-footer">
@@ -255,6 +226,8 @@
       </div>
     </div>
   </footer>
+  <script src="products.js"></script>
+  <script src="render.js"></script>
   <script>
     // USA Timer Countdown
     function startUSACountdown() {
@@ -282,7 +255,10 @@
         secondsEl.textContent = seconds.toString().padStart(2, '0');
       }, 1000);
     }
-    document.addEventListener('DOMContentLoaded', startUSACountdown);
+    document.addEventListener('DOMContentLoaded', function() {
+      startUSACountdown();
+      renderProducts('usa-flash-sale', 'usaProductsGrid');
+    });
   </script>
 </body>
 </html>

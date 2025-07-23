@@ -233,8 +233,16 @@
           <option value="electrical">Electronics</option>
           <option value="gaming">Gaming</option>
           <option value="home-garden">Home & Garden</option>
+          <option value="usa-flash-sale">USA Flash Sale</option>
         </select>
         <span class="error" id="categoryError"></span>
+      </div>
+
+      <!-- After category select -->
+      <div class="form-group" id="discountGroup" style="display:none;">
+        <label for="discount">Discount (%)</label>
+        <input type="number" id="discount" min="0" max="99" step="1" />
+        <span class="error" id="discountError"></span>
       </div>
 
       <div class="form-group">
@@ -481,6 +489,7 @@
           const link = document.getElementById("productLink").value.trim();
           const email = document.getElementById("email").value.trim();
           const category = document.getElementById("category").value;
+          const discount = document.getElementById('discount').value.trim();
 
           let valid = true;
 
@@ -527,6 +536,11 @@
             valid = false;
           }
 
+          if (category === 'usa-flash-sale' && (!discount || isNaN(discount) || parseInt(discount) <= 0)) {
+            document.getElementById('discountError').textContent = 'Please enter a valid discount.';
+            valid = false;
+          }
+
           if (!valid) {
             showStatus("Please fix the validation errors above.", "error");
             resetFormState();
@@ -559,6 +573,10 @@
             createdAt: Date.now(),
             submittedBy: email
           };
+
+          if (category === 'usa-flash-sale') {
+            product.discount = parseInt(discount);
+          }
 
           // Try to submit to Firebase with timeout
           let docRef;
@@ -628,6 +646,17 @@
           console.error("Submission error:", error);
           showStatus(`Error: ${error.message}`, "error");
           resetFormState();
+        }
+      });
+
+      const categorySelect = document.getElementById('category');
+      const discountGroup = document.getElementById('discountGroup');
+      categorySelect.addEventListener('change', function() {
+        if (categorySelect.value === 'usa-flash-sale') {
+          discountGroup.style.display = 'block';
+        } else {
+          discountGroup.style.display = 'none';
+          document.getElementById('discount').value = '';
         }
       });
     });
