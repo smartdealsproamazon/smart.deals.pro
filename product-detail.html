@@ -31,10 +31,14 @@
     }
     
     .product-detail-header {
+      padding: 3rem;
+    }
+    
+    .product-basic-info {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 3rem;
-      padding: 3rem;
+      margin-bottom: 3rem;
     }
     
     .product-image-section {
@@ -112,15 +116,28 @@
       font-size: 1.1rem;
       line-height: 1.7;
       color: #4b5563;
-      margin-bottom: 2rem;
+      margin-bottom: 3rem;
       background: #f9fafb;
-      padding: 1.5rem;
-      border-radius: 10px;
+      padding: 2rem;
+      border-radius: 15px;
       border-left: 4px solid #3b82f6;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    }
+    
+    .product-features-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: start;
     }
     
     .product-features {
       margin-bottom: 2rem;
+    }
+    
+    .product-features-container {
+      display: flex;
+      flex-direction: column;
     }
     
     .features-title {
@@ -149,6 +166,7 @@
       display: flex;
       gap: 1rem;
       flex-wrap: wrap;
+      margin-top: auto; /* Push to bottom if in flex container */
     }
     
     .btn-primary {
@@ -262,12 +280,20 @@
       transform: translateY(-2px);
     }
     
-    @media (max-width: 768px) {
-      .product-detail-header {
-        grid-template-columns: 1fr;
-        gap: 2rem;
-        padding: 2rem;
-      }
+          @media (max-width: 768px) {
+        .product-detail-header {
+          padding: 2rem;
+        }
+        
+        .product-basic-info {
+          grid-template-columns: 1fr;
+          gap: 2rem;
+        }
+        
+        .product-features-actions {
+          grid-template-columns: 1fr;
+          gap: 2rem;
+        }
       
       .product-title {
         font-size: 1.8rem;
@@ -277,9 +303,15 @@
         font-size: 1.8rem;
       }
       
-      .product-actions {
-        flex-direction: column;
-      }
+              .product-actions {
+          flex-direction: column;
+          margin-top: 0;
+        }
+        
+        .product-description {
+          padding: 1.5rem;
+          margin-bottom: 2rem;
+        }
       
       .back-to-products {
         position: static;
@@ -320,7 +352,7 @@
   </style>
 </head>
 <body class="product-detail-page">
-  <a href="products.html" class="back-to-products">
+  <a href="products.html" class="back-to-products" id="backButton">
     <i class="fas fa-arrow-left"></i> Back to Products
   </a>
 
@@ -375,7 +407,7 @@
             <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 1rem;"></i>
             <h2>Product Not Found</h2>
             <p>The product you're looking for doesn't exist or may have been removed.</p>
-            <a href="products.html" class="btn-primary" style="margin-top: 1rem;">
+            <a href="products.html" class="btn-primary" style="margin-top: 1rem;" id="backButtonError">
               <i class="fas fa-arrow-left"></i> Back to Products
             </a>
           </div>
@@ -404,36 +436,42 @@
 
       contentDiv.innerHTML = `
         <div class="product-detail-header">
-          <div class="product-image-section">
-            <img src="${product.image}" alt="${product.name}" class="product-main-image" />
+          <div class="product-basic-info">
+            <div class="product-image-section">
+              <img src="${product.image}" alt="${product.name}" class="product-main-image" />
+            </div>
+            
+            <div class="product-info-section">
+              <h1 class="product-title">${product.name}</h1>
+              
+              <div class="product-rating">
+                <div class="stars">${generateStars(product.rating)}</div>
+                <span class="rating-text">${product.rating} out of 5 (${product.reviews} reviews)</span>
+              </div>
+              
+              <div class="product-price-section">
+                <span class="current-price">${product.price}</span>
+                ${product.originalPrice && product.originalPrice !== product.price ? `<span class="original-price">${product.originalPrice}</span>` : ''}
+                ${discountHTML}
+              </div>
+            </div>
           </div>
           
-          <div class="product-info-section">
-            <h1 class="product-title">${product.name}</h1>
-            
-            <div class="product-rating">
-              <div class="stars">${generateStars(product.rating)}</div>
-              <span class="rating-text">${product.rating} out of 5 (${product.reviews} reviews)</span>
+          <div class="product-description">
+            <strong>Product Description:</strong><br>
+            ${product.description}
+          </div>
+          
+          <div class="product-features-actions">
+            <div class="product-features-container">
+              ${featuresHTML}
             </div>
-            
-            <div class="product-price-section">
-              <span class="current-price">${product.price}</span>
-              ${product.originalPrice && product.originalPrice !== product.price ? `<span class="original-price">${product.originalPrice}</span>` : ''}
-              ${discountHTML}
-            </div>
-            
-            <div class="product-description">
-              <strong>Product Description:</strong><br>
-              ${product.description}
-            </div>
-            
-            ${featuresHTML}
             
             <div class="product-actions">
               <a href="${product.link}" target="_blank" rel="noopener noreferrer" class="btn-primary">
                 <i class="fas fa-shopping-cart"></i> Buy Now
               </a>
-              <a href="products.html" class="btn-secondary">
+              <a href="products.html" class="btn-secondary" id="backButtonSecondary">
                 <i class="fas fa-arrow-left"></i> Back to Products
               </a>
             </div>
@@ -445,6 +483,17 @@
       if (product.productReviews && product.productReviews.length > 0) {
         renderReviews(product.productReviews);
       }
+      
+      // Update navigation after rendering
+      setTimeout(() => {
+        if (window.navigationInfo) {
+          const backButtonSecondary = document.getElementById('backButtonSecondary');
+          if (backButtonSecondary) {
+            backButtonSecondary.href = window.navigationInfo.backUrl;
+            backButtonSecondary.innerHTML = `<i class="fas fa-arrow-left"></i> ${window.navigationInfo.backText}`;
+          }
+        }
+      }, 100);
     }
 
     // Render product reviews
@@ -524,8 +573,113 @@
       }
     }
 
+    // Function to setup navigation based on referrer
+    function setupNavigation() {
+      // Get referrer URL parameter (passed from links)
+      const referrer = getQueryParam('ref');
+      
+      // Get browser referrer as fallback
+      const browserReferrer = document.referrer;
+      
+      let backUrl = 'products.html';
+      let backText = 'Back to Products';
+      
+      // Check URL parameter first (most reliable)
+      if (referrer) {
+        backUrl = referrer;
+        // Determine text based on referrer page
+        if (referrer.includes('fashion')) {
+          backText = 'Back to Fashion';
+        } else if (referrer.includes('gaming')) {
+          backText = 'Back to Gaming';
+        } else if (referrer.includes('smartwatch')) {
+          backText = 'Back to Smartwatches';
+        } else if (referrer.includes('small-electrical')) {
+          backText = 'Back to Electronics';
+        } else if (referrer.includes('home-garden')) {
+          backText = 'Back to Home & Garden';
+        } else if (referrer.includes('deals')) {
+          backText = 'Back to Deals';
+        } else if (referrer.includes('index.html') || referrer === '/' || referrer === '') {
+          backText = 'Back to Home';
+        }
+      } 
+      // Fallback to browser referrer if no URL parameter
+      else if (browserReferrer && browserReferrer.includes(window.location.hostname)) {
+        const referrerFilename = browserReferrer.split('/').pop().split('?')[0];
+        if (referrerFilename && referrerFilename !== 'product-detail.html') {
+          backUrl = referrerFilename;
+          
+          // Set appropriate text based on referrer filename
+          if (referrerFilename.includes('fashion')) {
+            backText = 'Back to Fashion';
+          } else if (referrerFilename.includes('gaming')) {
+            backText = 'Back to Gaming';
+          } else if (referrerFilename.includes('smartwatch')) {
+            backText = 'Back to Smartwatches';
+          } else if (referrerFilename.includes('small-electrical')) {
+            backText = 'Back to Electronics';
+          } else if (referrerFilename.includes('home-garden')) {
+            backText = 'Back to Home & Garden';
+          } else if (referrerFilename.includes('deals')) {
+            backText = 'Back to Deals';
+          } else if (referrerFilename.includes('index.html') || referrerFilename === '') {
+            backText = 'Back to Home';
+          }
+        }
+      }
+      
+      // Update all back buttons
+      const backButton = document.getElementById('backButton');
+      const backButtonSecondary = document.getElementById('backButtonSecondary');
+      const backButtonError = document.getElementById('backButtonError');
+      
+      if (backButton) {
+        backButton.href = backUrl;
+        backButton.innerHTML = `<i class="fas fa-arrow-left"></i> ${backText}`;
+      }
+      
+      if (backButtonSecondary) {
+        backButtonSecondary.href = backUrl;
+        backButtonSecondary.innerHTML = `<i class="fas fa-arrow-left"></i> ${backText}`;
+      }
+      
+      if (backButtonError) {
+        backButtonError.href = backUrl;
+        backButtonError.innerHTML = `<i class="fas fa-arrow-left"></i> ${backText}`;
+      }
+      
+      console.log(`Navigation setup: Back to ${backUrl} with text "${backText}"`);
+      
+      // Store the navigation info globally for later use
+      window.navigationInfo = { backUrl, backText };
+      
+      // Set up a mutation observer to handle dynamically created buttons
+      const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+          mutation.addedNodes.forEach(function(node) {
+            if (node.nodeType === 1) { // Element node
+              const errorButton = node.querySelector ? node.querySelector('#backButtonError') : null;
+              if (errorButton) {
+                errorButton.href = backUrl;
+                errorButton.innerHTML = `<i class="fas fa-arrow-left"></i> ${backText}`;
+              }
+            }
+          });
+        });
+      });
+      
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true
+      });
+    }
+
     // Initialize when page loads
-    document.addEventListener('DOMContentLoaded', initProductDetail);
+    document.addEventListener('DOMContentLoaded', function() {
+      setupNavigation();
+      initProductDetail();
+    });
   </script>
 </body>
 </html>
