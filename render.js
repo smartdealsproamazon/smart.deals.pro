@@ -123,13 +123,23 @@ function createProductCard(product) {
     }, 0);
   }
 
+  // Make the entire card clickable to open product detail page
+  div.style.cursor = 'pointer';
+  div.addEventListener('click', function(e) {
+    // Don't trigger if clicking on buttons or links
+    if (e.target.closest('a, button')) {
+      return;
+    }
+    window.location.href = `product-detail.html?id=${String(product.id)}`;
+  });
+
   div.innerHTML = `
     ${discountBadge}
     <div class="product-image-container">
       <img src="${product.image}" alt="${product.name}" class="product-image" loading="lazy">
       <div class="product-overlay">
-        <button class="quick-view-btn" onclick="showProductDetails('${String(product.id)}')">
-          <i class="fas fa-eye"></i> Quick View
+        <button class="view-details-btn" onclick="event.stopPropagation(); window.location.href='product-detail.html?id=${String(product.id)}'">
+          <i class="fas fa-eye"></i> View Details
         </button>
       </div>
     </div>
@@ -139,7 +149,6 @@ function createProductCard(product) {
         <div class="stars">${stars}</div>
         <span class="rating-text">${product.rating} (${product.reviews} reviews)</span>
       </div>
-      <p class="product-description">${product.description}</p>
       <div class="product-features">
         ${features}
       </div>
@@ -149,15 +158,15 @@ function createProductCard(product) {
       </div>
       ${timerHTML}
       <div class="product-buttons">
-        <a href="${product.link}" target="_blank" class="btn btn-primary btn-small" onclick="trackClick('${product.name}', '${product.category}')">
+        <a href="${product.link}" target="_blank" class="btn btn-primary btn-small" onclick="event.stopPropagation(); trackClick('${product.name}', '${product.category}')">
           <i class="fas fa-shopping-cart"></i> Buy Now
         </a>
-        <button class="btn btn-outline btn-small" onclick="addToWishlist(${product.id})">
+        <button class="btn btn-outline btn-small" onclick="event.stopPropagation(); addToWishlist(${product.id})">
           <i class="fas fa-heart"></i> Save
         </button>
-        <a href="reviews.html#product-${product.id}" class="btn btn-secondary btn-small read-reviews-btn">
-          <i class="fas fa-star"></i> Read Reviews
-        </a>
+        <button class="btn btn-secondary btn-small" onclick="event.stopPropagation(); window.location.href='product-detail.html?id=${String(product.id)}'">
+          <i class="fas fa-info-circle"></i> Details
+        </button>
       </div>
     </div>
   `;
@@ -262,72 +271,7 @@ function renderFeaturedProducts() {
   });
 }
 
-// Function to show product details in modal
-function showProductDetails(productId) {
-  const product = window.products.find(p => String(p.id) === String(productId));
-  if (!product) return;
-  
-  const modal = document.createElement('div');
-  modal.className = 'product-modal';
-  modal.innerHTML = `
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2>${product.name}</h2>
-        <button class="close-modal" onclick="closeModal()">
-          <i class="fas fa-times"></i>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="modal-image">
-          <img src="${product.image}" alt="${product.name}">
-        </div>
-        <div class="modal-info">
-          <div class="product-rating">
-            <div class="stars">${generateStars(product.rating)}</div>
-            <span class="rating-text">${product.rating} (${product.reviews} reviews)</span>
-          </div>
-          <p class="product-description">${product.description}</p>
-          <div class="product-features">
-            <h4>Key Features:</h4>
-            <ul>
-              ${product.features.map(feature => `<li>${feature}</li>`).join('')}
-            </ul>
-          </div>
-          <div class="product-price">
-            ${product.originalPrice && product.originalPrice !== product.price ? 
-              `<span class="original-price">${product.originalPrice}</span>` : ''}
-            <span class="current-price">${product.price}</span>
-          </div>
-          <div class="modal-buttons">
-            <a href="${product.link}" target="_blank" class="btn btn-primary" onclick="trackClick('${product.name}', '${product.category}')">
-              <i class="fas fa-shopping-cart"></i> Buy Now
-            </a>
-            <button class="btn btn-outline" onclick="addToWishlist(${product.id})">
-              <i class="fas fa-heart"></i> Add to Wishlist
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  `;
-  
-  document.body.appendChild(modal);
-  
-  // Close modal when clicking outside
-  modal.addEventListener('click', (e) => {
-    if (e.target === modal) {
-      closeModal();
-    }
-  });
-}
-
-// Function to close modal
-function closeModal() {
-  const modal = document.querySelector('.product-modal');
-  if (modal) {
-    modal.remove();
-  }
-}
+// Removed modal functionality - now using dedicated product detail pages
 
 // Function to add product to wishlist
 function addToWishlist(productId) {
@@ -534,7 +478,6 @@ if (typeof module !== 'undefined' && module.exports) {
     renderProducts,
     renderFeaturedProducts,
     createProductCard,
-    showProductDetails,
     addToWishlist,
     trackClick,
     searchProducts,

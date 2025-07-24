@@ -12,6 +12,9 @@
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link rel="apple-touch-icon" sizes="180x180" href="logo.png">
   
+  <!-- FontAwesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  
   <!-- Open Graph Meta Tags -->
   <meta property="og:title" content="All Products - Best Deals & Reviews | SmartDeals Pro">
   <meta property="og:description" content="Browse all products with the best affiliate deals and expert reviews. Find top-rated electronics, gadgets, fashion items, and more at unbeatable prices.">
@@ -190,69 +193,46 @@
   </header>
 
   <div class="container">
-    <div id="productList" class="grid"></div>
+    <div id="product-container" class="grid"></div>
+    <div id="productList" class="grid" style="display: none;"></div>
     <p id="emptyState" class="empty" style="display: none;">No products submitted yet.</p>
   </div>
 
+  <!-- Load products data and rendering system -->
+  <script src="products.js"></script>
+  <script src="render.js"></script>
+  
   <script>
     document.addEventListener("DOMContentLoaded", function () {
-      const listEl = document.getElementById("productList");
-      const emptyState = document.getElementById("emptyState");
-
-      const products = JSON.parse(localStorage.getItem("products") || "[]");
-
-      if (!products.length) {
-        emptyState.style.display = "block";
-        return;
+      // Use the enhanced rendering system - no need for manual implementation
+      // The render.js autoRenderProducts() will handle the rendering automatically
+      
+      // Check if products are ready, if not wait for them
+      function checkAndRender() {
+        if (window.products && window.products.length > 0) {
+          renderProducts(null, 'product-container');
+        } else {
+          // Show loading state
+          const container = document.getElementById('product-container');
+          if (container) {
+            container.innerHTML = `
+              <div style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
+                <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: #9ca3af; margin-bottom: 1rem;"></i>
+                <h3>Loading products...</h3>
+                <p>Getting the latest submitted products...</p>
+              </div>
+            `;
+          }
+        }
       }
-
-      products
-        .sort((a, b) => b.createdAt - a.createdAt)
-        .forEach((prod, idx) => {
-          const card = document.createElement("div");
-          card.className = "card";
-          card.style.cursor = "pointer";
-          card.addEventListener("click", function () {
-            window.location.href = `product-detail.html?id=${idx}`;
-          });
-
-          const img = document.createElement("img");
-          img.src = prod.imageData;
-          img.alt = prod.title;
-
-          const content = document.createElement("div");
-          content.className = "card-content";
-
-          const title = document.createElement("h3");
-          title.textContent = prod.title;
-
-          const price = document.createElement("div");
-          price.className = "price";
-          price.textContent = `$${parseFloat(prod.price).toFixed(2)}`;
-
-          // Remove description from list view for cleaner look
-          // const desc = document.createElement("p");
-          // desc.className = "description";
-          // desc.textContent = prod.description;
-
-          // Remove affiliate link from list view
-          // const link = document.createElement("a");
-          // link.href = prod.link;
-          // link.target = "_blank";
-          // link.rel = "noopener noreferrer";
-          // link.className = "link-btn";
-          // link.textContent = "Visit Product";
-
-          content.appendChild(title);
-          content.appendChild(price);
-          // content.appendChild(desc);
-          // content.appendChild(link);
-
-          card.appendChild(img);
-          card.appendChild(content);
-
-          listEl.appendChild(card);
-        });
+      
+      // Try immediately
+      checkAndRender();
+      
+      // Listen for products ready event
+      document.addEventListener('products-ready', function() {
+        renderProducts(null, 'product-container');
+      });
     });
   </script>
   <!-- <script src="user-auth.js"></script> -->
