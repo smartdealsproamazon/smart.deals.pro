@@ -4,103 +4,528 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Product Details | SmartDeals Pro</title>
+  <meta name="description" content="View detailed information about this product on SmartDeals Pro" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link rel="stylesheet" href="style.css" />
   <style>
+    .product-detail-page {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    
     .product-detail-container {
-      max-width: 600px;
-      margin: 3rem auto;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+    }
+    
+    .product-detail-card {
       background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
-      padding: 2rem;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+      overflow: hidden;
+      margin-bottom: 2rem;
+    }
+    
+    .product-detail-header {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      padding: 3rem;
+    }
+    
+    .product-image-section {
+      position: relative;
+    }
+    
+    .product-main-image {
+      width: 100%;
+      height: 400px;
+      object-fit: cover;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    
+    .product-info-section {
       display: flex;
       flex-direction: column;
-      align-items: center;
+      justify-content: center;
     }
-    .product-detail-image {
-      width: 100%;
-      max-width: 320px;
-      border-radius: 8px;
-      margin-bottom: 1.5rem;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-    }
-    .product-detail-title {
-      font-size: 2rem;
+    
+    .product-title {
+      font-size: 2.5rem;
       font-weight: 700;
-      margin-bottom: 0.5rem;
-      color: #2563eb;
-      text-align: center;
-    }
-    .product-detail-price {
-      font-size: 1.3rem;
-      color: #16a34a;
+      color: #1a202c;
       margin-bottom: 1rem;
-      font-weight: 600;
+      line-height: 1.2;
     }
-    .product-detail-description {
-      font-size: 1.1rem;
-      color: #444;
+    
+    .product-rating {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
       margin-bottom: 1.5rem;
-      text-align: center;
     }
-    .product-detail-btns {
+    
+    .stars {
+      color: #fbbf24;
+      font-size: 1.2rem;
+    }
+    
+    .rating-text {
+      color: #6b7280;
+      font-size: 0.9rem;
+    }
+    
+    .product-price-section {
+      margin-bottom: 2rem;
+    }
+    
+    .current-price {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: #059669;
+      margin-right: 1rem;
+    }
+    
+    .original-price {
+      font-size: 1.5rem;
+      color: #9ca3af;
+      text-decoration: line-through;
+    }
+    
+    .discount-badge {
+      display: inline-block;
+      background: #ef4444;
+      color: white;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-left: 1rem;
+    }
+    
+    .product-description {
+      font-size: 1.1rem;
+      line-height: 1.7;
+      color: #4b5563;
+      margin-bottom: 2rem;
+      background: #f9fafb;
+      padding: 1.5rem;
+      border-radius: 10px;
+      border-left: 4px solid #3b82f6;
+    }
+    
+    .product-features {
+      margin-bottom: 2rem;
+    }
+    
+    .features-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 1rem;
+    }
+    
+    .feature-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    
+    .feature-tag {
+      background: #e0e7ff;
+      color: #3730a3;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+    
+    .product-actions {
       display: flex;
       gap: 1rem;
-      margin-top: 1.5rem;
+      flex-wrap: wrap;
     }
-    .product-detail-btns a, .product-detail-btns button {
-      padding: 0.75rem 1.5rem;
-      border-radius: 6px;
-      font-size: 1rem;
-      font-weight: 500;
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      color: white;
+      padding: 1rem 2rem;
       border: none;
-      cursor: pointer;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      font-weight: 600;
       text-decoration: none;
-      transition: background 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
     }
-    .visit-btn {
-      background: #2563eb;
-      color: #fff;
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(59, 130, 246, 0.6);
     }
-    .visit-btn:hover {
-      background: #1d4ed8;
+    
+    .btn-secondary {
+      background: #f3f4f6;
+      color: #374151;
+      padding: 1rem 2rem;
+      border: 2px solid #d1d5db;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.3s ease;
     }
-    .back-btn {
+    
+    .btn-secondary:hover {
       background: #e5e7eb;
-      color: #222;
+      border-color: #9ca3af;
     }
-    .back-btn:hover {
-      background: #d1d5db;
+    
+    .product-reviews-section {
+      background: #fff;
+      border-radius: 20px;
+      padding: 3rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    }
+    
+    .reviews-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1a202c;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+    
+    .review-card {
+      background: #f8fafc;
+      border-radius: 15px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      border-left: 4px solid #3b82f6;
+    }
+    
+    .review-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    
+    .reviewer-name {
+      font-weight: 600;
+      color: #1f2937;
+    }
+    
+    .review-date {
+      color: #6b7280;
+      font-size: 0.9rem;
+    }
+    
+    .review-text {
+      color: #4b5563;
+      line-height: 1.6;
+    }
+    
+    .back-to-products {
+      position: fixed;
+      top: 2rem;
+      left: 2rem;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      border: none;
+      border-radius: 50px;
+      padding: 1rem 1.5rem;
+      font-weight: 600;
+      color: #374151;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      z-index: 1000;
+    }
+    
+    .back-to-products:hover {
+      background: rgba(255, 255, 255, 1);
+      transform: translateY(-2px);
+    }
+    
+    @media (max-width: 768px) {
+      .product-detail-header {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        padding: 2rem;
+      }
+      
+      .product-title {
+        font-size: 1.8rem;
+      }
+      
+      .current-price {
+        font-size: 1.8rem;
+      }
+      
+      .product-actions {
+        flex-direction: column;
+      }
+      
+      .back-to-products {
+        position: static;
+        margin-bottom: 1rem;
+        align-self: flex-start;
+      }
+    }
+    
+    .loading-spinner {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 400px;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid #f3f4f6;
+      border-top: 4px solid #3b82f6;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .error-message {
+      text-align: center;
+      padding: 3rem;
+      color: #ef4444;
+      font-size: 1.2rem;
     }
   </style>
 </head>
-<body>
-  <div class="product-detail-container" id="productDetail">
-    <!-- Product details will be rendered here -->
+<body class="product-detail-page">
+  <a href="products.html" class="back-to-products">
+    <i class="fas fa-arrow-left"></i> Back to Products
+  </a>
+
+  <div class="product-detail-container">
+    <div class="product-detail-card">
+      <div id="productContent">
+        <div class="loading-spinner">
+          <div class="spinner"></div>
+          <p>Loading product details...</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-reviews-section" id="reviewsSection" style="display: none;">
+      <h2 class="reviews-title">Customer Reviews</h2>
+      <div id="reviewsContainer"></div>
+    </div>
   </div>
+
+  <!-- Load products data -->
+  <script src="products.js"></script>
+  
   <script>
+    // Get product ID from URL parameters
     function getQueryParam(name) {
-      const url = new URL(window.location.href);
-      return url.searchParams.get(name);
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(name);
     }
-    const idx = getQueryParam('id');
-    const products = JSON.parse(localStorage.getItem('products') || '[]');
-    const prod = products[idx];
-    const container = document.getElementById('productDetail');
-    if (!prod) {
-      container.innerHTML = '<h2>Product not found</h2><a href="products.html" class="back-btn">Back to Products</a>';
-    } else {
-      container.innerHTML = `
-        <img src="${prod.imageData}" alt="${prod.title}" class="product-detail-image" />
-        <h2 class="product-detail-title">${prod.title}</h2>
-        <div class="product-detail-price">$${parseFloat(prod.price).toFixed(2)}</div>
-        <div class="product-detail-description">${prod.description}</div>
-        <div class="product-detail-btns">
-          <a href="products.html" class="back-btn">Back to Products</a>
-          <a href="${prod.link}" target="_blank" rel="noopener noreferrer" class="visit-btn">Visit Product</a>
+
+    // Generate star rating HTML
+    function generateStars(rating) {
+      let stars = '';
+      for (let i = 1; i <= 5; i++) {
+        if (i <= rating) {
+          stars += '<i class="fas fa-star"></i>';
+        } else if (i - 0.5 <= rating) {
+          stars += '<i class="fas fa-star-half-alt"></i>';
+        } else {
+          stars += '<i class="far fa-star"></i>';
+        }
+      }
+      return stars;
+    }
+
+    // Render product details
+    function renderProductDetail(product) {
+      const contentDiv = document.getElementById('productContent');
+      
+      if (!product) {
+        contentDiv.innerHTML = `
+          <div class="error-message">
+            <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+            <h2>Product Not Found</h2>
+            <p>The product you're looking for doesn't exist or may have been removed.</p>
+            <a href="products.html" class="btn-primary" style="margin-top: 1rem;">
+              <i class="fas fa-arrow-left"></i> Back to Products
+            </a>
+          </div>
+        `;
+        return;
+      }
+
+      // Calculate discount if original price exists
+      let discountHTML = '';
+      if (product.discount && product.discount > 0) {
+        discountHTML = `<span class="discount-badge">-${product.discount}% OFF</span>`;
+      }
+
+      // Generate features HTML
+      let featuresHTML = '';
+      if (product.features && product.features.length > 0) {
+        featuresHTML = `
+          <div class="product-features">
+            <h3 class="features-title">Key Features</h3>
+            <div class="feature-list">
+              ${product.features.map(feature => `<span class="feature-tag">${feature}</span>`).join('')}
+            </div>
+          </div>
+        `;
+      }
+
+      contentDiv.innerHTML = `
+        <div class="product-detail-header">
+          <div class="product-image-section">
+            <img src="${product.image}" alt="${product.name}" class="product-main-image" />
+          </div>
+          
+          <div class="product-info-section">
+            <h1 class="product-title">${product.name}</h1>
+            
+            <div class="product-rating">
+              <div class="stars">${generateStars(product.rating)}</div>
+              <span class="rating-text">${product.rating} out of 5 (${product.reviews} reviews)</span>
+            </div>
+            
+            <div class="product-price-section">
+              <span class="current-price">${product.price}</span>
+              ${product.originalPrice && product.originalPrice !== product.price ? `<span class="original-price">${product.originalPrice}</span>` : ''}
+              ${discountHTML}
+            </div>
+            
+            <div class="product-description">
+              <strong>Product Description:</strong><br>
+              ${product.description}
+            </div>
+            
+            ${featuresHTML}
+            
+            <div class="product-actions">
+              <a href="${product.link}" target="_blank" rel="noopener noreferrer" class="btn-primary">
+                <i class="fas fa-shopping-cart"></i> Buy Now
+              </a>
+              <a href="products.html" class="btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Products
+              </a>
+            </div>
+          </div>
         </div>
       `;
+
+      // Show reviews if available
+      if (product.productReviews && product.productReviews.length > 0) {
+        renderReviews(product.productReviews);
+      }
     }
+
+    // Render product reviews
+    function renderReviews(reviews) {
+      const reviewsSection = document.getElementById('reviewsSection');
+      const reviewsContainer = document.getElementById('reviewsContainer');
+      
+      const reviewsHTML = reviews.map(review => `
+        <div class="review-card">
+          <div class="review-header">
+            <span class="reviewer-name">${review.name}</span>
+            <span class="review-date">${review.date}</span>
+          </div>
+          <div class="review-text">${review.text}</div>
+        </div>
+      `).join('');
+      
+      reviewsContainer.innerHTML = reviewsHTML;
+      reviewsSection.style.display = 'block';
+    }
+
+    // Wait for products to load and then render the detail
+    function initProductDetail() {
+      const productId = getQueryParam('id');
+      
+      if (!productId) {
+        document.getElementById('productContent').innerHTML = `
+          <div class="error-message">
+            <h2>No Product Selected</h2>
+            <p>Please select a product to view its details.</p>
+            <a href="products.html" class="btn-primary">Browse Products</a>
+          </div>
+        `;
+        return;
+      }
+
+      // Function to find and render product
+      function findAndRenderProduct() {
+        if (!window.products || window.products.length === 0) {
+          // Try loading from localStorage as fallback
+          const localProducts = JSON.parse(localStorage.getItem('products') || '[]');
+          if (localProducts.length > 0) {
+            window.products = localProducts;
+          } else {
+            // Still loading, wait a bit more
+            setTimeout(findAndRenderProduct, 500);
+            return;
+          }
+        }
+
+        // Find product by ID (try different ID formats)
+        let product = window.products.find(p => 
+          String(p.id) === String(productId) || 
+          String(p.id) === String(productId).replace('local_', '') ||
+          window.products.indexOf(p) === parseInt(productId)
+        );
+
+        // If not found by ID, try by index
+        if (!product && !isNaN(productId)) {
+          const index = parseInt(productId);
+          if (index >= 0 && index < window.products.length) {
+            product = window.products[index];
+          }
+        }
+
+        renderProductDetail(product);
+      }
+
+      // Start the process
+      if (window.products && window.products.length > 0) {
+        findAndRenderProduct();
+      } else {
+        // Listen for products ready event
+        document.addEventListener('products-ready', findAndRenderProduct);
+        // Also try after a short delay
+        setTimeout(findAndRenderProduct, 1000);
+      }
+    }
+
+    // Initialize when page loads
+    document.addEventListener('DOMContentLoaded', initProductDetail);
   </script>
 </body>
 </html>
