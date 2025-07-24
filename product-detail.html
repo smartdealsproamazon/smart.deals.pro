@@ -31,10 +31,14 @@
     }
     
     .product-detail-header {
+      padding: 3rem;
+    }
+    
+    .product-basic-info {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 3rem;
-      padding: 3rem;
+      margin-bottom: 3rem;
     }
     
     .product-image-section {
@@ -112,15 +116,28 @@
       font-size: 1.1rem;
       line-height: 1.7;
       color: #4b5563;
-      margin-bottom: 2rem;
+      margin-bottom: 3rem;
       background: #f9fafb;
-      padding: 1.5rem;
-      border-radius: 10px;
+      padding: 2rem;
+      border-radius: 15px;
       border-left: 4px solid #3b82f6;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    }
+    
+    .product-features-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: start;
     }
     
     .product-features {
       margin-bottom: 2rem;
+    }
+    
+    .product-features-container {
+      display: flex;
+      flex-direction: column;
     }
     
     .features-title {
@@ -149,6 +166,7 @@
       display: flex;
       gap: 1rem;
       flex-wrap: wrap;
+      margin-top: auto; /* Push to bottom if in flex container */
     }
     
     .btn-primary {
@@ -262,12 +280,20 @@
       transform: translateY(-2px);
     }
     
-    @media (max-width: 768px) {
-      .product-detail-header {
-        grid-template-columns: 1fr;
-        gap: 2rem;
-        padding: 2rem;
-      }
+          @media (max-width: 768px) {
+        .product-detail-header {
+          padding: 2rem;
+        }
+        
+        .product-basic-info {
+          grid-template-columns: 1fr;
+          gap: 2rem;
+        }
+        
+        .product-features-actions {
+          grid-template-columns: 1fr;
+          gap: 2rem;
+        }
       
       .product-title {
         font-size: 1.8rem;
@@ -277,9 +303,15 @@
         font-size: 1.8rem;
       }
       
-      .product-actions {
-        flex-direction: column;
-      }
+              .product-actions {
+          flex-direction: column;
+          margin-top: 0;
+        }
+        
+        .product-description {
+          padding: 1.5rem;
+          margin-bottom: 2rem;
+        }
       
       .back-to-products {
         position: static;
@@ -404,30 +436,36 @@
 
       contentDiv.innerHTML = `
         <div class="product-detail-header">
-          <div class="product-image-section">
-            <img src="${product.image}" alt="${product.name}" class="product-main-image" />
+          <div class="product-basic-info">
+            <div class="product-image-section">
+              <img src="${product.image}" alt="${product.name}" class="product-main-image" />
+            </div>
+            
+            <div class="product-info-section">
+              <h1 class="product-title">${product.name}</h1>
+              
+              <div class="product-rating">
+                <div class="stars">${generateStars(product.rating)}</div>
+                <span class="rating-text">${product.rating} out of 5 (${product.reviews} reviews)</span>
+              </div>
+              
+              <div class="product-price-section">
+                <span class="current-price">${product.price}</span>
+                ${product.originalPrice && product.originalPrice !== product.price ? `<span class="original-price">${product.originalPrice}</span>` : ''}
+                ${discountHTML}
+              </div>
+            </div>
           </div>
           
-          <div class="product-info-section">
-            <h1 class="product-title">${product.name}</h1>
-            
-            <div class="product-rating">
-              <div class="stars">${generateStars(product.rating)}</div>
-              <span class="rating-text">${product.rating} out of 5 (${product.reviews} reviews)</span>
+          <div class="product-description">
+            <strong>Product Description:</strong><br>
+            ${product.description}
+          </div>
+          
+          <div class="product-features-actions">
+            <div class="product-features-container">
+              ${featuresHTML}
             </div>
-            
-            <div class="product-price-section">
-              <span class="current-price">${product.price}</span>
-              ${product.originalPrice && product.originalPrice !== product.price ? `<span class="original-price">${product.originalPrice}</span>` : ''}
-              ${discountHTML}
-            </div>
-            
-            <div class="product-description">
-              <strong>Product Description:</strong><br>
-              ${product.description}
-            </div>
-            
-            ${featuresHTML}
             
             <div class="product-actions">
               <a href="${product.link}" target="_blank" rel="noopener noreferrer" class="btn-primary">
