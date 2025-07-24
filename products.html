@@ -208,9 +208,13 @@
 
       products
         .sort((a, b) => b.createdAt - a.createdAt)
-        .forEach((prod) => {
+        .forEach((prod, idx) => {
           const card = document.createElement("div");
           card.className = "card";
+          card.style.cursor = "pointer";
+          card.addEventListener("click", function () {
+            window.location.href = `product-detail.html?id=${idx}`;
+          });
 
           const img = document.createElement("img");
           img.src = prod.imageData;
@@ -226,21 +230,23 @@
           price.className = "price";
           price.textContent = `$${parseFloat(prod.price).toFixed(2)}`;
 
-          const desc = document.createElement("p");
-          desc.className = "description";
-          desc.textContent = prod.description;
+          // Remove description from list view for cleaner look
+          // const desc = document.createElement("p");
+          // desc.className = "description";
+          // desc.textContent = prod.description;
 
-          const link = document.createElement("a");
-          link.href = prod.link;
-          link.target = "_blank";
-          link.rel = "noopener noreferrer";
-          link.className = "link-btn";
-          link.textContent = "Visit Product";
+          // Remove affiliate link from list view
+          // const link = document.createElement("a");
+          // link.href = prod.link;
+          // link.target = "_blank";
+          // link.rel = "noopener noreferrer";
+          // link.className = "link-btn";
+          // link.textContent = "Visit Product";
 
           content.appendChild(title);
           content.appendChild(price);
-          content.appendChild(desc);
-          content.appendChild(link);
+          // content.appendChild(desc);
+          // content.appendChild(link);
 
           card.appendChild(img);
           card.appendChild(content);
