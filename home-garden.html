@@ -55,13 +55,6 @@
         </nav>
 
         <div class="header-right">
-          <div class="search-container">
-            <input type="text" id="headerSearch" placeholder="Search products..." class="search-input">
-            <button class="search-btn" onclick="performSearch()">
-              <i class="fas fa-search"></i>
-            </button>
-          </div>
-
           <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
             <i class="fas fa-bars"></i>
           </button>
@@ -541,23 +534,7 @@
       mobileMenu.classList.toggle('active');
     }
 
-    // Search functionality
-    function performSearch() {
-      const query = document.getElementById('headerSearch').value.toLowerCase();
-      if (query.includes('watch') || query.includes('smart')) {
-        window.location.href = 'smartwatches.html';
-      } else if (query.includes('fashion') || query.includes('clothing')) {
-        window.location.href = 'fashion.html';
-      } else if (query.includes('electronic') || query.includes('gadget')) {
-        window.location.href = 'small-electrical.html';
-      } else if (query.includes('gaming') || query.includes('game')) {
-        window.location.href = 'gaming.html';
-      } else if (query.includes('home') || query.includes('garden')) {
-        window.location.href = 'home-garden.html';
-      } else {
-        window.location.href = 'deals.html';
-      }
-    }
+
 
     // Filter by category from showcase
     function filterByCategory(category) {

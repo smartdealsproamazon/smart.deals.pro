@@ -81,13 +81,6 @@
         </nav>
 
         <div class="header-right">
-          <div class="search-container">
-            <input type="text" id="headerSearch" placeholder="Search gaming gear..." class="search-input">
-            <button class="search-btn" onclick="searchGaming()">
-              <i class="fas fa-search"></i>
-            </button>
-          </div>
-
           <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
             <i class="fas fa-bars"></i>
           </button>
@@ -359,18 +352,7 @@
       mobileMenu.classList.toggle('active');
     }
 
-    // Search gaming products
-    function searchGaming() {
-      const query = document.getElementById('headerSearch').value;
-      if (query) {
-        const gamingProducts = getProductsByCategory('gaming');
-        const results = gamingProducts.filter(product => 
-          product.name.toLowerCase().includes(query.toLowerCase()) ||
-          product.description.toLowerCase().includes(query.toLowerCase())
-        );
-        renderGamingGrid(results);
-      }
-    }
+
 
     // Filter gaming products
     function filterGaming(category) {
