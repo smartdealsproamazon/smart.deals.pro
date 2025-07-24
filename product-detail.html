@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Product Details | SmartDeals Pro</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .product-detail-container {
+      max-width: 600px;
+      margin: 3rem auto;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .product-detail-image {
+      width: 100%;
+      max-width: 320px;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .product-detail-title {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: #2563eb;
+      text-align: center;
+    }
+    .product-detail-price {
+      font-size: 1.3rem;
+      color: #16a34a;
+      margin-bottom: 1rem;
+      font-weight: 600;
+    }
+    .product-detail-description {
+      font-size: 1.1rem;
+      color: #444;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+    .product-detail-btns {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+    .product-detail-btns a, .product-detail-btns button {
+      padding: 0.75rem 1.5rem;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: 500;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    .visit-btn {
+      background: #2563eb;
+      color: #fff;
+    }
+    .visit-btn:hover {
+      background: #1d4ed8;
+    }
+    .back-btn {
+      background: #e5e7eb;
+      color: #222;
+    }
+    .back-btn:hover {
+      background: #d1d5db;
+    }
+  </style>
+</head>
+<body>
+  <div class="product-detail-container" id="productDetail">
+    <!-- Product details will be rendered here -->
+  </div>
+  <script>
+    function getQueryParam(name) {
+      const url = new URL(window.location.href);
+      return url.searchParams.get(name);
+    }
+    const idx = getQueryParam('id');
+    const products = JSON.parse(localStorage.getItem('products') || '[]');
+    const prod = products[idx];
+    const container = document.getElementById('productDetail');
+    if (!prod) {
+      container.innerHTML = '<h2>Product not found</h2><a href="products.html" class="back-btn">Back to Products</a>';
+    } else {
+      container.innerHTML = `
+        <img src="${prod.imageData}" alt="${prod.title}" class="product-detail-image" />
+        <h2 class="product-detail-title">${prod.title}</h2>
+        <div class="product-detail-price">$${parseFloat(prod.price).toFixed(2)}</div>
+        <div class="product-detail-description">${prod.description}</div>
+        <div class="product-detail-btns">
+          <a href="products.html" class="back-btn">Back to Products</a>
+          <a href="${prod.link}" target="_blank" rel="noopener noreferrer" class="visit-btn">Visit Product</a>
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html>
