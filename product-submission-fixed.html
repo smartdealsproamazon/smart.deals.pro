@@ -544,7 +544,7 @@
 
             // Redirect after success
             setTimeout(() => {
-              window.location.href = "products.html";
+              window.location.href = "index.html";
             }, 2000);
 
           } catch (firebaseError) {
@@ -560,7 +560,7 @@
               showStatus("Saved locally. Will sync when connection is restored.", "warning");
               
               setTimeout(() => {
-                window.location.href = "products.html";
+                window.location.href = "index.html";
               }, 2000);
               
             } catch (localError) {
