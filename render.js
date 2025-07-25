@@ -1,6 +1,6 @@
 // Enhanced Product Rendering System for SmartDeals Pro
 
-// Main function to render products with enhanced features
+// Main function to render products with enhanced features and real-time updates
 function renderProducts(filterCategory = null, containerId = 'product-container') {
   const container = document.getElementById(containerId);
   if (!container) {
@@ -8,6 +8,7 @@ function renderProducts(filterCategory = null, containerId = 'product-container'
     return;
   }
   
+  // Clear previous content
   container.innerHTML = "";
 
   // Ensure we have products array
@@ -20,6 +21,10 @@ function renderProducts(filterCategory = null, containerId = 'product-container'
         <p>Getting the latest deals for you...</p>
         <div class="loading-progress">
           <div class="progress-bar" id="loadingProgress"></div>
+        </div>
+        <div class="realtime-status">
+          <i class="fas fa-wifi"></i>
+          <span>Connecting to real-time updates...</span>
         </div>
       </div>
     `;
@@ -472,6 +477,84 @@ document.addEventListener('products-ready', function () {
   console.log('Products ready event received, auto-rendering...');
   autoRenderProducts();
 });
+
+// Listen for real-time product updates and re-render automatically
+document.addEventListener('products-updated', function () {
+  console.log('Real-time products update received, re-rendering...');
+  autoRenderProducts();
+  
+  // Show subtle update indicator
+  showRealtimeUpdateIndicator();
+});
+
+// Function to show a subtle indicator that products were updated in real-time
+function showRealtimeUpdateIndicator() {
+  const indicator = document.createElement('div');
+  indicator.className = 'realtime-update-indicator';
+  indicator.innerHTML = '<i class="fas fa-sync-alt"></i> Updated';
+  
+  document.body.appendChild(indicator);
+  
+  // Auto-remove after 2 seconds
+  setTimeout(() => {
+    if (indicator.parentElement) {
+      indicator.remove();
+    }
+  }, 2000);
+  
+  // Add CSS if not already present
+  if (!document.getElementById('realtime-indicator-styles')) {
+    const style = document.createElement('style');
+    style.id = 'realtime-indicator-styles';
+    style.textContent = `
+      .realtime-update-indicator {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        background: #10b981;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 500;
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        z-index: 9999;
+        animation: slideInLeft 0.3s ease-out, fadeOut 0.3s ease-out 1.7s forwards;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      
+      .realtime-update-indicator i {
+        animation: spin 1s linear;
+      }
+      
+      @keyframes slideInLeft {
+        from {
+          transform: translateX(-100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+      
+      @keyframes fadeOut {
+        to {
+          opacity: 0;
+          transform: translateX(-100%);
+        }
+      }
+      
+      @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+}
 
 // Export functions for use in other files
 if (typeof module !== 'undefined' && module.exports) {
