@@ -113,20 +113,8 @@ function createProductCard(product) {
   const features = product.features ? 
     product.features.slice(0, 3).map(feature => `<span class="feature-tag">${feature}</span>`).join('') : '';
 
-  // Modern timer for USA Flash Sale products
+  // Timer functionality removed
   let timerHTML = '';
-  if (product.category === 'usa-flash-sale' && product.timer && product.createdAt) {
-    const timerId = `timer-${product.id}`;
-    timerHTML = `
-      <div class="modern-timer" id="${timerId}">
-        <span class="timer-label">Flash Sale Ends In:</span>
-        <span class="timer-value">--:--:--</span>
-      </div>
-    `;
-    setTimeout(() => {
-      startProductTimer(timerId, product.createdAt, product.timer, div);
-    }, 0);
-  }
 
   // Make the entire card clickable to open product detail page
   div.style.cursor = 'pointer';
@@ -180,46 +168,7 @@ function createProductCard(product) {
   return div;
 }
 
-// Modern timer logic for each product
-function startProductTimer(timerId, createdAt, timerMinutes, productCardDiv) {
-  const timerElem = document.getElementById(timerId);
-  if (!timerElem) return;
-  const timerValueElem = timerElem.querySelector('.timer-value');
-  const endTime = createdAt + timerMinutes * 60 * 1000;
-  function updateTimer() {
-    const now = Date.now();
-    const diff = endTime - now;
-    if (diff <= 0) {
-      // Hide product card when timer expires
-      if (productCardDiv && productCardDiv.parentNode) {
-        productCardDiv.parentNode.removeChild(productCardDiv);
-      }
-      return;
-    }
-    const totalSeconds = Math.floor(diff / 1000);
-    const days = Math.floor(totalSeconds / (60 * 60 * 24));
-    const hours = Math.floor((totalSeconds % (60 * 60 * 24)) / (60 * 60));
-    const minutes = Math.floor((totalSeconds % (60 * 60)) / 60);
-    const seconds = totalSeconds % 60;
-    let display = '';
-    if (days > 0) {
-      display = `${days}d ${hours.toString().padStart(2, '0')}:${minutes
-        .toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-    } else {
-      display = `${hours.toString().padStart(2, '0')}:${minutes
-        .toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-    }
-    timerValueElem.textContent = display;
-  }
-  updateTimer();
-  const interval = setInterval(() => {
-    if (!document.body.contains(timerElem)) {
-      clearInterval(interval);
-      return;
-    }
-    updateTimer();
-  }, 1000);
-}
+
 
 // Function to generate star ratings
 function generateStars(rating) {

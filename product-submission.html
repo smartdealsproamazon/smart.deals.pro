@@ -265,7 +265,7 @@
           <option value="girls-fashion">Girls Fashion</option>
           <option value="electrical">Electronics</option>
           <option value="gaming">Gaming</option>
-          <option value="home-garden">Home & Garden</option>
+                    <option value="home-garden">Home & Garden</option>
           <option value="usa-flash-sale">USA Flash Sale</option>
         </select>
         <span class="error" id="categoryError"></span>
@@ -277,11 +277,7 @@
         <input type="number" id="discount" min="0" max="99" step="1" />
         <span class="error" id="discountError"></span>
       </div>
-      <div class="form-group" id="timerGroup" style="display:none;">
-        <label for="timer">Flash Sale Timer (minutes)</label>
-        <input type="number" id="timer" min="1" max="1440" step="1" />
-        <span class="error" id="timerError"></span>
-      </div>
+
 
       <div class="form-group">
         <label for="description">Description</label>
@@ -529,7 +525,7 @@
           const email = document.getElementById("email").value.trim();
           const category = document.getElementById("category").value;
           const discount = document.getElementById('discount').value.trim();
-          const timer = document.getElementById('timer').value.trim();
+
 
           let valid = true;
 
@@ -571,17 +567,13 @@
             valid = false;
           }
 
-          if (!category) {
+                    if (!category) {
             errors.category.textContent = "Please select a category.";
             valid = false;
           }
 
           if (category === 'usa-flash-sale' && (!discount || isNaN(discount) || parseInt(discount) <= 0)) {
-            document.getElementById('discountError').textContent = 'Please enter a valid discount.';
-            valid = false;
-          }
-          if (category === 'usa-flash-sale' && (!timer || isNaN(timer) || parseInt(timer) <= 0)) {
-            document.getElementById('timerError').textContent = 'Please enter a valid timer (in minutes).';
+            document.getElementById('discountError').textContent = 'Please enter a valid discount for USA Flash Sale.';
             valid = false;
           }
 
@@ -603,7 +595,7 @@
           updateProgress(60);
           showStatus("Submitting to server...", "info");
 
-          // Create product object
+                    // Create product object
           const product = {
             title,
             imageData,
@@ -620,7 +612,6 @@
 
           if (category === 'usa-flash-sale') {
             product.discount = parseInt(discount);
-            product.timer = parseInt(timer); // Save timer in minutes
           }
 
           // Try to submit to Firebase with timeout
@@ -696,16 +687,12 @@
 
       const categorySelect = document.getElementById('category');
       const discountGroup = document.getElementById('discountGroup');
-      const timerGroup = document.getElementById('timerGroup');
       categorySelect.addEventListener('change', function() {
         if (categorySelect.value === 'usa-flash-sale') {
           discountGroup.style.display = 'block';
-          timerGroup.style.display = 'block';
         } else {
           discountGroup.style.display = 'none';
-          timerGroup.style.display = 'none';
           document.getElementById('discount').value = '';
-          document.getElementById('timer').value = '';
         }
       });
     });
