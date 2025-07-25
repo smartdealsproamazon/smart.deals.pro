@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lago Firebase Admin - Real-time Product Management</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: #333;
+    }
+
+    .admin-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+      color: white;
+    }
+
+    .header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+    }
+
+    .header p {
+      opacity: 0.9;
+      font-size: 1.1rem;
+    }
+
+    .admin-panel {
+      background: white;
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+    }
+
+    .panel-header {
+      margin-bottom: 25px;
+    }
+
+    .panel-header h2 {
+      color: #333;
+      margin-bottom: 5px;
+    }
+
+    .panel-header p {
+      color: #666;
+    }
+
+    .action-buttons {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .action-btn {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 15px 20px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    .action-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    .action-btn:active {
+      transform: translateY(0);
+    }
+
+    .status-panel {
+      background: #f8fafc;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .status-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .status-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .status-indicator {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #10b981;
+      animation: pulse 2s infinite;
+    }
+
+    .status-indicator.connecting {
+      background: #f59e0b;
+    }
+
+    .status-indicator.error {
+      background: #ef4444;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .log-panel {
+      background: #1e293b;
+      color: #e2e8f0;
+      border-radius: 12px;
+      padding: 20px;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .log-entry {
+      margin-bottom: 5px;
+      word-break: break-word;
+    }
+
+    .log-entry.success {
+      color: #10b981;
+    }
+
+    .log-entry.error {
+      color: #ef4444;
+    }
+
+    .log-entry.info {
+      color: #3b82f6;
+    }
+
+    .real-time-demo {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white;
+      border-radius: 16px;
+      padding: 25px;
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .real-time-demo h3 {
+      margin-bottom: 15px;
+    }
+
+    .real-time-demo p {
+      opacity: 0.9;
+      margin-bottom: 20px;
+    }
+
+    .demo-btn {
+      background: rgba(255,255,255,0.2);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.3);
+      padding: 12px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      margin: 0 5px;
+      transition: all 0.3s ease;
+    }
+
+    .demo-btn:hover {
+      background: rgba(255,255,255,0.3);
+    }
+
+    @media (max-width: 768px) {
+      .admin-container {
+        padding: 15px;
+      }
+
+      .header h1 {
+        font-size: 2rem;
+      }
+
+      .action-buttons {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-container">
+    <div class="header">
+      <h1><i class="fas fa-fire"></i> Lago Firebase Admin</h1>
+      <p>Real-time Product Management System</p>
+    </div>
+
+    <div class="admin-panel">
+      <div class="panel-header">
+        <h2>System Status</h2>
+        <p>Monitor Firebase connection and real-time functionality</p>
+      </div>
+      
+      <div class="status-panel">
+        <div class="status-item">
+          <div class="status-indicator" id="firebaseStatus"></div>
+          <span id="firebaseStatusText">Connecting to Firebase...</span>
+        </div>
+        <div class="status-item">
+          <div class="status-indicator" id="realtimeStatus"></div>
+          <span id="realtimeStatusText">Setting up real-time listener...</span>
+        </div>
+        <div class="status-item">
+          <div class="status-indicator" id="productsStatus"></div>
+          <span id="productsStatusText">Loading products...</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="admin-panel">
+      <div class="panel-header">
+        <h2>Product Management</h2>
+        <p>Add, update, and manage products in real-time</p>
+      </div>
+      
+      <div class="action-buttons">
+        <button class="action-btn" onclick="addSingleProduct()">
+          <i class="fas fa-plus"></i>
+          Add Sample Product
+        </button>
+        <button class="action-btn" onclick="addMultipleProducts()">
+          <i class="fas fa-plus-circle"></i>
+          Add 3 Products
+        </button>
+        <button class="action-btn" onclick="viewAllProducts()">
+          <i class="fas fa-list"></i>
+          View All Products
+        </button>
+        <button class="action-btn" onclick="clearLogs()">
+          <i class="fas fa-trash"></i>
+          Clear Logs
+        </button>
+      </div>
+
+      <div class="real-time-demo">
+        <h3><i class="fas fa-broadcast-tower"></i> Real-time Demo</h3>
+        <p>Open another tab with products.html and watch products appear instantly when you add them here!</p>
+        <button class="demo-btn" onclick="window.open('products.html', '_blank')">
+          Open Products Page
+        </button>
+        <button class="demo-btn" onclick="startAutoDemo()">
+          Start Auto Demo
+        </button>
+      </div>
+    </div>
+
+    <div class="admin-panel">
+      <div class="panel-header">
+        <h2>Activity Log</h2>
+        <p>Real-time system logs and product updates</p>
+      </div>
+      
+      <div class="log-panel" id="logPanel">
+        <div class="log-entry info">[System] Firebase Admin panel loaded</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  
+  <!-- Product Admin Script -->
+  <script src="firebase-product-admin.js"></script>
+
+  <script>
+    // Status tracking
+    let autoDemo = null;
+
+    // Update status indicators
+    function updateStatus(element, status, text) {
+      const indicator = document.getElementById(element + 'Status');
+      const textElement = document.getElementById(element + 'StatusText');
+      
+      indicator.className = 'status-indicator';
+      if (status === 'connected') {
+        indicator.classList.add('connected');
+      } else if (status === 'connecting') {
+        indicator.classList.add('connecting');
+      } else if (status === 'error') {
+        indicator.classList.add('error');
+      }
+      
+      textElement.textContent = text;
+    }
+
+    // Logging system
+    function addLog(message, type = 'info') {
+      const logPanel = document.getElementById('logPanel');
+      const timestamp = new Date().toLocaleTimeString();
+      const logEntry = document.createElement('div');
+      logEntry.className = `log-entry ${type}`;
+      logEntry.textContent = `[${timestamp}] ${message}`;
+      
+      logPanel.appendChild(logEntry);
+      logPanel.scrollTop = logPanel.scrollHeight;
+    }
+
+    // Action functions
+    async function addSingleProduct() {
+      addLog('Adding single product...', 'info');
+      try {
+        const result = await window.addSampleProduct();
+        if (result.success) {
+          addLog(`✅ Product added: ${result.product.name}`, 'success');
+        } else {
+          addLog(`❌ Failed to add product: ${result.error}`, 'error');
+        }
+      } catch (error) {
+        addLog(`❌ Error: ${error.message}`, 'error');
+      }
+    }
+
+    async function addMultipleProducts() {
+      addLog('Adding 3 products...', 'info');
+      try {
+        const results = await window.addMultipleProducts(3);
+        const successful = results.filter(r => r.success).length;
+        addLog(`✅ Added ${successful}/3 products successfully`, 'success');
+      } catch (error) {
+        addLog(`❌ Error: ${error.message}`, 'error');
+      }
+    }
+
+    async function viewAllProducts() {
+      addLog('Fetching all products...', 'info');
+      try {
+        const result = await window.getAllProducts();
+        if (result.success) {
+          addLog(`📦 Found ${result.products.length} products in Firebase`, 'success');
+          result.products.forEach(product => {
+            addLog(`  - ${product.name} (${product.category}) - $${product.price}`, 'info');
+          });
+        } else {
+          addLog(`❌ Failed to fetch products: ${result.error}`, 'error');
+        }
+      } catch (error) {
+        addLog(`❌ Error: ${error.message}`, 'error');
+      }
+    }
+
+    function clearLogs() {
+      const logPanel = document.getElementById('logPanel');
+      logPanel.innerHTML = '<div class="log-entry info">[System] Logs cleared</div>';
+    }
+
+    function startAutoDemo() {
+      if (autoDemo) {
+        clearInterval(autoDemo);
+        autoDemo = null;
+        addLog('🛑 Auto demo stopped', 'info');
+        return;
+      }
+
+      addLog('🚀 Starting auto demo - adding product every 10 seconds', 'info');
+      autoDemo = setInterval(async () => {
+        await addSingleProduct();
+      }, 10000);
+
+      // Stop after 5 products
+      setTimeout(() => {
+        if (autoDemo) {
+          clearInterval(autoDemo);
+          autoDemo = null;
+          addLog('🛑 Auto demo completed', 'info');
+        }
+      }, 50000);
+    }
+
+    // Initialize status monitoring
+    document.addEventListener('DOMContentLoaded', function() {
+      updateStatus('firebase', 'connecting', 'Connecting to Firebase...');
+      updateStatus('realtime', 'connecting', 'Setting up real-time listener...');
+      updateStatus('products', 'connecting', 'Loading products...');
+
+      // Monitor Firebase connection
+      setTimeout(() => {
+        if (window.firebaseAdmin) {
+          updateStatus('firebase', 'connected', 'Firebase connected');
+          updateStatus('realtime', 'connected', 'Real-time listener active');
+          addLog('🔥 Firebase Admin system ready!', 'success');
+        } else {
+          updateStatus('firebase', 'error', 'Firebase connection failed');
+          addLog('❌ Firebase connection failed', 'error');
+        }
+      }, 3000);
+
+      // Monitor products
+      setTimeout(() => {
+        if (window.products && window.products.length > 0) {
+          updateStatus('products', 'connected', `${window.products.length} products loaded`);
+          addLog(`📦 Loaded ${window.products.length} products`, 'success');
+        } else {
+          updateStatus('products', 'connecting', 'No products found');
+          addLog('📦 No products found - ready to add some!', 'info');
+        }
+      }, 4000);
+    });
+
+    // Listen for real-time updates
+    document.addEventListener('products-updated', function() {
+      const count = window.products ? window.products.length : 0;
+      updateStatus('products', 'connected', `${count} products (updated)`);
+      addLog(`🔄 Real-time update: ${count} products`, 'success');
+    });
+  </script>
+</body>
+</html>
