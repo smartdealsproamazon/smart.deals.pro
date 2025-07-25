@@ -52,7 +52,7 @@ function renderProducts(filterCategory = null, containerId = 'product-container'
         <i class="fas fa-search" style="font-size: 3rem; color: #9ca3af; margin-bottom: 1rem;"></i>
         <h3>No products found</h3>
         <p>No products available in this category yet. Try submitting a product or check back later!</p>
-        <a href="product-submission.html" class="btn btn-primary" style="margin-top: 1rem;">Submit a Product</a>
+        <a href="product-submission-verification.html" class="btn btn-primary" style="margin-top: 1rem;">Submit a Product</a>
       </div>
     `;
     return;
