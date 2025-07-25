@@ -118,6 +118,35 @@
       <a href="contact.html">Contact</a>
     </div>
   </div>
+  <script>
+    // Mobile menu toggle
+    function toggleMobileMenu() {
+      const mobileMenu = document.getElementById('mobileMenu');
+      mobileMenu.classList.toggle('active');
+      if (mobileMenu.classList.contains('active')) {
+        document.body.style.overflow = 'hidden';
+      } else {
+        document.body.style.overflow = '';
+      }
+    }
+    // Close mobile menu on outside click (mobile only)
+    function handleMobileMenuOutsideClick(e) {
+      const mobileMenu = document.getElementById('mobileMenu');
+      const toggleBtn = document.querySelector('.mobile-menu-toggle');
+      if (
+        window.innerWidth <= 1024 &&
+        mobileMenu.classList.contains('active') &&
+        !mobileMenu.contains(e.target) &&
+        !toggleBtn.contains(e.target)
+      ) {
+        mobileMenu.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+    }
+    document.addEventListener('mousedown', handleMobileMenuOutsideClick);
+    // Allow scrolling inside the menu if content is long
+    // (CSS fix will be added in style.css)
+  </script>
 
   <!-- About Hero Section -->
   <section class="about-hero">
@@ -389,12 +418,6 @@
   <!-- Scripts -->
   <!-- <script src="user-auth.js"></script> -->
   <script>
-    // Mobile menu toggle
-    function toggleMobileMenu() {
-      const mobileMenu = document.getElementById('mobileMenu');
-      mobileMenu.classList.toggle('active');
-    }
-
     // Search functionality
     function performSearch() {
       const query = document.getElementById('headerSearch').value.toLowerCase();
