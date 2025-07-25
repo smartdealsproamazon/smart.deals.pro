@@ -317,7 +317,7 @@ function renderSearchResults(query) {
   });
 }
 
-// Function to render USA Flash Sale products with intelligent fallback
+// Function to render USA Flash Sale products with proper filtering
 function renderUSAFlashSaleProducts() {
   const container = document.getElementById('usaProductsGrid');
   if (!container) {
@@ -354,50 +354,46 @@ function renderUSAFlashSaleProducts() {
   console.log('Filtering USA flash sale products...');
   console.log('Available products:', window.products.length);
   
-  // First try to get products specifically tagged as usa-flash-sale
+  // Only show products specifically tagged as usa-flash-sale
   let usaProducts = window.products.filter(p => p.category === 'usa-flash-sale');
   
-  // If no specific USA flash sale products, get products with high discounts as fallback
-  if (usaProducts.length === 0) {
-    console.log('No usa-flash-sale products found, using high-discount products as fallback');
-    usaProducts = window.products
-      .filter(p => p.discount && p.discount > 0)
-      .sort((a, b) => (b.discount || 0) - (a.discount || 0))
-      .slice(0, 12); // Show top 12 discounted products
-  }
-  
-  // If still no products with discounts, show featured/recent products
-  if (usaProducts.length === 0) {
-    console.log('No discounted products found, using featured products as fallback');
-    usaProducts = window.products.slice(0, 8); // Show first 8 products
-  }
-
-  console.log(`Rendering ${usaProducts.length} USA flash sale products`);
+  console.log(`Found ${usaProducts.length} USA flash sale products`);
 
   if (usaProducts.length === 0) {
     container.innerHTML = `
       <div class="no-products">
-        <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #f59e0b; margin-bottom: 1rem;"></i>
-        <h3>No Flash Sale Products Available</h3>
-        <p>We're currently updating our USA flash sale inventory. Please check back soon!</p>
-        <a href="deals.html" class="btn btn-primary" style="margin-top: 1rem;">Browse All Deals</a>
+        <i class="fas fa-flag" style="font-size: 3rem; color: #3b82f6; margin-bottom: 1rem;"></i>
+        <h3>No USA Flash Sale Products Available</h3>
+        <p>Currently, no products have been specifically added to the USA Flash Sale category. Products need to be submitted through our <a href="product-submission.html" style="color: #3b82f6; text-decoration: underline;">product submission form</a> with the "USA Flash Sale" category selected.</p>
+        <div style="margin-top: 2rem; padding: 1rem; background: #f3f4f6; border-radius: 8px; text-align: left; max-width: 500px; margin-left: auto; margin-right: auto;">
+          <h4 style="margin-top: 0; color: #374151;">To add USA Flash Sale products:</h4>
+          <ol style="color: #6b7280; margin: 0; padding-left: 1.5rem;">
+            <li>Go to the <a href="product-submission.html" style="color: #3b82f6;">Product Submission</a> page</li>
+            <li>Fill in the product details</li>
+            <li>Select "USA Flash Sale" from the category dropdown</li>
+            <li>Enter a discount percentage</li>
+            <li>Submit the product</li>
+          </ol>
+        </div>
+        <div style="margin-top: 2rem;">
+          <a href="product-submission.html" class="btn btn-primary" style="margin-right: 1rem;">Add Flash Sale Product</a>
+          <a href="deals.html" class="btn btn-secondary">Browse All Products</a>
+        </div>
       </div>
     `;
     return;
   }
 
-  // Add a special header if we're showing fallback products
-  if (window.products.filter(p => p.category === 'usa-flash-sale').length === 0) {
-    const headerDiv = document.createElement('div');
-    headerDiv.className = 'usa-flash-sale-header';
-    headerDiv.innerHTML = `
-      <div class="flash-sale-notice">
-        <i class="fas fa-bolt"></i>
-        <span>Special Discounted Products for USA Shoppers</span>
-      </div>
-    `;
-    container.appendChild(headerDiv);
-  }
+  // Show the special USA flash sale header
+  const headerDiv = document.createElement('div');
+  headerDiv.className = 'usa-flash-sale-header';
+  headerDiv.innerHTML = `
+    <div class="flash-sale-notice">
+      <i class="fas fa-bolt"></i>
+      <span>🇺🇸 Exclusive USA Flash Sale Products (${usaProducts.length} ${usaProducts.length === 1 ? 'Deal' : 'Deals'} Available)</span>
+    </div>
+  `;
+  container.appendChild(headerDiv);
 
   // Animate products appearing
   usaProducts.forEach((product, index) => {
