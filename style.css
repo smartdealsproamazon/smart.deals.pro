@@ -361,6 +361,29 @@ h4 { font-size: 1.25rem; }
   padding: 0 1rem;
 }
 
+.mobile-menu-close {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  padding: 1rem;
+  cursor: pointer;
+  align-self: flex-end;
+  margin-bottom: 1rem;
+  border-radius: 0.5rem;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.mobile-menu-close:hover {
+  background-color: #2d3748;
+  transform: scale(1.1);
+}
+
+.mobile-menu-close:focus {
+  outline: 2px solid #667eea;
+  outline-offset: 2px;
+}
+
 .mobile-menu-content a {
   color: white;
   text-decoration: none;
