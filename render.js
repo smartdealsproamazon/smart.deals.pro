@@ -52,7 +52,7 @@ function renderProducts(filterCategory = null, containerId = 'product-container'
         <i class="fas fa-search" style="font-size: 3rem; color: #9ca3af; margin-bottom: 1rem;"></i>
         <h3>No products found</h3>
         <p>No products available in this category yet. Try submitting a product or check back later!</p>
-        <a href="product-submission.html" class="btn btn-primary" style="margin-top: 1rem;">Submit a Product</a>
+        <a href="product-submission-verification.html" class="btn btn-primary" style="margin-top: 1rem;">Submit a Product</a>
       </div>
     `;
     return;
@@ -317,6 +317,110 @@ function renderSearchResults(query) {
   });
 }
 
+// Function to render USA Flash Sale products with intelligent fallback
+function renderUSAFlashSaleProducts() {
+  const container = document.getElementById('usaProductsGrid');
+  if (!container) {
+    console.log('USA products grid container not found');
+    return;
+  }
+  
+  // Clear previous content
+  container.innerHTML = "";
+
+  // Ensure we have products array
+  if (!window.products || window.products.length === 0) {
+    console.log('Products array not available, showing loading state');
+    container.innerHTML = `
+      <div class="no-products">
+        <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: #9ca3af; margin-bottom: 1rem;"></i>
+        <h3>Loading Flash Sale Products...</h3>
+        <p>Getting the latest USA deals for you...</p>
+        <div class="loading-progress">
+          <div class="progress-bar" id="loadingProgress"></div>
+        </div>
+        <div class="realtime-status">
+          <i class="fas fa-wifi"></i>
+          <span>Connecting to real-time updates...</span>
+        </div>
+      </div>
+    `;
+    
+    // Start progress animation
+    animateLoadingProgress();
+    return;
+  }
+
+  console.log('Filtering USA flash sale products...');
+  console.log('Available products:', window.products.length);
+  
+  // First try to get products specifically tagged as usa-flash-sale
+  let usaProducts = window.products.filter(p => p.category === 'usa-flash-sale');
+  
+  // If no specific USA flash sale products, get products with high discounts as fallback
+  if (usaProducts.length === 0) {
+    console.log('No usa-flash-sale products found, using high-discount products as fallback');
+    usaProducts = window.products
+      .filter(p => p.discount && p.discount > 0)
+      .sort((a, b) => (b.discount || 0) - (a.discount || 0))
+      .slice(0, 12); // Show top 12 discounted products
+  }
+  
+  // If still no products with discounts, show featured/recent products
+  if (usaProducts.length === 0) {
+    console.log('No discounted products found, using featured products as fallback');
+    usaProducts = window.products.slice(0, 8); // Show first 8 products
+  }
+
+  console.log(`Rendering ${usaProducts.length} USA flash sale products`);
+
+  if (usaProducts.length === 0) {
+    container.innerHTML = `
+      <div class="no-products">
+        <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #f59e0b; margin-bottom: 1rem;"></i>
+        <h3>No Flash Sale Products Available</h3>
+        <p>We're currently updating our USA flash sale inventory. Please check back soon!</p>
+        <a href="deals.html" class="btn btn-primary" style="margin-top: 1rem;">Browse All Deals</a>
+      </div>
+    `;
+    return;
+  }
+
+  // Add a special header if we're showing fallback products
+  if (window.products.filter(p => p.category === 'usa-flash-sale').length === 0) {
+    const headerDiv = document.createElement('div');
+    headerDiv.className = 'usa-flash-sale-header';
+    headerDiv.innerHTML = `
+      <div class="flash-sale-notice">
+        <i class="fas fa-bolt"></i>
+        <span>Special Discounted Products for USA Shoppers</span>
+      </div>
+    `;
+    container.appendChild(headerDiv);
+  }
+
+  // Animate products appearing
+  usaProducts.forEach((product, index) => {
+    const productCard = createProductCard(product);
+    productCard.style.opacity = '0';
+    productCard.style.transform = 'translateY(20px)';
+    
+    // Add USA flash sale styling
+    productCard.classList.add('usa-flash-sale-card');
+    
+    container.appendChild(productCard);
+    
+    // Stagger animation
+    setTimeout(() => {
+      productCard.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+      productCard.style.opacity = '1';
+      productCard.style.transform = 'translateY(0)';
+    }, index * 50);
+  });
+  
+  console.log(`Successfully rendered ${usaProducts.length} USA flash sale products`);
+}
+
 // Auto-render products based on page URL
 function autoRenderProducts() {
   const path = window.location.pathname;
@@ -346,6 +450,9 @@ function autoRenderProducts() {
   } else if (filename.includes('home-garden')) {
     console.log('Rendering home-garden products');
     renderProducts('home-garden');
+  } else if (filename.includes('usa-discount')) {
+    console.log('Rendering USA flash sale products');
+    renderUSAFlashSaleProducts();
   } else if (filename.includes('index') || filename === '' || filename === '/') {
     console.log('Rendering featured products for homepage');
     // Homepage - render featured products
@@ -510,6 +617,7 @@ if (typeof module !== 'undefined' && module.exports) {
   module.exports = {
     renderProducts,
     renderFeaturedProducts,
+    renderUSAFlashSaleProducts,
     createProductCard,
     addToWishlist,
     trackClick,

@@ -697,5 +697,51 @@
       });
     });
   </script>
+
+  <!-- Verification Check Script -->
+  <script>
+    // Verification configuration
+    const VERIFICATION_KEY = 'product_submission_verified';
+    const VERIFICATION_TIMESTAMP_KEY = 'verification_timestamp';
+    const VERIFICATION_EXPIRY = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+
+    // Check verification status immediately when page loads
+    function checkVerificationStatus() {
+      const isVerified = localStorage.getItem(VERIFICATION_KEY) === 'true';
+      const timestamp = localStorage.getItem(VERIFICATION_TIMESTAMP_KEY);
+      
+      if (!isVerified || !timestamp) {
+        // Not verified, redirect to verification page
+        window.location.href = 'product-submission-verification.html';
+        return false;
+      }
+      
+      const verificationTime = parseInt(timestamp);
+      const currentTime = Date.now();
+      
+      if (currentTime - verificationTime >= VERIFICATION_EXPIRY) {
+        // Verification expired, clear storage and redirect
+        localStorage.removeItem(VERIFICATION_KEY);
+        localStorage.removeItem(VERIFICATION_TIMESTAMP_KEY);
+        window.location.href = 'product-submission-verification.html';
+        return false;
+      }
+      
+      return true;
+    }
+
+    // Run verification check immediately
+    if (!checkVerificationStatus()) {
+      // If verification fails, hide page content to prevent flash
+      document.body.style.display = 'none';
+    }
+
+    // Also check when page becomes visible (in case user returns from another tab)
+    document.addEventListener('visibilitychange', function() {
+      if (document.visibilityState === 'visible') {
+        checkVerificationStatus();
+      }
+    });
+  </script>
 </body>
 </html>
