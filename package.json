@@ -1,0 +1,16 @@
+{
+  "name": "smartdeals-website",
+  "version": "1.0.0",
+  "description": "Smart Deals Pro Amazon - E-commerce website",
+  "main": "index.html",
+  "scripts": {
+    "build": "echo 'No build step required for static website'",
+    "start": "echo 'Use Firebase serve for local development'",
+    "test": "echo 'No tests specified'"
+  },
+  "keywords": ["ecommerce", "deals", "amazon", "smart"],
+  "author": "Smart Deals Pro",
+  "license": "MIT",
+  "devDependencies": {},
+  "dependencies": {}
+}
