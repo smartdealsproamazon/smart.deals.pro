@@ -1886,33 +1886,4 @@ h4 { font-size: 1.25rem; }
   }
 }
 
-/* Modern timer for USA Flash Sale products */
-.modern-timer {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  background: linear-gradient(90deg, #ff416c 0%, #ff4b2b 100%);
-  color: #fff;
-  border-radius: 24px;
-  padding: 8px 18px;
-  margin: 12px 0 0 0;
-  font-size: 1.1rem;
-  font-weight: 600;
-  box-shadow: 0 2px 8px rgba(255, 65, 108, 0.12);
-  gap: 10px;
-}
-.modern-timer .timer-label {
-  font-size: 0.95em;
-  font-weight: 400;
-  margin-right: 8px;
-  opacity: 0.85;
-}
-.modern-timer .timer-value {
-  font-family: 'Roboto Mono', monospace;
-  font-size: 1.2em;
-  letter-spacing: 1px;
-  background: rgba(255,255,255,0.15);
-  border-radius: 8px;
-  padding: 2px 10px;
-  font-weight: 700;
-}
+
