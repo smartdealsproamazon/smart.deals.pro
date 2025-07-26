@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Girls Fashion Fix</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .test-container { max-width: 800px; margin: 0 auto; }
+        .test-section { margin: 20px 0; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .status { padding: 10px; border-radius: 4px; margin: 10px 0; }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .warning { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        .product-item { margin: 10px 0; padding: 15px; background: #f8f9fa; border-radius: 4px; border-left: 4px solid #007bff; }
+        .category-badge { padding: 2px 8px; border-radius: 12px; font-size: 0.8em; font-weight: bold; }
+        .category-girls-fashion { background: #e7f3ff; color: #0056b3; }
+        .category-other { background: #f8f9fa; color: #6c757d; }
+        button { padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; margin: 5px; }
+        button:hover { background: #0056b3; }
+        .log { background: #f8f9fa; padding: 10px; border-radius: 4px; font-family: monospace; font-size: 0.9em; white-space: pre-wrap; max-height: 200px; overflow-y: auto; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 Girls Fashion Category Fix Test</h1>
+        <p>This page tests if the girls fashion filtering is working correctly.</p>
+        
+        <div class="test-section">
+            <h2>🔍 System Status</h2>
+            <div id="systemStatus">Loading...</div>
+            <button onclick="runTests()">🔄 Refresh Tests</button>
+            <button onclick="clearLogs()">🗑️ Clear Logs</button>
+        </div>
+        
+        <div class="test-section">
+            <h2>📊 Category Analysis</h2>
+            <div id="categoryAnalysis">Loading...</div>
+        </div>
+        
+        <div class="test-section">
+            <h2>👗 Girls Fashion Products</h2>
+            <div id="girlsFashionTest">Loading...</div>
+        </div>
+        
+        <div class="test-section">
+            <h2>⚠️ Potential Issues</h2>
+            <div id="issueDetection">Loading...</div>
+        </div>
+        
+        <div class="test-section">
+            <h2>📋 Console Logs</h2>
+            <div id="consoleLogs" class="log">Console logs will appear here...</div>
+        </div>
+    </div>
+
+    <script src="products.js"></script>
+    <script src="render.js"></script>
+    <script>
+        let logBuffer = [];
+        
+        // Capture console logs
+        const originalLog = console.log;
+        const originalWarn = console.warn;
+        const originalError = console.error;
+        
+        console.log = function(...args) {
+            logBuffer.push(`[LOG] ${args.join(' ')}`);
+            updateLogDisplay();
+            originalLog.apply(console, args);
+        };
+        
+        console.warn = function(...args) {
+            logBuffer.push(`[WARN] ${args.join(' ')}`);
+            updateLogDisplay();
+            originalWarn.apply(console, args);
+        };
+        
+        console.error = function(...args) {
+            logBuffer.push(`[ERROR] ${args.join(' ')}`);
+            updateLogDisplay();
+            originalError.apply(console, args);
+        };
+        
+        function updateLogDisplay() {
+            const logsDiv = document.getElementById('consoleLogs');
+            logsDiv.textContent = logBuffer.slice(-20).join('\n'); // Show last 20 logs
+            logsDiv.scrollTop = logsDiv.scrollHeight;
+        }
+        
+        function clearLogs() {
+            logBuffer = [];
+            updateLogDisplay();
+        }
+        
+        function runTests() {
+            console.log('=== RUNNING GIRLS FASHION TESTS ===');
+            
+            // Test 1: System Status
+            const systemDiv = document.getElementById('systemStatus');
+            let systemStatus = [];
+            
+            if (window.products) {
+                systemStatus.push(`<div class="status success">✅ Products array exists (${window.products.length} products)</div>`);
+            } else {
+                systemStatus.push(`<div class="status error">❌ Products array not found</div>`);
+            }
+            
+            if (window.firebase) {
+                systemStatus.push(`<div class="status success">✅ Firebase loaded</div>`);
+            } else {
+                systemStatus.push(`<div class="status warning">⚠️ Firebase not loaded</div>`);
+            }
+            
+            if (typeof getProductsByCategory === 'function') {
+                systemStatus.push(`<div class="status success">✅ getProductsByCategory function available</div>`);
+            } else {
+                systemStatus.push(`<div class="status error">❌ getProductsByCategory function missing</div>`);
+            }
+            
+            systemDiv.innerHTML = systemStatus.join('');
+            
+            if (!window.products || window.products.length === 0) {
+                document.getElementById('categoryAnalysis').innerHTML = '<div class="status info">ℹ️ Waiting for products to load...</div>';
+                document.getElementById('girlsFashionTest').innerHTML = '<div class="status info">ℹ️ Waiting for products to load...</div>';
+                document.getElementById('issueDetection').innerHTML = '<div class="status info">ℹ️ Waiting for products to load...</div>';
+                return;
+            }
+            
+            // Test 2: Category Analysis
+            const categories = [...new Set(window.products.map(p => p.category))];
+            const categoryAnalysisDiv = document.getElementById('categoryAnalysis');
+            
+            let categoryHtml = `<div class="status info">Found ${categories.length} categories:</div>`;
+            categories.forEach(cat => {
+                const count = window.products.filter(p => p.category === cat).length;
+                const isGirlsFashion = cat === 'girls-fashion';
+                const badgeClass = isGirlsFashion ? 'category-girls-fashion' : 'category-other';
+                categoryHtml += `<div style="margin: 5px 0;">
+                    <span class="category-badge ${badgeClass}">${cat}</span> 
+                    <span>${count} products</span>
+                    ${isGirlsFashion ? ' 👗' : ''}
+                </div>`;
+            });
+            
+            categoryAnalysisDiv.innerHTML = categoryHtml;
+            
+            // Test 3: Girls Fashion Products
+            const girlsFashionProducts = getProductsByCategory('girls-fashion');
+            const girlsFashionDiv = document.getElementById('girlsFashionTest');
+            
+            if (girlsFashionProducts.length > 0) {
+                let girlsHtml = `<div class="status success">✅ Found ${girlsFashionProducts.length} girls fashion products:</div>`;
+                girlsFashionProducts.slice(0, 5).forEach(product => {
+                    girlsHtml += `<div class="product-item">
+                        <strong>${product.name}</strong><br>
+                        <small>Category: ${product.category} | Price: ${product.price} | ID: ${product.id}</small>
+                    </div>`;
+                });
+                if (girlsFashionProducts.length > 5) {
+                    girlsHtml += `<div class="status info">... and ${girlsFashionProducts.length - 5} more</div>`;
+                }
+                girlsFashionDiv.innerHTML = girlsHtml;
+            } else {
+                girlsFashionDiv.innerHTML = `<div class="status error">❌ No girls fashion products found</div>`;
+            }
+            
+            // Test 4: Issue Detection
+            const issuesDiv = document.getElementById('issueDetection');
+            let issues = [];
+            
+            // Check for similar category names
+            const similarCategories = categories.filter(cat => 
+                cat.toLowerCase().includes('fashion') || 
+                cat.toLowerCase().includes('girl') ||
+                cat.toLowerCase().includes('female')
+            );
+            
+            if (similarCategories.length > 1) {
+                issues.push(`<div class="status warning">⚠️ Multiple fashion-related categories found: ${similarCategories.join(', ')}</div>`);
+            }
+            
+            // Check for products without category
+            const uncategorized = window.products.filter(p => !p.category || p.category === '');
+            if (uncategorized.length > 0) {
+                issues.push(`<div class="status warning">⚠️ ${uncategorized.length} products without category</div>`);
+            }
+            
+            // Check for case sensitivity issues
+            const fashionVariants = window.products.filter(p => 
+                p.category && p.category.toLowerCase().includes('girls') && p.category.toLowerCase().includes('fashion')
+            );
+            
+            if (fashionVariants.length > girlsFashionProducts.length) {
+                issues.push(`<div class="status warning">⚠️ Possible case sensitivity issue: ${fashionVariants.length} fashion products vs ${girlsFashionProducts.length} exact matches</div>`);
+                fashionVariants.forEach(p => {
+                    if (p.category !== 'girls-fashion') {
+                        issues.push(`<div class="status warning">⚠️ Found variant: "${p.category}" for product "${p.name}"</div>`);
+                    }
+                });
+            }
+            
+            if (issues.length === 0) {
+                issues.push(`<div class="status success">✅ No issues detected</div>`);
+            }
+            
+            issuesDiv.innerHTML = issues.join('');
+            
+            console.log('=== TESTS COMPLETED ===');
+        }
+        
+        // Auto-run tests when products are ready
+        function initTests() {
+            setTimeout(runTests, 1000);
+        }
+        
+        if (window.products && window.products.length > 0) {
+            initTests();
+        }
+        
+        document.addEventListener('products-ready', initTests);
+        document.addEventListener('products-updated', initTests);
+        
+        // Run tests every 3 seconds for the first 15 seconds
+        let testCount = 0;
+        const testInterval = setInterval(() => {
+            testCount++;
+            runTests();
+            if (testCount >= 5) {
+                clearInterval(testInterval);
+            }
+        }, 3000);
+    </script>
+</body>
+</html>

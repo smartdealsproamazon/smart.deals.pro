@@ -295,8 +295,39 @@
 
     // Render fashion products
     function renderFashionProducts() {
+      console.log('=== FASHION PAGE: Rendering girls fashion products ===');
+      console.log('Total products available:', window.products ? window.products.length : 0);
+      
+      if (!window.products || window.products.length === 0) {
+        console.log('No products available yet');
+        return;
+      }
+      
+      // Log all categories for debugging
+      const allCategories = [...new Set(window.products.map(p => p.category))];
+      console.log('Available categories:', allCategories);
+      
       const girlsFashionProducts = getProductsByCategory('girls-fashion');
       console.log('Girls fashion products found:', girlsFashionProducts.length);
+      
+      // Also log some example products for debugging
+      if (girlsFashionProducts.length > 0) {
+        console.log('Sample girls fashion products:');
+        girlsFashionProducts.slice(0, 3).forEach(p => {
+          console.log(`- ${p.name} (category: ${p.category})`);
+        });
+      } else {
+        console.log('No girls-fashion products found. Checking for similar categories...');
+        const fashionRelated = window.products.filter(p => 
+          p.category.toLowerCase().includes('fashion') || 
+          p.category.toLowerCase().includes('girl')
+        );
+        console.log('Fashion-related products:', fashionRelated.length);
+        fashionRelated.forEach(p => {
+          console.log(`- ${p.name} (category: "${p.category}")`);
+        });
+      }
+      
       renderFashionGrid(girlsFashionProducts);
     }
 
@@ -312,7 +343,20 @@
       
       container.innerHTML = '';
       
-      if (products.length === 0) {
+      // SAFETY CHECK: Only render products that are actually girls-fashion
+      const safeProducts = products.filter(p => p.category === 'girls-fashion');
+      console.log(`Filtering products: ${products.length} → ${safeProducts.length} girls-fashion products`);
+      
+      if (products.length !== safeProducts.length) {
+        console.warn('WARNING: Some non-girls-fashion products were filtered out!');
+        products.forEach(p => {
+          if (p.category !== 'girls-fashion') {
+            console.warn(`- Filtered out: ${p.name} (category: ${p.category})`);
+          }
+        });
+      }
+      
+      if (safeProducts.length === 0) {
         container.innerHTML = `
           <div class="no-products">
             <i class="fas fa-female" style="font-size: 3rem; color: #9ca3af; margin-bottom: 1rem;"></i>
@@ -324,19 +368,30 @@
         return;
       }
       
-      products.forEach(product => {
+      safeProducts.forEach(product => {
         const productCard = createProductCard(product);
         container.appendChild(productCard);
       });
+      
+      console.log(`Successfully rendered ${safeProducts.length} girls fashion products`);
     }
 
     // Initialize page when products are ready
     function initializeFashion() {
-      console.log('Initializing fashion page...');
+      console.log('=== INITIALIZING FASHION PAGE ===');
       console.log('Total products loaded:', window.products ? window.products.length : 0);
       
-      // Force render fashion products
+      // Clear any previous content that might have been rendered by auto-render
+      const container = document.getElementById('product-container');
+      if (container) {
+        container.innerHTML = '';
+      }
+      
+      // Force render fashion products with our specific logic
       renderFashionProducts();
+      
+      // Mark that we've taken control of rendering
+      window.fashionPageInitialized = true;
     }
 
     // Initialize when DOM is loaded
