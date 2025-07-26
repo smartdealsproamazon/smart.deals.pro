@@ -432,11 +432,11 @@ function autoRenderProducts() {
   }
   
   if (filename.includes('smartwatch')) {
-    console.log('Rendering smartwatch products');
-    renderProducts('smartwatch');
+    console.log('Rendering boys fashion products');
+    renderProducts('boys-fashion');
   } else if (filename.includes('fashion')) {
-    console.log('Rendering fashion products');
-    renderProducts('fashion');
+    console.log('Rendering girls fashion products');
+    renderProducts('girls-fashion');
   } else if (filename.includes('small-electrical') || filename.includes('electronic')) {
     console.log('Rendering electrical products');
     renderProducts('electrical');
