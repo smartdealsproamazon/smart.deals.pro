@@ -435,7 +435,12 @@ function autoRenderProducts() {
     console.log('Rendering boys fashion products');
     renderProducts('boys-fashion');
   } else if (filename.includes('fashion')) {
-    console.log('Rendering girls fashion products');
+    // Check if the fashion page has already taken control of rendering
+    if (window.fashionPageInitialized) {
+      console.log('Fashion page has already initialized, skipping auto-render');
+      return;
+    }
+    console.log('Auto-rendering girls fashion products');
     renderProducts('girls-fashion');
   } else if (filename.includes('small-electrical') || filename.includes('electronic')) {
     console.log('Rendering electrical products');
