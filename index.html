@@ -130,65 +130,90 @@
   </script>
 </head>
 <body>
-  <!-- Loading Screen -->
+  <!-- Modern Animated Loading Screen -->
   <div id="loading-screen" class="homepage-preloader">
-    <div class="preloader-container">
-      <div class="preloader-background-effects">
-        <div class="floating-particle"></div>
-        <div class="floating-particle"></div>
-        <div class="floating-particle"></div>
-        <div class="floating-particle"></div>
-        <div class="floating-particle"></div>
+    <!-- Animated Background -->
+    <div class="preloader-bg">
+      <div class="bg-circle circle-1"></div>
+      <div class="bg-circle circle-2"></div>
+      <div class="bg-circle circle-3"></div>
+      <div class="bg-lines">
+        <div class="line line-1"></div>
+        <div class="line line-2"></div>
+        <div class="line line-3"></div>
+        <div class="line line-4"></div>
+      </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="preloader-content">
+      <!-- Logo Animation -->
+      <div class="logo-container">
+        <div class="logo-circle">
+          <img src="logo.svg" alt="SmartDeals Pro" class="preloader-logo">
+          <div class="logo-ring ring-1"></div>
+          <div class="logo-ring ring-2"></div>
+          <div class="logo-ring ring-3"></div>
+        </div>
       </div>
       
-      <div class="preloader-content">
-        <div class="logo-section">
-          <div class="logo-wrapper">
-            <img src="logo.svg" alt="SmartDeals Pro Logo" class="preloader-logo" />
-            <div class="logo-glow"></div>
-          </div>
+      <!-- Brand Text with Typewriter Effect -->
+      <div class="brand-section">
+        <h1 class="brand-title">
+          <span class="brand-text" data-text="SmartDeals Pro">SmartDeals Pro</span>
+        </h1>
+        <p class="brand-subtitle">Your Ultimate Shopping Experience</p>
+      </div>
+      
+      <!-- Modern Loading Animation -->
+      <div class="loading-section">
+        <div class="loading-spinner">
+          <div class="spinner-ring"></div>
+          <div class="spinner-ring"></div>
+          <div class="spinner-ring"></div>
+          <div class="spinner-ring"></div>
         </div>
         
-        <div class="brand-animation">
-          <div class="shopping-icon-container">
-            <div class="shopping-bag">🛍️</div>
-            <div class="shopping-cart">🛒</div>
-            <div class="sparkles">✨</div>
-          </div>
-          <div class="brand-text-container">
-            <h1 class="brand-name">SmartDeals Pro</h1>
-            <p class="brand-tagline">Your Ultimate Shopping Destination</p>
-          </div>
-        </div>
-        
-        <div class="loading-progress">
-          <div class="progress-bar">
-            <div class="progress-fill"></div>
-          </div>
-          <div class="loading-text">
-            <span class="loading-message">Loading amazing deals</span>
-            <div class="loading-dots">
-              <span></span>
-              <span></span>
-              <span></span>
+        <div class="loading-progress-modern">
+          <div class="progress-container">
+            <div class="progress-bar-modern">
+              <div class="progress-fill-modern"></div>
+              <div class="progress-glow"></div>
+            </div>
+            <div class="progress-text">
+              <span class="loading-status">Initializing</span>
+              <span class="progress-percent">0%</span>
             </div>
           </div>
-          <div class="loading-percentage">0%</div>
         </div>
         
-        <div class="features-preview">
-          <div class="feature-item">
-            <i class="fas fa-star"></i>
-            <span>Top Rated Products</span>
-          </div>
-          <div class="feature-item">
-            <i class="fas fa-truck"></i>
-            <span>Fast Delivery</span>
-          </div>
-          <div class="feature-item">
-            <i class="fas fa-shield-alt"></i>
-            <span>Secure Shopping</span>
-          </div>
+        <!-- Animated Dots -->
+        <div class="loading-dots-modern">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+      
+      <!-- Feature Icons with Animation -->
+      <div class="features-modern">
+        <div class="feature-icon" data-delay="0">
+          <i class="fas fa-shopping-cart"></i>
+          <span>Shop</span>
+        </div>
+        <div class="feature-icon" data-delay="200">
+          <i class="fas fa-star"></i>
+          <span>Reviews</span>
+        </div>
+        <div class="feature-icon" data-delay="400">
+          <i class="fas fa-truck-fast"></i>
+          <span>Delivery</span>
+        </div>
+        <div class="feature-icon" data-delay="600">
+          <i class="fas fa-shield-check"></i>
+          <span>Secure</span>
         </div>
       </div>
     </div>
@@ -513,70 +538,110 @@
   <script src="render.js"></script>
   <!-- <script src="user-auth.js"></script> -->
   <script>
-    // Enhanced Loading screen with progress animation
+    // Modern Preloader with Enhanced Animations
     let loadingProgress = 0;
     let progressInterval;
+    let isPreloaderActive = true;
     
-    function updateLoadingProgress() {
-      const progressFill = document.querySelector('.progress-fill');
-      const loadingPercentage = document.querySelector('.loading-percentage');
-      const loadingMessages = [
-        'Loading amazing deals',
-        'Fetching best products',
-        'Preparing your experience',
-        'Almost ready'
+    function updateModernProgress() {
+      const progressFill = document.querySelector('.progress-fill-modern');
+      const progressPercent = document.querySelector('.progress-percent');
+      const loadingStatus = document.querySelector('.loading-status');
+      
+      const statusMessages = [
+        'Initializing',
+        'Loading Resources',
+        'Preparing Interface',
+        'Finalizing Setup',
+        'Ready to Launch'
       ];
       
-      if (progressFill && loadingPercentage) {
-        loadingProgress += Math.random() * 15 + 5; // Random increment between 5-20
-        if (loadingProgress > 100) loadingProgress = 100;
+      if (progressFill && progressPercent && loadingStatus && isPreloaderActive) {
+        // Smooth progress increment
+        const increment = Math.random() * 12 + 3; // 3-15% increments
+        loadingProgress = Math.min(loadingProgress + increment, 100);
         
         progressFill.style.width = loadingProgress + '%';
-        loadingPercentage.textContent = Math.round(loadingProgress) + '%';
+        progressPercent.textContent = Math.round(loadingProgress) + '%';
         
-        // Update loading message based on progress
-        const messageIndex = Math.min(Math.floor(loadingProgress / 25), loadingMessages.length - 1);
-        const loadingMessage = document.querySelector('.loading-message');
-        if (loadingMessage) {
-          loadingMessage.textContent = loadingMessages[messageIndex];
-        }
+        // Update status message based on progress
+        const messageIndex = Math.min(Math.floor(loadingProgress / 20), statusMessages.length - 1);
+        loadingStatus.textContent = statusMessages[messageIndex];
         
+        // Complete loading
         if (loadingProgress >= 100) {
           clearInterval(progressInterval);
-          // Hide preloader after completing progress
+          isPreloaderActive = false;
+          
+          // Add completion effect
           setTimeout(() => {
             const loadingScreen = document.getElementById('loading-screen');
             if (loadingScreen) {
               loadingScreen.style.opacity = '0';
+              loadingScreen.style.transform = 'scale(1.1)';
+              
               setTimeout(() => {
                 loadingScreen.style.display = 'none';
-              }, 500);
+              }, 800);
             }
-          }, 800);
+          }, 1000);
         }
       }
     }
     
-    window.addEventListener('load', function() {
+    // Initialize preloader animations
+    function initPreloader() {
       const loadingScreen = document.getElementById('loading-screen');
       
       if (loadingScreen && loadingScreen.classList.contains('homepage-preloader')) {
-        // Start progress animation
-        progressInterval = setInterval(updateLoadingProgress, 200);
-        
-        // Ensure minimum loading time of 3 seconds
+        // Start progress animation after a brief delay
         setTimeout(() => {
-          if (loadingProgress < 100) {
-            loadingProgress = 100;
-            updateLoadingProgress();
+          progressInterval = setInterval(updateModernProgress, 250);
+        }, 500);
+        
+        // Ensure minimum display time of 4 seconds
+        setTimeout(() => {
+          if (isPreloaderActive && loadingProgress < 100) {
+            loadingProgress = 95;
+            setTimeout(() => {
+              loadingProgress = 100;
+              updateModernProgress();
+            }, 500);
           }
-        }, 3000);
+        }, 4000);
+        
+        // Add typewriter effect completion
+        setTimeout(() => {
+          const brandText = document.querySelector('.brand-text');
+          if (brandText) {
+            brandText.style.animation = 'textReveal 2s ease-out forwards';
+          }
+        }, 1000);
+        
       } else if (loadingScreen) {
-        // Hide other preloaders immediately after page load
+        // Hide other preloaders immediately
         loadingScreen.style.opacity = '0';
         setTimeout(() => {
           loadingScreen.style.display = 'none';
         }, 500);
+      }
+    }
+    
+    // Start preloader when DOM is ready
+    document.addEventListener('DOMContentLoaded', initPreloader);
+    
+    // Also start on window load as fallback
+    window.addEventListener('load', function() {
+      if (isPreloaderActive) {
+        // Speed up progress if page is already loaded
+        const speedUpInterval = setInterval(() => {
+          if (loadingProgress < 90) {
+            loadingProgress += 15;
+            updateModernProgress();
+          } else {
+            clearInterval(speedUpInterval);
+          }
+        }, 100);
       }
     });
 
