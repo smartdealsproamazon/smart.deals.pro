@@ -59,6 +59,14 @@
   </script>
 </head>
 <body>
+  <!-- Loading Screen -->
+  <div id="loading-screen">
+    <div class="preloader-container">
+      <div class="old-loader"></div>
+      <p class="old-loading-text">Loading amazing deals...</p>
+    </div>
+  </div>
+
   <!-- Header -->
   <header class="main-header">
     <div class="container">
@@ -901,5 +909,18 @@
       }
     }
   </style>
+
+  <script>
+    // Loading screen for non-homepage pages
+    window.addEventListener('load', function() {
+      const loadingScreen = document.getElementById('loading-screen');
+      if (loadingScreen) {
+        loadingScreen.style.opacity = '0';
+        setTimeout(() => {
+          loadingScreen.style.display = 'none';
+        }, 500);
+      }
+    });
+  </script>
 </body>
 </html>

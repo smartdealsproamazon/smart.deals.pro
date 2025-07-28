@@ -131,21 +131,20 @@
 </head>
 <body>
   <!-- Loading Screen -->
-  <div id="loading-screen">
+  <div id="loading-screen" class="homepage-preloader">
     <div class="preloader-container">
-      <div class="cart-animation">
-        <div class="cart-icon">🛒</div>
-        <div class="site-name-reveal">
-          <span class="name-part" data-delay="0">Smart</span>
-          <span class="name-part" data-delay="0.3"> Deals</span>
-          <span class="name-part" data-delay="0.6"> Pro</span>
+      <div class="header-style-preloader">
+        <div class="logo-section">
+          <img src="logo.svg" alt="SmartDeals Pro Logo" class="preloader-logo" />
+        </div>
+        <div class="cart-text-animation">
+          <div class="cart-icon">🛒</div>
+          <div class="site-name-behind">
+            <span class="logo-text-preloader">SmartDeals Pro</span>
+          </div>
         </div>
       </div>
-      <div class="loading-dots">
-        <span></span>
-        <span></span>
-        <span></span>
-      </div>
+      <div class="loading-subtitle">Loading amazing deals...</div>
     </div>
   </div>
 
@@ -468,17 +467,25 @@
   <script src="render.js"></script>
   <!-- <script src="user-auth.js"></script> -->
   <script>
-    // Loading screen
+    // Loading screen - Homepage only with cart animation
     window.addEventListener('load', function() {
       const loadingScreen = document.getElementById('loading-screen');
       
-      // Hide preloader after exactly 3.5 seconds
-      setTimeout(() => {
+      if (loadingScreen && loadingScreen.classList.contains('homepage-preloader')) {
+        // Hide homepage preloader after exactly 3.5 seconds
+        setTimeout(() => {
+          loadingScreen.style.opacity = '0';
+          setTimeout(() => {
+            loadingScreen.style.display = 'none';
+          }, 500);
+        }, 3500);
+      } else if (loadingScreen) {
+        // Hide other preloaders immediately after page load
         loadingScreen.style.opacity = '0';
         setTimeout(() => {
           loadingScreen.style.display = 'none';
         }, 500);
-      }, 3500);
+      }
     });
 
     // Mobile menu toggle
