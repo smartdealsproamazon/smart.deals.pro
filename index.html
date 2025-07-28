@@ -133,18 +133,64 @@
   <!-- Loading Screen -->
   <div id="loading-screen" class="homepage-preloader">
     <div class="preloader-container">
-      <div class="header-style-preloader">
+      <div class="preloader-background-effects">
+        <div class="floating-particle"></div>
+        <div class="floating-particle"></div>
+        <div class="floating-particle"></div>
+        <div class="floating-particle"></div>
+        <div class="floating-particle"></div>
+      </div>
+      
+      <div class="preloader-content">
         <div class="logo-section">
-          <img src="logo.svg" alt="SmartDeals Pro Logo" class="preloader-logo" />
+          <div class="logo-wrapper">
+            <img src="logo.svg" alt="SmartDeals Pro Logo" class="preloader-logo" />
+            <div class="logo-glow"></div>
+          </div>
         </div>
-        <div class="cart-text-animation">
-          <div class="cart-icon">🛒</div>
-          <div class="site-name-behind">
-            <span class="logo-text-preloader">SmartDeals Pro</span>
+        
+        <div class="brand-animation">
+          <div class="shopping-icon-container">
+            <div class="shopping-bag">🛍️</div>
+            <div class="shopping-cart">🛒</div>
+            <div class="sparkles">✨</div>
+          </div>
+          <div class="brand-text-container">
+            <h1 class="brand-name">SmartDeals Pro</h1>
+            <p class="brand-tagline">Your Ultimate Shopping Destination</p>
+          </div>
+        </div>
+        
+        <div class="loading-progress">
+          <div class="progress-bar">
+            <div class="progress-fill"></div>
+          </div>
+          <div class="loading-text">
+            <span class="loading-message">Loading amazing deals</span>
+            <div class="loading-dots">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+          <div class="loading-percentage">0%</div>
+        </div>
+        
+        <div class="features-preview">
+          <div class="feature-item">
+            <i class="fas fa-star"></i>
+            <span>Top Rated Products</span>
+          </div>
+          <div class="feature-item">
+            <i class="fas fa-truck"></i>
+            <span>Fast Delivery</span>
+          </div>
+          <div class="feature-item">
+            <i class="fas fa-shield-alt"></i>
+            <span>Secure Shopping</span>
           </div>
         </div>
       </div>
-      <div class="loading-subtitle">Loading amazing deals...</div>
     </div>
   </div>
 
@@ -467,18 +513,64 @@
   <script src="render.js"></script>
   <!-- <script src="user-auth.js"></script> -->
   <script>
-    // Loading screen - Homepage only with cart animation
+    // Enhanced Loading screen with progress animation
+    let loadingProgress = 0;
+    let progressInterval;
+    
+    function updateLoadingProgress() {
+      const progressFill = document.querySelector('.progress-fill');
+      const loadingPercentage = document.querySelector('.loading-percentage');
+      const loadingMessages = [
+        'Loading amazing deals',
+        'Fetching best products',
+        'Preparing your experience',
+        'Almost ready'
+      ];
+      
+      if (progressFill && loadingPercentage) {
+        loadingProgress += Math.random() * 15 + 5; // Random increment between 5-20
+        if (loadingProgress > 100) loadingProgress = 100;
+        
+        progressFill.style.width = loadingProgress + '%';
+        loadingPercentage.textContent = Math.round(loadingProgress) + '%';
+        
+        // Update loading message based on progress
+        const messageIndex = Math.min(Math.floor(loadingProgress / 25), loadingMessages.length - 1);
+        const loadingMessage = document.querySelector('.loading-message');
+        if (loadingMessage) {
+          loadingMessage.textContent = loadingMessages[messageIndex];
+        }
+        
+        if (loadingProgress >= 100) {
+          clearInterval(progressInterval);
+          // Hide preloader after completing progress
+          setTimeout(() => {
+            const loadingScreen = document.getElementById('loading-screen');
+            if (loadingScreen) {
+              loadingScreen.style.opacity = '0';
+              setTimeout(() => {
+                loadingScreen.style.display = 'none';
+              }, 500);
+            }
+          }, 800);
+        }
+      }
+    }
+    
     window.addEventListener('load', function() {
       const loadingScreen = document.getElementById('loading-screen');
       
       if (loadingScreen && loadingScreen.classList.contains('homepage-preloader')) {
-        // Hide homepage preloader after exactly 2 seconds
+        // Start progress animation
+        progressInterval = setInterval(updateLoadingProgress, 200);
+        
+        // Ensure minimum loading time of 3 seconds
         setTimeout(() => {
-          loadingScreen.style.opacity = '0';
-          setTimeout(() => {
-            loadingScreen.style.display = 'none';
-          }, 500);
-        }, 2000);
+          if (loadingProgress < 100) {
+            loadingProgress = 100;
+            updateLoadingProgress();
+          }
+        }, 3000);
       } else if (loadingScreen) {
         // Hide other preloaders immediately after page load
         loadingScreen.style.opacity = '0';
