@@ -350,3 +350,109 @@ function searchProducts(query) {
     (p.features || []).some(f => f.toLowerCase().includes(term))
   );
 }
+
+// ---- Example Products for Category Testing ----
+// These are example products to demonstrate the category filtering functionality
+// In a real environment, products would come from Firebase Firestore
+
+// Add example products if none exist (for testing/demonstration purposes)
+if (typeof window !== 'undefined') {
+  document.addEventListener('DOMContentLoaded', function() {
+    // Wait a bit for Firebase to load, then add examples if no products exist
+    setTimeout(() => {
+      if (!window.products || window.products.length === 0) {
+        console.log('No products found, adding example products for demonstration...');
+        
+        const exampleProducts = [
+          {
+            id: 'boys-1',
+            name: "Blue Boys T-Shirt",
+            category: "boys",
+            price: 19.99,
+            originalPrice: 24.99,
+            image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=300&h=300&fit=crop",
+            description: "Comfortable cotton t-shirt for boys",
+            features: ["100% Cotton", "Machine Washable", "Comfortable Fit"],
+            discount: 20,
+            rating: 4.5,
+            reviews: 15,
+            link: "#"
+          },
+          {
+            id: 'boys-2',
+            name: "Boys Denim Jeans",
+            category: "boys",
+            price: 39.99,
+            originalPrice: 49.99,
+            image: "https://images.unsplash.com/photo-1542272604-787c3835535d?w=300&h=300&fit=crop",
+            description: "Durable denim jeans for active boys",
+            features: ["Durable Denim", "Adjustable Waist", "Classic Fit"],
+            discount: 20,
+            rating: 4.7,
+            reviews: 22,
+            link: "#"
+          },
+          {
+            id: 'girls-1',
+            name: "Pink Girls Dress",
+            category: "girls",
+            price: 29.99,
+            originalPrice: 39.99,
+            image: "https://images.unsplash.com/photo-1518831959646-742c3a14ebf7?w=300&h=300&fit=crop",
+            description: "Beautiful pink dress perfect for special occasions",
+            features: ["Soft Fabric", "Elegant Design", "Perfect for Parties"],
+            discount: 25,
+            rating: 4.8,
+            reviews: 18,
+            link: "#"
+          },
+          {
+            id: 'girls-2',
+            name: "Girls Fashion Leggings",
+            category: "girls",
+            price: 15.99,
+            originalPrice: 19.99,
+            image: "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=300&h=300&fit=crop",
+            description: "Comfortable and stylish leggings for girls",
+            features: ["Stretchy Material", "Comfortable Waistband", "Multiple Colors"],
+            discount: 20,
+            rating: 4.6,
+            reviews: 12,
+            link: "#"
+          },
+          {
+            id: 'electronic-1',
+            name: "Smart Phone",
+            category: "electronics",
+            price: 299.99,
+            originalPrice: 399.99,
+            image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=300&h=300&fit=crop",
+            description: "Latest smartphone with amazing features",
+            features: ["High-Quality Camera", "Long Battery Life", "Fast Performance"],
+            discount: 25,
+            rating: 4.9,
+            reviews: 45,
+            link: "#"
+          }
+        ];
+        
+        // Normalize and add to products array
+        window.products = exampleProducts.map((p, idx) => normalizeProduct(p, idx));
+        
+        console.log(`Added ${exampleProducts.length} example products`);
+        console.log('Example products by category:');
+        const categories = [...new Set(window.products.map(p => p.category))];
+        categories.forEach(cat => {
+          const count = window.products.filter(p => p.category === cat).length;
+          console.log(`- ${cat}: ${count} products`);
+        });
+        
+        // Trigger rendering
+        document.dispatchEvent(new Event('products-ready'));
+        if (typeof window.autoRenderProducts === 'function') {
+          window.autoRenderProducts();
+        }
+      }
+    }, 2000); // Wait 2 seconds for Firebase
+  });
+}

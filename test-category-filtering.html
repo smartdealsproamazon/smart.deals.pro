@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Category Filtering Test - SmartDeals Pro</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .test-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    .test-section {
+      margin-bottom: 3rem;
+      padding: 1rem;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+    }
+    .test-buttons {
+      margin-bottom: 1rem;
+    }
+    .test-btn {
+      padding: 0.5rem 1rem;
+      margin: 0.25rem;
+      border: none;
+      border-radius: 4px;
+      background: #007bff;
+      color: white;
+      cursor: pointer;
+    }
+    .test-btn:hover {
+      background: #0056b3;
+    }
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="test-container">
+    <h1>Category Filtering Test</h1>
+    
+    <div class="test-section">
+      <h2>Test Category Filtering</h2>
+      <p>This page tests the category filtering functionality for boys and girls fashion pages.</p>
+      
+      <div class="test-buttons">
+        <button class="test-btn" onclick="testBoys()">Test Boys Filter</button>
+        <button class="test-btn" onclick="testGirls()">Test Girls Filter</button>
+        <button class="test-btn" onclick="testAll()">Show All Products</button>
+        <button class="test-btn" onclick="logCategories()">Log Available Categories</button>
+      </div>
+      
+      <div id="test-results">
+        <p>Click buttons above to test filtering...</p>
+      </div>
+    </div>
+    
+    <div class="test-section">
+      <h2>Products Display</h2>
+      <div id="loadingMessage" style="text-align: center; padding: 2rem;">
+        Loading products...
+      </div>
+      <div class="products-grid" id="product-container">
+        <!-- Products will be displayed here -->
+      </div>
+    </div>
+    
+    <div class="test-section">
+      <h2>Page Detection Test</h2>
+      <p>Current page: <span id="current-page"></span></p>
+      <p>Detected category: <span id="detected-category"></span></p>
+      
+      <div style="margin-top: 1rem;">
+        <p><strong>Links to test pages:</strong></p>
+        <a href="boys-fashion.html" target="_blank">Boys Fashion Page</a> |
+        <a href="girls-fashion.html" target="_blank">Girls Fashion Page</a> |
+        <a href="index.html" target="_blank">Home Page</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="products.js"></script>
+  <script src="render.js"></script>
+  <script>
+    function testBoys() {
+      const boys = (window.products || []).filter(p => p.category === 'boys');
+      document.getElementById('test-results').innerHTML = `
+        <h3>Boys Category Filter Test</h3>
+        <p>Found ${boys.length} boys products:</p>
+        <ul>${boys.map(p => `<li>${p.name} (category: ${p.category})</li>`).join('')}</ul>
+      `;
+      displayProducts(boys);
+    }
+    
+    function testGirls() {
+      const girls = (window.products || []).filter(p => p.category === 'girls');
+      document.getElementById('test-results').innerHTML = `
+        <h3>Girls Category Filter Test</h3>
+        <p>Found ${girls.length} girls products:</p>
+        <ul>${girls.map(p => `<li>${p.name} (category: ${p.category})</li>`).join('')}</ul>
+      `;
+      displayProducts(girls);
+    }
+    
+    function testAll() {
+      document.getElementById('test-results').innerHTML = `
+        <h3>All Products Test</h3>
+        <p>Showing all ${(window.products || []).length} products</p>
+      `;
+      displayProducts(window.products || []);
+    }
+    
+    function logCategories() {
+      const categories = [...new Set((window.products || []).map(p => p.category))];
+      const categoryCounts = {};
+      categories.forEach(cat => {
+        categoryCounts[cat] = (window.products || []).filter(p => p.category === cat).length;
+      });
+      
+      document.getElementById('test-results').innerHTML = `
+        <h3>Available Categories</h3>
+        <ul>${categories.map(cat => `<li>${cat}: ${categoryCounts[cat]} products</li>`).join('')}</ul>
+      `;
+    }
+    
+    function updatePageInfo() {
+      const currentPage = window.location.pathname;
+      const filename = currentPage.split('/').pop();
+      
+      let selectedCategory = "";
+      if (currentPage.includes("boys-fashion.html")) {
+        selectedCategory = "boys";
+      } else if (currentPage.includes("girls-fashion.html")) {
+        selectedCategory = "girls";
+      } else if (filename.includes('fashion') && !filename.includes('boys-fashion') && !filename.includes('girls-fashion')) {
+        selectedCategory = "girls-fashion (legacy)";
+      } else {
+        selectedCategory = "none (show all)";
+      }
+      
+      document.getElementById('current-page').textContent = filename || 'index.html';
+      document.getElementById('detected-category').textContent = selectedCategory;
+    }
+    
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
+      updatePageInfo();
+      
+      // Wait for products to load
+      if (window.products && window.products.length > 0) {
+        testAll();
+      }
+    });
+    
+    document.addEventListener('products-ready', function() {
+      console.log('Products ready on test page');
+      testAll();
+      logCategories();
+    });
+    
+    document.addEventListener('products-updated', function() {
+      console.log('Products updated on test page');
+      testAll();
+      logCategories();
+    });
+  </script>
+</body>
+</html>

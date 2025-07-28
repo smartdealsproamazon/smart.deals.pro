@@ -417,19 +417,41 @@ function renderUSAFlashSaleProducts() {
   console.log(`Successfully rendered ${usaProducts.length} USA flash sale products`);
 }
 
-// Auto-render products based on page URL
+// Auto-render products based on page URL with enhanced category detection
 function autoRenderProducts() {
-  const path = window.location.pathname;
-  const filename = path.split('/').pop();
+  const currentPage = window.location.pathname;
+  const filename = currentPage.split('/').pop();
   
   console.log(`Auto-rendering for page: ${filename}`);
   console.log('Products available:', window.products ? window.products.length : 0);
+  
+  // Detect which page is open and set category filter
+  let selectedCategory = "";
+  
+  if (currentPage.includes("boys-fashion.html")) {
+    selectedCategory = "boys";
+    console.log('Detected boys-fashion.html page, filtering for "boys" category');
+  } else if (currentPage.includes("girls-fashion.html")) {
+    selectedCategory = "girls";
+    console.log('Detected girls-fashion.html page, filtering for "girls" category');
+  } else if (filename.includes('fashion') && !filename.includes('boys-fashion') && !filename.includes('girls-fashion')) {
+    // Legacy fashion.html page - keep using girls-fashion for backward compatibility
+    selectedCategory = "girls-fashion";
+    console.log('Detected legacy fashion.html page, filtering for "girls-fashion" category');
+  }
   
   // Log all available categories for debugging
   if (window.products && window.products.length > 0) {
     const categories = [...new Set(window.products.map(p => p.category))];
     console.log('Available categories:', categories);
   }
+  
+  // Filter products by category before rendering
+  const filteredProducts = selectedCategory
+    ? (window.products || []).filter(product => product.category === selectedCategory)
+    : (window.products || []);
+    
+  console.log(`Category filter "${selectedCategory}" - Found ${filteredProducts.length} products`);
   
   if (filename.includes('boys-fashion')) {
     // Check if the boys fashion page has already taken control of rendering
@@ -438,18 +460,21 @@ function autoRenderProducts() {
       return;
     }
     console.log('Auto-rendering boys fashion products');
-    renderProducts('boys-fashion');
+    displayProducts(filteredProducts);
+  } else if (filename.includes('girls-fashion')) {
+    console.log('Auto-rendering girls fashion products');
+    displayProducts(filteredProducts);
   } else if (filename.includes('smartwatch')) {
     console.log('Rendering smartwatch/boys fashion products (legacy)');
     renderProducts('boys-fashion');
-  } else if (filename.includes('fashion') && !filename.includes('boys-fashion')) {
+  } else if (filename.includes('fashion') && !filename.includes('boys-fashion') && !filename.includes('girls-fashion')) {
     // Check if the fashion page has already taken control of rendering
     if (window.fashionPageInitialized) {
       console.log('Fashion page has already initialized, skipping auto-render');
       return;
     }
-    console.log('Auto-rendering girls fashion products');
-    renderProducts('girls-fashion');
+    console.log('Auto-rendering girls fashion products (legacy)');
+    displayProducts(filteredProducts);
   } else if (filename.includes('small-electrical') || filename.includes('electronic')) {
     console.log('Rendering electrical products');
     renderProducts('electrical');
@@ -468,10 +493,67 @@ function autoRenderProducts() {
     if (document.getElementById('featuredProductsGrid')) {
       renderFeaturedProducts();
     }
+    // Also render all products if there's a general product container
+    if (document.getElementById('product-container') && !document.getElementById('featuredProductsGrid')) {
+      console.log('Rendering all products on homepage');
+      displayProducts(window.products || []);
+    }
   } else {
     console.log(`No specific rendering rule for page: ${filename}`);
   }
 }
+
+// Display filtered products function (used by category filtering)
+function displayProducts(filteredProducts) {
+  const container = document.getElementById('product-container');
+  if (!container) {
+    console.log('Product container not found');
+    return;
+  }
+  
+  // Hide loading message if it exists
+  const loadingMessage = document.getElementById('loadingMessage');
+  if (loadingMessage) {
+    loadingMessage.style.display = 'none';
+  }
+  
+  // Clear previous content
+  container.innerHTML = '';
+  
+  console.log(`Displaying ${filteredProducts.length} filtered products`);
+  
+  if (filteredProducts.length === 0) {
+    container.innerHTML = `
+      <div class="no-products">
+        <i class="fas fa-search" style="font-size: 3rem; color: #9ca3af; margin-bottom: 1rem;"></i>
+        <h3>No products found</h3>
+        <p>No products available in this category yet. Try submitting a product or check back later!</p>
+        <a href="product-submission-verification.html" class="btn btn-primary" style="margin-top: 1rem;">Submit a Product</a>
+      </div>
+    `;
+    return;
+  }
+  
+  // Animate products appearing
+  filteredProducts.forEach((product, index) => {
+    const productCard = createProductCard(product);
+    productCard.style.opacity = '0';
+    productCard.style.transform = 'translateY(20px)';
+    container.appendChild(productCard);
+    
+    // Stagger animation
+    setTimeout(() => {
+      productCard.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+      productCard.style.opacity = '1';
+      productCard.style.transform = 'translateY(0)';
+    }, index * 50);
+  });
+  
+  console.log(`Successfully displayed ${filteredProducts.length} products`);
+}
+
+// Make displayProducts globally accessible
+window.displayProducts = displayProducts;
 
 // Enhanced initialization with immediate rendering
 function initializeRenderer() {
@@ -652,6 +734,8 @@ if (typeof module !== 'undefined' && module.exports) {
     addToWishlist,
     trackClick,
     searchProducts,
-    renderSearchResults
+    renderSearchResults,
+    displayProducts,
+    autoRenderProducts
   };
 }
