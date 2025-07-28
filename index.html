@@ -472,13 +472,13 @@
       const loadingScreen = document.getElementById('loading-screen');
       
       if (loadingScreen && loadingScreen.classList.contains('homepage-preloader')) {
-        // Hide homepage preloader after exactly 3.5 seconds
+        // Hide homepage preloader after exactly 2 seconds
         setTimeout(() => {
           loadingScreen.style.opacity = '0';
           setTimeout(() => {
             loadingScreen.style.display = 'none';
           }, 500);
-        }, 3500);
+        }, 2000);
       } else if (loadingScreen) {
         // Hide other preloaders immediately after page load
         loadingScreen.style.opacity = '0';
