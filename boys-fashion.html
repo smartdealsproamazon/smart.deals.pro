@@ -297,68 +297,29 @@
     document.addEventListener('DOMContentLoaded', function() {
       console.log('Boys Fashion page: DOM loaded');
       
-      // Implement URL-based category filtering as requested
-      initializeBoysFashionFiltering();
+      // Show static message instead of auto-rendering products
+      showStaticMessage();
     });
 
-    // Listen for products ready/updated events
-    document.addEventListener('products-ready', function() {
-      console.log('Boys Fashion page: Products ready');
-      initializeBoysFashionFiltering();
-    });
-
-    document.addEventListener('products-updated', function() {
-      console.log('Boys Fashion page: Products updated');
-      initializeBoysFashionFiltering();
-    });
-
-    // URL-based category filtering function
-    function initializeBoysFashionFiltering() {
-      // Get current page path
-      const currentPage = window.location.pathname;
-      let selectedCategory = "";
-
-      if (currentPage.includes("boys-fashion.html")) {
-        selectedCategory = "boys";
-      } else if (currentPage.includes("girls-fashion.html")) {
-        selectedCategory = "girls";
-      }
-
-      console.log('Current page:', currentPage);
-      console.log('Selected category:', selectedCategory);
-      console.log('Available products:', window.products ? window.products.length : 0);
-
-      // If no products are available yet, show loading state
-      if (!window.products || window.products.length === 0) {
-        const container = document.getElementById('product-container');
-        if (container) {
-          container.innerHTML = `
-            <div class="loading">
-              <i class="fas fa-spinner fa-spin"></i> Loading boys fashion products...
-            </div>
-          `;
-        }
-        return;
-      }
-
-      // Filter products based on category
-      const filteredProducts = selectedCategory
-        ? window.products.filter(p => {
-            console.log(`Product "${p.name}" has category: "${p.category}"`);
-            return p.category === selectedCategory;
-          })
-        : window.products;
-
-      console.log('Filtered products count:', filteredProducts.length);
-
-      // Hide loading message
+    // Show static message instead of auto-rendering
+    function showStaticMessage() {
+      const container = document.getElementById('product-container');
       const loadingMessage = document.getElementById('loadingMessage');
+      
       if (loadingMessage) {
         loadingMessage.style.display = 'none';
       }
-
-      // Display filtered products
-      displayProducts(filteredProducts);
+      
+      if (container) {
+        container.innerHTML = `
+          <div class="no-products">
+            <i class="fas fa-tshirt" style="font-size: 3rem; color: #667eea; margin-bottom: 1rem;"></i>
+            <h3>Boys Fashion Products</h3>
+            <p>Boys fashion products will be displayed here. Please check back later or contact us for product availability.</p>
+            <a href="product-submission-verification.html" class="btn btn-primary" style="margin-top: 1rem;">Submit a Product</a>
+          </div>
+        `;
+      }
     }
   </script>
 </body>

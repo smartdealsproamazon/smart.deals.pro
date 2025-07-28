@@ -119,11 +119,7 @@ function setupRealtimeProductListener() {
         
         console.log(`Products updated: ${previousCount} → ${window.products.length}`);
         
-        // Show notification for new products (only after initial load)
-        if (previousCount > 0 && window.products.length > previousCount) {
-          const newProductsCount = window.products.length - previousCount;
-          showNewProductNotification(newProductsCount);
-        }
+        // Notification functionality removed
 
         persistProductReviews();
 
@@ -160,98 +156,7 @@ function setupRealtimeProductListener() {
     );
 }
 
-// Function to show notification when new products are added
-function showNewProductNotification(count) {
-  // Create notification element
-  const notification = document.createElement('div');
-  notification.className = 'new-product-notification';
-  notification.innerHTML = `
-    <div class="notification-content">
-      <i class="fas fa-sparkles"></i>
-      <span>${count} new product${count > 1 ? 's' : ''} added!</span>
-      <button onclick="this.parentElement.parentElement.remove()" class="notification-close">
-        <i class="fas fa-times"></i>
-      </button>
-    </div>
-  `;
-  
-  // Add to page
-  document.body.appendChild(notification);
-  
-  // Auto-remove after 5 seconds
-  setTimeout(() => {
-    if (notification.parentElement) {
-      notification.remove();
-    }
-  }, 5000);
-  
-  // Add CSS if not already present
-  if (!document.getElementById('notification-styles')) {
-    const style = document.createElement('style');
-    style.id = 'notification-styles';
-    style.textContent = `
-      .new-product-notification {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        z-index: 10000;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        border-radius: 12px;
-        padding: 16px 20px;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-        animation: slideInNotification 0.3s ease-out;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      }
-      
-      .notification-content {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-      }
-      
-      .notification-content i.fa-sparkles {
-        color: #ffd700;
-        font-size: 18px;
-      }
-      
-      .notification-close {
-        background: none;
-        border: none;
-        color: white;
-        cursor: pointer;
-        padding: 4px;
-        border-radius: 4px;
-        transition: background-color 0.2s;
-      }
-      
-      .notification-close:hover {
-        background-color: rgba(255,255,255,0.2);
-      }
-      
-      @keyframes slideInNotification {
-        from {
-          transform: translateX(100%);
-          opacity: 0;
-        }
-        to {
-          transform: translateX(0);
-          opacity: 1;
-        }
-      }
-      
-      @media (max-width: 768px) {
-        .new-product-notification {
-          top: 10px;
-          right: 10px;
-          left: 10px;
-          padding: 12px 16px;
-        }
-      }
-    `;
-    document.head.appendChild(style);
-  }
-}
+// Notification functionality removed
 
 // Initialize real-time Firebase connection
 function initProducts() {
