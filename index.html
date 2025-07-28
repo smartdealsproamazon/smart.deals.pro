@@ -132,8 +132,21 @@
 <body>
   <!-- Loading Screen -->
   <div id="loading-screen">
-    <div class="loader"></div>
-    <p>Loading amazing deals...</p>
+    <div class="preloader-container">
+      <div class="cart-animation">
+        <div class="cart-icon">🛒</div>
+        <div class="site-name-reveal">
+          <span class="name-part" data-delay="0">Smart</span>
+          <span class="name-part" data-delay="0.3"> Deals</span>
+          <span class="name-part" data-delay="0.6"> Pro</span>
+        </div>
+      </div>
+      <div class="loading-dots">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
   </div>
 
   <!-- Header -->
@@ -458,10 +471,14 @@
     // Loading screen
     window.addEventListener('load', function() {
       const loadingScreen = document.getElementById('loading-screen');
-      loadingScreen.style.opacity = '0';
+      
+      // Hide preloader after exactly 3.5 seconds
       setTimeout(() => {
-        loadingScreen.style.display = 'none';
-      }, 500);
+        loadingScreen.style.opacity = '0';
+        setTimeout(() => {
+          loadingScreen.style.display = 'none';
+        }, 500);
+      }, 3500);
     });
 
     // Mobile menu toggle

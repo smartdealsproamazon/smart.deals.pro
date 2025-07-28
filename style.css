@@ -35,7 +35,7 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: #1a202c;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -44,25 +44,225 @@ body {
   transition: opacity 0.5s ease;
 }
 
-.loader {
-  width: 50px;
-  height: 50px;
-  border: 4px solid #e2e8f0;
-  border-top: 4px solid #3b82f6;
+.preloader-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.cart-animation {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  height: 80px;
+  margin-bottom: 2rem;
+}
+
+.cart-icon {
+  font-size: 3rem;
+  animation: cartMove 3.5s ease-in-out;
+  position: absolute;
+  left: -100px;
+  z-index: 2;
+}
+
+.site-name-reveal {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: white;
+  display: flex;
+  position: relative;
+  margin-left: 50px;
+}
+
+.name-part {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: revealText 0.8s ease-out forwards;
+}
+
+.name-part:nth-child(1) {
+  animation-delay: 0.5s;
+}
+
+.name-part:nth-child(2) {
+  animation-delay: 1.2s;
+}
+
+.name-part:nth-child(3) {
+  animation-delay: 1.9s;
+  color: #ffd700;
+}
+
+.loading-dots {
+  display: flex;
+  gap: 8px;
+  margin-top: 1rem;
+}
+
+.loading-dots span {
+  width: 10px;
+  height: 10px;
+  background-color: white;
   border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: 1rem;
+  animation: dotPulse 1.5s ease-in-out infinite;
 }
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+.loading-dots span:nth-child(1) {
+  animation-delay: 0s;
 }
 
-#loading-screen p {
-  color: #e2e8f0;
-  font-size: 1.1rem;
-  font-weight: 500;
+.loading-dots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.loading-dots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes cartMove {
+  0% {
+    left: -100px;
+    transform: scale(1);
+  }
+  30% {
+    left: 50px;
+    transform: scale(1.1);
+  }
+  60% {
+    left: 150px;
+    transform: scale(1);
+  }
+  80% {
+    left: 200px;
+    transform: scale(0.9);
+  }
+  90% {
+    left: 200px;
+    transform: scale(1);
+  }
+  100% {
+    left: 200px;
+    opacity: 0;
+    transform: scale(0.8);
+  }
+}
+
+@keyframes revealText {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes dotPulse {
+  0%, 20% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.3);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Responsive styles for preloader */
+@media (max-width: 768px) {
+  .cart-icon {
+    font-size: 2.5rem;
+  }
+  
+  .site-name-reveal {
+    font-size: 1.8rem;
+    margin-left: 30px;
+  }
+  
+  .cart-animation {
+    height: 60px;
+    margin-bottom: 1.5rem;
+  }
+  
+  @keyframes cartMove {
+    0% {
+      left: -80px;
+      transform: scale(1);
+    }
+    30% {
+      left: 30px;
+      transform: scale(1.1);
+    }
+    60% {
+      left: 100px;
+      transform: scale(1);
+    }
+    80% {
+      left: 130px;
+      transform: scale(0.9);
+    }
+    90% {
+      left: 130px;
+      transform: scale(1);
+    }
+    100% {
+      left: 130px;
+      opacity: 0;
+      transform: scale(0.8);
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .cart-icon {
+    font-size: 2rem;
+  }
+  
+  .site-name-reveal {
+    font-size: 1.5rem;
+    margin-left: 20px;
+  }
+  
+  .cart-animation {
+    height: 50px;
+    margin-bottom: 1rem;
+  }
+  
+  @keyframes cartMove {
+    0% {
+      left: -60px;
+      transform: scale(1);
+    }
+    30% {
+      left: 20px;
+      transform: scale(1.1);
+    }
+    60% {
+      left: 70px;
+      transform: scale(1);
+    }
+    80% {
+      left: 90px;
+      transform: scale(0.9);
+    }
+    90% {
+      left: 90px;
+      transform: scale(1);
+    }
+    100% {
+      left: 90px;
+      opacity: 0;
+      transform: scale(0.8);
+    }
+  }
 }
 
 /* Typography */
