@@ -270,8 +270,7 @@
   </footer>
 
   <!-- Scripts -->
-  <script src="products.js"></script>
-  <script src="render.js"></script>
+  <!-- Auto-rendering scripts removed -->
   <script>
     // Mobile menu toggle
     function toggleMobileMenu() {
@@ -279,18 +278,9 @@
       mobileMenu.classList.toggle('active');
     }
 
-    // Search fashion products
+    // Search functionality removed
     function searchFashion() {
-      const query = document.getElementById('headerSearch').value;
-      if (query) {
-        // Filter girls products first, then search within them
-        const girlsFashionProducts = (window.products || []).filter(p => p.category === 'girls');
-        const results = girlsFashionProducts.filter(product => 
-          product.name.toLowerCase().includes(query.toLowerCase()) ||
-          product.description.toLowerCase().includes(query.toLowerCase())
-        );
-        displayProducts(results);
-      }
+      console.log('Search functionality disabled');
     }
 
     // Initialize page when DOM loads
@@ -320,6 +310,11 @@
           </div>
         `;
       }
+      
+      // Disable any global rendering functions
+      window.displayProducts = function() { console.log('Product rendering disabled'); };
+      window.renderProducts = function() { console.log('Product rendering disabled'); };
+      window.autoRenderProducts = function() { console.log('Auto-rendering disabled'); };
     }
   </script>
 </body>
