@@ -538,6 +538,19 @@ document.addEventListener('products-ready', function () {
 // Listen for real-time product updates and re-render automatically
 document.addEventListener('products-updated', function () {
   console.log('Real-time products update received, re-rendering...');
+  
+  // Check if we're on the fashion page and it has taken control of rendering
+  const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+  if (currentPage.includes('fashion') && window.fashionPageInitialized) {
+    console.log('Fashion page has control, triggering fashion-specific re-render...');
+    // Call the fashion page's specific render function instead
+    if (typeof renderFashionProducts === 'function') {
+      renderFashionProducts();
+    }
+    showRealtimeUpdateIndicator();
+    return;
+  }
+  
   autoRenderProducts();
   
   // Show subtle update indicator
