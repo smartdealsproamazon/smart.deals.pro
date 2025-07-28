@@ -293,156 +293,36 @@
       }
     }
 
-    // Render fashion products
-    function renderFashionProducts() {
-      console.log('=== FASHION PAGE: Rendering girls fashion products ===');
-      console.log('Total products available:', window.products ? window.products.length : 0);
-      
-      if (!window.products || window.products.length === 0) {
-        console.log('No products available yet');
-        return;
-      }
-      
-      // Log all categories for debugging
-      const allCategories = [...new Set(window.products.map(p => p.category))];
-      console.log('Available categories:', allCategories);
-      
-      const girlsFashionProducts = getProductsByCategory('girls-fashion');
-      console.log('Girls fashion products found:', girlsFashionProducts.length);
-      
-      // Also log some example products for debugging
-      if (girlsFashionProducts.length > 0) {
-        console.log('Sample girls fashion products:');
-        girlsFashionProducts.slice(0, 3).forEach(p => {
-          console.log(`- ${p.name} (category: ${p.category})`);
-        });
-      } else {
-        console.log('No girls-fashion products found. Checking for similar categories...');
-        const fashionRelated = window.products.filter(p => 
-          p.category.toLowerCase().includes('fashion') || 
-          p.category.toLowerCase().includes('girl')
-        );
-        console.log('Fashion-related products:', fashionRelated.length);
-        fashionRelated.forEach(p => {
-          console.log(`- ${p.name} (category: "${p.category}")`);
-        });
-      }
-      
-      renderFashionGrid(girlsFashionProducts);
-    }
+    // Product rendering functions removed
 
-    // Render fashion grid
-    function renderFashionGrid(products) {
+    // Initialize page when DOM loads
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('Girls Fashion page: DOM loaded');
+      
+      // Show static message instead of auto-rendering products
+      showStaticMessage();
+    });
+
+    // Show static message instead of auto-rendering
+    function showStaticMessage() {
       const container = document.getElementById('product-container');
       const loadingMessage = document.getElementById('loadingMessage');
       
-      // Hide loading message
       if (loadingMessage) {
         loadingMessage.style.display = 'none';
       }
       
-      container.innerHTML = '';
-      
-      // SAFETY CHECK: Only render products that are actually girls-fashion
-      const safeProducts = products.filter(p => p.category === 'girls-fashion');
-      console.log(`Filtering products: ${products.length} → ${safeProducts.length} girls-fashion products`);
-      
-      if (products.length !== safeProducts.length) {
-        console.warn('WARNING: Some non-girls-fashion products were filtered out!');
-        products.forEach(p => {
-          if (p.category !== 'girls-fashion') {
-            console.warn(`- Filtered out: ${p.name} (category: ${p.category})`);
-          }
-        });
-      }
-      
-      if (safeProducts.length === 0) {
+      if (container) {
         container.innerHTML = `
           <div class="no-products">
-            <i class="fas fa-female" style="font-size: 3rem; color: #9ca3af; margin-bottom: 1rem;"></i>
-            <h3>No girls fashion products found</h3>
-            <p>Check back later for more girls fashion deals or try submitting a product!</p>
-            <a href="product-submission-verification.html" class="btn btn-primary" style="margin-top: 1rem;">Submit a Girls Fashion Product</a>
+            <i class="fas fa-female" style="font-size: 3rem; color: #f093fb; margin-bottom: 1rem;"></i>
+            <h3>Girls Fashion Products</h3>
+            <p>Girls fashion products will be displayed here. Please check back later or contact us for product availability.</p>
+            <a href="product-submission-verification.html" class="btn btn-primary" style="margin-top: 1rem;">Submit a Product</a>
           </div>
         `;
-        return;
       }
-      
-      safeProducts.forEach(product => {
-        const productCard = createProductCard(product);
-        container.appendChild(productCard);
-      });
-      
-      console.log(`Successfully rendered ${safeProducts.length} girls fashion products`);
     }
-
-    // Initialize page when products are ready
-    function initializeFashion() {
-      console.log('=== INITIALIZING FASHION PAGE ===');
-      console.log('Total products loaded:', window.products ? window.products.length : 0);
-      
-      // Clear any previous content that might have been rendered by auto-render
-      const container = document.getElementById('product-container');
-      if (container) {
-        container.innerHTML = '';
-      }
-      
-      // Force render fashion products with our specific logic
-      renderFashionProducts();
-      
-      // Mark that we've taken control of rendering
-      window.fashionPageInitialized = true;
-    }
-
-    // Make renderFashionProducts globally accessible for real-time updates
-    window.renderFashionProducts = renderFashionProducts;
-
-    // Initialize when DOM is loaded
-    document.addEventListener('DOMContentLoaded', function() {
-      console.log('DOM loaded, checking for products...');
-      
-      // If products are already loaded
-      if (window.products && window.products.length > 0) {
-        initializeFashion();
-      }
-    });
-
-    // Listen for products ready event
-    document.addEventListener('products-ready', function() {
-      console.log('Products ready event received');
-      initializeFashion();
-    });
-
-    // Listen for products updated event to re-render when new products are added
-    document.addEventListener('products-updated', function() {
-      console.log('Products updated event received on fashion page');
-      if (window.fashionPageInitialized) {
-        console.log('Re-rendering girls fashion products after update...');
-        renderFashionProducts();
-      }
-    });
-
-    // Fallback - check for products every 500ms for up to 10 seconds
-    let checkCount = 0;
-    const maxChecks = 20;
-    const checkInterval = setInterval(() => {
-      checkCount++;
-      console.log(`Checking for products (attempt ${checkCount})...`);
-      
-      if (window.products && window.products.length > 0) {
-        console.log('Products found, initializing...');
-        clearInterval(checkInterval);
-        initializeFashion();
-      } else if (checkCount >= maxChecks) {
-        console.log('Max checks reached, stopping...');
-        clearInterval(checkInterval);
-        // Show message that no products were found
-        const loadingMessage = document.getElementById('loadingMessage');
-        if (loadingMessage) {
-          loadingMessage.innerHTML = '<p>Unable to load products. Please try refreshing the page.</p>';
-        }
-      }
-    }, 500);
   </script>
 </body>
 </html>

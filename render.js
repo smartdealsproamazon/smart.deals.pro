@@ -454,27 +454,17 @@ function autoRenderProducts() {
   console.log(`Category filter "${selectedCategory}" - Found ${filteredProducts.length} products`);
   
   if (filename.includes('boys-fashion')) {
-    // Check if the boys fashion page has already taken control of rendering
-    if (window.boysFashionPageInitialized) {
-      console.log('Boys fashion page has already initialized, skipping auto-render');
-      return;
-    }
-    console.log('Auto-rendering boys fashion products');
-    displayProducts(filteredProducts);
+    console.log('Boys fashion page detected - auto-rendering disabled');
+    return;
   } else if (filename.includes('girls-fashion')) {
-    console.log('Auto-rendering girls fashion products');
-    displayProducts(filteredProducts);
+    console.log('Girls fashion page detected - auto-rendering disabled');
+    return;
   } else if (filename.includes('smartwatch')) {
     console.log('Rendering smartwatch/boys fashion products (legacy)');
     renderProducts('boys-fashion');
   } else if (filename.includes('fashion') && !filename.includes('boys-fashion') && !filename.includes('girls-fashion')) {
-    // Check if the fashion page has already taken control of rendering
-    if (window.fashionPageInitialized) {
-      console.log('Fashion page has already initialized, skipping auto-render');
-      return;
-    }
-    console.log('Auto-rendering girls fashion products (legacy)');
-    displayProducts(filteredProducts);
+    console.log('Legacy fashion page detected - auto-rendering disabled');
+    return;
   } else if (filename.includes('small-electrical') || filename.includes('electronic')) {
     console.log('Rendering electrical products');
     renderProducts('electrical');
@@ -625,104 +615,9 @@ document.addEventListener('products-ready', function () {
   autoRenderProducts();
 });
 
-// Listen for real-time product updates and re-render automatically
-document.addEventListener('products-updated', function () {
-  console.log('Real-time products update received, re-rendering...');
-  
-  // Check if we're on fashion pages and they have taken control of rendering
-  const currentPage = window.location.pathname.split('/').pop() || 'index.html';
-  if (currentPage.includes('boys-fashion') && window.boysFashionPageInitialized) {
-    console.log('Boys fashion page has control, triggering boys fashion-specific re-render...');
-    // Call the boys fashion page's specific render function instead
-    if (typeof renderBoysFashionProducts === 'function') {
-      renderBoysFashionProducts();
-    }
-    showRealtimeUpdateIndicator();
-    return;
-  } else if (currentPage.includes('fashion') && !currentPage.includes('boys-fashion') && window.fashionPageInitialized) {
-    console.log('Girls fashion page has control, triggering girls fashion-specific re-render...');
-    // Call the girls fashion page's specific render function instead
-    if (typeof renderFashionProducts === 'function') {
-      renderFashionProducts();
-    }
-    showRealtimeUpdateIndicator();
-    return;
-  }
-  
-  autoRenderProducts();
-  
-  // Show subtle update indicator
-  showRealtimeUpdateIndicator();
-});
+// Real-time update functionality removed for fashion pages
 
-// Function to show a subtle indicator that products were updated in real-time
-function showRealtimeUpdateIndicator() {
-  const indicator = document.createElement('div');
-  indicator.className = 'realtime-update-indicator';
-  indicator.innerHTML = '<i class="fas fa-sync-alt"></i> Updated';
-  
-  document.body.appendChild(indicator);
-  
-  // Auto-remove after 2 seconds
-  setTimeout(() => {
-    if (indicator.parentElement) {
-      indicator.remove();
-    }
-  }, 2000);
-  
-  // Add CSS if not already present
-  if (!document.getElementById('realtime-indicator-styles')) {
-    const style = document.createElement('style');
-    style.id = 'realtime-indicator-styles';
-    style.textContent = `
-      .realtime-update-indicator {
-        position: fixed;
-        bottom: 20px;
-        left: 20px;
-        background: #10b981;
-        color: white;
-        padding: 8px 16px;
-        border-radius: 20px;
-        font-size: 14px;
-        font-weight: 500;
-        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-        z-index: 9999;
-        animation: slideInLeft 0.3s ease-out, fadeOut 0.3s ease-out 1.7s forwards;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-      
-      .realtime-update-indicator i {
-        animation: spin 1s linear;
-      }
-      
-      @keyframes slideInLeft {
-        from {
-          transform: translateX(-100%);
-          opacity: 0;
-        }
-        to {
-          transform: translateX(0);
-          opacity: 1;
-        }
-      }
-      
-      @keyframes fadeOut {
-        to {
-          opacity: 0;
-          transform: translateX(-100%);
-        }
-      }
-      
-      @keyframes spin {
-        from { transform: rotate(0deg); }
-        to { transform: rotate(360deg); }
-      }
-    `;
-    document.head.appendChild(style);
-  }
-}
+// Real-time update indicator functionality removed
 
 // Export functions for use in other files
 if (typeof module !== 'undefined' && module.exports) {
