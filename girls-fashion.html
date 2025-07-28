@@ -603,6 +603,7 @@
         .onSnapshot(
           (snapshot) => {
             console.log(`Real-time update: ${snapshot.size} girls products found`);
+            console.log('Raw snapshot docs:', snapshot.docs.map(doc => ({ id: doc.id, data: doc.data() })));
             
             let girlsProducts = snapshot.docs.map(doc => ({
               id: doc.id,
