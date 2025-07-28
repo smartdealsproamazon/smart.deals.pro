@@ -431,10 +431,18 @@ function autoRenderProducts() {
     console.log('Available categories:', categories);
   }
   
-  if (filename.includes('smartwatch')) {
-    console.log('Rendering boys fashion products');
+  if (filename.includes('boys-fashion')) {
+    // Check if the boys fashion page has already taken control of rendering
+    if (window.boysFashionPageInitialized) {
+      console.log('Boys fashion page has already initialized, skipping auto-render');
+      return;
+    }
+    console.log('Auto-rendering boys fashion products');
     renderProducts('boys-fashion');
-  } else if (filename.includes('fashion')) {
+  } else if (filename.includes('smartwatch')) {
+    console.log('Rendering smartwatch/boys fashion products (legacy)');
+    renderProducts('boys-fashion');
+  } else if (filename.includes('fashion') && !filename.includes('boys-fashion')) {
     // Check if the fashion page has already taken control of rendering
     if (window.fashionPageInitialized) {
       console.log('Fashion page has already initialized, skipping auto-render');
@@ -539,11 +547,19 @@ document.addEventListener('products-ready', function () {
 document.addEventListener('products-updated', function () {
   console.log('Real-time products update received, re-rendering...');
   
-  // Check if we're on the fashion page and it has taken control of rendering
+  // Check if we're on fashion pages and they have taken control of rendering
   const currentPage = window.location.pathname.split('/').pop() || 'index.html';
-  if (currentPage.includes('fashion') && window.fashionPageInitialized) {
-    console.log('Fashion page has control, triggering fashion-specific re-render...');
-    // Call the fashion page's specific render function instead
+  if (currentPage.includes('boys-fashion') && window.boysFashionPageInitialized) {
+    console.log('Boys fashion page has control, triggering boys fashion-specific re-render...');
+    // Call the boys fashion page's specific render function instead
+    if (typeof renderBoysFashionProducts === 'function') {
+      renderBoysFashionProducts();
+    }
+    showRealtimeUpdateIndicator();
+    return;
+  } else if (currentPage.includes('fashion') && !currentPage.includes('boys-fashion') && window.fashionPageInitialized) {
+    console.log('Girls fashion page has control, triggering girls fashion-specific re-render...');
+    // Call the girls fashion page's specific render function instead
     if (typeof renderFashionProducts === 'function') {
       renderFashionProducts();
     }
