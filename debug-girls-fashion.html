@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Girls Fashion - SmartDeals Pro</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; }
+        .status { padding: 10px; margin: 10px 0; border-radius: 4px; }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .warning { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        .product-card { border: 1px solid #ddd; padding: 15px; margin: 10px 0; border-radius: 8px; }
+        .debug-section { margin: 20px 0; padding: 15px; border: 2px solid #007bff; border-radius: 8px; }
+        button { padding: 10px 20px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Girls Fashion Debug Center</h1>
+        <p>This page will help identify and fix all issues with girls fashion products.</p>
+
+        <div class="debug-section">
+            <h2>🚀 Quick Actions</h2>
+            <button onclick="runCompleteTest()">Run Complete Test</button>
+            <button onclick="checkFirebaseConnection()">Test Firebase Connection</button>
+            <button onclick="debugAllProducts()">Debug All Products</button>
+            <button onclick="testGirlsFiltering()">Test Girls Filtering</button>
+            <button onclick="clearResults()">Clear Results</button>
+        </div>
+
+        <div id="results"></div>
+
+        <div class="debug-section">
+            <h2>📊 Live Results</h2>
+            <div id="live-results"></div>
+        </div>
+
+        <div class="debug-section">
+            <h2>🎯 Girls Fashion Products</h2>
+            <div id="girls-products"></div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBFJhzOiAb2FamPW4AkW8jgJSYqMRmqjy8",
+            authDomain: "smart-affiliate-site.firebaseapp.com",
+            databaseURL: "https://smart-affiliate-site-default-rtdb.firebaseio.com",
+            projectId: "smart-affiliate-site",
+            storageBucket: "smart-affiliate-site.appspot.com",
+            messagingSenderId: "590866229099",
+            appId: "1:590866229099:web:3a9f8b7c1d2e4f5g6h7i8j"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        let allProducts = [];
+        let girlsProducts = [];
+
+        function addResult(message, type = 'info') {
+            const results = document.getElementById('results');
+            const div = document.createElement('div');
+            div.className = `status ${type}`;
+            div.innerHTML = message;
+            results.appendChild(div);
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+
+        function updateLiveResults(data) {
+            const liveResults = document.getElementById('live-results');
+            liveResults.innerHTML = data;
+        }
+
+        function clearResults() {
+            document.getElementById('results').innerHTML = '';
+            document.getElementById('live-results').innerHTML = '';
+            document.getElementById('girls-products').innerHTML = '';
+        }
+
+        async function checkFirebaseConnection() {
+            addResult('🔌 Testing Firebase connection...', 'info');
+            try {
+                const testDoc = await db.collection('products').limit(1).get();
+                addResult(`✅ Firebase connected successfully! Found ${testDoc.size} products in test query.`, 'success');
+                return true;
+            } catch (error) {
+                addResult(`❌ Firebase connection failed: ${error.message}`, 'error');
+                return false;
+            }
+        }
+
+        async function debugAllProducts() {
+            addResult('📊 Fetching all products from Firebase...', 'info');
+            try {
+                const snapshot = await db.collection('products').get();
+                allProducts = snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+
+                addResult(`📈 Total products found: ${allProducts.length}`, 'success');
+
+                // Category analysis
+                const categoryCount = {};
+                allProducts.forEach(product => {
+                    const category = product.category || 'undefined';
+                    categoryCount[category] = (categoryCount[category] || 0) + 1;
+                });
+
+                let categoryReport = '<h3>📊 Category Breakdown:</h3><ul>';
+                Object.entries(categoryCount).forEach(([category, count]) => {
+                    categoryReport += `<li><strong>${category}</strong>: ${count} products</li>`;
+                });
+                categoryReport += '</ul>';
+
+                updateLiveResults(categoryReport);
+
+                // Log detailed product info
+                console.log('=== DETAILED PRODUCT LIST ===');
+                allProducts.forEach(product => {
+                    console.log(`ID: ${product.id}, Title: "${product.title || product.name}", Category: "${product.category}"`);
+                });
+
+                return allProducts;
+            } catch (error) {
+                addResult(`❌ Failed to fetch products: ${error.message}`, 'error');
+                return [];
+            }
+        }
+
+        async function testGirlsFiltering() {
+            addResult('🎯 Testing girls fashion filtering...', 'info');
+            
+            if (allProducts.length === 0) {
+                await debugAllProducts();
+            }
+
+            // Test different filtering methods
+            const filters = [
+                { name: 'girls-fashion', filter: p => p.category === 'girls-fashion' },
+                { name: 'girls', filter: p => p.category === 'girls' },
+                { name: 'Girls (capital)', filter: p => p.category === 'Girls' },
+                { name: 'Girls-Fashion (capital)', filter: p => p.category === 'Girls-Fashion' },
+                { name: 'title contains girls', filter: p => (p.title || '').toLowerCase().includes('girls') },
+                { name: 'name contains girls', filter: p => (p.name || '').toLowerCase().includes('girls') }
+            ];
+
+            let resultsHtml = '<h3>🔍 Filter Test Results:</h3>';
+            girlsProducts = [];
+
+            filters.forEach(({ name, filter }) => {
+                const filtered = allProducts.filter(filter);
+                resultsHtml += `<div class="status ${filtered.length > 0 ? 'success' : 'warning'}">
+                    <strong>${name}</strong>: ${filtered.length} products found
+                </div>`;
+                
+                if (filtered.length > 0) {
+                    girlsProducts = [...girlsProducts, ...filtered];
+                    filtered.forEach(product => {
+                        console.log(`Found with "${name}": ${product.title || product.name} (Category: "${product.category}")`);
+                    });
+                }
+            });
+
+            // Remove duplicates
+            girlsProducts = girlsProducts.filter((product, index, self) => 
+                index === self.findIndex(p => p.id === product.id)
+            );
+
+            resultsHtml += `<div class="status info"><strong>Total unique girls products</strong>: ${girlsProducts.length}</div>`;
+            updateLiveResults(resultsHtml);
+
+            displayGirlsProducts();
+        }
+
+        function displayGirlsProducts() {
+            const container = document.getElementById('girls-products');
+            
+            if (girlsProducts.length === 0) {
+                container.innerHTML = '<div class="status warning">⚠️ No girls fashion products found!</div>';
+                return;
+            }
+
+            let html = `<h3>👗 Found ${girlsProducts.length} Girls Fashion Products:</h3>`;
+            html += '<div class="grid">';
+
+            girlsProducts.forEach(product => {
+                html += `
+                    <div class="product-card">
+                        <h4>${product.title || product.name || 'Untitled'}</h4>
+                        <p><strong>Category:</strong> "${product.category}"</p>
+                        <p><strong>Price:</strong> $${product.price || 'N/A'}</p>
+                        <p><strong>ID:</strong> ${product.id}</p>
+                        <p><strong>Created:</strong> ${product.createdAt ? new Date(product.createdAt).toLocaleString() : 'N/A'}</p>
+                        ${product.imageData ? `<img src="${product.imageData}" alt="Product" style="max-width: 100px; max-height: 100px;">` : ''}
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        async function testDirectFirebaseQuery() {
+            addResult('🔥 Testing direct Firebase query for girls-fashion...', 'info');
+            try {
+                const snapshot = await db.collection('products').where('category', '==', 'girls-fashion').get();
+                addResult(`🎯 Direct query result: ${snapshot.size} products with category "girls-fashion"`, snapshot.size > 0 ? 'success' : 'warning');
+                
+                snapshot.docs.forEach(doc => {
+                    const data = doc.data();
+                    console.log(`Direct query found: ${data.title || data.name} (ID: ${doc.id})`);
+                });
+            } catch (error) {
+                addResult(`❌ Direct query failed: ${error.message}`, 'error');
+            }
+
+            addResult('🔥 Testing direct Firebase query for girls...', 'info');
+            try {
+                const snapshot = await db.collection('products').where('category', '==', 'girls').get();
+                addResult(`🎯 Direct query result: ${snapshot.size} products with category "girls"`, snapshot.size > 0 ? 'success' : 'warning');
+                
+                snapshot.docs.forEach(doc => {
+                    const data = doc.data();
+                    console.log(`Direct query found: ${data.title || data.name} (ID: ${doc.id})`);
+                });
+            } catch (error) {
+                addResult(`❌ Direct query failed: ${error.message}`, 'error');
+            }
+        }
+
+        async function runCompleteTest() {
+            clearResults();
+            addResult('🚀 Starting complete diagnostic test...', 'info');
+            
+            // Step 1: Test Firebase connection
+            const connectionOk = await checkFirebaseConnection();
+            if (!connectionOk) return;
+
+            // Step 2: Fetch all products
+            await debugAllProducts();
+
+            // Step 3: Test filtering
+            await testGirlsFiltering();
+
+            // Step 4: Test direct queries
+            await testDirectFirebaseQuery();
+
+            addResult('✅ Complete diagnostic test finished! Check results above.', 'success');
+        }
+
+        // Auto-run test when page loads
+        window.addEventListener('load', () => {
+            setTimeout(runCompleteTest, 1000);
+        });
+    </script>
+</body>
+</html>

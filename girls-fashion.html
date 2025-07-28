@@ -599,7 +599,7 @@
       
       // First try simple query without orderBy to avoid index issues
       db.collection('products')
-        .where('category', '==', 'girls')
+        .where('category', '==', 'girls-fashion')
         .onSnapshot(
           (snapshot) => {
             console.log(`Real-time update: ${snapshot.size} girls products found`);
