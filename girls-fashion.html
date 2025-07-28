@@ -308,6 +308,74 @@
       }
     }
 
+    // Open product detail page with correct ID
+    function openProductDetail(productId) {
+      console.log('Opening product detail for ID:', productId);
+      const currentPage = window.location.pathname.split('/').pop() || 'girls-fashion.html';
+      const detailUrl = `product-detail.html?id=${encodeURIComponent(productId)}&ref=${encodeURIComponent(currentPage)}`;
+      console.log('Redirecting to:', detailUrl);
+      window.location.href = detailUrl;
+    }
+
+    // Add product to wishlist
+    function addToWishlist(productId) {
+      console.log('Adding to wishlist:', productId);
+      
+      // Find the product
+      const product = window.girlsProducts ? window.girlsProducts.find(p => p.id === productId) : null;
+      if (!product) {
+        console.error('Product not found:', productId);
+        showNotification('Product not found!', 'error');
+        return;
+      }
+
+      // Get existing wishlist
+      let wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+      
+      // Check if already in wishlist
+      if (wishlist.includes(productId)) {
+        showNotification(`${product.title || product.name} is already in your wishlist!`, 'info');
+        return;
+      }
+
+      // Add to wishlist
+      wishlist.push(productId);
+      localStorage.setItem('wishlist', JSON.stringify(wishlist));
+      showNotification(`${product.title || product.name} added to wishlist!`, 'success');
+    }
+
+    // Show notification
+    function showNotification(message, type = 'info') {
+      const notification = document.createElement('div');
+      notification.className = `notification notification-${type}`;
+      notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#f093fb'};
+        color: white;
+        padding: 12px 20px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        z-index: 10000;
+        animation: slideIn 0.3s ease-out;
+        max-width: 300px;
+      `;
+      
+      notification.innerHTML = `
+        <i class="fas fa-${type === 'success' ? 'check' : type === 'error' ? 'times' : 'info'}-circle"></i>
+        <span style="margin-left: 8px;">${message}</span>
+      `;
+      
+      document.body.appendChild(notification);
+      
+      setTimeout(() => {
+        notification.remove();
+      }, 3000);
+    }
+
     // Create product card for girls products
     function createGirlsProductCard(product) {
       const div = document.createElement("div");
@@ -326,7 +394,7 @@
         <div class="product-image-container">
           <img src="${product.imageData || product.image}" alt="${product.name}" class="product-image" loading="lazy">
           <div class="product-overlay">
-            <button class="view-details-btn">
+            <button class="view-details-btn" onclick="openProductDetail('${product.id}')">
               <i class="fas fa-eye"></i> View Details
             </button>
           </div>
@@ -345,8 +413,11 @@
             <a href="${product.link}" target="_blank" class="btn btn-primary btn-small">
               <i class="fas fa-shopping-cart"></i> Buy Now
             </a>
-            <button class="btn btn-outline btn-small">
+            <button class="btn btn-outline btn-small" onclick="addToWishlist('${product.id}')">
               <i class="fas fa-heart"></i> Save
+            </button>
+            <button class="btn btn-secondary btn-small" onclick="openProductDetail('${product.id}')">
+              <i class="fas fa-info-circle"></i> Details
             </button>
           </div>
         </div>
