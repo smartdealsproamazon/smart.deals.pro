@@ -216,6 +216,17 @@
       <div id="loadingMessage" class="loading">
         <i class="fas fa-spinner fa-spin"></i> Loading girls fashion products...
       </div>
+      
+      <!-- Manual refresh button for debugging -->
+      <div style="text-align: center; margin: 2rem 0;">
+        <button onclick="manualRefreshProducts()" class="btn btn-secondary" style="margin-right: 1rem;">
+          <i class="fas fa-sync"></i> Refresh Products
+        </button>
+        <button onclick="debugAllProducts()" class="btn btn-outline">
+          <i class="fas fa-bug"></i> Debug All Products
+        </button>
+      </div>
+      
       <div class="products-grid" id="product-container">
         <!-- Products will be populated by JavaScript -->
       </div>
@@ -374,6 +385,98 @@
       setTimeout(() => {
         notification.remove();
       }, 3000);
+    }
+
+    // Manual refresh products function
+    function manualRefreshProducts() {
+      console.log('=== MANUAL REFRESH TRIGGERED ===');
+      showNotification('Refreshing products...', 'info');
+      
+      // Try direct query to get girls products
+      db.collection('products')
+        .where('category', '==', 'girls')
+        .get()
+        .then((snapshot) => {
+          console.log(`Manual refresh: Found ${snapshot.size} girls products`);
+          
+          let girlsProducts = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+          }));
+
+          console.log('Manual refresh products:', girlsProducts);
+          
+          // Sort manually by createdAt if available
+          girlsProducts.sort((a, b) => {
+            const dateA = a.createdAt ? new Date(a.createdAt) : new Date();
+            const dateB = b.createdAt ? new Date(b.createdAt) : new Date();
+            return dateB - dateA;
+          });
+
+          // Store globally for search
+          window.girlsProducts = girlsProducts;
+          
+          // Display immediately
+          displayGirlsProducts(girlsProducts);
+          
+          showNotification(`Found ${girlsProducts.length} girls products!`, 'success');
+        })
+        .catch((error) => {
+          console.error('Manual refresh failed:', error);
+          showNotification('Refresh failed: ' + error.message, 'error');
+        });
+    }
+
+    // Debug all products function
+    function debugAllProducts() {
+      console.log('=== DEBUG ALL PRODUCTS TRIGGERED ===');
+      showNotification('Debugging all products...', 'info');
+      
+      db.collection('products').get()
+        .then((snapshot) => {
+          console.log(`Total products in database: ${snapshot.size}`);
+          
+          const allProducts = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+          }));
+
+          console.log('=== ALL PRODUCTS WITH CATEGORIES ===');
+          const categoryCount = {};
+          
+          allProducts.forEach(product => {
+            const category = product.category || 'undefined';
+            categoryCount[category] = (categoryCount[category] || 0) + 1;
+            console.log(`Product: "${product.title || product.name}", Category: "${category}", ID: ${product.id}`);
+          });
+
+          console.log('=== CATEGORY SUMMARY ===');
+          Object.keys(categoryCount).forEach(category => {
+            console.log(`Category "${category}": ${categoryCount[category]} products`);
+          });
+
+          // Filter girls products manually
+          const girlsProducts = allProducts.filter(product => 
+            product.category === 'girls'
+          );
+
+          console.log(`Girls products found: ${girlsProducts.length}`);
+          girlsProducts.forEach(product => {
+            console.log(`Girls product: "${product.title || product.name}" (ID: ${product.id})`);
+          });
+
+          showNotification(`Debug complete! Check console. Found ${girlsProducts.length} girls products.`, 'success');
+          
+          // Also display the girls products
+          if (girlsProducts.length > 0) {
+            window.girlsProducts = girlsProducts;
+            displayGirlsProducts(girlsProducts);
+          }
+        })
+        .catch((error) => {
+          console.error('Debug failed:', error);
+          showNotification('Debug failed: ' + error.message, 'error');
+        });
     }
 
     // Create product card for girls products
@@ -535,8 +638,8 @@
             console.error('Error fetching girls products:', error);
             console.error('Error details:', error.message);
             
-            // Try fallback query without category filter
-            console.log('Trying fallback query...');
+            // If error is permission denied or similar, try fallback
+            console.log('Primary query failed, trying fallback query...');
             setupFallbackGirlsListener();
           }
         );
