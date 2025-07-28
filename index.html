@@ -130,92 +130,47 @@
   </script>
 </head>
 <body>
-  <!-- Modern Animated Loading Screen -->
+  <!-- Loading Screen -->
   <div id="loading-screen" class="homepage-preloader">
-    <!-- Animated Background -->
-    <div class="preloader-bg">
-      <div class="bg-circle circle-1"></div>
-      <div class="bg-circle circle-2"></div>
-      <div class="bg-circle circle-3"></div>
-      <div class="bg-lines">
-        <div class="line line-1"></div>
-        <div class="line line-2"></div>
-        <div class="line line-3"></div>
-        <div class="line line-4"></div>
-      </div>
+    <!-- Animated Background Elements -->
+    <div class="bg-animation-layer">
+      <div class="floating-icon" style="--delay: 0s; --x: 10%; --y: 20%;">💳</div>
+      <div class="floating-icon" style="--delay: 0.5s; --x: 80%; --y: 30%;">🏷️</div>
+      <div class="floating-icon" style="--delay: 1s; --x: 20%; --y: 70%;">💰</div>
+      <div class="floating-icon" style="--delay: 1.5s; --x: 70%; --y: 80%;">🎁</div>
+      <div class="floating-icon" style="--delay: 2s; --x: 90%; --y: 15%;">⚡</div>
+      <div class="floating-icon" style="--delay: 2.5s; --x: 15%; --y: 85%;">🔥</div>
+      <div class="floating-icon" style="--delay: 3s; --x: 60%; --y: 25%;">💎</div>
+      <div class="floating-icon" style="--delay: 3.5s; --x: 30%; --y: 60%;">🎯</div>
     </div>
     
+    <!-- Particle System -->
+    <div class="particle-system">
+      <div class="particle" style="--delay: 0s; --duration: 4s;"></div>
+      <div class="particle" style="--delay: 1s; --duration: 5s;"></div>
+      <div class="particle" style="--delay: 2s; --duration: 3s;"></div>
+      <div class="particle" style="--delay: 0.5s; --duration: 6s;"></div>
+      <div class="particle" style="--delay: 1.5s; --duration: 4.5s;"></div>
+      <div class="particle" style="--delay: 2.5s; --duration: 3.5s;"></div>
+    </div>
+    
+    <!-- Scanning Line Effect -->
+    <div class="scan-line"></div>
+    
     <!-- Main Content -->
-    <div class="preloader-content">
-      <!-- Logo Animation -->
-      <div class="logo-container">
-        <div class="logo-circle">
-          <img src="logo.svg" alt="SmartDeals Pro" class="preloader-logo">
-          <div class="logo-ring ring-1"></div>
-          <div class="logo-ring ring-2"></div>
-          <div class="logo-ring ring-3"></div>
+    <div class="preloader-container">
+      <div class="header-style-preloader">
+        <div class="logo-section">
+          <img src="logo.svg" alt="SmartDeals Pro Logo" class="preloader-logo" />
         </div>
-      </div>
-      
-      <!-- Brand Text with Typewriter Effect -->
-      <div class="brand-section">
-        <h1 class="brand-title">
-          <span class="brand-text" data-text="SmartDeals Pro">SmartDeals Pro</span>
-        </h1>
-        <p class="brand-subtitle">Your Ultimate Shopping Experience</p>
-      </div>
-      
-      <!-- Modern Loading Animation -->
-      <div class="loading-section">
-        <div class="loading-spinner">
-          <div class="spinner-ring"></div>
-          <div class="spinner-ring"></div>
-          <div class="spinner-ring"></div>
-          <div class="spinner-ring"></div>
-        </div>
-        
-        <div class="loading-progress-modern">
-          <div class="progress-container">
-            <div class="progress-bar-modern">
-              <div class="progress-fill-modern"></div>
-              <div class="progress-glow"></div>
-            </div>
-            <div class="progress-text">
-              <span class="loading-status">Initializing</span>
-              <span class="progress-percent">0%</span>
-            </div>
+        <div class="cart-text-animation">
+          <div class="cart-icon">🛒</div>
+          <div class="site-name-behind">
+            <span class="logo-text-preloader">SmartDeals Pro</span>
           </div>
         </div>
-        
-        <!-- Animated Dots -->
-        <div class="loading-dots-modern">
-          <div class="dot"></div>
-          <div class="dot"></div>
-          <div class="dot"></div>
-          <div class="dot"></div>
-          <div class="dot"></div>
-        </div>
       </div>
-      
-      <!-- Feature Icons with Animation -->
-      <div class="features-modern">
-        <div class="feature-icon" data-delay="0">
-          <i class="fas fa-shopping-cart"></i>
-          <span>Shop</span>
-        </div>
-        <div class="feature-icon" data-delay="200">
-          <i class="fas fa-star"></i>
-          <span>Reviews</span>
-        </div>
-        <div class="feature-icon" data-delay="400">
-          <i class="fas fa-truck-fast"></i>
-          <span>Delivery</span>
-        </div>
-        <div class="feature-icon" data-delay="600">
-          <i class="fas fa-shield-check"></i>
-          <span>Secure</span>
-        </div>
-      </div>
+      <div class="loading-subtitle">Loading amazing deals...</div>
     </div>
   </div>
 
@@ -538,112 +493,27 @@
   <script src="render.js"></script>
   <!-- <script src="user-auth.js"></script> -->
   <script>
-    // Modern Preloader with Enhanced Animations
-    let loadingProgress = 0;
-    let progressInterval;
-    let isPreloaderActive = true;
-    
-    function updateModernProgress() {
-      const progressFill = document.querySelector('.progress-fill-modern');
-      const progressPercent = document.querySelector('.progress-percent');
-      const loadingStatus = document.querySelector('.loading-status');
-      
-      const statusMessages = [
-        'Initializing',
-        'Loading Resources',
-        'Preparing Interface',
-        'Finalizing Setup',
-        'Ready to Launch'
-      ];
-      
-      if (progressFill && progressPercent && loadingStatus && isPreloaderActive) {
-        // Smooth progress increment
-        const increment = Math.random() * 12 + 3; // 3-15% increments
-        loadingProgress = Math.min(loadingProgress + increment, 100);
-        
-        progressFill.style.width = loadingProgress + '%';
-        progressPercent.textContent = Math.round(loadingProgress) + '%';
-        
-        // Update status message based on progress
-        const messageIndex = Math.min(Math.floor(loadingProgress / 20), statusMessages.length - 1);
-        loadingStatus.textContent = statusMessages[messageIndex];
-        
-        // Complete loading
-        if (loadingProgress >= 100) {
-          clearInterval(progressInterval);
-          isPreloaderActive = false;
-          
-          // Add completion effect
-          setTimeout(() => {
-            const loadingScreen = document.getElementById('loading-screen');
-            if (loadingScreen) {
-              loadingScreen.style.opacity = '0';
-              loadingScreen.style.transform = 'scale(1.1)';
-              
-              setTimeout(() => {
-                loadingScreen.style.display = 'none';
-              }, 800);
-            }
-          }, 1000);
-        }
-      }
-    }
-    
-    // Initialize preloader animations
-    function initPreloader() {
+    // Loading screen - Homepage only with cart animation
+    window.addEventListener('load', function() {
       const loadingScreen = document.getElementById('loading-screen');
       
       if (loadingScreen && loadingScreen.classList.contains('homepage-preloader')) {
-        // Start progress animation after a brief delay
+        // Hide homepage preloader after exactly 2 seconds
         setTimeout(() => {
-          progressInterval = setInterval(updateModernProgress, 250);
-        }, 500);
-        
-        // Ensure minimum display time of 4 seconds
-        setTimeout(() => {
-          if (isPreloaderActive && loadingProgress < 100) {
-            loadingProgress = 95;
-            setTimeout(() => {
-              loadingProgress = 100;
-              updateModernProgress();
-            }, 500);
-          }
-        }, 4000);
-        
-        // Add typewriter effect completion
-        setTimeout(() => {
-          const brandText = document.querySelector('.brand-text');
-          if (brandText) {
-            brandText.style.animation = 'textReveal 2s ease-out forwards';
-          }
-        }, 1000);
-        
+          loadingScreen.style.opacity = '0';
+          setTimeout(() => {
+            loadingScreen.style.display = 'none';
+          }, 500);
+        }, 2000);
       } else if (loadingScreen) {
-        // Hide other preloaders immediately
+        // Hide other preloaders immediately after page load
         loadingScreen.style.opacity = '0';
         setTimeout(() => {
           loadingScreen.style.display = 'none';
         }, 500);
       }
-    }
-    
-    // Start preloader when DOM is ready
-    document.addEventListener('DOMContentLoaded', initPreloader);
-    
-    // Also start on window load as fallback
-    window.addEventListener('load', function() {
-      if (isPreloaderActive) {
-        // Speed up progress if page is already loaded
-        const speedUpInterval = setInterval(() => {
-          if (loadingProgress < 90) {
-            loadingProgress += 15;
-            updateModernProgress();
-          } else {
-            clearInterval(speedUpInterval);
-          }
-        }, 100);
-      }
     });
+
 
     // Mobile menu toggle
     function toggleMobileMenu() {
