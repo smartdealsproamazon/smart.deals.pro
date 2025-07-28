@@ -423,17 +423,24 @@
     function setupBoysProductListener() {
       console.log('Setting up real-time listener for boys fashion products...');
       
+      // First try simple query without orderBy to avoid index issues
       db.collection('products')
         .where('category', '==', 'boys')
-        .orderBy('createdAt', 'desc')
         .onSnapshot(
           (snapshot) => {
             console.log(`Real-time update: ${snapshot.size} boys products found`);
             
-            const boysProducts = snapshot.docs.map(doc => ({
+            let boysProducts = snapshot.docs.map(doc => ({
               id: doc.id,
               ...doc.data()
             }));
+
+            // Sort manually by createdAt if available
+            boysProducts.sort((a, b) => {
+              const dateA = a.createdAt ? new Date(a.createdAt) : new Date();
+              const dateB = b.createdAt ? new Date(b.createdAt) : new Date();
+              return dateB - dateA; // Newest first
+            });
 
             // Store globally for search
             window.boysProducts = boysProducts;
@@ -449,16 +456,76 @@
           },
           (error) => {
             console.error('Error fetching boys products:', error);
+            console.error('Error details:', error.message);
+            
+            // Try fallback query without category filter
+            console.log('Trying fallback query...');
+            setupFallbackBoysListener();
+          }
+        );
+    }
+
+    // Fallback listener in case category filter fails
+    function setupFallbackBoysListener() {
+      db.collection('products')
+        .onSnapshot(
+          (snapshot) => {
+            console.log(`Fallback query: ${snapshot.size} total products found`);
+            
+            // Filter boys products manually
+            let allProducts = snapshot.docs.map(doc => ({
+              id: doc.id,
+              ...doc.data()
+            }));
+
+            const boysProducts = allProducts.filter(product => 
+              product.category === 'boys' || 
+              product.category === 'boys-fashion' ||
+              (product.title && product.title.toLowerCase().includes('boys')) ||
+              (product.name && product.name.toLowerCase().includes('boys'))
+            );
+
+            console.log(`Filtered boys products: ${boysProducts.length}`);
+
+            // Sort manually by createdAt if available
+            boysProducts.sort((a, b) => {
+              const dateA = a.createdAt ? new Date(a.createdAt) : new Date();
+              const dateB = b.createdAt ? new Date(b.createdAt) : new Date();
+              return dateB - dateA; // Newest first
+            });
+
+            // Store globally for search
+            window.boysProducts = boysProducts;
+            
+            // Display immediately
+            displayBoysProducts(boysProducts);
+            
+            // Show update indicator if products were added
+            if (boysProducts.length > 0 && window.previousBoysCount !== undefined && boysProducts.length > window.previousBoysCount) {
+              showUpdateIndicator(`${boysProducts.length - window.previousBoysCount} new boys products added!`);
+            }
+            window.previousBoysCount = boysProducts.length;
+          },
+          (error) => {
+            console.error('Fallback query also failed:', error);
             const container = document.getElementById('product-container');
             if (container) {
               container.innerHTML = `
                 <div class="no-products">
                   <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #f59e0b; margin-bottom: 1rem;"></i>
                   <h3>Connection Error</h3>
-                  <p>Unable to load boys fashion products. Please check your connection.</p>
-                  <button onclick="window.location.reload()" class="btn btn-primary" style="margin-top: 1rem;">
-                    <i class="fas fa-redo"></i> Try Again
-                  </button>
+                  <p>Unable to connect to Firebase. Please check your internet connection and try again.</p>
+                  <div style="margin-top: 1rem;">
+                    <button onclick="window.location.reload()" class="btn btn-primary" style="margin-right: 1rem;">
+                      <i class="fas fa-redo"></i> Try Again
+                    </button>
+                    <button onclick="setupBoysProductListener()" class="btn btn-secondary">
+                      <i class="fas fa-sync"></i> Reconnect
+                    </button>
+                  </div>
+                  <div style="margin-top: 1rem; padding: 1rem; background: #f3f4f6; border-radius: 8px; font-size: 12px; color: #6b7280;">
+                    Error: ${error.message || 'Unknown Firebase error'}
+                  </div>
                 </div>
               `;
             }
@@ -515,10 +582,73 @@
       }
     }
 
+    // Test Firebase connection
+    function testFirebaseConnection() {
+      console.log('Testing Firebase connection...');
+      
+      // Show loading state
+      const container = document.getElementById('product-container');
+      const loadingMessage = document.getElementById('loadingMessage');
+      
+      if (loadingMessage) {
+        loadingMessage.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Connecting to Firebase...';
+        loadingMessage.style.display = 'block';
+      }
+      
+      // Simple connection test
+      db.collection('products').limit(1).get()
+        .then((snapshot) => {
+          console.log('Firebase connection successful!');
+          console.log('Total documents in products collection:', snapshot.size);
+          
+          // Connection successful, now setup listener
+          setupBoysProductListener();
+        })
+        .catch((error) => {
+          console.error('Firebase connection failed:', error);
+          
+          if (container) {
+            container.innerHTML = `
+              <div class="no-products">
+                <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #f59e0b; margin-bottom: 1rem;"></i>
+                <h3>Firebase Connection Failed</h3>
+                <p>Unable to connect to the database. This might be due to:</p>
+                <ul style="text-align: left; margin: 1rem 0; padding-left: 2rem;">
+                  <li>Internet connection issues</li>
+                  <li>Firebase configuration problems</li>
+                  <li>Firestore security rules</li>
+                </ul>
+                <div style="margin-top: 1rem;">
+                  <button onclick="testFirebaseConnection()" class="btn btn-primary" style="margin-right: 1rem;">
+                    <i class="fas fa-redo"></i> Test Connection
+                  </button>
+                  <button onclick="window.location.reload()" class="btn btn-secondary">
+                    <i class="fas fa-sync"></i> Reload Page
+                  </button>
+                </div>
+                <div style="margin-top: 1rem; padding: 1rem; background: #f3f4f6; border-radius: 8px; font-size: 12px; color: #6b7280; text-align: left;">
+                  <strong>Error Details:</strong><br>
+                  ${error.message || 'Unknown Firebase error'}<br><br>
+                  <strong>Error Code:</strong> ${error.code || 'N/A'}
+                </div>
+              </div>
+            `;
+          }
+          
+          if (loadingMessage) {
+            loadingMessage.style.display = 'none';
+          }
+        });
+    }
+
     // Initialize when DOM loads
     document.addEventListener('DOMContentLoaded', function() {
-      console.log('Boys Fashion page: DOM loaded, setting up Firebase listener...');
-      setupBoysProductListener();
+      console.log('Boys Fashion page: DOM loaded, testing Firebase connection...');
+      
+      // Wait a bit for Firebase to initialize
+      setTimeout(() => {
+        testFirebaseConnection();
+      }, 1000);
     });
   </script>
 </body>
