@@ -283,7 +283,8 @@
     function searchBoysFashion() {
       const query = document.getElementById('headerSearch').value;
       if (query) {
-        const boysFashionProducts = getProductsByCategory('boys');
+        // Filter boys products first, then search within them
+        const boysFashionProducts = (window.products || []).filter(p => p.category === 'boys');
         const results = boysFashionProducts.filter(product => 
           product.name.toLowerCase().includes(query.toLowerCase()) ||
           product.description.toLowerCase().includes(query.toLowerCase())
@@ -296,26 +297,69 @@
     document.addEventListener('DOMContentLoaded', function() {
       console.log('Boys Fashion page: DOM loaded');
       
-      // Use the enhanced render system with page detection
-      if (typeof window.autoRenderProducts === 'function') {
-        window.autoRenderProducts();
-      }
+      // Implement URL-based category filtering as requested
+      initializeBoysFashionFiltering();
     });
 
     // Listen for products ready/updated events
     document.addEventListener('products-ready', function() {
       console.log('Boys Fashion page: Products ready');
-      if (typeof window.autoRenderProducts === 'function') {
-        window.autoRenderProducts();
-      }
+      initializeBoysFashionFiltering();
     });
 
     document.addEventListener('products-updated', function() {
       console.log('Boys Fashion page: Products updated');
-      if (typeof window.autoRenderProducts === 'function') {
-        window.autoRenderProducts();
-      }
+      initializeBoysFashionFiltering();
     });
+
+    // URL-based category filtering function
+    function initializeBoysFashionFiltering() {
+      // Get current page path
+      const currentPage = window.location.pathname;
+      let selectedCategory = "";
+
+      if (currentPage.includes("boys-fashion.html")) {
+        selectedCategory = "boys";
+      } else if (currentPage.includes("girls-fashion.html")) {
+        selectedCategory = "girls";
+      }
+
+      console.log('Current page:', currentPage);
+      console.log('Selected category:', selectedCategory);
+      console.log('Available products:', window.products ? window.products.length : 0);
+
+      // If no products are available yet, show loading state
+      if (!window.products || window.products.length === 0) {
+        const container = document.getElementById('product-container');
+        if (container) {
+          container.innerHTML = `
+            <div class="loading">
+              <i class="fas fa-spinner fa-spin"></i> Loading boys fashion products...
+            </div>
+          `;
+        }
+        return;
+      }
+
+      // Filter products based on category
+      const filteredProducts = selectedCategory
+        ? window.products.filter(p => {
+            console.log(`Product "${p.name}" has category: "${p.category}"`);
+            return p.category === selectedCategory;
+          })
+        : window.products;
+
+      console.log('Filtered products count:', filteredProducts.length);
+
+      // Hide loading message
+      const loadingMessage = document.getElementById('loadingMessage');
+      if (loadingMessage) {
+        loadingMessage.style.display = 'none';
+      }
+
+      // Display filtered products
+      displayProducts(filteredProducts);
+    }
   </script>
 </body>
 </html>

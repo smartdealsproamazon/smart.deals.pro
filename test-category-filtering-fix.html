@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Category Filtering Test</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .test-section { margin: 20px 0; padding: 20px; border: 1px solid #ccc; }
+    .product { margin: 10px 0; padding: 10px; background: #f9f9f9; }
+    .category-boys { background: #e3f2fd; }
+    .category-girls { background: #fce4ec; }
+  </style>
+</head>
+<body>
+  <h1>Category Filtering Test</h1>
+  
+  <div class="test-section">
+    <h2>Current Page Detection</h2>
+    <p>Current pathname: <span id="currentPath"></span></p>
+    <p>Detected category: <span id="detectedCategory"></span></p>
+  </div>
+  
+  <div class="test-section">
+    <h2>All Products</h2>
+    <div id="allProducts"></div>
+  </div>
+  
+  <div class="test-section">
+    <h2>Boys Products</h2>
+    <div id="boysProducts"></div>
+  </div>
+  
+  <div class="test-section">
+    <h2>Girls Products</h2>
+    <div id="girlsProducts"></div>
+  </div>
+
+  <script src="products.js"></script>
+  <script>
+    function testCategoryFiltering() {
+      // Display current page detection
+      const currentPage = window.location.pathname;
+      document.getElementById('currentPath').textContent = currentPage;
+      
+      let selectedCategory = "";
+      if (currentPage.includes("boys-fashion.html")) {
+        selectedCategory = "boys";
+      } else if (currentPage.includes("girls-fashion.html")) {
+        selectedCategory = "girls";
+      }
+      document.getElementById('detectedCategory').textContent = selectedCategory || 'none';
+      
+      // Display all products
+      const allProductsDiv = document.getElementById('allProducts');
+      const boysProductsDiv = document.getElementById('boysProducts');
+      const girlsProductsDiv = document.getElementById('girlsProducts');
+      
+      if (!window.products || window.products.length === 0) {
+        allProductsDiv.innerHTML = '<p>No products loaded yet...</p>';
+        return;
+      }
+      
+      // Show all products with their categories
+      allProductsDiv.innerHTML = '';
+      window.products.forEach(product => {
+        const div = document.createElement('div');
+        div.className = `product category-${product.category}`;
+        div.innerHTML = `<strong>${product.name}</strong> - Category: ${product.category}`;
+        allProductsDiv.appendChild(div);
+      });
+      
+      // Show boys products
+      const boysProducts = window.products.filter(p => p.category === 'boys');
+      boysProductsDiv.innerHTML = `<p>Found ${boysProducts.length} boys products:</p>`;
+      boysProducts.forEach(product => {
+        const div = document.createElement('div');
+        div.className = 'product category-boys';
+        div.innerHTML = `<strong>${product.name}</strong>`;
+        boysProductsDiv.appendChild(div);
+      });
+      
+      // Show girls products
+      const girlsProducts = window.products.filter(p => p.category === 'girls');
+      girlsProductsDiv.innerHTML = `<p>Found ${girlsProducts.length} girls products:</p>`;
+      girlsProducts.forEach(product => {
+        const div = document.createElement('div');
+        div.className = 'product category-girls';
+        div.innerHTML = `<strong>${product.name}</strong>`;
+        girlsProductsDiv.appendChild(div);
+      });
+    }
+    
+    // Test when DOM loads
+    document.addEventListener('DOMContentLoaded', testCategoryFiltering);
+    
+    // Test when products are ready
+    document.addEventListener('products-ready', testCategoryFiltering);
+    
+    // Test when products are updated
+    document.addEventListener('products-updated', testCategoryFiltering);
+  </script>
+</body>
+</html>
