@@ -270,7 +270,8 @@
   </footer>
 
   <!-- Scripts -->
-  <!-- Auto-rendering scripts removed -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
   <script>
     // Mobile menu toggle
     function toggleMobileMenu() {
@@ -278,21 +279,107 @@
       mobileMenu.classList.toggle('active');
     }
 
-    // Search functionality removed
+    // Firebase Configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyBJqBEWDdBlfv5xAjgcvqput1KC1NzKvlU",
+      authDomain: "smart-deals-pro.firebaseapp.com",
+      projectId: "smart-deals-pro",
+      storageBucket: "smart-deals-pro.firebasestorage.app",
+      messagingSenderId: "680016915696",
+      appId: "1:680016915696:web:4b3721313ea0e2e3342635",
+      measurementId: "G-HV5N0LQJTG"
+    };
+
+    // Initialize Firebase
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    const db = firebase.firestore();
+
+    // Search girls fashion products
     function searchFashion() {
-      console.log('Search functionality disabled');
+      const query = document.getElementById('headerSearch').value;
+      if (query && window.girlsProducts) {
+        const results = window.girlsProducts.filter(product => 
+          product.name.toLowerCase().includes(query.toLowerCase()) ||
+          product.description.toLowerCase().includes(query.toLowerCase())
+        );
+        displayGirlsProducts(results);
+      }
     }
 
-    // Initialize page when DOM loads
-    document.addEventListener('DOMContentLoaded', function() {
-      console.log('Girls Fashion page: DOM loaded');
+    // Create product card for girls products
+    function createGirlsProductCard(product) {
+      const div = document.createElement("div");
+      div.className = "product-card";
       
-      // Show static message instead of auto-rendering products
-      showStaticMessage();
-    });
+      const discountBadge = product.discount > 0 ? 
+        `<div class="discount-badge">-${product.discount}%</div>` : '';
+      
+      const originalPrice = product.originalPrice && product.originalPrice !== product.price ? 
+        `<span class="original-price">$${product.originalPrice}</span>` : '';
+      
+      const stars = generateStars(product.rating || 4.5);
+      
+      div.innerHTML = `
+        ${discountBadge}
+        <div class="product-image-container">
+          <img src="${product.imageData || product.image}" alt="${product.name}" class="product-image" loading="lazy">
+          <div class="product-overlay">
+            <button class="view-details-btn">
+              <i class="fas fa-eye"></i> View Details
+            </button>
+          </div>
+        </div>
+        <div class="product-info">
+          <h3 class="product-title">${product.title || product.name}</h3>
+          <div class="product-rating">
+            <div class="stars">${stars}</div>
+            <span class="rating-text">${product.rating || 4.5} (${product.reviews || 10} reviews)</span>
+          </div>
+          <div class="product-price">
+            ${originalPrice}
+            <span class="current-price">$${product.price}</span>
+          </div>
+          <div class="product-buttons">
+            <a href="${product.link}" target="_blank" class="btn btn-primary btn-small">
+              <i class="fas fa-shopping-cart"></i> Buy Now
+            </a>
+            <button class="btn btn-outline btn-small">
+              <i class="fas fa-heart"></i> Save
+            </button>
+          </div>
+        </div>
+      `;
+      
+      return div;
+    }
 
-    // Show static message instead of auto-rendering
-    function showStaticMessage() {
+    // Generate star ratings
+    function generateStars(rating) {
+      const fullStars = Math.floor(rating);
+      const halfStar = rating % 1 !== 0;
+      const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+      
+      let stars = '';
+      
+      for (let i = 0; i < fullStars; i++) {
+        stars += '<i class="fas fa-star"></i>';
+      }
+      
+      if (halfStar) {
+        stars += '<i class="fas fa-star-half-alt"></i>';
+      }
+      
+      for (let i = 0; i < emptyStars; i++) {
+        stars += '<i class="far fa-star"></i>';
+      }
+      
+      return stars;
+    }
+
+    // Display girls products only
+    function displayGirlsProducts(products) {
       const container = document.getElementById('product-container');
       const loadingMessage = document.getElementById('loadingMessage');
       
@@ -300,22 +387,139 @@
         loadingMessage.style.display = 'none';
       }
       
-      if (container) {
+      container.innerHTML = '';
+      
+      if (products.length === 0) {
         container.innerHTML = `
           <div class="no-products">
             <i class="fas fa-female" style="font-size: 3rem; color: #f093fb; margin-bottom: 1rem;"></i>
-            <h3>Girls Fashion Products</h3>
-            <p>Girls fashion products will be displayed here. Please check back later or contact us for product availability.</p>
-            <a href="product-submission-verification.html" class="btn btn-primary" style="margin-top: 1rem;">Submit a Product</a>
+            <h3>No Girls Fashion Products</h3>
+            <p>No girls fashion products available yet. Be the first to add one!</p>
+            <a href="product-submission-verification.html" class="btn btn-primary" style="margin-top: 1rem;">Add Girls Product</a>
           </div>
         `;
+        return;
       }
+
+      // Animate products appearing
+      products.forEach((product, index) => {
+        const productCard = createGirlsProductCard(product);
+        productCard.style.opacity = '0';
+        productCard.style.transform = 'translateY(20px)';
+        container.appendChild(productCard);
+        
+        // Stagger animation
+        setTimeout(() => {
+          productCard.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+          productCard.style.opacity = '1';
+          productCard.style.transform = 'translateY(0)';
+        }, index * 50);
+      });
       
-      // Disable any global rendering functions
-      window.displayProducts = function() { console.log('Product rendering disabled'); };
-      window.renderProducts = function() { console.log('Product rendering disabled'); };
-      window.autoRenderProducts = function() { console.log('Auto-rendering disabled'); };
+      console.log(`Displayed ${products.length} girls fashion products`);
     }
+
+    // Real-time Firebase listener for girls category only
+    function setupGirlsProductListener() {
+      console.log('Setting up real-time listener for girls fashion products...');
+      
+      db.collection('products')
+        .where('category', '==', 'girls')
+        .orderBy('createdAt', 'desc')
+        .onSnapshot(
+          (snapshot) => {
+            console.log(`Real-time update: ${snapshot.size} girls products found`);
+            
+            const girlsProducts = snapshot.docs.map(doc => ({
+              id: doc.id,
+              ...doc.data()
+            }));
+
+            // Store globally for search
+            window.girlsProducts = girlsProducts;
+            
+            // Display immediately
+            displayGirlsProducts(girlsProducts);
+            
+            // Show update indicator if products were added
+            if (girlsProducts.length > 0 && window.previousGirlsCount !== undefined && girlsProducts.length > window.previousGirlsCount) {
+              showUpdateIndicator(`${girlsProducts.length - window.previousGirlsCount} new girls products added!`);
+            }
+            window.previousGirlsCount = girlsProducts.length;
+          },
+          (error) => {
+            console.error('Error fetching girls products:', error);
+            const container = document.getElementById('product-container');
+            if (container) {
+              container.innerHTML = `
+                <div class="no-products">
+                  <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #f59e0b; margin-bottom: 1rem;"></i>
+                  <h3>Connection Error</h3>
+                  <p>Unable to load girls fashion products. Please check your connection.</p>
+                  <button onclick="window.location.reload()" class="btn btn-primary" style="margin-top: 1rem;">
+                    <i class="fas fa-redo"></i> Try Again
+                  </button>
+                </div>
+              `;
+            }
+          }
+        );
+    }
+
+    // Show subtle update indicator
+    function showUpdateIndicator(message) {
+      const indicator = document.createElement('div');
+      indicator.className = 'update-indicator';
+      indicator.innerHTML = `<i class="fas fa-plus-circle"></i> ${message}`;
+      indicator.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: #f093fb;
+        color: white;
+        padding: 12px 20px;
+        border-radius: 25px;
+        font-size: 14px;
+        font-weight: 500;
+        box-shadow: 0 4px 15px rgba(240, 147, 251, 0.3);
+        z-index: 9999;
+        animation: slideIn 0.3s ease-out;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      `;
+      
+      document.body.appendChild(indicator);
+      
+      setTimeout(() => {
+        indicator.remove();
+      }, 3000);
+      
+      // Add animation CSS if not present
+      if (!document.getElementById('update-indicator-styles')) {
+        const style = document.createElement('style');
+        style.id = 'update-indicator-styles';
+        style.textContent = `
+          @keyframes slideIn {
+            from {
+              transform: translateX(100%);
+              opacity: 0;
+            }
+            to {
+              transform: translateX(0);
+              opacity: 1;
+            }
+          }
+        `;
+        document.head.appendChild(style);
+      }
+    }
+
+    // Initialize when DOM loads
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('Girls Fashion page: DOM loaded, setting up Firebase listener...');
+      setupGirlsProductListener();
+    });
   </script>
 </body>
 </html>
