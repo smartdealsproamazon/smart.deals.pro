@@ -457,7 +457,7 @@
 
           // Filter girls products manually
           const girlsProducts = allProducts.filter(product => 
-            product.category === 'girls'
+            product.category === 'girls-fashion' || product.category === 'girls'
           );
 
           console.log(`Girls products found: ${girlsProducts.length}`);
@@ -665,8 +665,8 @@
             });
 
             const girlsProducts = allProducts.filter(product => 
-              product.category === 'girls' || 
-              product.category === 'girls-fashion' ||
+              product.category === 'girls-fashion' || 
+              product.category === 'girls' ||
               (product.title && product.title.toLowerCase().includes('girls')) ||
               (product.name && product.name.toLowerCase().includes('girls'))
             );
