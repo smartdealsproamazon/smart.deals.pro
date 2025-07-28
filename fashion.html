@@ -394,6 +394,9 @@
       window.fashionPageInitialized = true;
     }
 
+    // Make renderFashionProducts globally accessible for real-time updates
+    window.renderFashionProducts = renderFashionProducts;
+
     // Initialize when DOM is loaded
     document.addEventListener('DOMContentLoaded', function() {
       console.log('DOM loaded, checking for products...');
@@ -408,6 +411,15 @@
     document.addEventListener('products-ready', function() {
       console.log('Products ready event received');
       initializeFashion();
+    });
+
+    // Listen for products updated event to re-render when new products are added
+    document.addEventListener('products-updated', function() {
+      console.log('Products updated event received on fashion page');
+      if (window.fashionPageInitialized) {
+        console.log('Re-rendering girls fashion products after update...');
+        renderFashionProducts();
+      }
     });
 
     // Fallback - check for products every 500ms for up to 10 seconds
