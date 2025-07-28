@@ -506,6 +506,12 @@
               ...doc.data()
             }));
 
+            // Debug: Log all found products with their categories
+            console.log('=== GIRLS PRODUCTS DEBUG ===');
+            girlsProducts.forEach(product => {
+              console.log(`Product: ${product.title || product.name}, Category: "${product.category}", ID: ${product.id}`);
+            });
+
             // Sort manually by createdAt if available
             girlsProducts.sort((a, b) => {
               const dateA = a.createdAt ? new Date(a.createdAt) : new Date();
@@ -549,6 +555,12 @@
               ...doc.data()
             }));
 
+            // Debug: Log all products with their categories
+            console.log('=== ALL PRODUCTS DEBUG ===');
+            allProducts.forEach(product => {
+              console.log(`Product: ${product.title || product.name}, Category: "${product.category}", ID: ${product.id}`);
+            });
+
             const girlsProducts = allProducts.filter(product => 
               product.category === 'girls' || 
               product.category === 'girls-fashion' ||
@@ -557,6 +569,7 @@
             );
 
             console.log(`Filtered girls products: ${girlsProducts.length}`);
+            console.log('Girls products found:', girlsProducts.map(p => `${p.title || p.name} (${p.category})`));
 
             // Sort manually by createdAt if available
             girlsProducts.sort((a, b) => {
@@ -666,11 +679,26 @@
         loadingMessage.style.display = 'block';
       }
       
-      // Simple connection test
-      db.collection('products').limit(1).get()
+      // Simple connection test and debug all products
+      db.collection('products').get()
         .then((snapshot) => {
           console.log('Firebase connection successful!');
           console.log('Total documents in products collection:', snapshot.size);
+          
+          // Debug: Show all products and their categories
+          console.log('=== ALL PRODUCTS IN DATABASE ===');
+          const allCategories = new Set();
+          snapshot.docs.forEach(doc => {
+            const data = doc.data();
+            const category = data.category;
+            allCategories.add(category);
+            console.log(`ID: ${doc.id}, Name: ${data.title || data.name}, Category: "${category}"`);
+          });
+          
+          console.log('=== UNIQUE CATEGORIES FOUND ===');
+          Array.from(allCategories).forEach(cat => {
+            console.log(`Category: "${cat}"`);
+          });
           
           // Connection successful, now setup listener
           setupGirlsProductListener();
