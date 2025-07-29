@@ -8,10 +8,27 @@
   <title>SmartDeals Pro - Best Deals & Reviews for USA Shoppers</title>
   <link rel="canonical" href="https://rizwan-10html.github.io/Smart--affiliate---site/">
   
-  <!-- Favicon -->
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
-  <link rel="apple-touch-icon" sizes="180x180" href="logo.png">
+  <!-- Performance Optimization Meta Tags -->
+  <meta http-equiv="x-dns-prefetch-control" content="on">
+  <meta name="format-detection" content="telephone=no">
   
+  <!-- Enhanced Favicon Implementation -->
+  <link rel="icon" type="image/x-icon" href="favicon.ico" sizes="16x16 32x32">
+  <link rel="icon" type="image/svg+xml" href="logo.svg">
+  <link rel="apple-touch-icon" sizes="180x180" href="logo.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="logo.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="logo.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="logo.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="logo.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="logo.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="logo.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="logo.png">
+  <link rel="apple-touch-icon" sizes="57x57" href="logo.png">
+  <link rel="manifest" href="site.webmanifest">
+  <meta name="msapplication-TileColor" content="#3b82f6">
+  <meta name="msapplication-TileImage" content="logo.png">
+  <meta name="theme-color" content="#3b82f6">
+
   <!-- Open Graph Meta Tags for Social Media -->
   <meta property="og:title" content="SmartDeals Pro - Best Deals & Reviews for USA Shoppers">
   <meta property="og:description" content="Discover the best deals on tech gadgets, smartwatches, fashion, and electronics in the USA. Expert reviews, daily deals, and trusted recommendations for American shoppers.">
@@ -42,13 +59,25 @@
   <meta name="ICBM" content="39.78373, -100.445882" />
   <meta name="distribution" content="US" />
   <meta name="country" content="USA" />
-  
+
   <meta name="verify-admitad" content="f440e2ccf9" />
+  
+  <!-- Performance Optimization: DNS Prefetch and Preconnect -->
+  <link rel="dns-prefetch" href="//fonts.googleapis.com">
+  <link rel="dns-prefetch" href="//fonts.gstatic.com">
+  <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
+  <link rel="dns-prefetch" href="//www.googletagmanager.com">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Critical Resource Preloading -->
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"></noscript>
+  <link rel="preload" href="style.css" as="style">
+  <link rel="stylesheet" href="style.css">
+  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  <link rel="stylesheet" href="style.css" />
   
   <!-- Enhanced JSON-LD Schema Markup -->
   <script type="application/ld+json">
@@ -144,7 +173,7 @@
       <div class="header-content">
         <div class="header-left">
           <a href="index.html" class="logo-link">
-            <img src="logo.svg" alt="SmartDeals Pro Logo" class="logo" />
+            <img src="logo.svg" alt="SmartDeals Pro Logo" class="logo" loading="eager" />
           </a>
           <div class="site-name">
             <span class="logo-text">SmartDeals Pro</span>
@@ -452,10 +481,20 @@
     </div>
   </footer>
 
-  <!-- Scripts -->
-  <script src="products.js"></script>
-  <script src="render.js"></script>
-  <!-- <script src="user-auth.js"></script> -->
+  <!-- Performance Optimized Scripts -->
+  <script>
+    // Critical JavaScript for immediate functionality
+    window.addEventListener('load', function() {
+      // Load non-critical scripts after page load
+      const scripts = ['products.js', 'render.js'];
+      scripts.forEach(function(src) {
+        const script = document.createElement('script');
+        script.src = src;
+        script.async = true;
+        document.head.appendChild(script);
+      });
+    });
+  </script>
   <script>
     // Simple Loading Screen
     document.addEventListener('DOMContentLoaded', function() {
@@ -466,7 +505,7 @@
           setTimeout(function() {
             loadingScreen.style.display = 'none';
           }, 500);
-        }, 2000); // Show for 2 seconds
+        }, 1000); // Show for 1 second - optimized for performance
       }
     });
 
@@ -515,6 +554,70 @@
     document.addEventListener('DOMContentLoaded', function() {
       renderFeaturedProducts();
     });
+
+    // Performance Optimization Scripts
+    (function() {
+      // Lazy load images when they're about to enter viewport
+      if ('IntersectionObserver' in window) {
+        const imageObserver = new IntersectionObserver((entries, observer) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              const img = entry.target;
+              if (img.dataset.src) {
+                img.src = img.dataset.src;
+                img.classList.remove('lazy');
+                imageObserver.unobserve(img);
+              }
+            }
+          });
+        });
+
+        document.querySelectorAll('img[data-src]').forEach(img => {
+          imageObserver.observe(img);
+        });
+      }
+
+      // Preload critical resources on user interaction
+      let preloadTriggered = false;
+      function preloadResources() {
+        if (preloadTriggered) return;
+        preloadTriggered = true;
+        
+        // Preload important pages
+        const importantPages = ['products.html', 'deals.html', 'about.html'];
+        importantPages.forEach(page => {
+          const link = document.createElement('link');
+          link.rel = 'prefetch';
+          link.href = page;
+          document.head.appendChild(link);
+        });
+      }
+
+      // Trigger preload on first user interaction
+      ['mousedown', 'touchstart', 'keydown'].forEach(event => {
+        document.addEventListener(event, preloadResources, { once: true, passive: true });
+      });
+
+      // Optimize form submissions
+      document.querySelectorAll('form').forEach(form => {
+        form.addEventListener('submit', function(e) {
+          const submitBtn = form.querySelector('[type="submit"]');
+          if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Processing...';
+          }
+        });
+      });
+
+      // Service Worker Registration for Caching
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('/sw.js')
+            .then(registration => console.log('SW registered'))
+            .catch(error => console.log('SW registration failed'));
+        });
+      }
+    })();
   </script>
 </body>
 </html>
