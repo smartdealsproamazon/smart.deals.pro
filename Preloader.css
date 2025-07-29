@@ -1,0 +1,177 @@
+.preloader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  z-index: 9999;
+  transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+}
+
+.preloader.fade-out {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.loader {
+  position: relative;
+  width: 120px;
+  height: 120px;
+}
+
+.loader::before,
+.loader::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  animation: pulse 2s infinite ease-in-out;
+}
+
+.loader::before {
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.2);
+  animation-delay: -0.5s;
+}
+
+.loader::after {
+  width: 80%;
+  height: 80%;
+  background: rgba(255, 255, 255, 0.4);
+  top: 10%;
+  left: 10%;
+}
+
+.spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60px;
+  height: 60px;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-top: 4px solid #ffffff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loading-text {
+  margin-top: 30px;
+  color: white;
+  font-size: 18px;
+  font-weight: 300;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  animation: fadeInOut 1.5s infinite;
+  font-family: 'Arial', sans-serif;
+}
+
+.progress-bar {
+  width: 200px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+  margin-top: 20px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1);
+  border-radius: 2px;
+  animation: progress 3s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.4;
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+@keyframes fadeInOut {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes progress {
+  0% {
+    width: 0%;
+    transform: translateX(-100%);
+  }
+  50% {
+    width: 100%;
+    transform: translateX(0%);
+  }
+  100% {
+    width: 100%;
+    transform: translateX(100%);
+  }
+}
+
+/* Responsive design for mobile devices */
+@media (max-width: 768px) {
+  .loader {
+    width: 80px;
+    height: 80px;
+  }
+
+  .spinner {
+    width: 40px;
+    height: 40px;
+  }
+
+  .loading-text {
+    font-size: 14px;
+    margin-top: 20px;
+  }
+
+  .progress-bar {
+    width: 150px;
+  }
+}
+
+@media (max-width: 480px) {
+  .loader {
+    width: 60px;
+    height: 60px;
+  }
+
+  .spinner {
+    width: 30px;
+    height: 30px;
+    border-width: 3px;
+  }
+
+  .loading-text {
+    font-size: 12px;
+    margin-top: 15px;
+  }
+
+  .progress-bar {
+    width: 120px;
+    height: 3px;
+  }
+}
