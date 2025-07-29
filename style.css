@@ -63,31 +63,74 @@ body {
 }
 
 .circle-1 {
-  width: 300px;
-  height: 300px;
-  top: -150px;
-  left: -150px;
+  width: 350px;
+  height: 350px;
+  top: -175px;
+  left: -175px;
   animation-delay: 0s;
-  background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.18) 0%, transparent 70%);
 }
 
 .circle-2 {
-  width: 200px;
-  height: 200px;
+  width: 250px;
+  height: 250px;
   top: 50%;
-  right: -100px;
+  right: -125px;
   animation-delay: 2s;
-  background: radial-gradient(circle, rgba(139, 92, 246, 0.12) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%);
 }
 
 .circle-3 {
-  width: 400px;
-  height: 400px;
-  bottom: -200px;
+  width: 450px;
+  height: 450px;
+  bottom: -225px;
   left: 50%;
   transform: translateX(-50%);
   animation-delay: 4s;
-  background: radial-gradient(circle, rgba(6, 182, 212, 0.1) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(6, 182, 212, 0.12) 0%, transparent 70%);
+}
+
+/* Responsive background animations */
+@media (max-width: 768px) {
+  .circle-1 {
+    width: 280px;
+    height: 280px;
+    top: -140px;
+    left: -140px;
+  }
+  
+  .circle-2 {
+    width: 200px;
+    height: 200px;
+    right: -100px;
+  }
+  
+  .circle-3 {
+    width: 350px;
+    height: 350px;
+    bottom: -175px;
+  }
+}
+
+@media (max-width: 480px) {
+  .circle-1 {
+    width: 220px;
+    height: 220px;
+    top: -110px;
+    left: -110px;
+  }
+  
+  .circle-2 {
+    width: 160px;
+    height: 160px;
+    right: -80px;
+  }
+  
+  .circle-3 {
+    width: 280px;
+    height: 280px;
+    bottom: -140px;
+  }
 }
 
 .bg-lines {
@@ -566,11 +609,222 @@ body {
   font-weight: 500;
 }
 
-/* Responsive styles for modern preloader */
+/* Enhanced Responsive styles for larger animations across all devices */
+
+/* Desktop/Large screens - Bigger animations */
+@media (min-width: 1200px) {
+  .logo-circle {
+    width: 160px;
+    height: 160px;
+  }
+  
+  .preloader-logo {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .ring-1 { width: 200px; height: 200px; }
+  .ring-2 { width: 240px; height: 240px; }
+  .ring-3 { width: 280px; height: 280px; }
+  
+  .brand-title {
+    font-size: 4.5rem;
+  }
+  
+  .brand-subtitle {
+    font-size: 1.4rem;
+  }
+  
+  .loading-spinner {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .preloader-content {
+    gap: 4rem;
+    padding: 3rem;
+  }
+  
+  .features-modern {
+    gap: 3rem;
+  }
+  
+  .feature-icon {
+    padding: 1.5rem;
+    min-width: 120px;
+  }
+  
+  .feature-icon i {
+    font-size: 2rem;
+  }
+  
+  .feature-icon span {
+    font-size: 1rem;
+  }
+}
+
+/* Desktop/Medium-large screens */
+@media (min-width: 992px) and (max-width: 1199px) {
+  .logo-circle {
+    width: 140px;
+    height: 140px;
+  }
+  
+  .preloader-logo {
+    width: 70px;
+    height: 70px;
+  }
+  
+  .ring-1 { width: 180px; height: 180px; }
+  .ring-2 { width: 210px; height: 210px; }
+  .ring-3 { width: 240px; height: 240px; }
+  
+  .brand-title {
+    font-size: 4rem;
+  }
+  
+  .brand-subtitle {
+    font-size: 1.3rem;
+  }
+  
+  .loading-spinner {
+    width: 90px;
+    height: 90px;
+  }
+  
+  .preloader-content {
+    gap: 3.5rem;
+    padding: 2.5rem;
+  }
+  
+  .features-modern {
+    gap: 2.5rem;
+  }
+  
+  .feature-icon {
+    padding: 1.3rem;
+    min-width: 100px;
+  }
+  
+  .feature-icon i {
+    font-size: 1.8rem;
+  }
+  
+  .feature-icon span {
+    font-size: 0.95rem;
+  }
+}
+
+/* Tablet/Medium screens - Enhanced sizes */
+@media (min-width: 769px) and (max-width: 991px) {
+  .logo-circle {
+    width: 130px;
+    height: 130px;
+  }
+  
+  .preloader-logo {
+    width: 65px;
+    height: 65px;
+  }
+  
+  .ring-1 { width: 160px; height: 160px; }
+  .ring-2 { width: 190px; height: 190px; }
+  .ring-3 { width: 220px; height: 220px; }
+  
+  .brand-title {
+    font-size: 3.5rem;
+  }
+  
+  .brand-subtitle {
+    font-size: 1.2rem;
+  }
+  
+  .loading-spinner {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .preloader-content {
+    gap: 3rem;
+    padding: 2rem;
+  }
+  
+  .features-modern {
+    gap: 2rem;
+  }
+  
+  .feature-icon {
+    padding: 1.2rem;
+    min-width: 90px;
+  }
+  
+  .feature-icon i {
+    font-size: 1.6rem;
+  }
+  
+  .feature-icon span {
+    font-size: 0.9rem;
+  }
+}
+
+/* Mobile/Small tablets - Improved sizes */
 @media (max-width: 768px) {
   .preloader-content {
     gap: 2.5rem;
     padding: 1.5rem;
+  }
+  
+  .logo-circle {
+    width: 120px;
+    height: 120px;
+  }
+  
+  .preloader-logo {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .ring-1 { width: 150px; height: 150px; }
+  .ring-2 { width: 180px; height: 180px; }
+  .ring-3 { width: 210px; height: 210px; }
+  
+  .brand-title {
+    font-size: 3.2rem;
+  }
+  
+  .brand-subtitle {
+    font-size: 1.1rem;
+  }
+  
+  .loading-spinner {
+    width: 70px;
+    height: 70px;
+  }
+  
+  .features-modern {
+    gap: 1.8rem;
+  }
+  
+  .feature-icon {
+    padding: 1rem;
+    min-width: 80px;
+  }
+  
+  .feature-icon i {
+    font-size: 1.4rem;
+  }
+  
+  .feature-icon span {
+    font-size: 0.85rem;
+  }
+}
+
+/* Small mobile screens - Enhanced sizes */
+@media (max-width: 480px) {
+  .preloader-content {
+    gap: 2.2rem;
+    padding: 1.2rem;
+    width: 95%;
   }
   
   .logo-circle {
@@ -583,9 +837,9 @@ body {
     height: 50px;
   }
   
-  .ring-1 { width: 120px; height: 120px; }
-  .ring-2 { width: 140px; height: 140px; }
-  .ring-3 { width: 160px; height: 160px; }
+  .ring-1 { width: 130px; height: 130px; }
+  .ring-2 { width: 150px; height: 150px; }
+  .ring-3 { width: 170px; height: 170px; }
   
   .brand-title {
     font-size: 2.8rem;
@@ -600,51 +854,70 @@ body {
     height: 60px;
   }
   
+  .loading-progress-modern {
+    max-width: 280px;
+  }
+  
   .features-modern {
     gap: 1.5rem;
   }
   
   .feature-icon {
     padding: 0.8rem;
-    min-width: 70px;
+    min-width: 75px;
   }
   
   .feature-icon i {
-    font-size: 1.2rem;
+    font-size: 1.3rem;
   }
   
   .feature-icon span {
-    font-size: 0.75rem;
+    font-size: 0.8rem;
+  }
+  
+  .progress-text {
+    font-size: 0.85rem;
+  }
+  
+  .dot {
+    width: 7px;
+    height: 7px;
   }
 }
 
-@media (max-width: 480px) {
+/* Very small mobile screens - Optimized sizes */
+@media (max-width: 320px) {
   .preloader-content {
-    gap: 2rem;
+    gap: 1.8rem;
     padding: 1rem;
-    width: 95%;
   }
-  
-  .logo-circle {
-    width: 80px;
-    height: 80px;
-  }
-  
-  .preloader-logo {
-    width: 40px;
-    height: 40px;
-  }
-  
-  .ring-1 { width: 100px; height: 100px; }
-  .ring-2 { width: 120px; height: 120px; }
-  .ring-3 { width: 140px; height: 140px; }
   
   .brand-title {
-    font-size: 2.2rem;
+    font-size: 2.4rem;
   }
   
   .brand-subtitle {
     font-size: 0.9rem;
+  }
+  
+  .features-modern {
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .feature-icon {
+    padding: 0.6rem;
+    min-width: 65px;
+    flex: 0 1 calc(50% - 0.5rem);
+  }
+  
+  .feature-icon i {
+    font-size: 1.1rem;
+  }
+  
+  .feature-icon span {
+    font-size: 0.7rem;
   }
   
   .loading-spinner {
@@ -652,67 +925,26 @@ body {
     height: 50px;
   }
   
+  .logo-circle {
+    width: 85px;
+    height: 85px;
+  }
+  
+  .preloader-logo {
+    width: 42px;
+    height: 42px;
+  }
+  
+  .ring-1 { width: 110px; height: 110px; }
+  .ring-2 { width: 130px; height: 130px; }
+  .ring-3 { width: 150px; height: 150px; }
+  
   .loading-progress-modern {
-    max-width: 250px;
-  }
-  
-  .features-modern {
-    gap: 1rem;
-  }
-  
-  .feature-icon {
-    padding: 0.6rem;
-    min-width: 60px;
-  }
-  
-  .feature-icon i {
-    font-size: 1rem;
-  }
-  
-  .feature-icon span {
-    font-size: 0.7rem;
+    max-width: 260px;
   }
   
   .progress-text {
     font-size: 0.8rem;
-  }
-  
-  .dot {
-    width: 6px;
-    height: 6px;
-  }
-}
-
-@media (max-width: 320px) {
-  .preloader-content {
-    gap: 1.5rem;
-  }
-  
-  .brand-title {
-    font-size: 1.8rem;
-  }
-  
-  .brand-subtitle {
-    font-size: 0.8rem;
-  }
-  
-  .features-modern {
-    display: none; /* Hide features on very small screens */
-  }
-  
-  .loading-spinner {
-    width: 40px;
-    height: 40px;
-  }
-  
-  .logo-circle {
-    width: 70px;
-    height: 70px;
-  }
-  
-  .preloader-logo {
-    width: 35px;
-    height: 35px;
   }
 }
 
