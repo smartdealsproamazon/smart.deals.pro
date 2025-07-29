@@ -88,19 +88,38 @@ class ProductStateManager {
 
   // Normalize product data with consistent structure
   normalizeProduct(prod, id) {
+    // Helper function to safely parse price
+    const safeParsePrice = (price) => {
+      if (price === null || price === undefined || price === '') {
+        return 0;
+      }
+      
+      // Convert to string and remove currency symbols
+      let priceStr = String(price).replace(/[$₨₹€£¥]/g, '').trim();
+      
+      // Handle common price formats
+      priceStr = priceStr.replace(/[,\s]/g, ''); // Remove commas and spaces
+      
+      const numPrice = parseFloat(priceStr);
+      return isNaN(numPrice) ? 0 : numPrice;
+    };
+
+    const normalizedPrice = safeParsePrice(prod.price);
+    const normalizedOriginalPrice = safeParsePrice(prod.originalPrice || prod.price);
+
     return {
       id: id,
       name: prod.title || prod.name || 'Untitled Product',
-      price: `$${parseFloat(prod.price || 0).toFixed(2)}`,
-      originalPrice: `$${parseFloat(prod.originalPrice || prod.price || 0).toFixed(2)}`,
+      price: `$${normalizedPrice.toFixed(2)}`,
+      originalPrice: `$${normalizedOriginalPrice.toFixed(2)}`,
       image: prod.imageData || prod.image || '',
       link: prod.link || '#',
       category: prod.category || 'uncategorized',
-      rating: prod.rating || 5,
-      reviews: prod.reviews || 0,
+      rating: isNaN(parseFloat(prod.rating)) ? 5 : parseFloat(prod.rating),
+      reviews: isNaN(parseInt(prod.reviews)) ? 0 : parseInt(prod.reviews),
       description: prod.description || '',
-      features: prod.features || [],
-      discount: prod.discount || 0,
+      features: Array.isArray(prod.features) ? prod.features : [],
+      discount: isNaN(parseInt(prod.discount)) ? 0 : parseInt(prod.discount),
       featured: Boolean(prod.featured),
       productReviews: prod.productReviews || this.generateRandomReviews(prod.title || prod.name || 'Product'),
       createdAt: prod.createdAt || new Date().toISOString()

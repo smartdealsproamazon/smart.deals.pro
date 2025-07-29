@@ -99,18 +99,42 @@ function createProductCard(product) {
   
   // Add data attributes so existing filters on some pages work
   div.setAttribute('data-category', product.category || '');
-  const numericPrice = parseFloat((product.price || '').toString().replace('$','')) || 0;
+  
+  // Safe price parsing with validation
+  const safeParsePriceForAttribute = (priceStr) => {
+    if (!priceStr) return 0;
+    const cleanPrice = String(priceStr).replace(/[$₨₹€£¥,\s]/g, '');
+    const numPrice = parseFloat(cleanPrice);
+    return isNaN(numPrice) ? 0 : numPrice;
+  };
+  
+  const numericPrice = safeParsePriceForAttribute(product.price);
   div.setAttribute('data-price', numericPrice);
   
   const discountBadge = product.discount > 0 ? 
     `<div class="discount-badge">-${product.discount}%</div>` : '';
   
-  const originalPrice = product.originalPrice && product.originalPrice !== product.price ? 
-    `<span class="original-price">${product.originalPrice}</span>` : '';
+  // Safe price display with validation
+  const safeDisplayPrice = (price) => {
+    if (!price) return '$0.00';
+    const priceStr = String(price);
+    if (priceStr.includes('NaN') || priceStr === 'undefined' || priceStr === 'null') {
+      return '$0.00';
+    }
+    return priceStr.startsWith('$') ? priceStr : `$${priceStr}`;
+  };
+
+  const displayPrice = safeDisplayPrice(product.price);
+  const displayOriginalPrice = safeDisplayPrice(product.originalPrice);
   
-  const stars = generateStars(product.rating);
+  const originalPrice = product.originalPrice && 
+                       product.originalPrice !== product.price && 
+                       !displayOriginalPrice.includes('$0.00') ? 
+    `<span class="original-price">${displayOriginalPrice}</span>` : '';
   
-  const features = product.features ? 
+  const stars = generateStars(product.rating || 5);
+  
+  const features = Array.isArray(product.features) ? 
     product.features.slice(0, 3).map(feature => `<span class="feature-tag">${feature}</span>`).join('') : '';
 
   // Timer functionality removed
@@ -155,7 +179,7 @@ function createProductCard(product) {
       </div>
       <div class="product-price">
         ${originalPrice}
-        <span class="current-price">${product.price}</span>
+        <span class="current-price">${displayPrice}</span>
       </div>
       ${timerHTML}
       <div class="product-buttons">
