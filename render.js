@@ -123,8 +123,15 @@ function createProductCard(product) {
     if (e.target.closest('a, button')) {
       return;
     }
-    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
-    window.location.href = `product-detail.html?id=${String(product.id)}&ref=${encodeURIComponent(currentPage)}`;
+    // Enhanced product linking with validation
+    if (product && product.id) {
+      const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+      const productId = encodeURIComponent(String(product.id));
+      console.log(`Navigating to product detail for ID: ${product.id}`);
+      window.location.href = `product-detail.html?id=${productId}&ref=${encodeURIComponent(currentPage)}`;
+    } else {
+      console.error('Product ID not available for navigation', product);
+    }
   });
 
   div.innerHTML = `
@@ -132,7 +139,7 @@ function createProductCard(product) {
     <div class="product-image-container">
       <img src="${product.image}" alt="${product.name}" class="product-image" loading="lazy">
       <div class="product-overlay">
-        <button class="view-details-btn" onclick="event.stopPropagation(); const currentPage = window.location.pathname.split('/').pop() || 'index.html'; window.location.href='product-detail.html?id=${String(product.id)}&ref=' + encodeURIComponent(currentPage)">
+        <button class="view-details-btn" onclick="event.stopPropagation(); if('${product.id}') { const currentPage = window.location.pathname.split('/').pop() || 'index.html'; const productId = encodeURIComponent('${product.id}'); console.log('View Details clicked for ID: ${product.id}'); window.location.href='product-detail.html?id=' + productId + '&ref=' + encodeURIComponent(currentPage); } else { console.error('Product ID not available'); }">
           <i class="fas fa-eye"></i> View Details
         </button>
       </div>
@@ -158,7 +165,7 @@ function createProductCard(product) {
         <button class="btn btn-outline btn-small" onclick="event.stopPropagation(); addToWishlist(${product.id})">
           <i class="fas fa-heart"></i> Save
         </button>
-        <button class="btn btn-secondary btn-small" onclick="event.stopPropagation(); const currentPage = window.location.pathname.split('/').pop() || 'index.html'; window.location.href='product-detail.html?id=${String(product.id)}&ref=' + encodeURIComponent(currentPage)">
+        <button class="btn btn-secondary btn-small" onclick="event.stopPropagation(); if('${product.id}') { const currentPage = window.location.pathname.split('/').pop() || 'index.html'; const productId = encodeURIComponent('${product.id}'); console.log('Details button clicked for ID: ${product.id}'); window.location.href='product-detail.html?id=' + productId + '&ref=' + encodeURIComponent(currentPage); } else { console.error('Product ID not available for details'); }">
           <i class="fas fa-info-circle"></i> Details
         </button>
       </div>

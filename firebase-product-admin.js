@@ -52,11 +52,19 @@ class FirebaseProductAdmin {
         await this.init();
       }
 
+      // Use the product state manager to generate consistent IDs
+      let productId = productData.id;
+      if (!productId && window.productStateManager) {
+        productId = window.productStateManager.generateProductId(productData);
+      } else if (!productId) {
+        productId = `prod_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      }
+
       const product = {
         ...productData,
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-        id: productData.id || Date.now().toString()
+        id: productId
       };
 
       const docRef = await this.db.collection('products').add(product);
