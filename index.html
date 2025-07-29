@@ -38,9 +38,17 @@
             visibility: hidden;
         }
 
-        .preloader-content {
-            text-align: center;
-        }
+                 .preloader-content {
+             text-align: center;
+         }
+
+         dotlottie-wc {
+             pointer-events: none !important;
+             user-select: none !important;
+             -webkit-user-select: none !important;
+             -moz-user-select: none !important;
+             -ms-user-select: none !important;
+         }
 
         .loading-text {
             color: white;
@@ -175,13 +183,14 @@
     <!-- Preloader -->
     <div class="preloader" id="preloader">
         <div class="preloader-content">
-            <dotlottie-wc 
-                src="https://lottie.host/cd5c1a76-6831-45dd-87d2-c70936d7f14a/EgWzVInYyW.lottie" 
-                style="width: 300px; height: 300px;" 
-                speed="1" 
-                autoplay 
-                loop>
-            </dotlottie-wc>
+                         <dotlottie-wc 
+                 src="https://lottie.host/cd5c1a76-6831-45dd-87d2-c70936d7f14a/EgWzVInYyW.lottie" 
+                 style="width: 300px; height: 300px; pointer-events: none;" 
+                 speed="1" 
+                 autoplay 
+                 loop
+                 onclick="return false;">
+             </dotlottie-wc>
             <div class="loading-text">Loading...</div>
         </div>
     </div>
