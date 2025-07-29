@@ -380,15 +380,18 @@
 
   <!-- Load products data -->
   <script src="products.js"></script>
+  <!-- Load Product Detail Manager -->
+  <script src="product-detail-manager.js"></script>
   
   <script>
-    // Get product ID from URL parameters
+    // Legacy functions for backward compatibility
+    // The Product Detail Manager now handles all the core functionality
+    
     function getQueryParam(name) {
       const urlParams = new URLSearchParams(window.location.search);
       return urlParams.get(name);
     }
 
-    // Generate star rating HTML
     function generateStars(rating) {
       let stars = '';
       for (let i = 1; i <= 5; i++) {
@@ -403,9 +406,20 @@
       return stars;
     }
 
-    // Render product details
     function renderProductDetail(product) {
+      // Delegate to Product Detail Manager if available
+      if (window.productDetailManager) {
+        if (product) {
+          window.productDetailManager.renderProduct(product);
+        } else {
+          window.productDetailManager.showError('Product Not Found', 'The product you\'re looking for doesn\'t exist or may have been removed.');
+        }
+        return;
+      }
+      
+      // Fallback legacy implementation
       const contentDiv = document.getElementById('productContent');
+      if (!contentDiv) return;
       
       if (!product) {
         contentDiv.innerHTML = `
@@ -413,7 +427,7 @@
             <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 1rem;"></i>
             <h2>Product Not Found</h2>
             <p>The product you're looking for doesn't exist or may have been removed.</p>
-            <a href="products.html" class="btn-primary" style="margin-top: 1rem;" id="backButtonError">
+            <a href="products.html" class="btn-primary" style="margin-top: 1rem;">
               <i class="fas fa-arrow-left"></i> Back to Products
             </a>
           </div>
@@ -421,91 +435,40 @@
         return;
       }
 
-      // Calculate discount if original price exists
-      let discountHTML = '';
-      if (product.discount && product.discount > 0) {
-        discountHTML = `<span class="discount-badge">-${product.discount}% OFF</span>`;
-      }
-
-      // Generate features HTML
-      let featuresHTML = '';
-      if (product.features && product.features.length > 0) {
-        featuresHTML = `
-          <div class="product-features">
-            <h3 class="features-title">Key Features</h3>
-            <div class="feature-list">
-              ${product.features.map(feature => `<span class="feature-tag">${feature}</span>`).join('')}
-            </div>
-          </div>
-        `;
-      }
-
+      // Basic rendering for fallback
       contentDiv.innerHTML = `
         <div class="product-detail-header">
           <div class="product-basic-info">
             <div class="product-image-section">
               <img src="${product.image}" alt="${product.name}" class="product-main-image" />
             </div>
-            
             <div class="product-info-section">
               <h1 class="product-title">${product.name}</h1>
-              
-              <div class="product-rating">
-                <div class="stars">${generateStars(product.rating)}</div>
-                <span class="rating-text">${product.rating} out of 5 (${product.reviews} reviews)</span>
-              </div>
-              
               <div class="product-price-section">
                 <span class="current-price">${product.price}</span>
-                ${product.originalPrice && product.originalPrice !== product.price ? `<span class="original-price">${product.originalPrice}</span>` : ''}
-                ${discountHTML}
               </div>
             </div>
           </div>
-          
           <div class="product-description">
             <strong>Product Description:</strong><br>
             ${product.description}
           </div>
-          
-          <div class="product-features-actions">
-            <div class="product-features-container">
-              ${featuresHTML}
-            </div>
-            
-            <div class="product-actions">
-              <a href="${product.link}" target="_blank" rel="noopener noreferrer" class="btn-primary">
-                <i class="fas fa-shopping-cart"></i> Buy Now
-              </a>
-              <a href="products.html" class="btn-secondary" id="backButtonSecondary">
-                <i class="fas fa-arrow-left"></i> Back to Products
-              </a>
-            </div>
-          </div>
         </div>
       `;
-
-      // Show reviews if available
-      if (product.productReviews && product.productReviews.length > 0) {
-        renderReviews(product.productReviews);
-      }
-      
-      // Update navigation after rendering
-      setTimeout(() => {
-        if (window.navigationInfo) {
-          const backButtonSecondary = document.getElementById('backButtonSecondary');
-          if (backButtonSecondary) {
-            backButtonSecondary.href = window.navigationInfo.backUrl;
-            backButtonSecondary.innerHTML = `<i class="fas fa-arrow-left"></i> ${window.navigationInfo.backText}`;
-          }
-        }
-      }, 100);
     }
 
-    // Render product reviews
     function renderReviews(reviews) {
+      // Delegate to Product Detail Manager if available
+      if (window.productDetailManager) {
+        window.productDetailManager.renderReviews(reviews);
+        return;
+      }
+      
+      // Fallback implementation
       const reviewsSection = document.getElementById('reviewsSection');
       const reviewsContainer = document.getElementById('reviewsContainer');
+      
+      if (!reviewsSection || !reviewsContainer) return;
       
       const reviewsHTML = reviews.map(review => `
         <div class="review-card">
@@ -521,62 +484,9 @@
       reviewsSection.style.display = 'block';
     }
 
-    // Wait for products to load and then render the detail
     function initProductDetail() {
-      const productId = getQueryParam('id');
-      
-      if (!productId) {
-        document.getElementById('productContent').innerHTML = `
-          <div class="error-message">
-            <h2>No Product Selected</h2>
-            <p>Please select a product to view its details.</p>
-            <a href="products.html" class="btn-primary">Browse Products</a>
-          </div>
-        `;
-        return;
-      }
-
-      // Function to find and render product
-      function findAndRenderProduct() {
-        if (!window.products || window.products.length === 0) {
-          // Try loading from localStorage as fallback
-          const localProducts = JSON.parse(localStorage.getItem('products') || '[]');
-          if (localProducts.length > 0) {
-            window.products = localProducts;
-          } else {
-            // Still loading, wait a bit more
-            setTimeout(findAndRenderProduct, 500);
-            return;
-          }
-        }
-
-        // Find product by ID (try different ID formats)
-        let product = window.products.find(p => 
-          String(p.id) === String(productId) || 
-          String(p.id) === String(productId).replace('local_', '') ||
-          window.products.indexOf(p) === parseInt(productId)
-        );
-
-        // If not found by ID, try by index
-        if (!product && !isNaN(productId)) {
-          const index = parseInt(productId);
-          if (index >= 0 && index < window.products.length) {
-            product = window.products[index];
-          }
-        }
-
-        renderProductDetail(product);
-      }
-
-      // Start the process
-      if (window.products && window.products.length > 0) {
-        findAndRenderProduct();
-      } else {
-        // Listen for products ready event
-        document.addEventListener('products-ready', findAndRenderProduct);
-        // Also try after a short delay
-        setTimeout(findAndRenderProduct, 1000);
-      }
+      // The Product Detail Manager now handles initialization
+      console.log('Legacy initProductDetail called - Product Detail Manager should handle this');
     }
 
     // Function to setup navigation based on referrer
