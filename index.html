@@ -1,250 +1,695 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Website with Lottie Preloader</title>
-    <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.6.2/dist/dotlottie-wc.js" type="module"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Discover the best deals on tech gadgets, smartwatches, fashion, and electronics in the USA. Expert reviews, daily deals, and trusted recommendations for American shoppers.">
+  <meta name="keywords" content="USA deals, American tech deals, smartwatches USA, electronics USA, fashion deals America, online shopping USA, product reviews America, best deals United States">
+  <title>SmartDeals Pro - Best Deals & Reviews for USA Shoppers</title>
+  <link rel="canonical" href="https://rizwan-10html.github.io/Smart--affiliate---site/">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="logo.png">
+  
+  <!-- Open Graph Meta Tags for Social Media -->
+  <meta property="og:title" content="SmartDeals Pro - Best Deals & Reviews for USA Shoppers">
+  <meta property="og:description" content="Discover the best deals on tech gadgets, smartwatches, fashion, and electronics in the USA. Expert reviews, daily deals, and trusted recommendations for American shoppers.">
+  <meta property="og:image" content="https://rizwan-10html.github.io/Smart--affiliate---site/logo.png">
+  <meta property="og:url" content="https://rizwan-10html.github.io/Smart--affiliate---site/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="SmartDeals Pro">
+  <meta property="og:locale" content="en_US">
+  
+  <!-- Twitter Card Meta Tags -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="SmartDeals Pro - Best Deals & Reviews for USA Shoppers">
+  <meta name="twitter:description" content="Discover the best deals on tech gadgets, smartwatches, fashion, and electronics in the USA. Expert reviews, daily deals, and trusted recommendations for American shoppers.">
+  <meta name="twitter:image" content="https://rizwan-10html.github.io/Smart--affiliate---site/logo.png">
 
-        body {
-            font-family: 'Arial', sans-serif;
-            overflow: hidden;
-        }
+  
+  <!-- Additional SEO Meta Tags -->
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <meta name="author" content="SmartDeals Pro">
+  <meta name="publisher" content="SmartDeals Pro">
+  <meta name="language" content="English">
+  <meta name="revisit-after" content="7 days">
+  
+  <!-- USA Geo-targeting Meta Tags -->
+  <meta name="geo.region" content="US" />
+  <meta name="geo.placename" content="United States" />
+  <meta name="geo.position" content="39.78373;-100.445882" />
+  <meta name="ICBM" content="39.78373, -100.445882" />
+  <meta name="distribution" content="US" />
+  <meta name="country" content="USA" />
+  
+  <meta name="verify-admitad" content="f440e2ccf9" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  
+  <!-- Enhanced JSON-LD Schema Markup -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "SmartDeals Pro",
+    "description": "Best affiliate marketing deals and reviews for tech products, smartwatches, electronics, fashion, and more",
+    "url": "https://rizwan-10html.github.io/Smart--affiliate---site/",
+    "publisher": {
+      "@type": "Organization",
+      "name": "SmartDeals Pro",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://rizwan-10html.github.io/Smart--affiliate---site/logo.png",
+        "width": 512,
+        "height": 512
+      }
+    },
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://rizwan-10html.github.io/Smart--affiliate---site/?s={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+  
+  <!-- Organization Schema for Logo Display -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "SmartDeals Pro",
+    "url": "https://rizwan-10html.github.io/Smart--affiliate---site/",
+    "logo": "https://rizwan-10html.github.io/Smart--affiliate---site/logo.png",
+    "sameAs": [
+      "https://rizwan-10html.github.io/Smart--affiliate---site/"
+    ],
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "contactType": "customer service",
+      "availableLanguage": "English"
+    }
+  }
+  </script>
+  
+  <!-- Breadcrumb Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://rizwan-10html.github.io/Smart--affiliate---site/"
+      }
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "SmartDeals Pro",
+    "description": "Best affiliate marketing deals and reviews for tech products",
+    "url": "https://rizwan-10html.github.io/Smart--affiliate---site/"
+  }
+  </script>
 
-        /* Preloader Styles */
-        .preloader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            z-index: 9999;
-            transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
-        }
-
-        .preloader.fade-out {
-            opacity: 0;
-            visibility: hidden;
-        }
-
-        .preloader-content {
-            text-align: center;
-        }
-
-        .loading-text {
-            color: white;
-            font-size: 24px;
-            font-weight: 300;
-            letter-spacing: 2px;
-            margin-top: 20px;
-            animation: fadeInOut 2s infinite;
-        }
-
-        @keyframes fadeInOut {
-            0%, 100% {
-                opacity: 0.5;
-            }
-            50% {
-                opacity: 1;
-            }
-        }
-
-        /* Main Content */
-        .main-content {
-            display: none;
-            min-height: 100vh;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            padding: 50px 20px;
-            text-align: center;
-        }
-
-        .main-content.show {
-            display: block;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .main-content h1 {
-            font-size: 3rem;
-            color: #2c3e50;
-            margin-bottom: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .main-content p {
-            font-size: 1.2rem;
-            color: #34495e;
-            max-width: 800px;
-            margin: 0 auto 40px;
-            line-height: 1.6;
-        }
-
-        .feature-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin-top: 40px;
-        }
-
-        .feature-card {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .feature-card h3 {
-            font-size: 1.5rem;
-            color: #2c3e50;
-            margin-bottom: 15px;
-        }
-
-        .feature-card p {
-            color: #7f8c8d;
-            line-height: 1.5;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .preloader dotlottie-wc {
-                width: 200px !important;
-                height: 200px !important;
-            }
-
-            .loading-text {
-                font-size: 18px;
-            }
-
-            .main-content h1 {
-                font-size: 2rem;
-            }
-
-            .main-content p {
-                font-size: 1rem;
-            }
-
-            .feature-grid {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .preloader dotlottie-wc {
-                width: 150px !important;
-                height: 150px !important;
-            }
-
-            .loading-text {
-                font-size: 16px;
-            }
-
-            .main-content {
-                padding: 30px 15px;
-            }
-
-            .main-content h1 {
-                font-size: 1.5rem;
-            }
-        }
-    </style>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-73WLXY20G3"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-73WLXY20G3');
+  </script>
 </head>
 <body>
-    <!-- Preloader -->
-    <div class="preloader" id="preloader">
-        <div class="preloader-content">
-            <dotlottie-wc 
-                src="https://lottie.host/cd5c1a76-6831-45dd-87d2-c70936d7f14a/EgWzVInYyW.lottie" 
-                style="width: 300px; height: 300px;" 
-                speed="1" 
-                autoplay 
-                loop>
-            </dotlottie-wc>
-            <div class="loading-text">Loading...</div>
-        </div>
+  <!-- Modern Animated Loading Screen -->
+  <div id="loading-screen" class="homepage-preloader">
+    <!-- Animated Background -->
+    <div class="preloader-bg">
+      <div class="bg-circle circle-1"></div>
+      <div class="bg-circle circle-2"></div>
+      <div class="bg-circle circle-3"></div>
+      <div class="bg-lines">
+        <div class="line line-1"></div>
+        <div class="line line-2"></div>
+        <div class="line line-3"></div>
+        <div class="line line-4"></div>
+      </div>
     </div>
-
+    
     <!-- Main Content -->
-    <div class="main-content" id="mainContent">
-        <div class="container">
-            <h1>Welcome to Your Website</h1>
-            <p>Your content loads after the beautiful Lottie preloader animation. This preloader works perfectly on both desktop and mobile devices with responsive design.</p>
-            
-            <div class="feature-grid">
-                <div class="feature-card">
-                    <h3>Beautiful Animation</h3>
-                    <p>Smooth Lottie animation for better user experience</p>
-                </div>
-                <div class="feature-card">
-                    <h3>Responsive Design</h3>
-                    <p>Works perfectly on all devices and screen sizes</p>
-                </div>
-                <div class="feature-card">
-                    <h3>Fast Loading</h3>
-                    <p>Optimized for quick loading and smooth transitions</p>
-                </div>
-            </div>
+    <div class="preloader-content">
+      <!-- Logo Animation -->
+      <div class="logo-container">
+        <div class="logo-circle">
+          <img src="logo.svg" alt="SmartDeals Pro" class="preloader-logo">
+          <div class="logo-ring ring-1"></div>
+          <div class="logo-ring ring-2"></div>
+          <div class="logo-ring ring-3"></div>
         </div>
+      </div>
+      
+      <!-- Brand Text with Typewriter Effect -->
+      <div class="brand-section">
+        <h1 class="brand-title">
+          <span class="brand-text" data-text="SmartDeals Pro">SmartDeals Pro</span>
+        </h1>
+        <p class="brand-subtitle">Your Ultimate Shopping Experience</p>
+      </div>
+      
+      <!-- Modern Loading Animation -->
+      <div class="loading-section">
+        <div class="loading-spinner">
+          <div class="spinner-ring"></div>
+          <div class="spinner-ring"></div>
+          <div class="spinner-ring"></div>
+          <div class="spinner-ring"></div>
+        </div>
+        
+        <div class="loading-progress-modern">
+          <div class="progress-container">
+            <div class="progress-bar-modern">
+              <div class="progress-fill-modern"></div>
+              <div class="progress-glow"></div>
+            </div>
+            <div class="progress-text">
+              <span class="loading-status">Initializing</span>
+              <span class="progress-percent">0%</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Animated Dots -->
+        <div class="loading-dots-modern">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+      
+      <!-- Feature Icons with Animation -->
+      <div class="features-modern">
+        <div class="feature-icon" data-delay="0">
+          <i class="fas fa-shopping-cart"></i>
+          <span>Shop</span>
+        </div>
+        <div class="feature-icon" data-delay="200">
+          <i class="fas fa-star"></i>
+          <span>Reviews</span>
+        </div>
+        <div class="feature-icon" data-delay="400">
+          <i class="fas fa-truck-fast"></i>
+          <span>Delivery</span>
+        </div>
+        <div class="feature-icon" data-delay="600">
+          <i class="fas fa-shield-check"></i>
+          <span>Secure</span>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <script>
-        // Show preloader and hide main content initially
-        document.body.style.overflow = 'hidden';
+  <!-- Header -->
+  <header class="main-header">
+    <div class="container">
+      <div class="header-content">
+        <div class="header-left">
+          <a href="index.html" class="logo-link">
+            <img src="logo.svg" alt="SmartDeals Pro Logo" class="logo" />
+          </a>
+          <div class="site-name">
+            <span class="logo-text">SmartDeals Pro</span>
+          </div>
+        </div>
+        
+        <nav class="main-nav">
+          <ul>
+            <li><a href="index.html" class="nav-link active">Home</a></li>
+            <li class="dropdown">
+              <a href="#" class="nav-link dropdown-toggle">Categories <i class="fas fa-chevron-down"></i></a>
+              <ul class="dropdown-menu">
+                <li><a href="boys-fashion.html">Boys Fashion</a></li>
+                <li><a href="fashion.html">Girls Fashion</a></li>
+                <li><a href="small-electrical.html">Electronics</a></li>
+                <li><a href="gaming.html">Gaming</a></li>
+                <li><a href="home-garden.html">Home & Garden</a></li>
+                <li><a href="product-submission-verification.html">Submit Product</a></li>
+              </ul>
+            </li>
+            <li><a href="reviews.html" class="nav-link">Reviews</a></li>
+                          <li><a href="deals.html" class="nav-link">All Products</a></li>
+              <li><a href="usa-discount.html" class="nav-link">USA Flash Sale</a></li>
+              <li><a href="about.html" class="nav-link">About</a></li>
+            <li><a href="contact.html" class="nav-link">Contact</a></li>
+          </ul>
+        </nav>
 
-        // Wait for page to load
-        window.addEventListener('load', function() {
-            // Add a minimum display time for the preloader (3 seconds)
-            setTimeout(function() {
-                hidePreloader();
-            }, 3000);
-        });
+        <div class="header-right">
+          <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+            <i class="fas fa-bars"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
 
-        function hidePreloader() {
-            const preloader = document.getElementById('preloader');
-            const mainContent = document.getElementById('mainContent');
-            
-            // Fade out preloader
-            preloader.classList.add('fade-out');
-            
-            // Show main content and restore scrolling
-            setTimeout(function() {
-                preloader.style.display = 'none';
-                mainContent.classList.add('show');
-                document.body.style.overflow = 'auto';
-            }, 500);
-        }
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu-content">
+      <button class="mobile-menu-close" onclick="toggleMobileMenu()" aria-label="Close menu">
+        <i class="fas fa-times"></i>
+      </button>
+      <a href="index.html">Home</a>
+      <a href="boys-fashion.html">Boys Fashion</a>
+      <a href="fashion.html">Girls Fashion</a>
+      <a href="small-electrical.html">Electronics</a>
+      <a href="gaming.html">Gaming</a>
+      <a href="home-garden.html">Home & Garden</a>
+      <a href="reviews.html">Reviews</a>
+              <a href="deals.html">All Products</a>
+        <a href="usa-discount.html">USA Flash Sale</a>
+        <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+                <a href="product-submission-verification.html">Submit Product</a>
+    </div>
+  </div>
 
-        // Optional: Hide preloader immediately when Lottie animation is ready
-        document.addEventListener('DOMContentLoaded', function() {
-            const lottieElement = document.querySelector('dotlottie-wc');
-            if (lottieElement) {
-                lottieElement.addEventListener('ready', function() {
-                    console.log('Lottie animation is ready');
-                });
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-text">
+          <h1 class="hero-title">Discover the Best Deals on <span class="highlight">Premium Products</span></h1>
+          <p class="hero-subtitle">Get expert reviews, compare prices, and find unbeatable affiliate deals on tech gadgets, fashion, and electronics. Save money while shopping smart!</p>
+          <div class="hero-buttons">
+            <a href="#featured-products" class="btn btn-primary">Shop Now</a>
+            <a href="reviews.html" class="btn btn-secondary">Read Reviews</a>
+          </div>
+          <div class="hero-stats">
+            <div class="stat">
+              <span class="stat-number">10,000+</span>
+              <span class="stat-label">Happy Customers</span>
+            </div>
+            <div class="stat">
+              <span class="stat-number">5,000+</span>
+              <span class="stat-label">Products Reviewed</span>
+            </div>
+            <div class="stat">
+              <span class="stat-number">98%</span>
+              <span class="stat-label">Satisfaction Rate</span>
+            </div>
+          </div>
+        </div>
+        <div class="hero-image">
+          <img src="https://images.unsplash.com/photo-1560472355-536de3962603?w=600&h=400&fit=crop" alt="Tech Products" class="hero-img">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features-section">
+    <div class="container">
+      <div class="features-grid">
+        <div class="feature-card">
+          <i class="fas fa-star feature-icon"></i>
+          <h3>Expert Reviews</h3>
+          <p>In-depth product reviews from industry experts to help you make informed decisions.</p>
+        </div>
+        <div class="feature-card">
+          <i class="fas fa-tags feature-icon"></i>
+          <h3>Best Deals</h3>
+          <p>Daily updated deals and exclusive discounts on top-rated products.</p>
+        </div>
+        <div class="feature-card">
+          <i class="fas fa-shield-alt feature-icon"></i>
+          <h3>Trusted Partners</h3>
+          <p>We only partner with reputable brands and retailers for your peace of mind.</p>
+        </div>
+        <div class="feature-card">
+          <i class="fas fa-shipping-fast feature-icon"></i>
+          <h3>Fast Delivery</h3>
+          <p>Get your products quickly with our partners' expedited shipping options.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Products Section -->
+  <section class="featured-products-section" id="featured-products">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Featured Products</h2>
+        <p class="section-subtitle">Handpicked products with the best deals and highest ratings</p>
+      </div>
+      <div class="products-grid" id="featuredProductsGrid">
+        <!-- Products will be loaded here by JavaScript -->
+      </div>
+      <div class="text-center">
+        <a href="deals.html" class="btn btn-outline">View All Products</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Categories Section -->
+  <section class="categories-section">
+    <div class="container">
+      <h2 class="section-title">Shop by Category</h2>
+      <div class="categories-grid">
+        <a href="smartwatches.html" class="category-card">
+          <div class="category-image">
+            <img src="https://images.unsplash.com/photo-1434493789847-2f02dc6ca35d?w=300&h=200&fit=crop" alt="Boys Fashion">
+          </div>
+          <h3>Boys Fashion</h3>
+          <p>Latest boys fashion, watches, and accessories</p>
+        </a>
+        <a href="fashion.html" class="category-card">
+          <div class="category-image">
+            <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=300&h=200&fit=crop" alt="Girls Fashion">
+          </div>
+          <h3>Girls Fashion</h3>
+          <p>Trendy girls clothing and accessories</p>
+        </a>
+        <a href="small-electrical.html" class="category-card">
+          <div class="category-image">
+            <img src="https://images.unsplash.com/photo-1498049794561-7780e7231661?w=300&h=200&fit=crop" alt="Electronics">
+          </div>
+          <h3>Electronics</h3>
+          <p>Latest gadgets and tech accessories</p>
+        </a>
+        <a href="gaming.html" class="category-card">
+          <div class="category-image">
+            <img src="https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?w=300&h=200&fit=crop" alt="Gaming">
+          </div>
+          <h3>Gaming</h3>
+          <p>Gaming gear and accessories</p>
+        </a>
+        <a href="home-garden.html" class="category-card">
+          <div class="category-image">
+            <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=300&h=200&fit=crop" alt="Home & Garden">
+          </div>
+          <h3>Home & Garden</h3>
+          <p>Home improvement and gardening</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section class="testimonials-section">
+    <div class="container">
+      <h2 class="section-title">What Our Customers Say</h2>
+      <div class="testimonials-grid">
+        <div class="testimonial-card">
+          <div class="testimonial-content">
+            <p>"SmartDeals Pro helped me find the perfect smartwatch at an amazing price. The reviews were spot-on!"</p>
+          </div>
+          <div class="testimonial-author">
+            <img src="https://images.unsplash.com/photo-1494790108755-2616c9421a05?w=60&h=60&fit=crop&crop=face&auto=format&q=80" alt="Sarah Johnson" loading="lazy" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMzAiIGZpbGw9IiNGM0Y0RjYiLz4KPGF2YXRhciBpZD0iYXZhdGFyIiBjeD0iMzAiIGN5PSIyNSIgcj0iMTIiIGZpbGw9IiM5Q0EzQUYiLz4KPHBhdGggZD0iTTUgNDVDNSAzNS4zMzM0IDE0LjAwMiAyNyAyNSAyN0gzNUM0NS45OTggMjcgNTUgMzUuMzMzNCA1NSA0NVY1MEg1VjQ1WiIgZmlsbD0iIzlDQTNBRiIvPgo8L3N2Zz4K'; this.onerror=null;">
+            <div>
+              <h4>Sarah Johnson</h4>
+              <span>Verified Buyer</span>
+            </div>
+          </div>
+          <div class="testimonial-rating">
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div class="testimonial-content">
+            <p>"Great deals and honest reviews. I've saved hundreds of dollars shopping through this site!"</p>
+          </div>
+          <div class="testimonial-author">
+            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=60&h=60&fit=crop&crop=face" alt="Mike Chen">
+            <div>
+              <h4>Mike Chen</h4>
+              <span>Tech Enthusiast</span>
+            </div>
+          </div>
+          <div class="testimonial-rating">
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div class="testimonial-content">
+            <p>"The product comparisons are incredibly helpful. Makes shopping decisions so much easier!"</p>
+          </div>
+          <div class="testimonial-author">
+            <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=60&h=60&fit=crop&crop=face" alt="Emily Davis">
+            <div>
+              <h4>Emily Davis</h4>
+              <span>Online Shopper</span>
+            </div>
+          </div>
+          <div class="testimonial-rating">
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Newsletter Section -->
+  <section class="newsletter-section">
+    <div class="container">
+      <div class="newsletter-content">
+        <h2>Stay Updated with the Latest Deals</h2>
+        <p>Get exclusive offers, product launches, and money-saving tips delivered to your inbox.</p>
+        <form class="newsletter-form" onsubmit="subscribeNewsletter(event)">
+          <input type="email" placeholder="Enter your email address" required>
+          <button type="submit" class="btn btn-primary">Subscribe</button>
+        </form>
+        <p class="newsletter-disclaimer">We respect your privacy. Unsubscribe at any time.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="main-footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>SmartDeals Pro</h3>
+          <p>Your trusted source for the best affiliate deals and product reviews. We help you shop smarter and save money.</p>
+          <div class="social-links">
+          </div>
+        </div>
+        <div class="footer-section">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="reviews.html">Reviews</a></li>
+            <li><a href="deals.html">Hot Deals</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Categories</h4>
+          <ul>
+            <li><a href="boys-fashion.html">Boys Fashion</a></li>
+            <li><a href="fashion.html">Girls Fashion</a></li>
+            <li><a href="small-electrical.html">Electronics</a></li>
+            <li><a href="gaming.html">Gaming</a></li>
+            <li><a href="home-garden.html">Home & Garden</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="privacy-policy.html">Privacy Policy</a></li>
+            <li><a href="terms.html">Terms of Service</a></li>
+            <li><a href="affiliate-disclosure.html">Affiliate Disclosure</a></li>
+            <li><a href="cookies.html">Cookie Policy</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 SmartDeals Pro. All rights reserved.</p>
+        <p class="affiliate-disclaimer">This site contains affiliate links. We may earn a commission when you purchase through links on our site — at no extra cost to you.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="products.js"></script>
+  <script src="render.js"></script>
+  <!-- <script src="user-auth.js"></script> -->
+  <script>
+    // Modern Preloader with Enhanced Animations
+    let loadingProgress = 0;
+    let progressInterval;
+    let isPreloaderActive = true;
+    
+    function updateModernProgress() {
+      const progressFill = document.querySelector('.progress-fill-modern');
+      const progressPercent = document.querySelector('.progress-percent');
+      const loadingStatus = document.querySelector('.loading-status');
+      
+      const statusMessages = [
+        'Initializing',
+        'Loading Resources',
+        'Preparing Interface',
+        'Finalizing Setup',
+        'Ready to Launch'
+      ];
+      
+      if (progressFill && progressPercent && loadingStatus && isPreloaderActive) {
+        // Smooth progress increment
+        const increment = Math.random() * 12 + 3; // 3-15% increments
+        loadingProgress = Math.min(loadingProgress + increment, 100);
+        
+        progressFill.style.width = loadingProgress + '%';
+        progressPercent.textContent = Math.round(loadingProgress) + '%';
+        
+        // Update status message based on progress
+        const messageIndex = Math.min(Math.floor(loadingProgress / 20), statusMessages.length - 1);
+        loadingStatus.textContent = statusMessages[messageIndex];
+        
+        // Complete loading
+        if (loadingProgress >= 100) {
+          clearInterval(progressInterval);
+          isPreloaderActive = false;
+          
+          // Add completion effect
+          setTimeout(() => {
+            const loadingScreen = document.getElementById('loading-screen');
+            if (loadingScreen) {
+              loadingScreen.style.opacity = '0';
+              loadingScreen.style.transform = 'scale(1.1)';
+              
+              setTimeout(() => {
+                loadingScreen.style.display = 'none';
+              }, 800);
             }
-        });
-    </script>
+          }, 1000);
+        }
+      }
+    }
+    
+    // Initialize preloader animations
+    function initPreloader() {
+      const loadingScreen = document.getElementById('loading-screen');
+      
+      if (loadingScreen && loadingScreen.classList.contains('homepage-preloader')) {
+        // Start progress animation after a brief delay
+        setTimeout(() => {
+          progressInterval = setInterval(updateModernProgress, 250);
+        }, 500);
+        
+        // Ensure minimum display time of 4 seconds
+        setTimeout(() => {
+          if (isPreloaderActive && loadingProgress < 100) {
+            loadingProgress = 95;
+            setTimeout(() => {
+              loadingProgress = 100;
+              updateModernProgress();
+            }, 500);
+          }
+        }, 4000);
+        
+        // Add typewriter effect completion
+        setTimeout(() => {
+          const brandText = document.querySelector('.brand-text');
+          if (brandText) {
+            brandText.style.animation = 'textReveal 2s ease-out forwards';
+          }
+        }, 1000);
+        
+      } else if (loadingScreen) {
+        // Hide other preloaders immediately
+        loadingScreen.style.opacity = '0';
+        setTimeout(() => {
+          loadingScreen.style.display = 'none';
+        }, 500);
+      }
+    }
+    
+    // Start preloader when DOM is ready
+    document.addEventListener('DOMContentLoaded', initPreloader);
+    
+    // Also start on window load as fallback
+    window.addEventListener('load', function() {
+      if (isPreloaderActive) {
+        // Speed up progress if page is already loaded
+        const speedUpInterval = setInterval(() => {
+          if (loadingProgress < 90) {
+            loadingProgress += 15;
+            updateModernProgress();
+          } else {
+            clearInterval(speedUpInterval);
+          }
+        }, 100);
+      }
+    });
+
+    // Mobile menu toggle
+    function toggleMobileMenu() {
+      const mobileMenu = document.getElementById('mobileMenu');
+      mobileMenu.classList.toggle('active');
+    }
+
+    // Close mobile menu when clicking outside
+    document.addEventListener('click', function(event) {
+      const mobileMenu = document.getElementById('mobileMenu');
+      const menuToggle = document.querySelector('.mobile-menu-toggle');
+      const menuClose = document.querySelector('.mobile-menu-close');
+      
+      if (mobileMenu && mobileMenu.classList.contains('active')) {
+        if (!mobileMenu.contains(event.target) && 
+            !menuToggle.contains(event.target) && 
+            event.target !== menuClose) {
+          mobileMenu.classList.remove('active');
+        }
+      }
+    });
+
+
+
+    // Newsletter subscription
+    function subscribeNewsletter(event) {
+      event.preventDefault();
+      alert('Thank you for subscribing! You will receive the latest deals and offers.');
+      event.target.reset();
+    }
+
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
+
+    // Render featured products on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      renderFeaturedProducts();
+    });
+  </script>
 </body>
 </html>
