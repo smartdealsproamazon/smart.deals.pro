@@ -1,8 +1,20 @@
-/* CSS Reset and Base Styles */
+/* CSS Reset and Base Styles - Performance Optimized */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+
+/* Performance Critical Styles */
+html {
+  font-display: swap; /* Ensure font loading doesn't block rendering */
+}
+
+/* Optimize font loading */
+@font-face {
+  font-family: 'Inter';
+  font-display: swap;
+  src: local('Inter');
 }
 
 /* Prevent horizontal overflow */
@@ -26,6 +38,34 @@ body {
   min-width: 320px;
   word-wrap: break-word;
   overflow-wrap: break-word;
+}
+
+/* Performance Optimizations */
+img {
+  max-width: 100%;
+  height: auto;
+  image-rendering: auto;
+  image-rendering: crisp-edges;
+  image-rendering: -webkit-optimize-contrast;
+}
+
+/* Lazy loading images */
+img.lazy {
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+img.lazy.loaded {
+  opacity: 1;
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 /* Simple Loading Screen */
