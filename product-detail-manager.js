@@ -126,10 +126,24 @@ class ProductDetailManager {
       return;
     }
 
+    // Safe price display function
+    const safeDisplayPrice = (price) => {
+      if (!price) return '$0.00';
+      const priceStr = String(price);
+      if (priceStr.includes('NaN') || priceStr === 'undefined' || priceStr === 'null') {
+        return '$0.00';
+      }
+      return priceStr.startsWith('$') ? priceStr : `$${priceStr}`;
+    };
+
+    const displayPrice = safeDisplayPrice(product.price);
+    const displayOriginalPrice = safeDisplayPrice(product.originalPrice);
+
     // Calculate discount if original price exists
     let discountHTML = '';
-    if (product.discount && product.discount > 0) {
-      discountHTML = `<span class="discount-badge">-${product.discount}% OFF</span>`;
+    const discountValue = parseInt(product.discount) || 0;
+    if (discountValue > 0) {
+      discountHTML = `<span class="discount-badge">-${discountValue}% OFF</span>`;
     }
 
     // Generate features HTML
@@ -161,8 +175,8 @@ class ProductDetailManager {
             </div>
             
             <div class="product-price-section">
-              <span class="current-price">${product.price}</span>
-              ${product.originalPrice && product.originalPrice !== product.price ? `<span class="original-price">${product.originalPrice}</span>` : ''}
+              <span class="current-price">${displayPrice}</span>
+              ${product.originalPrice && product.originalPrice !== product.price && !displayOriginalPrice.includes('$0.00') ? `<span class="original-price">${displayOriginalPrice}</span>` : ''}
               ${discountHTML}
             </div>
           </div>

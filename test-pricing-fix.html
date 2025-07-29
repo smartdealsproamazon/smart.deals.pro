@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pricing Fix Test - SmartDeals Pro</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body>
+  <div class="container" style="padding: 2rem;">
+    <h1>Pricing Fix Test</h1>
+    <p>This page tests the pricing display fixes for mobile and desktop devices.</p>
+    
+    <div id="test-results" style="margin: 2rem 0; padding: 1rem; background: #f0f9ff; border-radius: 8px;">
+      <h3>Test Results:</h3>
+      <div id="test-output"></div>
+    </div>
+    
+    <h2>Test Products with Various Price Formats:</h2>
+    <div id="product-container" class="products-grid"></div>
+  </div>
+
+  <script src="products.js"></script>
+  <script src="render.js"></script>
+  
+  <script>
+    // Test products with various price formats that might cause NaN issues
+    const testProducts = [
+      {
+        id: 'test-1',
+        name: 'Test Product - Valid Price',
+        price: '29.99',
+        originalPrice: '39.99',
+        category: 'test',
+        image: 'https://via.placeholder.com/300x300',
+        description: 'Test product with valid pricing',
+        features: ['Feature 1', 'Feature 2'],
+        rating: 4.5,
+        reviews: 10,
+        discount: 25
+      },
+      {
+        id: 'test-2',
+        name: 'Test Product - Empty Price',
+        price: '',
+        originalPrice: '',
+        category: 'test',
+        image: 'https://via.placeholder.com/300x300',
+        description: 'Test product with empty pricing',
+        features: ['Feature 1', 'Feature 2'],
+        rating: 4.0,
+        reviews: 5,
+        discount: 0
+      },
+      {
+        id: 'test-3',
+        name: 'Test Product - Null Price',
+        price: null,
+        originalPrice: null,
+        category: 'test',
+        image: 'https://via.placeholder.com/300x300',
+        description: 'Test product with null pricing',
+        features: ['Feature 1', 'Feature 2'],
+        rating: 3.5,
+        reviews: 8,
+        discount: 0
+      },
+      {
+        id: 'test-4',
+        name: 'Test Product - Invalid String Price',
+        price: 'invalid',
+        originalPrice: 'also-invalid',
+        category: 'test',
+        image: 'https://via.placeholder.com/300x300',
+        description: 'Test product with invalid string pricing',
+        features: ['Feature 1', 'Feature 2'],
+        rating: 4.2,
+        reviews: 12,
+        discount: 15
+      },
+      {
+        id: 'test-5',
+        name: 'Test Product - Price with Currency Symbols',
+        price: '$45.99',
+        originalPrice: '₹2500',
+        category: 'test',
+        image: 'https://via.placeholder.com/300x300',
+        description: 'Test product with currency symbols',
+        features: ['Feature 1', 'Feature 2'],
+        rating: 4.8,
+        reviews: 20,
+        discount: 10
+      },
+      {
+        id: 'test-6',
+        name: 'Test Product - Price with Commas',
+        price: '1,299.99',
+        originalPrice: '1,499.99',
+        category: 'test',
+        image: 'https://via.placeholder.com/300x300',
+        description: 'Test product with comma-separated prices',
+        features: ['Feature 1', 'Feature 2'],
+        rating: 4.7,
+        reviews: 15,
+        discount: 13
+      }
+    ];
+
+    // Run tests
+    function runPricingTests() {
+      const testOutput = document.getElementById('test-output');
+      let allTestsPassed = true;
+      let testResults = [];
+
+      testProducts.forEach((product, index) => {
+        try {
+          // Test the normalizeProduct function
+          const normalizedProduct = productStateManager.normalizeProduct(product, product.id);
+          
+          // Check if prices are valid
+          const priceValid = normalizedProduct.price && !normalizedProduct.price.includes('NaN');
+          const originalPriceValid = normalizedProduct.originalPrice && !normalizedProduct.originalPrice.includes('NaN');
+          
+          const testPassed = priceValid && originalPriceValid;
+          if (!testPassed) allTestsPassed = false;
+          
+          testResults.push({
+            productName: product.name,
+            originalPrice: product.price,
+            normalizedPrice: normalizedProduct.price,
+            originalOriginalPrice: product.originalPrice,
+            normalizedOriginalPrice: normalizedProduct.originalPrice,
+            passed: testPassed
+          });
+          
+        } catch (error) {
+          allTestsPassed = false;
+          testResults.push({
+            productName: product.name,
+            error: error.message,
+            passed: false
+          });
+        }
+      });
+
+      // Display test results
+      let resultsHTML = `<p><strong>Overall Test Result: ${allTestsPassed ? '✅ PASSED' : '❌ FAILED'}</strong></p>`;
+      resultsHTML += '<ul>';
+      
+      testResults.forEach(result => {
+        const status = result.passed ? '✅' : '❌';
+        resultsHTML += `<li>${status} ${result.productName}`;
+        if (result.error) {
+          resultsHTML += ` - Error: ${result.error}`;
+        } else {
+          resultsHTML += ` - Price: ${result.originalPrice} → ${result.normalizedPrice}`;
+          if (result.originalOriginalPrice) {
+            resultsHTML += `, Original: ${result.originalOriginalPrice} → ${result.normalizedOriginalPrice}`;
+          }
+        }
+        resultsHTML += '</li>';
+      });
+      
+      resultsHTML += '</ul>';
+      testOutput.innerHTML = resultsHTML;
+    }
+
+    // Initialize test when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+      // Add test products to the product manager
+      testProducts.forEach(product => {
+        productStateManager.addProduct(product);
+      });
+      
+      // Update global products array
+      window.products = productStateManager.getAllProducts();
+      
+      // Run pricing tests
+      runPricingTests();
+      
+      // Render test products
+      renderProducts('test', 'product-container');
+    });
+  </script>
+</body>
+</html>

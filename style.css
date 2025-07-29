@@ -1886,6 +1886,41 @@ h4 { font-size: 1.25rem; }
   .mobile-menu-toggle {
     padding: 0.5rem;
   }
+
+  /* Enhanced mobile pricing display */
+  .product-price {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+  
+  .current-price {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #3b82f6;
+    display: block;
+    min-width: fit-content;
+    white-space: nowrap;
+  }
+  
+  .original-price {
+    font-size: 0.85rem;
+    color: #9ca3af;
+    text-decoration: line-through;
+  }
+  
+  .product-price-section {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+  
+  .product-price-section .current-price {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #3b82f6;
+  }
 }
 
 /* Remove max-width: 100% for desktop to allow proper grid layouts */

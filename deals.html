@@ -229,10 +229,18 @@
           products = products.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
           break;
         case 'price-low':
-          products = products.sort((a, b) => parseFloat(a.price.replace('$', '')) - parseFloat(b.price.replace('$', '')));
+          products = products.sort((a, b) => {
+            const priceA = parseFloat(a.price.replace(/[$₨₹€£¥,]/g, '')) || 0;
+            const priceB = parseFloat(b.price.replace(/[$₨₹€£¥,]/g, '')) || 0;
+            return priceA - priceB;
+          });
           break;
         case 'price-high':
-          products = products.sort((a, b) => parseFloat(b.price.replace('$', '')) - parseFloat(a.price.replace('$', '')));
+          products = products.sort((a, b) => {
+            const priceA = parseFloat(a.price.replace(/[$₨₹€£¥,]/g, '')) || 0;
+            const priceB = parseFloat(b.price.replace(/[$₨₹€£¥,]/g, '')) || 0;
+            return priceB - priceA;
+          });
           break;
         case 'rating':
           products = products.sort((a, b) => b.rating - a.rating);
