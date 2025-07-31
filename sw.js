@@ -1,4 +1,4 @@
-const CACHE_NAME = 'smartdeals-v2';
+const CACHE_NAME = 'smartdeals-v3-favicon-update';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -9,6 +9,10 @@ const urlsToCache = [
   '/logo.svg',
   '/logo.png',
   '/favicon.ico',
+  '/favicon-16x16.png',
+  '/favicon-32x32.png',
+  '/favicon-192x192.png',
+  '/favicon-512x512.png',
   '/site.webmanifest',
   // Add key pages
   '/products.html',
@@ -19,10 +23,13 @@ const urlsToCache = [
 
 // Install event - cache resources
 self.addEventListener('install', function(event) {
+  // Skip waiting to immediately activate new service worker
+  self.skipWaiting();
+  
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(function(cache) {
-        console.log('Opened cache');
+        console.log('Opened cache with new favicon files');
         return cache.addAll(urlsToCache);
       })
   );
@@ -60,14 +67,17 @@ self.addEventListener('fetch', function(event) {
     );
 });
 
-// Activate event - cleanup old caches
+// Activate event - cleanup old caches and take control immediately
 self.addEventListener('activate', function(event) {
+  // Take control of all clients immediately
+  self.clients.claim();
+  
   event.waitUntil(
     caches.keys().then(function(cacheNames) {
       return Promise.all(
         cacheNames.map(function(cacheName) {
           if (cacheName !== CACHE_NAME) {
-            console.log('Deleting old cache:', cacheName);
+            console.log('Deleting old cache to refresh favicon:', cacheName);
             return caches.delete(cacheName);
           }
         })
