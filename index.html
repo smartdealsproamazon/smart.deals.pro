@@ -79,6 +79,9 @@
   <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   
+  <!-- Cache Refresh for Favicon Update -->
+  <script src="cache-refresh.js"></script>
+  
   <!-- Enhanced JSON-LD Schema Markup -->
   <script type="application/ld+json">
   {
@@ -610,11 +613,15 @@
         });
       });
 
-      // Service Worker Registration for Caching
+      // Service Worker Registration for Caching with Favicon Update
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
           navigator.serviceWorker.register('/sw.js')
-            .then(registration => console.log('SW registered'))
+            .then(registration => {
+              console.log('SW registered');
+              // Force update to get new favicon cache
+              registration.update();
+            })
             .catch(error => console.log('SW registration failed'));
         });
       }
