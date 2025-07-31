@@ -157,6 +157,7 @@
     gtag('js', new Date());
     gtag('config', 'G-73WLXY20G3');
   </script>
+  <script src="data-sync.js" defer></script>
 </head>
 <body>
   <!-- Loading Screen -->
@@ -617,6 +618,136 @@
             .catch(error => console.log('SW registration failed'));
         });
       }
+
+      // PWA Install Prompt Handler
+      let deferredPrompt;
+      let installButton;
+
+      // Create install button
+      function createInstallButton() {
+        if (document.getElementById('install-button')) return;
+        
+        installButton = document.createElement('button');
+        installButton.id = 'install-button';
+        installButton.innerHTML = '<i class="fas fa-download"></i> Install App';
+        installButton.style.cssText = `
+          position: fixed;
+          bottom: 20px;
+          right: 20px;
+          background: #3b82f6;
+          color: white;
+          border: none;
+          padding: 12px 24px;
+          border-radius: 25px;
+          font-size: 14px;
+          font-weight: 600;
+          cursor: pointer;
+          box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+          z-index: 1000;
+          display: none;
+          align-items: center;
+          gap: 8px;
+          transition: all 0.3s ease;
+        `;
+        
+        installButton.addEventListener('mouseenter', function() {
+          this.style.transform = 'translateY(-2px)';
+          this.style.boxShadow = '0 6px 16px rgba(59, 130, 246, 0.4)';
+        });
+        
+        installButton.addEventListener('mouseleave', function() {
+          this.style.transform = 'translateY(0)';
+          this.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.3)';
+        });
+        
+        document.body.appendChild(installButton);
+      }
+
+      // Listen for install prompt
+      window.addEventListener('beforeinstallprompt', (e) => {
+        // Prevent the mini-infobar from appearing on mobile
+        e.preventDefault();
+        console.log('PWA install prompt available');
+        
+        // Stash the event so it can be triggered later
+        deferredPrompt = e;
+        
+        // Create and show install button
+        createInstallButton();
+        installButton.style.display = 'flex';
+        
+        // Show install notification
+        showInstallNotification();
+      });
+
+      // Handle install button click
+      function handleInstallClick() {
+        if (!deferredPrompt) return;
+        
+        // Hide the install button
+        installButton.style.display = 'none';
+        
+        // Show the install prompt
+        deferredPrompt.prompt();
+        
+        // Wait for the user to respond to the prompt
+        deferredPrompt.userChoice.then((choiceResult) => {
+          if (choiceResult.outcome === 'accepted') {
+            console.log('User accepted the install prompt');
+          } else {
+            console.log('User dismissed the install prompt');
+          }
+          deferredPrompt = null;
+        });
+      }
+
+      // Show install notification
+      function showInstallNotification() {
+        const notification = document.createElement('div');
+        notification.innerHTML = `
+          <div style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: white; padding: 16px 24px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1001; max-width: 300px; text-align: center;">
+            <div style="font-weight: 600; margin-bottom: 8px;">Install SmartDeals Pro</div>
+            <div style="font-size: 14px; color: #666; margin-bottom: 12px;">Get quick access to the best deals!</div>
+            <button onclick="this.parentElement.parentElement.remove()" style="background: #f3f4f6; border: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; cursor: pointer;">Dismiss</button>
+          </div>
+        `;
+        document.body.appendChild(notification);
+        
+        // Auto-remove after 10 seconds
+        setTimeout(() => {
+          if (notification.parentElement) {
+            notification.remove();
+          }
+        }, 10000);
+      }
+
+      // Handle app installed event
+      window.addEventListener('appinstalled', (e) => {
+        console.log('PWA was installed');
+        if (installButton) {
+          installButton.style.display = 'none';
+        }
+        deferredPrompt = null;
+        
+        // Show success message
+        const successMsg = document.createElement('div');
+        successMsg.innerHTML = `
+          <div style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #10b981; color: white; padding: 16px 24px; border-radius: 8px; z-index: 1001;">
+            <i class="fas fa-check-circle"></i> App installed successfully!
+          </div>
+        `;
+        document.body.appendChild(successMsg);
+        setTimeout(() => successMsg.remove(), 3000);
+      });
+
+      // Initialize install button when DOM is ready
+      document.addEventListener('DOMContentLoaded', function() {
+        createInstallButton();
+        if (installButton) {
+          installButton.addEventListener('click', handleInstallClick);
+        }
+      });
+
     })();
   </script>
 </body>

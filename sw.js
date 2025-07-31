@@ -1,10 +1,11 @@
-const CACHE_NAME = 'smartdeals-v1';
+const CACHE_NAME = 'smartdeals-v2';
 const urlsToCache = [
   '/',
   '/index.html',
   '/style.css',
   '/products.js',
   '/render.js',
+  '/data-sync.js',
   '/logo.svg',
   '/logo.png',
   '/favicon.ico',

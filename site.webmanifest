@@ -1,8 +1,9 @@
 {
   "name": "SmartDeals Pro",
   "short_name": "SmartDeals",
-  "description": "Best Deals & Reviews for USA Shoppers",
-  "start_url": "/",
+  "description": "Best Deals & Reviews for USA Shoppers - Discover amazing deals on tech gadgets, fashion, and electronics with expert reviews and trusted recommendations",
+  "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#f8fafc",
   "theme_color": "#3b82f6",
@@ -12,17 +13,34 @@
       "src": "logo.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
       "src": "logo.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "maskable"
     },
     {
       "src": "logo.svg",
       "sizes": "any",
       "type": "image/svg+xml"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "logo.png",
+      "sizes": "400x800",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "SmartDeals Pro Mobile View"
+    },
+    {
+      "src": "logo.png", 
+      "sizes": "1280x800",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "SmartDeals Pro Desktop View"
     }
   ],
   "categories": ["shopping", "business"],
