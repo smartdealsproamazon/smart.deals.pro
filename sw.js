@@ -1,24 +1,17 @@
-const CACHE_NAME = 'smartdeals-v4-new-logo-favicon-update';
+const CACHE_NAME = 'smartdeals-v5-fixed-favicon-regenerated';
 const urlsToCache = [
   '/',
   '/index.html',
   '/style.css',
   '/products.js',
   '/render.js',
-  '/data-sync.js',
   '/logo.svg',
-  '/logo.png',
   '/favicon.ico',
   '/favicon-16x16.png',
   '/favicon-32x32.png',
   '/favicon-192x192.png',
   '/favicon-512x512.png',
-  '/site.webmanifest',
-  // Add key pages
-  '/products.html',
-  '/deals.html',
-  '/about.html',
-  '/contact.html'
+  '/site.webmanifest'
 ];
 
 // Install event - cache resources
