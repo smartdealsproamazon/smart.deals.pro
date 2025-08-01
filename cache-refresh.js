@@ -9,7 +9,7 @@ async function clearFaviconCache() {
       
       // Delete all old caches
       const deletePromises = cacheNames.map(cacheName => {
-        if (cacheName.includes('smartdeals-v2') || cacheName.includes('smartdeals-v1')) {
+        if (cacheName.includes('smartdeals-v2') || cacheName.includes('smartdeals-v1') || cacheName.includes('smartdeals-v3')) {
           console.log('Clearing old cache:', cacheName);
           return caches.delete(cacheName);
         }
@@ -39,9 +39,9 @@ async function clearFaviconCache() {
 }
 
 // Auto-run cache refresh if needed
-if (localStorage.getItem('favicon-cache-cleared') !== 'v3-favicon-update') {
+if (localStorage.getItem('favicon-cache-cleared') !== 'v4-new-logo-favicon-update') {
   clearFaviconCache().then(() => {
-    localStorage.setItem('favicon-cache-cleared', 'v3-favicon-update');
+    localStorage.setItem('favicon-cache-cleared', 'v4-new-logo-favicon-update');
   });
 }
 

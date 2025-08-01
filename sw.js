@@ -1,4 +1,4 @@
-const CACHE_NAME = 'smartdeals-v3-favicon-update';
+const CACHE_NAME = 'smartdeals-v4-new-logo-favicon-update';
 const urlsToCache = [
   '/',
   '/index.html',
