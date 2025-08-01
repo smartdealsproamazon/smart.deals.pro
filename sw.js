@@ -1,4 +1,4 @@
-const CACHE_NAME = 'smartdeals-v5-fixed-favicon-regenerated';
+const CACHE_NAME = 'smartdeals-v6-proper-favicon-generated';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -15,62 +15,36 @@ const urlsToCache = [
 ];
 
 // Install event - cache resources
-self.addEventListener('install', function(event) {
-  // Skip waiting to immediately activate new service worker
-  self.skipWaiting();
-  
+self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(function(cache) {
-        console.log('Opened cache with new favicon files');
+      .then((cache) => {
+        console.log('Opened cache v6 with proper favicon files');
         return cache.addAll(urlsToCache);
       })
   );
 });
 
 // Fetch event - serve from cache, fallback to network
-self.addEventListener('fetch', function(event) {
+self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(event.request)
-      .then(function(response) {
-        // Cache hit - return response
-        if (response) {
-          return response;
-        }
-
-        return fetch(event.request).then(
-          function(response) {
-            // Check if we received a valid response
-            if(!response || response.status !== 200 || response.type !== 'basic') {
-              return response;
-            }
-
-            // Clone the response
-            var responseToCache = response.clone();
-
-            caches.open(CACHE_NAME)
-              .then(function(cache) {
-                cache.put(event.request, responseToCache);
-              });
-
-            return response;
-          }
-        );
-      })
-    );
+      .then((response) => {
+        // Return cached version or fetch from network
+        return response || fetch(event.request);
+      }
+    )
+  );
 });
 
-// Activate event - cleanup old caches and take control immediately
-self.addEventListener('activate', function(event) {
-  // Take control of all clients immediately
-  self.clients.claim();
-  
+// Activate event - cleanup old caches
+self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then(function(cacheNames) {
+    caches.keys().then((cacheNames) => {
       return Promise.all(
-        cacheNames.map(function(cacheName) {
+        cacheNames.map((cacheName) => {
           if (cacheName !== CACHE_NAME) {
-            console.log('Deleting old cache to refresh favicon:', cacheName);
+            console.log('Deleting old cache with corrupted favicons:', cacheName);
             return caches.delete(cacheName);
           }
         })
