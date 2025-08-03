@@ -77,49 +77,17 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   
-  <!-- Critical CSS Inline for Mobile Performance -->
-  <style data-critical="true">
-    /* Critical above-the-fold mobile-optimized styles */
-    *{margin:0;padding:0;box-sizing:border-box}
-    html{scroll-behavior:smooth;width:100%;overflow-x:hidden}
-    body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;line-height:1.6;color:#333;background-color:#f8fafc;width:100%;overflow-x:hidden;min-width:320px;word-wrap:break-word;overflow-wrap:break-word;font-size:16px}
-    img{max-width:100%;height:auto;image-rendering:auto;image-rendering:crisp-edges;image-rendering:-webkit-optimize-contrast}
-    .lazy{opacity:0;transition:opacity 0.3s}.lazy.loaded{opacity:1}
-    .header{background:#fff;box-shadow:0 2px 4px rgba(0,0,0,0.1);position:sticky;top:0;z-index:100}
-    .container{max-width:1200px;margin:0 auto;padding:0 1rem}
-    .logo{height:40px;width:auto;object-fit:contain}
-    .nav{display:flex;align-items:center;justify-content:space-between;padding:1rem 0}
-    .btn{display:inline-flex;align-items:center;justify-content:center;padding:0.75rem 1.5rem;border:none;border-radius:0.5rem;font-weight:600;text-decoration:none;transition:all 0.2s;min-height:44px;min-width:44px;cursor:pointer}
-    .btn-primary{background:#3b82f6;color:#fff}
-    .hero{padding:2rem 0;text-align:center}
-    .hero h1{font-size:2.5rem;font-weight:700;margin-bottom:1rem;color:#1f2937}
-    .skip-link{position:absolute;top:-40px;left:6px;background:#000;color:#fff;padding:8px;text-decoration:none;z-index:1000;opacity:0;transition:all 0.3s}
-    .skip-link:focus{top:6px;opacity:1}
-    @media(max-width:768px){
-      .hero h1{font-size:2rem}
-      .nav{padding:0.5rem 0}
-      .btn{padding:0.5rem 1rem;font-size:0.875rem}
-      .container{padding:0 0.75rem}
-      .hero{padding:1.5rem 0}
-      input,textarea,select{font-size:16px}
-    }
-    @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important}}
-    @media(prefers-contrast:high){body{background:#fff;color:#000}.btn-primary{background:#0066cc}a{color:#0066cc;text-decoration:underline}}
-  </style>
-  
-  <!-- Non-critical Resource Preloading -->
+  <!-- Critical Resource Preloading -->
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"></noscript>
-  <link rel="preload" href="style.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript><link rel="stylesheet" href="style.css"></noscript>
-  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" media="(min-width: 769px)">
+  <link rel="preload" href="style.css" as="style">
+  <link rel="stylesheet" href="style.css">
+  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   
   <!-- Cache Refresh for Favicon Update -->
   <script src="cache-refresh.js"></script>
-  
-  <!-- Mobile Performance Optimizer - Critical for mobile performance -->
-  <script src="mobile-performance-optimizer.js" defer></script>
   
   <!-- Enhanced JSON-LD Schema Markup -->
   <script type="application/ld+json">
@@ -202,56 +170,52 @@
   <script src="data-sync.js" defer></script>
 </head>
 <body>
-  <!-- Skip to main content link for accessibility -->
-  <a href="#main-content" class="skip-link">Skip to main content</a>
-
   <!-- Loading Screen -->
-  <div id="loading-screen" aria-label="Loading content" role="status">
+  <div id="loading-screen">
     <div class="preloader-container">
-      <div class="old-loader" aria-hidden="true"></div>
+      <div class="old-loader"></div>
       <p class="old-loading-text">Loading amazing deals...</p>
     </div>
   </div>
 
   <!-- Header -->
-  <header class="main-header" role="banner">
+  <header class="main-header">
     <div class="container">
       <div class="header-content">
         <div class="header-left">
-          <a href="index.html" class="logo-link" aria-label="SmartDeals Pro - Go to homepage">
-            <img src="logo.svg" alt="SmartDeals Pro Logo" class="logo" loading="eager" width="40" height="40" fetchpriority="high" />
+          <a href="index.html" class="logo-link">
+            <img src="logo.svg" alt="SmartDeals Pro Logo" class="logo" loading="eager" />
           </a>
           <div class="site-name">
             <span class="logo-text">SmartDeals Pro</span>
           </div>
         </div>
         
-        <nav class="main-nav" role="navigation" aria-label="Main site navigation">
-          <ul role="menubar">
-            <li role="none"><a href="index.html" class="nav-link active" role="menuitem" aria-current="page">Home</a></li>
-            <li class="dropdown" role="none">
-              <a href="#" class="nav-link dropdown-toggle" role="menuitem" aria-haspopup="true" aria-expanded="false" aria-controls="categories-menu">Categories <i class="fas fa-chevron-down" aria-hidden="true"></i></a>
-              <ul class="dropdown-menu" role="menu" id="categories-menu" aria-label="Product categories">
-                <li role="none"><a href="boys-fashion.html" role="menuitem">Boys Fashion</a></li>
-                <li role="none"><a href="girls-fashion.html" role="menuitem">Girls Fashion</a></li>
-                <li role="none"><a href="small-electrical.html" role="menuitem">Electronics</a></li>
-                <li role="none"><a href="gaming.html" role="menuitem">Gaming</a></li>
-                <li role="none"><a href="home-garden.html" role="menuitem">Home & Garden</a></li>
-                <li role="none"><a href="product-submission-verification.html" role="menuitem">Submit Product</a></li>
+        <nav class="main-nav">
+          <ul>
+            <li><a href="index.html" class="nav-link active">Home</a></li>
+            <li class="dropdown">
+              <a href="#" class="nav-link dropdown-toggle">Categories <i class="fas fa-chevron-down"></i></a>
+              <ul class="dropdown-menu">
+                <li><a href="boys-fashion.html">Boys Fashion</a></li>
+                <li><a href="girls-fashion.html">Girls Fashion</a></li>
+                <li><a href="small-electrical.html">Electronics</a></li>
+                <li><a href="gaming.html">Gaming</a></li>
+                <li><a href="home-garden.html">Home & Garden</a></li>
+                <li><a href="product-submission-verification.html">Submit Product</a></li>
               </ul>
             </li>
-            <li role="none"><a href="reviews.html" class="nav-link" role="menuitem">Reviews</a></li>
-            <li role="none"><a href="deals.html" class="nav-link" role="menuitem">All Products</a></li>
-            <li role="none"><a href="usa-discount.html" class="nav-link" role="menuitem">USA Flash Sale</a></li>
-            <li role="none"><a href="about.html" class="nav-link" role="menuitem">About</a></li>
-            <li role="none"><a href="contact.html" class="nav-link" role="menuitem">Contact</a></li>
+            <li><a href="reviews.html" class="nav-link">Reviews</a></li>
+                          <li><a href="deals.html" class="nav-link">All Products</a></li>
+              <li><a href="usa-discount.html" class="nav-link">USA Flash Sale</a></li>
+              <li><a href="about.html" class="nav-link">About</a></li>
+            <li><a href="contact.html" class="nav-link">Contact</a></li>
           </ul>
         </nav>
 
         <div class="header-right">
-          <button class="mobile-menu-toggle" onclick="toggleMobileMenu()" aria-label="Open mobile navigation menu" aria-expanded="false" aria-controls="mobileMenu">
-            <i class="fas fa-bars" aria-hidden="true"></i>
-            <span class="sr-only">Menu</span>
+          <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+            <i class="fas fa-bars"></i>
           </button>
         </div>
       </div>
@@ -279,39 +243,35 @@
     </div>
   </div>
 
-  <!-- Main Content -->
-  <main id="main-content" role="main">
-    <!-- Hero Section -->
-    <section class="hero-section" role="banner" aria-labelledby="hero-title">
-      <div class="container">
-        <div class="hero-content">
-          <div class="hero-text">
-            <h1 id="hero-title" class="hero-title">Discover the Best Deals on <span class="highlight">Premium Products</span></h1>
-            <p class="hero-subtitle">Get expert reviews, compare prices, and find unbeatable affiliate deals on tech gadgets, fashion, and electronics. Save money while shopping smart!</p>
-            <div class="hero-buttons" role="group" aria-label="Primary action buttons">
-              <a href="#featured-products" class="btn btn-primary" aria-describedby="shop-desc">Shop Now</a>
-              <span id="shop-desc" class="sr-only">Browse our featured products and current deals</span>
-              <a href="reviews.html" class="btn btn-secondary" aria-describedby="reviews-desc">Read Reviews</a>
-              <span id="reviews-desc" class="sr-only">Read expert reviews and customer feedback</span>
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-text">
+          <h1 class="hero-title">Discover the Best Deals on <span class="highlight">Premium Products</span></h1>
+          <p class="hero-subtitle">Get expert reviews, compare prices, and find unbeatable affiliate deals on tech gadgets, fashion, and electronics. Save money while shopping smart!</p>
+          <div class="hero-buttons">
+            <a href="#featured-products" class="btn btn-primary">Shop Now</a>
+            <a href="reviews.html" class="btn btn-secondary">Read Reviews</a>
+          </div>
+          <div class="hero-stats">
+            <div class="stat">
+              <span class="stat-number">10,000+</span>
+              <span class="stat-label">Happy Customers</span>
             </div>
-            <div class="hero-stats" role="group" aria-label="Company statistics">
-              <div class="stat">
-                <span class="stat-number" aria-label="10 thousand plus">10,000+</span>
-                <span class="stat-label">Happy Customers</span>
-              </div>
-              <div class="stat">
-                <span class="stat-number" aria-label="5 thousand plus">5,000+</span>
-                <span class="stat-label">Products Reviewed</span>
-              </div>
-              <div class="stat">
-                <span class="stat-number" aria-label="98 percent">98%</span>
-                <span class="stat-label">Satisfaction Rate</span>
-              </div>
+            <div class="stat">
+              <span class="stat-number">5,000+</span>
+              <span class="stat-label">Products Reviewed</span>
+            </div>
+            <div class="stat">
+              <span class="stat-number">98%</span>
+              <span class="stat-label">Satisfaction Rate</span>
             </div>
           </div>
-          <div class="hero-image">
-            <img src="https://images.unsplash.com/photo-1560472355-536de3962603?w=600&h=400&fit=crop" alt="High-quality tech gadgets and electronics for sale" class="hero-img" loading="lazy">
-          </div>
+        </div>
+        <div class="hero-image">
+          <img src="https://images.unsplash.com/photo-1560472355-536de3962603?w=600&h=400&fit=crop" alt="Tech Products" class="hero-img">
+        </div>
       </div>
     </div>
   </section>
