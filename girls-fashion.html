@@ -862,13 +862,98 @@
 
     // Initialize when DOM loads
     document.addEventListener('DOMContentLoaded', function() {
-      console.log('Girls Fashion page: DOM loaded, testing Firebase connection...');
+      console.log('Girls Fashion page: DOM loaded');
       
-      // Wait a bit for Firebase to initialize
+      // Show cached products immediately
+      const cachedProducts = JSON.parse(localStorage.getItem('products') || '[]');
+      if (cachedProducts.length > 0) {
+        console.log('Loading cached girls fashion products...');
+        const girlsProducts = cachedProducts.filter(p => 
+          p.category && p.category.toLowerCase().includes('girls') ||
+          p.category && p.category.toLowerCase().includes('women') ||
+          p.category && p.category.toLowerCase().includes('fashion') ||
+          p.tags && p.tags.some(tag => tag.toLowerCase().includes('girls') || tag.toLowerCase().includes('women'))
+        );
+        
+        if (girlsProducts.length > 0) {
+          renderGirlsProducts(girlsProducts);
+        }
+      }
+      
+      // Setup Firebase connection with shorter timeout
       setTimeout(() => {
         testFirebaseConnection();
-      }, 1000);
+      }, 300); // Reduced from 1000ms to 300ms
+      
+      // Listen for Firebase events
+      document.addEventListener('firebase-connected', function() {
+        console.log('Firebase connected - refreshing girls products');
+        setupGirlsProductListener();
+      });
+      
+      document.addEventListener('firebase-timeout', function() {
+        console.log('Firebase timeout - using cached products only');
+        const loadingMessage = document.getElementById('loadingMessage');
+        if (loadingMessage) {
+          loadingMessage.style.display = 'none';
+        }
+      });
+      
+      document.addEventListener('firebase-error', function() {
+        console.log('Firebase error - falling back to cached products');
+        const loadingMessage = document.getElementById('loadingMessage');
+        if (loadingMessage) {
+          loadingMessage.innerHTML = '<i class="fas fa-wifi"></i> Using offline data...';
+          setTimeout(() => {
+            loadingMessage.style.display = 'none';
+          }, 1500);
+        }
+      });
     });
+
+    // Optimized function to render girls products
+    function renderGirlsProducts(products) {
+      const container = document.getElementById('product-container');
+      const loadingMessage = document.getElementById('loadingMessage');
+      
+      if (products && products.length > 0) {
+        container.innerHTML = products.map(product => `
+          <div class="product-card" data-category="${product.category || ''}" data-tags="${(product.tags || []).join(' ')}">
+            <div class="product-image">
+              <img src="${product.image || 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=300&h=200&fit=crop'}" 
+                   alt="${product.title || product.name}" 
+                   loading="lazy" 
+                   onerror="this.src='https://images.unsplash.com/photo-1483985988355-763728e1935b?w=300&h=200&fit=crop'">
+              ${product.discount ? `<div class="discount-badge">${product.discount}% OFF</div>` : ''}
+            </div>
+            <div class="product-info">
+              <h3 class="product-title">${product.title || product.name}</h3>
+              <p class="product-description">${(product.description || '').substring(0, 120)}${(product.description || '').length > 120 ? '...' : ''}</p>
+              <div class="product-price">
+                ${product.originalPrice ? `<span class="original-price">$${product.originalPrice}</span>` : ''}
+                <span class="current-price">$${product.price}</span>
+              </div>
+              <div class="product-meta">
+                <div class="product-rating">
+                  ${'★'.repeat(Math.floor(product.rating || 4))}${'☆'.repeat(5 - Math.floor(product.rating || 4))}
+                  <span class="rating-text">(${product.rating || '4.0'})</span>
+                </div>
+                <div class="product-category">${product.category || 'Fashion'}</div>
+              </div>
+              <a href="${product.link || '#'}" target="_blank" rel="noopener" class="btn btn-primary product-btn">
+                <i class="fas fa-shopping-cart"></i> Shop Now
+              </a>
+            </div>
+          </div>
+        `).join('');
+        
+        if (loadingMessage) {
+          loadingMessage.style.display = 'none';
+        }
+        
+        console.log(`Rendered ${products.length} girls fashion products`);
+      }
+    }
   </script>
 </body>
 </html>

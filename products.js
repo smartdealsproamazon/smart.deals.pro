@@ -206,14 +206,38 @@ function loadFirebase(callback) {
     return;
   }
 
-  // Dynamically add the Firebase SDK scripts so we don't have to touch every HTML page
+  // Show cached products immediately while Firebase loads
+  const cachedProducts = JSON.parse(localStorage.getItem('products') || '[]');
+  if (cachedProducts.length > 0) {
+    console.log('Loading cached products immediately...');
+    productStateManager.updateProducts(cachedProducts);
+    window.products = productStateManager.getAllProducts();
+    document.dispatchEvent(new Event('products-ready'));
+    if (typeof window.autoRenderProducts === 'function') {
+      window.autoRenderProducts();
+    }
+  }
+
+  // Load Firebase SDK in parallel with a shorter timeout
+  const loadTimeout = setTimeout(() => {
+    console.warn('Firebase loading timeout - using cached data only');
+    if (typeof window.autoRenderProducts === 'function') {
+      window.autoRenderProducts();
+    }
+  }, 3000); // 3 second timeout instead of waiting indefinitely
+
+  // Dynamically add the Firebase SDK scripts with faster CDN
   const appScript = document.createElement('script');
   appScript.src = 'https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js';
   appScript.onload = () => {
     const storeScript = document.createElement('script');
     storeScript.src = 'https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js';
-    storeScript.onload = callback;
+    storeScript.onload = () => {
+      clearTimeout(loadTimeout);
+      callback();
+    };
     storeScript.onerror = () => {
+      clearTimeout(loadTimeout);
       console.error('Failed to load Firebase Firestore SDK');
       // Still try to show cached products
       if (typeof window.autoRenderProducts === 'function') {
@@ -223,6 +247,7 @@ function loadFirebase(callback) {
     document.head.appendChild(storeScript);
   };
   appScript.onerror = () => {
+    clearTimeout(loadTimeout);
     console.error('Failed to load Firebase App SDK');
     // Still try to show cached products
     if (typeof window.autoRenderProducts === 'function') {
@@ -232,9 +257,9 @@ function loadFirebase(callback) {
   document.head.appendChild(appScript);
 }
 
-// Real-time Firebase listener function
+// Real-time Firebase listener function with optimized connection
 function setupRealtimeProductListener() {
-  console.log('Setting up real-time Firebase listener...');
+  console.log('Setting up optimized Firebase listener...');
   
   const firebaseConfig = {
     apiKey: "AIzaSyBJqBEWDdBlfv5xAjgcvqput1KC1NzKvlU",
@@ -251,12 +276,28 @@ function setupRealtimeProductListener() {
   }
   const db = firebase.firestore();
 
-  // Set up real-time listener
+  // Enable offline persistence for faster loading
+  try {
+    db.enablePersistence({ synchronizeTabs: true });
+    console.log('Firebase offline persistence enabled');
+  } catch (err) {
+    console.warn('Firebase persistence failed:', err);
+  }
+
+  // Use a timeout for the initial connection
+  const connectionTimeout = setTimeout(() => {
+    console.warn('Firebase connection timeout - proceeding with cached data');
+    document.dispatchEvent(new Event('firebase-timeout'));
+  }, 2000); // 2 second timeout
+
+  // Set up real-time listener with optimized query
   firestoreListener = db.collection('products')
     .orderBy('createdAt', 'desc')
+    .limit(50) // Limit initial load for faster performance
     .onSnapshot(
       (snapshot) => {
-        console.log('Real-time update received from Firebase:', snapshot.size, 'products');
+        clearTimeout(connectionTimeout);
+        console.log('Firebase connected! Received', snapshot.size, 'products');
         
         // Get Firebase products
         const firebaseProducts = snapshot.docs.map(doc => ({
@@ -264,15 +305,24 @@ function setupRealtimeProductListener() {
           ...doc.data()
         }));
 
-        // Get local products (if any)
+        // Only merge with local products if we have new data
+        let allProducts = firebaseProducts;
         const localProducts = JSON.parse(localStorage.getItem('products') || '[]');
         
-        // Combine and process through state manager
-        const combined = [...localProducts, ...firebaseProducts];
-        productStateManager.updateProducts(combined);
+        // If we have cached products and Firebase is empty, keep cached
+        if (firebaseProducts.length === 0 && localProducts.length > 0) {
+          allProducts = localProducts;
+        } else if (firebaseProducts.length > 0) {
+          // Merge Firebase with any additional local products
+          const firebaseIds = new Set(firebaseProducts.map(p => p.id));
+          const additionalLocal = localProducts.filter(p => !firebaseIds.has(p.id));
+          allProducts = [...firebaseProducts, ...additionalLocal];
+        }
+        
+        productStateManager.updateProducts(allProducts);
         
         // Update global products array for backward compatibility
-        const previousCount = window.products.length;
+        const previousCount = window.products?.length || 0;
         window.products = productStateManager.getAllProducts();
         
         console.log(`Products updated: ${previousCount} → ${window.products.length}`);
@@ -284,6 +334,7 @@ function setupRealtimeProductListener() {
         // Notify any listeners
         document.dispatchEvent(new Event('products-updated'));
         document.dispatchEvent(new Event('products-ready'));
+        document.dispatchEvent(new Event('firebase-connected'));
 
         // Auto-render if function is available
         if (typeof window.autoRenderProducts === 'function') {
@@ -296,10 +347,13 @@ function setupRealtimeProductListener() {
         }
       },
       (error) => {
-        console.error('Real-time listener error:', error);
+        clearTimeout(connectionTimeout);
+        console.error('Firebase listener error:', error);
+        document.dispatchEvent(new Event('firebase-error'));
+        
         // Fallback to cached data
-        if (window.products.length === 0) {
-          const fallbackProducts = JSON.parse(localStorage.getItem('products') || '[]');
+        const fallbackProducts = JSON.parse(localStorage.getItem('products') || '[]');
+        if (fallbackProducts.length > 0) {
           productStateManager.updateProducts(fallbackProducts);
           window.products = productStateManager.getAllProducts();
           document.dispatchEvent(new Event('products-ready'));
