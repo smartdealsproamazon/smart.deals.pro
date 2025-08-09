@@ -1,5 +1,5 @@
-// Enhanced cache refresh mechanism for favicon updates
-// Automatically clears old cache and forces reload of new favicon assets
+// Enhanced cache refresh mechanism for favicon and logo updates
+// Automatically clears old cache and forces reload of new favicon and logo assets
 
 async function clearFaviconCache() {
   try {
@@ -31,6 +31,8 @@ async function clearFaviconCache() {
       '/favicon-192x192.png',
       '/favicon-512x512.png',
       '/logo.svg',
+      '/logo.png',
+      '/logo-social.png',
       '/site.webmanifest'
     ];
     
@@ -56,19 +58,54 @@ async function clearFaviconCache() {
       }
     });
     
-    console.log('Favicon cache refresh completed with proper favicon files');
+    // Force refresh of main logo images in the document
+    const logoImages = document.querySelectorAll('img[src*="logo"]');
+    logoImages.forEach(img => {
+      const src = img.src;
+      if (src.includes('logo.svg') || src.includes('logo.png') || src.includes('logo-social.png')) {
+        // Remove cache busting parameter if it exists
+        const cleanSrc = src.split('?')[0];
+        // Add new cache busting parameter
+        img.src = cleanSrc + '?v=' + timestamp;
+      }
+    });
+    
+    console.log('Logo and favicon cache refresh completed with proper files');
   } catch (error) {
     console.error('Cache refresh failed:', error);
   }
 }
 
 // Auto-run cache refresh if needed
-if (localStorage.getItem('favicon-cache-cleared') !== 'v6-proper-favicon-generated') {
+if (localStorage.getItem('favicon-cache-cleared') !== 'v7-logo-cache-fix') {
   clearFaviconCache().then(() => {
-    localStorage.setItem('favicon-cache-cleared', 'v6-proper-favicon-generated');
-    console.log('Favicon cache cleared - new proper favicon files loaded');
+    localStorage.setItem('favicon-cache-cleared', 'v7-logo-cache-fix');
+    console.log('Logo and favicon cache cleared - new logo files loaded');
   });
+}
+
+// Function to refresh logo on page load if needed
+function refreshLogo() {
+  const timestamp = Date.now();
+  const logoImages = document.querySelectorAll('img[src*="logo"]');
+  logoImages.forEach(img => {
+    const src = img.src;
+    if (src.includes('logo.svg') || src.includes('logo.png') || src.includes('logo-social.png')) {
+      // Only add cache buster if not already present
+      if (!src.includes('?v=')) {
+        img.src = src + '?v=' + timestamp;
+      }
+    }
+  });
+}
+
+// Refresh logo when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', refreshLogo);
+} else {
+  refreshLogo();
 }
 
 // Export for manual use if needed
 window.clearFaviconCache = clearFaviconCache;
+window.refreshLogo = refreshLogo;

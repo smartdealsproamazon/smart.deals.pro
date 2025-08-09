@@ -133,3 +133,10 @@
     Header set Cache-Control "max-age=31536000, public"
     Header set Expires "access plus 1 year"
 </Files>
+
+# Prevent logo caching to fix logo update issues
+<FilesMatch "logo\.(svg|png|jpg|jpeg|gif)$">
+    Header set Cache-Control "no-cache, no-store, must-revalidate"
+    Header set Pragma "no-cache"
+    Header set Expires "0"
+</FilesMatch>
