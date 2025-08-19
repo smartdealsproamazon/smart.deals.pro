@@ -146,7 +146,7 @@ class ProductStateManager {
       `The design and features are amazing.`,
       `Perfect for my needs. Thank you!`
     ];
-    const reviewCount = Math.floor(Math.random() * 2) + 3; // 3 or 4 reviews
+    const reviewCount = Math.floor(Math.random() * 2) + 2; // 2 or 3 reviews (reduced from 3-4)
     const usedNames = [];
     const reviews = [];
     for (let i = 0; i < reviewCount; i++) {
@@ -159,15 +159,67 @@ class ProductStateManager {
       reviews.push({
         name,
         text: template.replace('{product}', productName),
-        date: new Date(Date.now() - Math.floor(Math.random() * 10000000000)).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+        date: new Date(Date.now() - Math.floor(Math.random() * 10000000000)).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+        timestamp: Date.now() - Math.floor(Math.random() * 10000000000) // Add timestamp for sorting
       });
     }
     return reviews;
+  }
+
+  // Add a new review to a product with automatic limit management
+  addReviewToProduct(productId, reviewData) {
+    const product = this.getProductById(productId);
+    if (!product) {
+      console.error('Product not found:', productId);
+      return false;
+    }
+
+    // Ensure productReviews array exists
+    if (!product.productReviews) {
+      product.productReviews = [];
+    }
+
+    // Create new review with timestamp
+    const newReview = {
+      name: reviewData.name,
+      text: reviewData.text,
+      date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+      timestamp: Date.now()
+    };
+
+    // Add new review to the beginning of the array (most recent first)
+    product.productReviews.unshift(newReview);
+
+    // Maintain maximum of 5 reviews per product
+    const MAX_REVIEWS = 5;
+    if (product.productReviews.length > MAX_REVIEWS) {
+      // Remove oldest reviews (from the end of array)
+      product.productReviews = product.productReviews.slice(0, MAX_REVIEWS);
+    }
+
+    // Update the product in our state
+    this.addProduct(product);
+    
+    // Persist changes
+    persistProductReviews();
+    
+    return true;
   }
 }
 
 // Create global product state manager
 const productStateManager = new ProductStateManager();
+
+// Global function to add a review to any product
+function addProductReview(productId, reviewData) {
+  return productStateManager.addReviewToProduct(productId, reviewData);
+}
+
+// Global function to get reviews for a product
+function getProductReviews(productId) {
+  const product = productStateManager.getProductById(productId);
+  return product ? product.productReviews || [] : [];
+}
 
 // Always expose products array for backward compatibility
 window.products = [];

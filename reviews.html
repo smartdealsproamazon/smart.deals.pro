@@ -131,54 +131,7 @@
     </div>
   </section>
 
-  <!-- Featured Review -->
-  <section class="featured-review">
-    <div class="container">
-      <div class="featured-review-card">
-        <div class="featured-review-badge">
-          <i class="fas fa-star"></i>
-          <span>Editor's Pick</span>
-        </div>
-        <div class="featured-review-content">
-          <div class="featured-review-image">
-            <img src="https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?w=400&h=300&fit=crop" alt="Apple Watch Series 9">
-          </div>
-          <div class="featured-review-info">
-            <h2>Apple Watch Series 9 GPS - Comprehensive Review</h2>
-            <div class="review-rating">
-              <div class="stars">
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-              </div>
-              <span class="rating-score">4.8/5</span>
-            </div>
-            <p class="review-excerpt">After extensive testing, the Apple Watch Series 9 stands out as the best smartwatch for iPhone users. The new S9 chip delivers incredible performance...</p>
-            <div class="review-highlights">
-              <div class="highlight pros">
-                <h4>Pros</h4>
-                <ul>
-                  <li>Excellent build quality</li>
-                  <li>Outstanding battery life</li>
-                  <li>Comprehensive health features</li>
-                </ul>
-              </div>
-              <div class="highlight cons">
-                <h4>Cons</h4>
-                <ul>
-                  <li>Expensive price point</li>
-                  <li>Limited Android compatibility</li>
-                </ul>
-              </div>
-            </div>
-            <a href="#" class="btn btn-primary">Read Full Review</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+
 
   <!-- Review Categories -->
   <section class="review-categories">
@@ -380,7 +333,9 @@
             <h3 class="review-product-title">${product.name}</h3>
           </div>
           <div class="product-reviews-list">
-            ${(product.productReviews || []).map(r => `
+            ${(product.productReviews || [])
+              .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0)) // Sort by timestamp, newest first
+              .map(r => `
               <div class="single-review">
                 <div class="reviewer-name"><i class='fas fa-user'></i> ${r.name}</div>
                 <div class="review-date">${r.date}</div>
@@ -429,6 +384,33 @@
     document.addEventListener('DOMContentLoaded', function() {
       renderReviews();
     });
+
+    // Demo function to test review addition (for testing purposes)
+    function addDemoReview() {
+      if (!window.products || window.products.length === 0) {
+        console.log('No products available for demo');
+        return;
+      }
+      
+      const randomProduct = window.products[Math.floor(Math.random() * window.products.length)];
+      const demoReviews = [
+        { name: 'Test User', text: 'This is a test review to demonstrate the automatic review limit system!' },
+        { name: 'Demo Customer', text: 'Great product! The review system works perfectly.' },
+        { name: 'Sample Reviewer', text: 'I love how the oldest reviews get automatically removed when new ones are added.' }
+      ];
+      
+      const randomReview = demoReviews[Math.floor(Math.random() * demoReviews.length)];
+      
+      if (addProductReview(randomProduct.id, randomReview)) {
+        console.log('Demo review added successfully!');
+        renderReviews(); // Refresh the display
+      } else {
+        console.log('Failed to add demo review');
+      }
+    }
+    
+    // Expose demo function globally for testing
+    window.addDemoReview = addDemoReview;
   </script>
 
   <style>
@@ -461,94 +443,7 @@
       text-align: center;
     }
 
-    .featured-review {
-      padding: 4rem 0;
-      background-color: white;
-    }
 
-    .featured-review-card {
-      background-color: #f8fafc;
-      border-radius: 1rem;
-      overflow: hidden;
-      position: relative;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-    }
-
-    .featured-review-badge {
-      position: absolute;
-      top: 2rem;
-      right: 2rem;
-      background-color: #fbbf24;
-      color: #1f2937;
-      padding: 0.5rem 1rem;
-      border-radius: 0.5rem;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      z-index: 10;
-    }
-
-    .featured-review-content {
-      display: grid;
-      grid-template-columns: 1fr 2fr;
-      gap: 2rem;
-      padding: 2rem;
-    }
-
-    .featured-review-image img {
-      width: 100%;
-      height: auto;
-      border-radius: 0.5rem;
-    }
-
-    .review-highlights {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-      margin: 1.5rem 0;
-    }
-
-    .highlight {
-      background-color: white;
-      padding: 1rem;
-      border-radius: 0.5rem;
-    }
-
-    .highlight h4 {
-      margin-bottom: 0.5rem;
-      font-size: 1rem;
-    }
-
-    .pros h4 {
-      color: #10b981;
-    }
-
-    .cons h4 {
-      color: #ef4444;
-    }
-
-    .highlight ul {
-      list-style: none;
-      padding: 0;
-    }
-
-    .highlight li {
-      padding: 0.25rem 0;
-      font-size: 0.9rem;
-    }
-
-    .pros li::before {
-      content: "✓ ";
-      color: #10b981;
-      font-weight: bold;
-    }
-
-    .cons li::before {
-      content: "✗ ";
-      color: #ef4444;
-      font-weight: bold;
-    }
 
     .review-categories {
       padding: 4rem 0;
@@ -774,13 +669,7 @@
         gap: 1rem;
       }
       
-      .featured-review-content {
-        grid-template-columns: 1fr;
-      }
-      
-      .review-highlights {
-        grid-template-columns: 1fr;
-      }
+
       
       .latest-reviews .section-header {
         flex-direction: column;
