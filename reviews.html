@@ -383,7 +383,47 @@
     // Initialize page
     document.addEventListener('DOMContentLoaded', function() {
       renderReviews();
+      updateProductCount();
     });
+
+    // Update product count display
+    function updateProductCount() {
+      // Add product count info to the page
+      const container = document.querySelector('.container');
+      if (container && typeof getProductCount === 'function') {
+        const existingInfo = document.getElementById('productLimitInfo');
+        if (existingInfo) {
+          existingInfo.remove();
+        }
+        
+        const infoDiv = document.createElement('div');
+        infoDiv.id = 'productLimitInfo';
+        infoDiv.style.cssText = `
+          background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+          padding: 1rem;
+          border-radius: 0.5rem;
+          margin: 1rem 0;
+          text-align: center;
+          font-size: 0.9rem;
+          color: #374151;
+          border-left: 4px solid #3b82f6;
+        `;
+        
+        const currentCount = getProductCount();
+        const maxCount = getMaxProducts();
+        
+        infoDiv.innerHTML = `
+          <i class="fas fa-info-circle" style="color: #3b82f6; margin-right: 0.5rem;"></i>
+          <strong>Smart Product Management:</strong> Showing ${currentCount} of maximum ${maxCount} products. 
+          When new products are added, oldest ones are automatically removed to keep the page fast and clean.
+        `;
+        
+        const reviewsSection = document.querySelector('.latest-reviews .container');
+        if (reviewsSection) {
+          reviewsSection.insertBefore(infoDiv, reviewsSection.firstChild);
+        }
+      }
+    }
 
     // Demo function to test review addition (for testing purposes)
     function addDemoReview() {

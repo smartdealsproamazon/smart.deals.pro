@@ -45,7 +45,20 @@ class ProductStateManager {
     if (existingIndex >= 0) {
       this.products[existingIndex] = normalizedProduct;
     } else {
-      this.products.push(normalizedProduct);
+      // Add new product to the beginning (most recent first)
+      this.products.unshift(normalizedProduct);
+      
+      // Maintain maximum number of products to prevent reviews page from getting too full
+      const MAX_PRODUCTS = 20; // Limit to 20 products on reviews page
+      if (this.products.length > MAX_PRODUCTS) {
+        // Remove oldest products (from the end of array)
+        const removedProducts = this.products.splice(MAX_PRODUCTS);
+        // Remove from map as well
+        removedProducts.forEach(product => {
+          this.productMap.delete(product.id);
+        });
+        console.log(`Removed ${removedProducts.length} oldest products to maintain limit of ${MAX_PRODUCTS}`);
+      }
     }
     
     // Update in map for fast lookup
@@ -64,14 +77,48 @@ class ProductStateManager {
     return [...this.products];
   }
 
+  // Get current product count
+  getProductCount() {
+    return this.products.length;
+  }
+
+  // Get maximum allowed products
+  getMaxProducts() {
+    return 20;
+  }
+
+  // Check if at product limit
+  isAtProductLimit() {
+    return this.products.length >= this.getMaxProducts();
+  }
+
   // Update products from external source (Firebase, localStorage)
   updateProducts(newProducts) {
     this.products = [];
     this.productMap.clear();
     
-    newProducts.forEach(product => {
-      this.addProduct(product);
+    // Sort products by creation date (newest first) before adding
+    const sortedProducts = newProducts.sort((a, b) => {
+      const dateA = new Date(a.createdAt || 0);
+      const dateB = new Date(b.createdAt || 0);
+      return dateB - dateA;
     });
+    
+    // Limit to maximum products to prevent reviews page overflow
+    const MAX_PRODUCTS = 20;
+    const productsToAdd = sortedProducts.slice(0, MAX_PRODUCTS);
+    
+    productsToAdd.forEach(product => {
+      // Add without triggering individual limit checks since we're already limiting here
+      const id = this.generateProductId(product);
+      const normalizedProduct = this.normalizeProduct(product, id);
+      this.products.push(normalizedProduct);
+      this.productMap.set(id, normalizedProduct);
+    });
+    
+    if (sortedProducts.length > MAX_PRODUCTS) {
+      console.log(`Loaded ${productsToAdd.length} most recent products out of ${sortedProducts.length} total products`);
+    }
     
     this.notifyListeners();
   }
@@ -219,6 +266,21 @@ function addProductReview(productId, reviewData) {
 function getProductReviews(productId) {
   const product = productStateManager.getProductById(productId);
   return product ? product.productReviews || [] : [];
+}
+
+// Global function to get current product count
+function getProductCount() {
+  return productStateManager.getProductCount();
+}
+
+// Global function to check if at product limit
+function isAtProductLimit() {
+  return productStateManager.isAtProductLimit();
+}
+
+// Global function to get max products allowed
+function getMaxProducts() {
+  return productStateManager.getMaxProducts();
 }
 
 // Always expose products array for backward compatibility
