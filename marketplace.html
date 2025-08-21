@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Global Affiliate Marketplace - SmartDeals Pro</title>
+  <meta name="description" content="Browse thousands of affiliate products from marketers worldwide. Find the best deals, compare prices, and discover new products from verified affiliates.">
+  <meta name="keywords" content="affiliate marketplace, global products, affiliate deals, online shopping, affiliate network">
+  <link rel="canonical" href="https://smartdealsproamazon.github.io/smart.deals.pro/marketplace.html">
+  
+  <!-- Enhanced Favicon Implementation -->
+  <link rel="icon" type="image/x-icon" href="favicon.ico" sizes="16x16 32x32">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="favicon-192x192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="favicon-512x512.png">
+  <link rel="icon" type="image/svg+xml" href="logo.svg">
+  <link rel="apple-touch-icon" sizes="180x180" href="logo.png">
+  <link rel="manifest" href="site.webmanifest">
+  <meta name="theme-color" content="#3b82f6">
+  
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:title" content="Global Affiliate Marketplace - SmartDeals Pro">
+  <meta property="og:description" content="Browse thousands of affiliate products from marketers worldwide.">
+  <meta property="og:image" content="https://smartdealsproamazon.github.io/smart.deals.pro/logo.png">
+  <meta property="og:url" content="https://smartdealsproamazon.github.io/smart.deals.pro/marketplace.html">
+  <meta property="og:type" content="website">
+  
+  <!-- FontAwesome and Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  
+  <!-- Marketplace specific styles -->
+  <style>
+    .marketplace-hero {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 120px 0 60px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .marketplace-hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+      opacity: 0.3;
+    }
+    
+    .marketplace-hero .container {
+      position: relative;
+      z-index: 1;
+    }
+    
+    .marketplace-hero h1 {
+      font-size: 3.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+    
+    .marketplace-hero p {
+      font-size: 1.25rem;
+      opacity: 0.9;
+      max-width: 600px;
+      margin: 0 auto 2rem;
+      line-height: 1.6;
+    }
+    
+    .marketplace-stats {
+      display: flex;
+      justify-content: center;
+      gap: 4rem;
+      margin-top: 3rem;
+      flex-wrap: wrap;
+    }
+    
+    .stat-item {
+      text-align: center;
+      padding: 1rem;
+    }
+    
+    .stat-number {
+      display: block;
+      font-size: 3rem;
+      font-weight: 700;
+      color: #FFD700;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+    
+    .stat-label {
+      font-size: 1rem;
+      opacity: 0.9;
+      margin-top: 0.5rem;
+    }
+    
+    .filters-section {
+      background: white;
+      padding: 2rem 0;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 80px;
+      z-index: 100;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    
+    .filters-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      align-items: end;
+    }
+    
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    
+    .filter-label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #374151;
+    }
+    
+    .filter-select, .filter-input {
+      padding: 0.75rem 1rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 1rem;
+      background: white;
+      transition: all 0.3s;
+    }
+    
+    .filter-select:focus, .filter-input:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+    
+    .products-section {
+      padding: 4rem 0;
+      background: #f8fafc;
+      min-height: 60vh;
+    }
+    
+    .section-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+    
+    .section-header h2 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #1f2937;
+      margin-bottom: 1rem;
+    }
+    
+    .section-header p {
+      font-size: 1.125rem;
+      color: #6b7280;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    .marketplace-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+    
+    .affiliate-product-card {
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+      transition: all 0.3s ease;
+      position: relative;
+      border: 1px solid #e5e7eb;
+    }
+    
+    .affiliate-product-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    }
+    
+    .product-image-container {
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .product-image {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      transition: transform 0.3s;
+    }
+    
+    .affiliate-product-card:hover .product-image {
+      transform: scale(1.05);
+    }
+    
+    .product-content {
+      padding: 1.5rem;
+    }
+    
+    .product-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 0.75rem;
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    
+    .product-price {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #059669;
+      margin-bottom: 1rem;
+    }
+    
+    .product-badges {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+    
+    .badge {
+      padding: 0.375rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .badge.platform {
+      background: #3b82f6;
+      color: white;
+    }
+    
+    .badge.commission {
+      background: #f59e0b;
+      color: white;
+    }
+    
+    .badge.featured {
+      background: linear-gradient(45deg, #ff6b6b, #feca57);
+      color: white;
+      animation: pulse 2s infinite;
+    }
+    
+    .badge.owner {
+      background: linear-gradient(45deg, #FFD700, #FFA500);
+      color: #000;
+      font-weight: 700;
+      box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
+    }
+    
+    .badge.owner::before {
+      content: "👑";
+      margin-right: 0.25rem;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    
+    .product-description {
+      color: #6b7280;
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    
+    .affiliate-info {
+      background: #f9fafb;
+      padding: 1rem 1.5rem;
+      border-top: 1px solid #e5e7eb;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .affiliate-name {
+      font-size: 0.9rem;
+      color: #6b7280;
+      font-weight: 500;
+    }
+    
+    .affiliate-rating {
+      color: #fbbf24;
+    }
+    
+    .product-cta {
+      width: 100%;
+      padding: 0.875rem 1.5rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-top: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .product-cta:hover {
+      background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(103, 126, 234, 0.4);
+    }
+    
+    .load-more {
+      text-align: center;
+      margin-top: 4rem;
+    }
+    
+    .load-more-btn {
+      padding: 1rem 2.5rem;
+      background: transparent;
+      border: 2px solid #3b82f6;
+      color: #3b82f6;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .load-more-btn:hover {
+      background: #3b82f6;
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+    }
+    
+    .cta-section {
+      background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 100%);
+      color: white;
+      padding: 4rem 0;
+      text-align: center;
+    }
+    
+    .cta-content h2 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+    
+    .cta-content p {
+      font-size: 1.25rem;
+      opacity: 0.9;
+      margin-bottom: 2rem;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    .cta-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    
+    .btn {
+      padding: 1rem 2rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .btn-primary {
+      background: #fff;
+      color: #1e3a8a;
+    }
+    
+    .btn-secondary {
+      background: transparent;
+      color: white;
+      border: 2px solid white;
+    }
+    
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+    
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      .marketplace-hero {
+        padding: 100px 0 40px;
+      }
+      
+      .marketplace-hero h1 {
+        font-size: 2.5rem;
+      }
+      
+      .marketplace-stats {
+        gap: 2rem;
+      }
+      
+      .stat-number {
+        font-size: 2rem;
+      }
+      
+      .filters-container {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+      
+      .marketplace-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+      
+      .filters-section {
+        position: static;
+      }
+      
+      .section-header h2 {
+        font-size: 2rem;
+      }
+      
+      .cta-content h2 {
+        font-size: 2rem;
+      }
+      
+      .cta-buttons {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .btn {
+        width: 100%;
+        max-width: 300px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Loading Screen -->
+  <div id="loading-screen">
+    <div class="preloader-container">
+      <div class="old-loader"></div>
+      <p class="old-loading-text">Loading marketplace...</p>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="main-header">
+    <div class="container">
+      <div class="header-content">
+        <div class="header-left">
+          <a href="index.html" class="logo-link">
+            <img src="logo.svg?v=2024.1" alt="SmartDeals Pro Logo" class="logo" loading="eager" />
+          </a>
+          <div class="site-name">
+            <span class="logo-text">SmartDeals Pro</span>
+          </div>
+        </div>
+        
+        <nav class="main-nav">
+          <ul>
+            <li><a href="index.html" class="nav-link">Home</a></li>
+            <li><a href="marketplace.html" class="nav-link active">🛍️ Marketplace</a></li>
+            <li class="dropdown">
+              <a href="#" class="nav-link dropdown-toggle">For Affiliates <i class="fas fa-chevron-down"></i></a>
+              <ul class="dropdown-menu">
+                <li><a href="for-affiliates.html">🚀 Join Network</a></li>
+                <li><a href="affiliate-register.html">📝 Register</a></li>
+                <li><a href="affiliate-dashboard.html">📊 Dashboard</a></li>
+                <li><a href="success-stories.html">🏆 Success Stories</a></li>
+              </ul>
+            </li>
+            <li><a href="reviews.html" class="nav-link">Reviews</a></li>
+            <li><a href="about.html" class="nav-link">About</a></li>
+            <li><a href="contact.html" class="nav-link">Contact</a></li>
+          </ul>
+        </nav>
+
+        <div class="header-right">
+          <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+            <i class="fas fa-bars"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu-content">
+      <button class="mobile-menu-close" onclick="toggleMobileMenu()">
+        <i class="fas fa-times"></i>
+      </button>
+      <a href="index.html">Home</a>
+      <a href="marketplace.html" class="active">🛍️ Marketplace</a>
+      <a href="for-affiliates.html">🚀 Join Network</a>
+      <a href="affiliate-register.html">📝 Register</a>
+      <a href="affiliate-dashboard.html">📊 Dashboard</a>
+      <a href="reviews.html">Reviews</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+    </div>
+  </div>
+
+  <!-- Marketplace Hero Section -->
+  <section class="marketplace-hero">
+    <div class="container">
+      <h1>🌍 Global Affiliate Marketplace</h1>
+      <p>Discover thousands of products from verified affiliate marketers worldwide. Find the best deals, compare prices, and shop with confidence from our global community.</p>
+      
+      <div class="marketplace-stats">
+        <div class="stat-item">
+          <span class="stat-number">25,000+</span>
+          <span class="stat-label">Products Listed</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">5,000+</span>
+          <span class="stat-label">Global Affiliates</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">150+</span>
+          <span class="stat-label">Countries</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">98%</span>
+          <span class="stat-label">Satisfaction Rate</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Filters Section -->
+  <section class="filters-section">
+    <div class="container">
+      <div class="filters-container">
+        <div class="filter-group">
+          <label class="filter-label">Category</label>
+          <select class="filter-select" id="categoryFilter">
+            <option value="">All Categories</option>
+            <option value="electronics">Electronics</option>
+            <option value="fashion">Fashion</option>
+            <option value="home">Home & Garden</option>
+            <option value="health">Health & Beauty</option>
+            <option value="sports">Sports & Outdoors</option>
+            <option value="books">Books & Education</option>
+            <option value="software">Software & Apps</option>
+            <option value="business">Business & Marketing</option>
+          </select>
+        </div>
+        
+        <div class="filter-group">
+          <label class="filter-label">Platform</label>
+          <select class="filter-select" id="platformFilter">
+            <option value="">All Platforms</option>
+            <option value="amazon">Amazon</option>
+            <option value="clickbank">ClickBank</option>
+            <option value="shareasale">ShareASale</option>
+            <option value="cj">Commission Junction</option>
+            <option value="owner">Platform Owner</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        
+        <div class="filter-group">
+          <label class="filter-label">Price Range</label>
+          <select class="filter-select" id="priceFilter">
+            <option value="">Any Price</option>
+            <option value="0-25">$0 - $25</option>
+            <option value="25-50">$25 - $50</option>
+            <option value="50-100">$50 - $100</option>
+            <option value="100-500">$100 - $500</option>
+            <option value="500+">$500+</option>
+          </select>
+        </div>
+        
+        <div class="filter-group">
+          <label class="filter-label">Search Products</label>
+          <input type="text" class="filter-input" id="searchInput" placeholder="Search products...">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Products Section -->
+  <section class="products-section">
+    <div class="container">
+      <div class="section-header">
+        <h2>Featured Products</h2>
+        <p>Handpicked products from our top-performing affiliates worldwide</p>
+      </div>
+      
+      <div class="marketplace-grid" id="marketplaceGrid">
+        <!-- Platform Owner Product -->
+        <div class="affiliate-product-card owner-product">
+          <div class="product-image-container">
+            <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=220&fit=crop" alt="Affiliate Marketing Course" class="product-image">
+          </div>
+          <div class="product-content">
+            <h3 class="product-title">Complete Affiliate Marketing Masterclass 2024</h3>
+            <div class="product-price">$97.00 <span style="text-decoration: line-through; color: #9ca3af; font-size: 1rem;">$297</span></div>
+            <div class="product-badges">
+              <span class="badge owner">Platform Owner</span>
+              <span class="badge featured">Featured</span>
+              <span class="badge platform">Own Product</span>
+            </div>
+            <p class="product-description">Master affiliate marketing with this comprehensive course. 50+ video lessons, proven strategies, templates, and live support included. Transform your online business today!</p>
+            <button class="product-cta" onclick="trackClick('course-001', 'owner')">
+              🚀 Enroll Now - Limited Time!
+            </button>
+          </div>
+          <div class="affiliate-info">
+            <span class="affiliate-name">👑 Platform Owner</span>
+            <div class="affiliate-rating">
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Amazon Affiliate Product -->
+        <div class="affiliate-product-card">
+          <div class="product-image-container">
+            <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=220&fit=crop" alt="Wireless Headphones" class="product-image">
+          </div>
+          <div class="product-content">
+            <h3 class="product-title">Premium Wireless Noise-Cancelling Headphones</h3>
+            <div class="product-price">$149.99</div>
+            <div class="product-badges">
+              <span class="badge platform">Amazon</span>
+              <span class="badge commission">8% Commission</span>
+            </div>
+            <p class="product-description">High-quality wireless headphones with active noise cancellation. Perfect for music lovers, professionals, and travelers. 30-hour battery life.</p>
+            <button class="product-cta" onclick="trackClick('headphones-001', 'affiliate-123')">
+              🛒 Buy on Amazon
+            </button>
+          </div>
+          <div class="affiliate-info">
+            <span class="affiliate-name">TechReviewer Pro (USA)</span>
+            <div class="affiliate-rating">
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- ClickBank Product -->
+        <div class="affiliate-product-card">
+          <div class="product-image-container">
+            <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=220&fit=crop" alt="Fitness Program" class="product-image">
+          </div>
+          <div class="product-content">
+            <h3 class="product-title">30-Day Fitness Transformation Program</h3>
+            <div class="product-price">$67.00</div>
+            <div class="product-badges">
+              <span class="badge platform">ClickBank</span>
+              <span class="badge commission">50% Commission</span>
+              <span class="badge featured">Trending</span>
+            </div>
+            <p class="product-description">Complete fitness transformation with meal plans, workout routines, and personal coaching support. Guaranteed results in 30 days or money back.</p>
+            <button class="product-cta" onclick="trackClick('fitness-001', 'affiliate-456')">
+              💪 Start Transformation
+            </button>
+          </div>
+          <div class="affiliate-info">
+            <span class="affiliate-name">FitnessGuru (Canada)</span>
+            <div class="affiliate-rating">
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="far fa-star"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Gaming Product -->
+        <div class="affiliate-product-card">
+          <div class="product-image-container">
+            <img src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=220&fit=crop" alt="Gaming Setup" class="product-image">
+          </div>
+          <div class="product-content">
+            <h3 class="product-title">RGB Mechanical Gaming Keyboard</h3>
+            <div class="product-price">$89.99</div>
+            <div class="product-badges">
+              <span class="badge platform">Amazon</span>
+              <span class="badge commission">6% Commission</span>
+            </div>
+            <p class="product-description">Professional mechanical gaming keyboard with customizable RGB lighting, programmable keys, and ultra-responsive switches. Perfect for gamers and programmers.</p>
+            <button class="product-cta" onclick="trackClick('keyboard-001', 'affiliate-789')">
+              🎮 Buy Now
+            </button>
+          </div>
+          <div class="affiliate-info">
+            <span class="affiliate-name">GamerHub (UK)</span>
+            <div class="affiliate-rating">
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Software Product -->
+        <div class="affiliate-product-card">
+          <div class="product-image-container">
+            <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=220&fit=crop" alt="Software Dashboard" class="product-image">
+          </div>
+          <div class="product-content">
+            <h3 class="product-title">All-in-One Marketing Software Suite</h3>
+            <div class="product-price">$49/month</div>
+            <div class="product-badges">
+              <span class="badge platform">ShareASale</span>
+              <span class="badge commission">40% Commission</span>
+            </div>
+            <p class="product-description">Complete marketing automation platform with email marketing, social media management, analytics, and CRM. Everything you need to grow your business.</p>
+            <button class="product-cta" onclick="trackClick('software-001', 'affiliate-101')">
+              🚀 Start Free Trial
+            </button>
+          </div>
+          <div class="affiliate-info">
+            <span class="affiliate-name">MarketingPro (Australia)</span>
+            <div class="affiliate-rating">
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Fashion Product -->
+        <div class="affiliate-product-card">
+          <div class="product-image-container">
+            <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=220&fit=crop" alt="Fashion Items" class="product-image">
+          </div>
+          <div class="product-content">
+            <h3 class="product-title">Premium Designer Handbag Collection</h3>
+            <div class="product-price">$199.99</div>
+            <div class="product-badges">
+              <span class="badge platform">Amazon</span>
+              <span class="badge commission">10% Commission</span>
+            </div>
+            <p class="product-description">Luxury designer handbags crafted from genuine leather. Multiple styles and colors available. Perfect for professional and casual occasions.</p>
+            <button class="product-cta" onclick="trackClick('handbag-001', 'affiliate-202')">
+              👜 Shop Collection
+            </button>
+          </div>
+          <div class="affiliate-info">
+            <span class="affiliate-name">FashionHub (Italy)</span>
+            <div class="affiliate-rating">
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="far fa-star"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="load-more">
+        <button class="load-more-btn" onclick="loadMoreProducts()">
+          Load More Products
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Call to Action Section -->
+  <section class="cta-section">
+    <div class="container">
+      <div class="cta-content">
+        <h2>Ready to Join Our Global Network?</h2>
+        <p>List your products, reach millions of shoppers worldwide, and grow your affiliate business with our powerful platform.</p>
+        <div class="cta-buttons">
+          <a href="affiliate-register.html" class="btn btn-primary">Join as Affiliate</a>
+          <a href="for-affiliates.html" class="btn btn-secondary">Learn More</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="main-footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>SmartDeals Pro</h3>
+          <p>The world's largest affiliate marketplace connecting global marketers with millions of shoppers worldwide.</p>
+        </div>
+        <div class="footer-section">
+          <h4>For Shoppers</h4>
+          <ul>
+            <li><a href="marketplace.html">Browse Products</a></li>
+            <li><a href="reviews.html">Read Reviews</a></li>
+            <li><a href="deals.html">Hot Deals</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>For Affiliates</h4>
+          <ul>
+            <li><a href="for-affiliates.html">Join Network</a></li>
+            <li><a href="affiliate-register.html">Register</a></li>
+            <li><a href="affiliate-dashboard.html">Dashboard</a></li>
+            <li><a href="success-stories.html">Success Stories</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="privacy-policy.html">Privacy Policy</a></li>
+            <li><a href="terms.html">Terms of Service</a></li>
+            <li><a href="affiliate-disclosure.html">Affiliate Disclosure</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 SmartDeals Pro. All rights reserved.</p>
+        <p class="affiliate-disclaimer">This site contains affiliate links. We may earn a commission when you purchase through links on our site.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JavaScript -->
+  <script>
+    // Loading screen
+    window.addEventListener('load', function() {
+      setTimeout(() => {
+        document.getElementById('loading-screen').style.opacity = '0';
+        setTimeout(() => {
+          document.getElementById('loading-screen').style.display = 'none';
+        }, 500);
+      }, 1000);
+    });
+
+    // Click tracking function
+    function trackClick(productId, affiliateId) {
+      console.log(`Tracking click: Product ${productId} by ${affiliateId}`);
+      
+      // Track click data
+      const clickData = {
+        productId: productId,
+        affiliateId: affiliateId,
+        timestamp: new Date().toISOString(),
+        userAgent: navigator.userAgent,
+        referrer: document.referrer
+      };
+      
+      // In real implementation, send to Firebase/database
+      localStorage.setItem('lastClick', JSON.stringify(clickData));
+      
+      // Show tracking message
+      alert(`✅ Click tracked! Product: ${productId}\nAffiliate: ${affiliateId}\nRedirecting to product page...`);
+      
+      // In real implementation, redirect to actual affiliate link
+      // window.open(affiliateLink, '_blank');
+    }
+
+    // Load more products function
+    function loadMoreProducts() {
+      const grid = document.getElementById('marketplaceGrid');
+      const loadBtn = document.querySelector('.load-more-btn');
+      
+      loadBtn.textContent = 'Loading...';
+      loadBtn.disabled = true;
+      
+      // Simulate loading
+      setTimeout(() => {
+        alert('🔄 Loading more products from database...\n\nIn real implementation, this would:\n• Fetch more products from Firebase\n• Add them to the grid\n• Update pagination');
+        
+        loadBtn.textContent = 'Load More Products';
+        loadBtn.disabled = false;
+      }, 1500);
+    }
+
+    // Filter functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      const categoryFilter = document.getElementById('categoryFilter');
+      const platformFilter = document.getElementById('platformFilter');
+      const priceFilter = document.getElementById('priceFilter');
+      const searchInput = document.getElementById('searchInput');
+
+      function applyFilters() {
+        const category = categoryFilter.value;
+        const platform = platformFilter.value;
+        const price = priceFilter.value;
+        const search = searchInput.value.toLowerCase();
+
+        console.log('Applying filters:', { category, platform, price, search });
+        
+        // In real implementation, this would filter products from database
+        alert(`🔍 Filters applied:\nCategory: ${category || 'All'}\nPlatform: ${platform || 'All'}\nPrice: ${price || 'Any'}\nSearch: ${search || 'None'}`);
+      }
+
+      categoryFilter.addEventListener('change', applyFilters);
+      platformFilter.addEventListener('change', applyFilters);
+      priceFilter.addEventListener('change', applyFilters);
+      
+      // Debounce search input
+      let searchTimeout;
+      searchInput.addEventListener('input', function() {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(applyFilters, 500);
+      });
+    });
+
+    // Mobile menu toggle
+    function toggleMobileMenu() {
+      const mobileMenu = document.getElementById('mobileMenu');
+      if (mobileMenu) {
+        mobileMenu.classList.toggle('active');
+      }
+    }
+
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
+  </script>
+</body>
+</html>
