@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Product Submission - SmartDeals Pro</title>
+  <link rel="icon" type="image/svg+xml" href="logo.svg">
+  <link rel="apple-touch-icon" sizes="180x180" href="logo.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="main-header">
+    <div class="container">
+      <div class="header-content">
+        <div class="header-left">
+          <a href="index.html" class="logo-link">
+            <img src="logo.svg?v=2024.1" alt="SmartDeals Pro Logo" class="logo" loading="eager" />
+          </a>
+          <div class="site-name">
+            <span class="logo-text">User Product Submission</span>
+          </div>
+        </div>
+        <nav class="main-nav">
+          <ul>
+            <li><a href="index.html" class="nav-link">Home</a></li>
+            <li><a href="marketplace.html" class="nav-link">Marketplace</a></li>
+            <li><a href="affiliate-dashboard.html" class="nav-link">Dashboard</a></li>
+          </ul>
+        </nav>
+        <div class="header-right">
+          <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+            <i class="fas fa-bars"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu-content">
+      <button class="mobile-menu-close" onclick="toggleMobileMenu()" aria-label="Close menu">
+        <i class="fas fa-times"></i>
+      </button>
+      <a href="index.html">Home</a>
+      <a href="marketplace.html">Marketplace</a>
+      <a href="affiliate-dashboard.html">Dashboard</a>
+    </div>
+  </div>
+
+  <section class="features-section" style="padding-top: 2rem;">
+    <div class="container">
+      <div class="section-header" style="text-align:center;">
+        <h2 class="section-title">Add a New Product</h2>
+        <p class="section-subtitle">Fill the details below. Your product will appear in Marketplace.</p>
+      </div>
+
+      <div class="dashboard-section" style="max-width: 760px; margin: 0 auto;">
+        <div class="section-content">
+          <form id="userProductForm">
+            <div class="form-group" style="margin-bottom: 1rem;">
+              <label for="title" style="display:block; font-weight:600; margin-bottom:0.25rem;">Product Title</label>
+              <input id="title" type="text" placeholder="Enter product title" required style="width:100%; padding:0.75rem; border-radius:8px; border:1px solid #e5e7eb;">
+            </div>
+
+            <div class="form-group" style="margin-bottom: 1rem;">
+              <label for="imageUrl" style="display:block; font-weight:600; margin-bottom:0.25rem;">Image URL (optional)</label>
+              <input id="imageUrl" type="url" placeholder="https://example.com/image.jpg" style="width:100%; padding:0.75rem; border-radius:8px; border:1px solid #e5e7eb;">
+              <small style="color:#6b7280;">Or upload an image file below.</small>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 1rem;">
+              <label for="imageFile" style="display:block; font-weight:600; margin-bottom:0.25rem;">Upload Image (optional)</label>
+              <input id="imageFile" type="file" accept="image/*" style="width:100%; padding:0.5rem; border-radius:8px; border:1px solid #e5e7eb; background:#fff;">
+            </div>
+
+            <div class="form-group" style="margin-bottom: 1rem;">
+              <label for="price" style="display:block; font-weight:600; margin-bottom:0.25rem;">Price</label>
+              <input id="price" type="text" inputmode="decimal" placeholder="$19.99" required style="width:100%; padding:0.75rem; border-radius:8px; border:1px solid #e5e7eb;">
+            </div>
+
+            <div class="form-group" style="margin-bottom: 1rem;">
+              <label for="description" style="display:block; font-weight:600; margin-bottom:0.25rem;">Description</label>
+              <textarea id="description" rows="4" placeholder="Enter product description" required style="width:100%; padding:0.75rem; border-radius:8px; border:1px solid #e5e7eb;"></textarea>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+              <label for="link" style="display:block; font-weight:600; margin-bottom:0.25rem;">Product Link</label>
+              <input id="link" type="url" placeholder="https://your-affiliate-link" required style="width:100%; padding:0.75rem; border-radius:8px; border:1px solid #e5e7eb;">
+            </div>
+
+            <div class="form-actions" style="display:flex; gap:0.75rem;">
+              <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i>&nbsp;Submit Product</button>
+              <a href="affiliate-dashboard.html" class="btn btn-secondary">Cancel</a>
+            </div>
+
+            <div id="formError" style="display:none; margin-top: 1rem; color:#ef4444; font-weight:600;"></div>
+            <div id="formSuccess" style="display:none; margin-top: 1rem; color:#16a34a; font-weight:700;"></div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script src="products.js"></script>
+  <script>
+    async function ensureFirebase() {
+      return new Promise((resolve, reject) => {
+        function initDb() {
+          try {
+            if (!firebase.apps || !firebase.apps.length) {
+              const firebaseConfig = {
+                apiKey: "AIzaSyBJqBEWDdBlfv5xAjgcvqput1KC1NzKvlU",
+                authDomain: "smart-deals-pro.firebaseapp.com",
+                projectId: "smart-deals-pro",
+                storageBucket: "smart-deals-pro.firebasestorage.app",
+                messagingSenderId: "680016915696",
+                appId: "1:680016915696:web:4b3721313ea0e2e3342635",
+                measurementId: "G-HV5N0LQJTG"
+              };
+              firebase.initializeApp(firebaseConfig);
+            }
+            const db = firebase.firestore();
+            resolve(db);
+          } catch (e) {
+            reject(e);
+          }
+        }
+
+        if (window.firebase && firebase.firestore) {
+          initDb();
+          return;
+        }
+        // Load SDKs if not present
+        const appScript = document.createElement('script');
+        appScript.src = 'https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js';
+        appScript.onload = () => {
+          const storeScript = document.createElement('script');
+          storeScript.src = 'https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js';
+          storeScript.onload = initDb;
+          storeScript.onerror = () => reject(new Error('Failed to load Firestore SDK'));
+          document.head.appendChild(storeScript);
+        };
+        appScript.onerror = () => reject(new Error('Failed to load Firebase App SDK'));
+        document.head.appendChild(appScript);
+      });
+    }
+    function toggleMobileMenu() {
+      const mobileMenu = document.getElementById('mobileMenu');
+      mobileMenu.classList.toggle('active');
+    }
+
+    function getQueryParam(name) {
+      const params = new URLSearchParams(window.location.search);
+      return params.get(name);
+    }
+
+    function readFileAsDataURL(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const accessEmail = localStorage.getItem('smartdeals_user_submission_access');
+      const currentUserRaw = localStorage.getItem('smartdeals_currentUser');
+      let currentUserEmail = '';
+      try { currentUserEmail = JSON.parse(currentUserRaw)?.email?.toLowerCase() || ''; } catch (e) {}
+
+      const emailParam = (getQueryParam('email') || '').toLowerCase();
+
+      if (!currentUserEmail || !accessEmail || accessEmail.toLowerCase() !== currentUserEmail || emailParam !== currentUserEmail) {
+        alert('Access denied. Please verify your email first.');
+        window.location.href = 'user-product-access.html';
+        return;
+      }
+
+      const form = document.getElementById('userProductForm');
+      const errorBox = document.getElementById('formError');
+      const successBox = document.getElementById('formSuccess');
+
+      form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        errorBox.style.display = 'none';
+        successBox.style.display = 'none';
+
+        const title = document.getElementById('title').value.trim();
+        const imageUrl = document.getElementById('imageUrl').value.trim();
+        const imageFile = document.getElementById('imageFile').files[0] || null;
+        const price = document.getElementById('price').value.trim();
+        const description = document.getElementById('description').value.trim();
+        const link = document.getElementById('link').value.trim();
+
+        if (!title || !price || !description || !link) {
+          errorBox.textContent = 'Please fill in all required fields.';
+          errorBox.style.display = 'block';
+          return;
+        }
+
+        let imageData = '';
+        try {
+          if (imageFile) {
+            imageData = await readFileAsDataURL(imageFile);
+          } else if (imageUrl) {
+            imageData = imageUrl;
+          }
+        } catch (e) {
+          console.warn('Image read failed:', e);
+        }
+
+        // Build product object
+        const product = {
+          title: title,
+          name: title,
+          image: imageData || imageUrl || '',
+          imageData: imageData || undefined,
+          price: price,
+          originalPrice: price,
+          description: description,
+          link: link,
+          category: 'users-products',
+          rating: 5,
+          reviews: 0,
+          discount: 0,
+          featured: false,
+          createdAt: firebase && firebase.firestore ? firebase.firestore.FieldValue.serverTimestamp() : new Date().toISOString(),
+          ownerEmail: currentUserEmail
+        };
+
+        try {
+          const db = await ensureFirebase();
+          // Write product to Firestore 'products' collection
+          const docRef = await db.collection('products').add(product);
+          console.log('Product written with ID:', docRef.id);
+          successBox.textContent = 'Product added successfully! Redirecting to Marketplace...';
+          successBox.style.display = 'block';
+          setTimeout(() => {
+            localStorage.removeItem('smartdeals_user_submission_access');
+            window.location.href = 'marketplace.html';
+          }, 900);
+        } catch (err) {
+          console.error('Failed to save product to Firebase:', err);
+          errorBox.textContent = 'Failed to save product. Please try again.';
+          errorBox.style.display = 'block';
+        }
+      });
+    });
+  </script>
+</body>
+</html>
+

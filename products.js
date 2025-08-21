@@ -85,10 +85,22 @@ class ProductStateManager {
     this.products = [];
     this.productMap.clear();
     
+    const toJsDate = (val) => {
+      try {
+        if (!val) return new Date(0);
+        if (typeof val?.toDate === 'function') return val.toDate(); // Firestore Timestamp
+        if (typeof val === 'number') return new Date(val);
+        if (typeof val === 'string') return new Date(val);
+        return new Date(0);
+      } catch (_) {
+        return new Date(0);
+      }
+    };
+    
     // Sort products by creation date (newest first) before adding
     const sortedProducts = newProducts.sort((a, b) => {
-      const dateA = new Date(a.createdAt || 0);
-      const dateB = new Date(b.createdAt || 0);
+      const dateA = toJsDate(a.createdAt);
+      const dateB = toJsDate(b.createdAt);
       return dateB - dateA;
     });
     
@@ -117,6 +129,22 @@ class ProductStateManager {
 
   // Normalize product data with consistent structure
   normalizeProduct(prod, id) {
+    // Normalize createdAt to ISO string for consistent sorting/rendering
+    let createdAtIso;
+    try {
+      if (prod.createdAt && typeof prod.createdAt.toDate === 'function') {
+        createdAtIso = prod.createdAt.toDate().toISOString();
+      } else if (typeof prod.createdAt === 'number') {
+        createdAtIso = new Date(prod.createdAt).toISOString();
+      } else if (typeof prod.createdAt === 'string') {
+        const d = new Date(prod.createdAt);
+        createdAtIso = isNaN(d.getTime()) ? new Date().toISOString() : d.toISOString();
+      } else {
+        createdAtIso = new Date().toISOString();
+      }
+    } catch (_) {
+      createdAtIso = new Date().toISOString();
+    }
     // Helper function to safely parse price
     const safeParsePrice = (price) => {
       if (price === null || price === undefined || price === '') {
@@ -151,7 +179,7 @@ class ProductStateManager {
       discount: isNaN(parseInt(prod.discount)) ? 0 : parseInt(prod.discount),
       featured: Boolean(prod.featured),
       productReviews: prod.productReviews || this.generateRandomReviews(prod.title || prod.name || 'Product'),
-      createdAt: prod.createdAt || new Date().toISOString()
+      createdAt: createdAtIso
     };
   }
 

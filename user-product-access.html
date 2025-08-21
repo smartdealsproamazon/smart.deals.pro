@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Product Access - SmartDeals Pro</title>
+  <link rel="icon" type="image/svg+xml" href="logo.svg">
+  <link rel="apple-touch-icon" sizes="180x180" href="logo.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="main-header">
+    <div class="container">
+      <div class="header-content">
+        <div class="header-left">
+          <a href="index.html" class="logo-link">
+            <img src="logo.svg?v=2024.1" alt="SmartDeals Pro Logo" class="logo" loading="eager" />
+          </a>
+          <div class="site-name">
+            <span class="logo-text">User Product Access</span>
+          </div>
+        </div>
+        <nav class="main-nav">
+          <ul>
+            <li><a href="index.html" class="nav-link">Home</a></li>
+            <li><a href="marketplace.html" class="nav-link">Marketplace</a></li>
+            <li><a href="affiliate-dashboard.html" class="nav-link">Dashboard</a></li>
+          </ul>
+        </nav>
+        <div class="header-right">
+          <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+            <i class="fas fa-bars"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu-content">
+      <button class="mobile-menu-close" onclick="toggleMobileMenu()" aria-label="Close menu">
+        <i class="fas fa-times"></i>
+      </button>
+      <a href="index.html">Home</a>
+      <a href="marketplace.html">Marketplace</a>
+      <a href="affiliate-dashboard.html">Dashboard</a>
+    </div>
+  </div>
+
+  <section class="features-section" style="padding-top: 2rem;">
+    <div class="container">
+      <div class="section-header" style="text-align:center;">
+        <h2 class="section-title">Access Verification</h2>
+        <p class="section-subtitle">Enter your registered email to proceed to User Product Submission</p>
+      </div>
+
+      <div class="dashboard-section" style="max-width: 560px; margin: 0 auto;">
+        <div class="section-content">
+          <form id="accessForm" class="newsletter-form" style="display:flex; gap: 0.75rem;">
+            <input id="accessEmail" type="email" placeholder="Enter your registered email" required style="flex:1;" />
+            <button type="submit" class="btn btn-primary">Verify & Continue</button>
+          </form>
+          <p id="accessHint" style="margin-top: 0.75rem; color:#6b7280; font-size:0.95rem;">
+            Use the same email as your affiliate registration.
+          </p>
+          <div id="accessError" style="display:none; margin-top: 0.75rem; color:#ef4444; font-weight:600;"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script src="user-auth.js"></script>
+  <script>
+    function toggleMobileMenu() {
+      const mobileMenu = document.getElementById('mobileMenu');
+      mobileMenu.classList.toggle('active');
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const form = document.getElementById('accessForm');
+      const emailInput = document.getElementById('accessEmail');
+      const errorBox = document.getElementById('accessError');
+
+      // Pre-fill with current user's email if available
+      const currentUserStr = localStorage.getItem('smartdeals_currentUser');
+      if (currentUserStr) {
+        try {
+          const user = JSON.parse(currentUserStr);
+          if (user?.email) {
+            emailInput.value = user.email;
+          }
+        } catch (e) {}
+      }
+
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        errorBox.style.display = 'none';
+        const enteredEmail = emailInput.value.trim().toLowerCase();
+
+        const currentUserRaw = localStorage.getItem('smartdeals_currentUser');
+        if (!currentUserRaw) {
+          errorBox.textContent = 'Please sign in or register first.';
+          errorBox.style.display = 'block';
+          return;
+        }
+        let currentUser;
+        try { currentUser = JSON.parse(currentUserRaw); } catch (e) { currentUser = null; }
+        const registeredEmail = (currentUser?.email || '').toLowerCase();
+
+        if (!enteredEmail || !registeredEmail || enteredEmail !== registeredEmail) {
+          errorBox.textContent = 'Email mismatch. Enter the same email used in registration.';
+          errorBox.style.display = 'block';
+          return;
+        }
+
+        // Grant scoped access for this email
+        localStorage.setItem('smartdeals_user_submission_access', enteredEmail);
+        // Redirect with email parameter
+        window.location.href = 'user-product-submission.html?email=' + encodeURIComponent(enteredEmail);
+      });
+    });
+  </script>
+</body>
+</html>
+
