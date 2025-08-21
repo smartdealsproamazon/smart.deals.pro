@@ -104,6 +104,47 @@
 
   <script src="products.js"></script>
   <script>
+    async function ensureFirebase() {
+      return new Promise((resolve, reject) => {
+        function initDb() {
+          try {
+            if (!firebase.apps || !firebase.apps.length) {
+              const firebaseConfig = {
+                apiKey: "AIzaSyBJqBEWDdBlfv5xAjgcvqput1KC1NzKvlU",
+                authDomain: "smart-deals-pro.firebaseapp.com",
+                projectId: "smart-deals-pro",
+                storageBucket: "smart-deals-pro.firebasestorage.app",
+                messagingSenderId: "680016915696",
+                appId: "1:680016915696:web:4b3721313ea0e2e3342635",
+                measurementId: "G-HV5N0LQJTG"
+              };
+              firebase.initializeApp(firebaseConfig);
+            }
+            const db = firebase.firestore();
+            resolve(db);
+          } catch (e) {
+            reject(e);
+          }
+        }
+
+        if (window.firebase && firebase.firestore) {
+          initDb();
+          return;
+        }
+        // Load SDKs if not present
+        const appScript = document.createElement('script');
+        appScript.src = 'https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js';
+        appScript.onload = () => {
+          const storeScript = document.createElement('script');
+          storeScript.src = 'https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js';
+          storeScript.onload = initDb;
+          storeScript.onerror = () => reject(new Error('Failed to load Firestore SDK'));
+          document.head.appendChild(storeScript);
+        };
+        appScript.onerror = () => reject(new Error('Failed to load Firebase App SDK'));
+        document.head.appendChild(appScript);
+      });
+    }
     function toggleMobileMenu() {
       const mobileMenu = document.getElementById('mobileMenu');
       mobileMenu.classList.toggle('active');
@@ -180,41 +221,31 @@
           originalPrice: price,
           description: description,
           link: link,
-          category: 'user-submission',
+          category: 'users-products',
           rating: 5,
           reviews: 0,
           discount: 0,
           featured: false,
-          createdAt: new Date().toISOString(),
+          createdAt: firebase && firebase.firestore ? firebase.firestore.FieldValue.serverTimestamp() : new Date().toISOString(),
           ownerEmail: currentUserEmail
         };
 
-        // Persist per-user products
-        const userKey = 'user_products_' + currentUserEmail;
-        const userProducts = JSON.parse(localStorage.getItem(userKey) || '[]');
-        userProducts.unshift(product);
-        localStorage.setItem(userKey, JSON.stringify(userProducts));
-
-        // Merge into global products to appear in marketplace
-        const globalProducts = JSON.parse(localStorage.getItem('products') || '[]');
-        // Generate a unique id similar to ProductStateManager logic (fallback if not loaded)
-        const uidBase = (title || '') + (link || '') + (price || '') + Date.now();
-        let hash = 0; for (let i = 0; i < uidBase.length; i++) { hash = ((hash << 5) - hash) + uidBase.charCodeAt(i); hash |= 0; }
-        const newId = 'user_' + Math.abs(hash).toString(36) + '_' + Date.now().toString(36);
-        product.id = newId;
-        globalProducts.unshift(product);
-        localStorage.setItem('products', JSON.stringify(globalProducts));
-        localStorage.setItem('products_updated', Date.now().toString());
-
-        // Success UI
-        successBox.textContent = 'Product added successfully! Redirecting to Marketplace...';
-        successBox.style.display = 'block';
-
-        // Clear access once used to avoid reuse from different accounts later
-        setTimeout(() => {
-          localStorage.removeItem('smartdeals_user_submission_access');
-          window.location.href = 'marketplace.html';
-        }, 900);
+        try {
+          const db = await ensureFirebase();
+          // Write product to Firestore 'products' collection
+          const docRef = await db.collection('products').add(product);
+          console.log('Product written with ID:', docRef.id);
+          successBox.textContent = 'Product added successfully! Redirecting to Marketplace...';
+          successBox.style.display = 'block';
+          setTimeout(() => {
+            localStorage.removeItem('smartdeals_user_submission_access');
+            window.location.href = 'marketplace.html';
+          }, 900);
+        } catch (err) {
+          console.error('Failed to save product to Firebase:', err);
+          errorBox.textContent = 'Failed to save product. Please try again.';
+          errorBox.style.display = 'block';
+        }
       });
     });
   </script>
