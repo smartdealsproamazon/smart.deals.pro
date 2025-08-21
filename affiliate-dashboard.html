@@ -4,9 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Affiliate Dashboard - SmartDeals Pro</title>
-  <meta name="description" content="Manage your affiliate products, track earnings, view analytics, and grow your business with our comprehensive dashboard.">
-  <meta name="keywords" content="affiliate dashboard, affiliate analytics, earnings tracking, product management">
-  <link rel="canonical" href="https://smartdealsproamazon.github.io/smart.deals.pro/affiliate-dashboard.html">
+  <meta name="description" content="Manage your affiliate business, track real earnings, and grow your income with SmartDeals Pro dashboard.">
+  <meta name="keywords" content="affiliate dashboard, earnings tracking, affiliate analytics, product management">
   
   <!-- Enhanced Favicon Implementation -->
   <link rel="icon" type="image/x-icon" href="favicon.ico" sizes="16x16 32x32">
@@ -26,8 +25,23 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link rel="stylesheet" href="style.css" />
   
+  <!-- Authentication Check Script - Runs Immediately -->
+  <script>
+    // Immediate authentication check before page loads
+    (function() {
+      const currentUser = localStorage.getItem('smartdeals_currentUser');
+      const affiliateRegistered = localStorage.getItem('smartdeals_affiliateRegistered');
+      
+      if (!currentUser || !affiliateRegistered) {
+        alert('Access Denied: Please register as an affiliate first to access the dashboard.');
+        window.location.href = 'affiliate-register.html';
+      }
+    })();
+  </script>
+  
   <style>
-    .dashboard-layout {
+    /* Dashboard Styles */
+    .dashboard-container {
       display: flex;
       min-height: 100vh;
       background: #f8fafc;
@@ -44,7 +58,6 @@
       height: calc(100vh - 80px);
       overflow-y: auto;
       z-index: 100;
-      transition: transform 0.3s ease;
     }
     
     .sidebar-header {
@@ -83,6 +96,17 @@
       font-size: 0.9rem;
     }
     
+    .affiliate-id {
+      background: #f3f4f6;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      margin: 1rem 0;
+      text-align: center;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #374151;
+    }
+    
     .sidebar-nav {
       padding: 1rem 0;
     }
@@ -98,13 +122,13 @@
     
     .nav-item:hover, .nav-item.active {
       background: #f3f4f6;
-      color: #3b82f6;
-      border-left-color: #3b82f6;
+      color: #667eea;
+      border-left-color: #667eea;
     }
     
     .nav-item i {
-      width: 20px;
       margin-right: 0.75rem;
+      width: 20px;
     }
     
     .dashboard-main {
@@ -117,14 +141,14 @@
       margin-bottom: 2rem;
     }
     
-    .dashboard-title {
+    .dashboard-header h1 {
       font-size: 2rem;
       font-weight: 700;
       color: #1f2937;
       margin-bottom: 0.5rem;
     }
     
-    .dashboard-subtitle {
+    .dashboard-header p {
       color: #6b7280;
       font-size: 1.1rem;
     }
@@ -142,6 +166,12 @@
       border-radius: 12px;
       box-shadow: 0 4px 15px rgba(0,0,0,0.08);
       border: 1px solid #e5e7eb;
+      transition: all 0.3s ease;
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.12);
     }
     
     .stat-header {
@@ -164,55 +194,36 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.25rem;
+      color: white;
+      font-size: 1.2rem;
     }
     
-    .stat-icon.earnings {
-      background: linear-gradient(135deg, #10b981, #059669);
-      color: white;
-    }
-    
-    .stat-icon.products {
-      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-      color: white;
-    }
-    
-    .stat-icon.clicks {
-      background: linear-gradient(135deg, #f59e0b, #d97706);
-      color: white;
-    }
-    
-    .stat-icon.conversion {
-      background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-      color: white;
-    }
+
+    .stat-icon.products { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+    .stat-icon.views { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+    .stat-icon.visits { background: linear-gradient(135deg, #f59e0b, #d97706); }
     
     .stat-value {
       font-size: 2rem;
       font-weight: 700;
       color: #1f2937;
-      margin-bottom: 0.25rem;
+      margin-bottom: 0.5rem;
     }
     
     .stat-change {
-      font-size: 0.875rem;
+      font-size: 0.85rem;
       font-weight: 500;
     }
     
-    .stat-change.positive {
-      color: #10b981;
-    }
-    
-    .stat-change.negative {
-      color: #ef4444;
-    }
+    .stat-change.positive { color: #10b981; }
+    .stat-change.negative { color: #ef4444; }
     
     .dashboard-section {
       background: white;
       border-radius: 12px;
       box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-      margin-bottom: 2rem;
       border: 1px solid #e5e7eb;
+      margin-bottom: 2rem;
     }
     
     .section-header {
@@ -229,130 +240,8 @@
       color: #1f2937;
     }
     
-    .section-action {
-      background: #3b82f6;
-      color: white;
-      border: none;
-      padding: 0.5rem 1rem;
-      border-radius: 6px;
-      font-size: 0.875rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.3s;
-      text-decoration: none;
-      display: inline-block;
-    }
-    
-    .section-action:hover {
-      background: #1d4ed8;
-      transform: translateY(-1px);
-    }
-    
     .section-content {
       padding: 2rem;
-    }
-    
-    .products-table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    
-    .products-table th,
-    .products-table td {
-      padding: 1rem;
-      text-align: left;
-      border-bottom: 1px solid #e5e7eb;
-    }
-    
-    .products-table th {
-      font-weight: 600;
-      color: #374151;
-      background: #f9fafb;
-    }
-    
-    .product-info {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
-    
-    .product-image {
-      width: 50px;
-      height: 50px;
-      border-radius: 8px;
-      object-fit: cover;
-    }
-    
-    .product-details h4 {
-      font-weight: 600;
-      color: #1f2937;
-      margin-bottom: 0.25rem;
-    }
-    
-    .product-details p {
-      color: #6b7280;
-      font-size: 0.875rem;
-    }
-    
-    .status-badge {
-      padding: 0.25rem 0.75rem;
-      border-radius: 20px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      text-transform: uppercase;
-    }
-    
-    .status-badge.active {
-      background: #d1fae5;
-      color: #065f46;
-    }
-    
-    .status-badge.pending {
-      background: #fef3c7;
-      color: #92400e;
-    }
-    
-    .status-badge.rejected {
-      background: #fee2e2;
-      color: #991b1b;
-    }
-    
-    .action-buttons {
-      display: flex;
-      gap: 0.5rem;
-    }
-    
-    .action-btn {
-      padding: 0.5rem;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: all 0.3s;
-      font-size: 0.875rem;
-    }
-    
-    .action-btn.edit {
-      background: #e0f2fe;
-      color: #0277bd;
-    }
-    
-    .action-btn.delete {
-      background: #ffebee;
-      color: #c62828;
-    }
-    
-    .action-btn:hover {
-      transform: translateY(-1px);
-    }
-    
-    .chart-container {
-      height: 300px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #f9fafb;
-      border-radius: 8px;
-      color: #6b7280;
     }
     
     .quick-actions {
@@ -361,63 +250,119 @@
       gap: 1rem;
     }
     
-    .quick-action {
-      background: #f8fafc;
-      border: 2px dashed #d1d5db;
-      border-radius: 8px;
-      padding: 2rem;
-      text-align: center;
-      transition: all 0.3s;
-      cursor: pointer;
-      text-decoration: none;
-      color: inherit;
-    }
-    
-    .quick-action:hover {
-      border-color: #3b82f6;
-      background: #f0f9ff;
-    }
-    
-    .quick-action i {
-      font-size: 2rem;
-      color: #3b82f6;
-      margin-bottom: 1rem;
-    }
-    
-    .quick-action h4 {
-      font-weight: 600;
-      color: #1f2937;
-      margin-bottom: 0.5rem;
-    }
-    
-    .quick-action p {
-      color: #6b7280;
-      font-size: 0.875rem;
-    }
-    
-    .mobile-sidebar-toggle {
-      display: none;
-      position: fixed;
-      top: 100px;
-      left: 1rem;
-      z-index: 101;
-      background: #3b82f6;
+    .action-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      padding: 1rem 1.5rem;
+      background: linear-gradient(135deg, #667eea, #764ba2);
       color: white;
       border: none;
-      padding: 0.75rem;
       border-radius: 8px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
       cursor: pointer;
     }
     
-    /* Mobile Responsive */
+    .action-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+      color: white;
+    }
+    
+    .action-btn.secondary {
+      background: linear-gradient(135deg, #6b7280, #4b5563);
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 3rem 2rem;
+      color: #6b7280;
+    }
+    
+    .empty-state i {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+    
+    .empty-state h3 {
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+      color: #374151;
+    }
+    
+    .empty-state p {
+      margin-bottom: 2rem;
+    }
+    
+    .recent-activity {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    
+    .activity-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      border-bottom: 1px solid #f3f4f6;
+    }
+    
+    .activity-item:last-child {
+      border-bottom: none;
+    }
+    
+    .activity-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #f3f4f6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #6b7280;
+    }
+    
+    .activity-content {
+      flex: 1;
+    }
+    
+    .activity-title {
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 0.25rem;
+    }
+    
+    .activity-time {
+      font-size: 0.85rem;
+      color: #6b7280;
+    }
+    
+    .status-badge {
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+    
+    .status-badge.active {
+      background: #dcfce7;
+      color: #166534;
+    }
+    
+    .status-badge.pending {
+      background: #fef3c7;
+      color: #92400e;
+    }
+    
+    /* Mobile Responsiveness */
     @media (max-width: 768px) {
-      .dashboard-layout {
-        padding-top: 80px;
-      }
-      
       .dashboard-sidebar {
         transform: translateX(-100%);
-        width: 280px;
+        transition: transform 0.3s ease;
       }
       
       .dashboard-sidebar.active {
@@ -429,49 +374,38 @@
         padding: 1rem;
       }
       
-      .mobile-sidebar-toggle {
-        display: block;
-      }
-      
       .stats-grid {
         grid-template-columns: 1fr;
-      }
-      
-      .products-table {
-        font-size: 0.875rem;
-      }
-      
-      .product-info {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.5rem;
-      }
-      
-      .action-buttons {
-        flex-direction: column;
       }
       
       .quick-actions {
         grid-template-columns: 1fr;
       }
-      
-      .section-header {
-        flex-direction: column;
-        gap: 1rem;
-        align-items: flex-start;
+    }
+    
+    .mobile-sidebar-toggle {
+      display: none;
+      position: fixed;
+      top: 90px;
+      left: 1rem;
+      z-index: 101;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 0.75rem;
+      cursor: pointer;
+    }
+    
+    @media (max-width: 768px) {
+      .mobile-sidebar-toggle {
+        display: block;
       }
     }
   </style>
 </head>
-<body>
-  <!-- Loading Screen -->
-  <div id="loading-screen">
-    <div class="preloader-container">
-      <div class="old-loader"></div>
-      <p class="old-loading-text">Loading dashboard...</p>
-    </div>
-  </div>
 
+<body>
   <!-- Header -->
   <header class="main-header">
     <div class="container">
@@ -480,27 +414,14 @@
           <a href="index.html" class="logo-link">
             <img src="logo.svg?v=2024.1" alt="SmartDeals Pro Logo" class="logo" loading="eager" />
           </a>
-          <div class="site-name">
-            <span class="logo-text">SmartDeals Pro</span>
-          </div>
         </div>
         
         <nav class="main-nav">
           <ul>
             <li><a href="index.html" class="nav-link">Home</a></li>
-            <li><a href="marketplace.html" class="nav-link">🛍️ Marketplace</a></li>
-            <li class="dropdown">
-              <a href="#" class="nav-link dropdown-toggle">For Affiliates <i class="fas fa-chevron-down"></i></a>
-              <ul class="dropdown-menu">
-                <li><a href="for-affiliates.html">🚀 Join Network</a></li>
-                <li><a href="affiliate-register.html">📝 Register</a></li>
-                <li><a href="affiliate-dashboard.html" class="active">📊 Dashboard</a></li>
-                <li><a href="success-stories.html">🏆 Success Stories</a></li>
-              </ul>
-            </li>
-            <li><a href="reviews.html" class="nav-link">Reviews</a></li>
             <li><a href="about.html" class="nav-link">About</a></li>
             <li><a href="contact.html" class="nav-link">Contact</a></li>
+            <li><a href="faq.html" class="nav-link">FAQ</a></li>
           </ul>
         </nav>
 
@@ -518,78 +439,59 @@
     <i class="fas fa-bars"></i>
   </button>
 
-  <!-- Dashboard Layout -->
-  <div class="dashboard-layout">
+  <!-- Dashboard Container -->
+  <div class="dashboard-container">
+    
     <!-- Sidebar -->
-    <aside class="dashboard-sidebar" id="dashboardSidebar">
+    <div class="dashboard-sidebar" id="dashboardSidebar">
       <div class="sidebar-header">
         <div class="user-info">
-          <div class="user-avatar">JD</div>
+          <div class="user-avatar" id="userAvatar">U</div>
           <div class="user-details">
-            <h3>John Doe</h3>
-            <p>Premium Member</p>
+            <h3 id="userName">Loading...</h3>
+            <p id="userEmail">Loading...</p>
           </div>
+        </div>
+        <div class="affiliate-id">
+          ID: <span id="affiliateId">Loading...</span>
         </div>
       </div>
       
       <nav class="sidebar-nav">
         <a href="#overview" class="nav-item active" onclick="showSection('overview')">
-          <i class="fas fa-chart-pie"></i>
-          Overview
+          <i class="fas fa-tachometer-alt"></i> Overview
         </a>
+
         <a href="#products" class="nav-item" onclick="showSection('products')">
-          <i class="fas fa-box"></i>
-          My Products
-        </a>
-        <a href="#add-product" class="nav-item" onclick="showSection('add-product')">
-          <i class="fas fa-plus"></i>
-          Add Product
+          <i class="fas fa-box"></i> My Products
         </a>
         <a href="#analytics" class="nav-item" onclick="showSection('analytics')">
-          <i class="fas fa-chart-line"></i>
-          Analytics
-        </a>
-        <a href="#earnings" class="nav-item" onclick="showSection('earnings')">
-          <i class="fas fa-dollar-sign"></i>
-          Earnings
+          <i class="fas fa-chart-bar"></i> Analytics
         </a>
         <a href="#profile" class="nav-item" onclick="showSection('profile')">
-          <i class="fas fa-user"></i>
-          Profile
+          <i class="fas fa-user"></i> Profile
         </a>
-        <a href="#support" class="nav-item" onclick="showSection('support')">
-          <i class="fas fa-headset"></i>
-          Support
+        <a href="#settings" class="nav-item" onclick="showSection('settings')">
+          <i class="fas fa-cog"></i> Settings
         </a>
-        <a href="index.html" class="nav-item">
-          <i class="fas fa-home"></i>
-          Back to Site
+        <a href="#" class="nav-item" onclick="signOut()">
+          <i class="fas fa-sign-out-alt"></i> Sign Out
         </a>
       </nav>
-    </aside>
+    </div>
 
     <!-- Main Content -->
-    <main class="dashboard-main">
+    <div class="dashboard-main">
+      
       <!-- Overview Section -->
       <div id="overview" class="dashboard-section-content">
         <div class="dashboard-header">
-          <h1 class="dashboard-title">Welcome back, John! 👋</h1>
-          <p class="dashboard-subtitle">Here's what's happening with your affiliate business today.</p>
+          <h1>Dashboard Overview</h1>
+          <p>Welcome back! Here's your affiliate performance summary.</p>
         </div>
 
         <!-- Stats Grid -->
         <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-header">
-              <div class="stat-title">Total Earnings</div>
-              <div class="stat-icon earnings">
-                <i class="fas fa-dollar-sign"></i>
-              </div>
-            </div>
-            <div class="stat-value">$2,847.50</div>
-            <div class="stat-change positive">+12.5% from last month</div>
-          </div>
-          
           <div class="stat-card">
             <div class="stat-header">
               <div class="stat-title">Active Products</div>
@@ -597,30 +499,30 @@
                 <i class="fas fa-box"></i>
               </div>
             </div>
-            <div class="stat-value">24</div>
-            <div class="stat-change positive">+3 new this month</div>
+            <div class="stat-value" id="activeProducts">0</div>
+            <div class="stat-change positive" id="productsChange">Ready to add products</div>
           </div>
           
           <div class="stat-card">
             <div class="stat-header">
-              <div class="stat-title">Total Clicks</div>
-              <div class="stat-icon clicks">
-                <i class="fas fa-mouse-pointer"></i>
+              <div class="stat-title">Total Views</div>
+              <div class="stat-icon views">
+                <i class="fas fa-eye"></i>
               </div>
             </div>
-            <div class="stat-value">8,456</div>
-            <div class="stat-change positive">+23.1% from last month</div>
+            <div class="stat-value" id="totalViews">0</div>
+            <div class="stat-change" id="viewsChange">Start promoting to get views</div>
           </div>
           
           <div class="stat-card">
             <div class="stat-header">
-              <div class="stat-title">Conversion Rate</div>
-              <div class="stat-icon conversion">
-                <i class="fas fa-percentage"></i>
+              <div class="stat-title">Profile Visits</div>
+              <div class="stat-icon visits">
+                <i class="fas fa-users"></i>
               </div>
             </div>
-            <div class="stat-value">3.4%</div>
-            <div class="stat-change negative">-0.2% from last month</div>
+            <div class="stat-value" id="profileVisits">0</div>
+            <div class="stat-change" id="visitsChange">No visits yet</div>
           </div>
         </div>
 
@@ -631,386 +533,277 @@
           </div>
           <div class="section-content">
             <div class="quick-actions">
-              <a href="#add-product" class="quick-action" onclick="showSection('add-product')">
-                <i class="fas fa-plus"></i>
-                <h4>Add New Product</h4>
-                <p>List a new affiliate product</p>
+              <a href="product-submission.html" class="action-btn">
+                <i class="fas fa-plus"></i> Add Product
               </a>
-              <a href="#analytics" class="quick-action" onclick="showSection('analytics')">
-                <i class="fas fa-chart-line"></i>
-                <h4>View Analytics</h4>
-                <p>Check performance metrics</p>
-              </a>
-              <a href="#earnings" class="quick-action" onclick="showSection('earnings')">
-                <i class="fas fa-money-bill-wave"></i>
-                <h4>Request Payout</h4>
-                <p>Withdraw your earnings</p>
-              </a>
-              <a href="marketplace.html" class="quick-action">
-                <i class="fas fa-store"></i>
-                <h4>View Marketplace</h4>
-                <p>See your products live</p>
-              </a>
+              <button class="action-btn secondary" onclick="showSection('analytics')">
+                <i class="fas fa-chart-line"></i> View Analytics
+              </button>
+              <button class="action-btn secondary" onclick="showSection('profile')">
+                <i class="fas fa-user-edit"></i> Update Profile
+              </button>
             </div>
           </div>
         </div>
 
-        <!-- Recent Products -->
+        <!-- Recent Activity -->
         <div class="dashboard-section">
           <div class="section-header">
-            <h2 class="section-title">Recent Products</h2>
-            <a href="#products" class="section-action" onclick="showSection('products')">View All</a>
+            <h2 class="section-title">Recent Activity</h2>
           </div>
           <div class="section-content">
-            <table class="products-table">
-              <thead>
-                <tr>
-                  <th>Product</th>
-                  <th>Status</th>
-                  <th>Clicks</th>
-                  <th>Earnings</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>
-                    <div class="product-info">
-                      <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=50&h=50&fit=crop" alt="Headphones" class="product-image">
-                      <div class="product-details">
-                        <h4>Wireless Headphones</h4>
-                        <p>Electronics • Amazon</p>
-                      </div>
-                    </div>
-                  </td>
-                  <td><span class="status-badge active">Active</span></td>
-                  <td>1,234</td>
-                  <td>$456.78</td>
-                  <td>
-                    <div class="action-buttons">
-                      <button class="action-btn edit"><i class="fas fa-edit"></i></button>
-                      <button class="action-btn delete"><i class="fas fa-trash"></i></button>
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <div class="product-info">
-                      <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=50&h=50&fit=crop" alt="Fitness" class="product-image">
-                      <div class="product-details">
-                        <h4>Fitness Program</h4>
-                        <p>Health • ClickBank</p>
-                      </div>
-                    </div>
-                  </td>
-                  <td><span class="status-badge active">Active</span></td>
-                  <td>892</td>
-                  <td>$234.50</td>
-                  <td>
-                    <div class="action-buttons">
-                      <button class="action-btn edit"><i class="fas fa-edit"></i></button>
-                      <button class="action-btn delete"><i class="fas fa-trash"></i></button>
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <div class="product-info">
-                      <img src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=50&h=50&fit=crop" alt="Gaming" class="product-image">
-                      <div class="product-details">
-                        <h4>Gaming Keyboard</h4>
-                        <p>Gaming • Amazon</p>
-                      </div>
-                    </div>
-                  </td>
-                  <td><span class="status-badge pending">Pending</span></td>
-                  <td>0</td>
-                  <td>$0.00</td>
-                  <td>
-                    <div class="action-buttons">
-                      <button class="action-btn edit"><i class="fas fa-edit"></i></button>
-                      <button class="action-btn delete"><i class="fas fa-trash"></i></button>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+            <div class="recent-activity" id="recentActivity">
+              <div class="empty-state">
+                <i class="fas fa-history"></i>
+                <h3>No Recent Activity</h3>
+                <p>Your recent affiliate activities will appear here.</p>
+                <a href="product-submission.html" class="action-btn">Add Your First Product</a>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Products Section -->
+      <!-- Other Sections (Hidden by default) -->
+
       <div id="products" class="dashboard-section-content" style="display: none;">
         <div class="dashboard-header">
-          <h1 class="dashboard-title">My Products</h1>
-          <p class="dashboard-subtitle">Manage all your affiliate products in one place</p>
+          <h1>My Products</h1>
+          <p>Manage your affiliate product listings.</p>
         </div>
-
-        <div class="dashboard-section">
-          <div class="section-header">
-            <h2 class="section-title">All Products (24)</h2>
-            <a href="#add-product" class="section-action" onclick="showSection('add-product')">Add New Product</a>
-          </div>
-          <div class="section-content">
-            <p>Complete products management interface would be implemented here with:</p>
-            <ul style="color: #6b7280; line-height: 1.8;">
-              <li>✅ Full product listing with pagination</li>
-              <li>✅ Search and filter functionality</li>
-              <li>✅ Bulk actions (delete, status change)</li>
-              <li>✅ Product performance metrics</li>
-              <li>✅ Edit product details inline</li>
-              <li>✅ Product status management</li>
-            </ul>
-          </div>
+        <div class="empty-state">
+          <i class="fas fa-box-open"></i>
+          <h3>No Products Listed</h3>
+          <p>Add your first product to start earning commissions.</p>
+          <a href="product-submission.html" class="action-btn">Add Product</a>
         </div>
       </div>
 
-      <!-- Add Product Section -->
-      <div id="add-product" class="dashboard-section-content" style="display: none;">
-        <div class="dashboard-header">
-          <h1 class="dashboard-title">Add New Product</h1>
-          <p class="dashboard-subtitle">List your affiliate product to reach millions of shoppers</p>
-        </div>
-
-        <div class="dashboard-section">
-          <div class="section-content">
-            <p style="color: #6b7280; margin-bottom: 2rem;">Enhanced product submission form would be implemented here with:</p>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
-              <div style="background: #f8fafc; padding: 1.5rem; border-radius: 8px;">
-                <h4 style="color: #1f2937; margin-bottom: 1rem;">📝 Product Information</h4>
-                <ul style="color: #6b7280; line-height: 1.8;">
-                  <li>Product title and description</li>
-                  <li>Category selection</li>
-                  <li>Price and commission rate</li>
-                  <li>Product images</li>
-                </ul>
-              </div>
-              <div style="background: #f8fafc; padding: 1.5rem; border-radius: 8px;">
-                <h4 style="color: #1f2937; margin-bottom: 1rem;">🔗 Affiliate Details</h4>
-                <ul style="color: #6b7280; line-height: 1.8;">
-                  <li>Affiliate link validation</li>
-                  <li>Platform selection</li>
-                  <li>Commission tracking setup</li>
-                  <li>Terms and conditions</li>
-                </ul>
-              </div>
-            </div>
-            <div style="margin-top: 2rem; text-align: center;">
-              <button class="section-action" style="padding: 1rem 2rem;">🚀 Submit Product for Review</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Analytics Section -->
       <div id="analytics" class="dashboard-section-content" style="display: none;">
         <div class="dashboard-header">
-          <h1 class="dashboard-title">Analytics & Insights</h1>
-          <p class="dashboard-subtitle">Track your performance and optimize your strategy</p>
+          <h1>Analytics</h1>
+          <p>Monitor your product views and profile performance.</p>
         </div>
-
-        <div class="dashboard-section">
-          <div class="section-header">
-            <h2 class="section-title">Performance Chart</h2>
-          </div>
-          <div class="section-content">
-            <div class="chart-container">
-              <div style="text-align: center;">
-                <i class="fas fa-chart-line" style="font-size: 3rem; color: #d1d5db; margin-bottom: 1rem;"></i>
-                <p>Interactive analytics charts would be implemented here with:</p>
-                <ul style="color: #6b7280; line-height: 1.8; text-align: left; margin-top: 1rem;">
-                  <li>📈 Earnings over time</li>
-                  <li>👆 Click tracking and sources</li>
-                  <li>🎯 Conversion rate analysis</li>
-                  <li>🏆 Top performing products</li>
-                  <li>🌍 Geographic performance</li>
-                </ul>
-              </div>
-            </div>
-          </div>
+        <div class="empty-state">
+          <i class="fas fa-chart-bar"></i>
+          <h3>No Analytics Data</h3>
+          <p>Analytics will appear once you start getting product views and profile visits.</p>
+          <a href="product-submission.html" class="action-btn">Start Adding Products</a>
         </div>
       </div>
 
-      <!-- Earnings Section -->
-      <div id="earnings" class="dashboard-section-content" style="display: none;">
-        <div class="dashboard-header">
-          <h1 class="dashboard-title">Earnings & Payouts</h1>
-          <p class="dashboard-subtitle">Track your commissions and request payouts</p>
-        </div>
-
-        <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-header">
-              <div class="stat-title">Available Balance</div>
-              <div class="stat-icon earnings">
-                <i class="fas fa-wallet"></i>
-              </div>
-            </div>
-            <div class="stat-value">$847.25</div>
-            <div class="stat-change positive">Ready for withdrawal</div>
-          </div>
-          
-          <div class="stat-card">
-            <div class="stat-header">
-              <div class="stat-title">Pending Earnings</div>
-              <div class="stat-icon clicks">
-                <i class="fas fa-clock"></i>
-              </div>
-            </div>
-            <div class="stat-value">$234.80</div>
-            <div class="stat-change">Processing...</div>
-          </div>
-          
-          <div class="stat-card">
-            <div class="stat-header">
-              <div class="stat-title">This Month</div>
-              <div class="stat-icon products">
-                <i class="fas fa-calendar"></i>
-              </div>
-            </div>
-            <div class="stat-value">$456.30</div>
-            <div class="stat-change positive">+15.2% vs last month</div>
-          </div>
-          
-          <div class="stat-card">
-            <div class="stat-header">
-              <div class="stat-title">All Time</div>
-              <div class="stat-icon conversion">
-                <i class="fas fa-trophy"></i>
-              </div>
-            </div>
-            <div class="stat-value">$12,847</div>
-            <div class="stat-change positive">Total earned</div>
-          </div>
-        </div>
-
-        <div class="dashboard-section">
-          <div class="section-header">
-            <h2 class="section-title">Request Payout</h2>
-          </div>
-          <div class="section-content">
-            <div style="max-width: 500px;">
-              <p style="color: #6b7280; margin-bottom: 2rem;">Minimum payout: $50. Payments processed within 24-48 hours.</p>
-              <div style="margin-bottom: 1rem;">
-                <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 0.5rem;">Payment Method</label>
-                <select style="width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 8px;">
-                  <option>PayPal</option>
-                  <option>Bank Transfer</option>
-                  <option>Cryptocurrency</option>
-                </select>
-              </div>
-              <div style="margin-bottom: 2rem;">
-                <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 0.5rem;">Amount</label>
-                <input type="number" value="847.25" style="width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 8px;">
-              </div>
-              <button class="section-action" style="padding: 1rem 2rem;">💰 Request Payout</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Profile Section -->
       <div id="profile" class="dashboard-section-content" style="display: none;">
         <div class="dashboard-header">
-          <h1 class="dashboard-title">Profile Settings</h1>
-          <p class="dashboard-subtitle">Manage your account information and preferences</p>
+          <h1>Profile Settings</h1>
+          <p>Update your affiliate profile and payment information.</p>
         </div>
-
         <div class="dashboard-section">
+          <div class="section-header">
+            <h2 class="section-title">Account Information</h2>
+          </div>
           <div class="section-content">
-            <p style="color: #6b7280; margin-bottom: 2rem;">Profile management interface would include:</p>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
-              <div style="background: #f8fafc; padding: 1.5rem; border-radius: 8px;">
-                <h4 style="color: #1f2937; margin-bottom: 1rem;">👤 Personal Information</h4>
-                <ul style="color: #6b7280; line-height: 1.8;">
-                  <li>Name and contact details</li>
-                  <li>Profile picture</li>
-                  <li>Bio and description</li>
-                  <li>Social media links</li>
-                </ul>
-              </div>
-              <div style="background: #f8fafc; padding: 1.5rem; border-radius: 8px;">
-                <h4 style="color: #1f2937; margin-bottom: 1rem;">💳 Payment Settings</h4>
-                <ul style="color: #6b7280; line-height: 1.8;">
-                  <li>Payment methods</li>
-                  <li>Tax information</li>
-                  <li>Payout preferences</li>
-                  <li>Currency settings</li>
-                </ul>
-              </div>
-              <div style="background: #f8fafc; padding: 1.5rem; border-radius: 8px;">
-                <h4 style="color: #1f2937; margin-bottom: 1rem;">🔔 Notifications</h4>
-                <ul style="color: #6b7280; line-height: 1.8;">
-                  <li>Email preferences</li>
-                  <li>SMS notifications</li>
-                  <li>Performance alerts</li>
-                  <li>Marketing updates</li>
-                </ul>
-              </div>
-              <div style="background: #f8fafc; padding: 1.5rem; border-radius: 8px;">
-                <h4 style="color: #1f2937; margin-bottom: 1rem;">🔒 Security</h4>
-                <ul style="color: #6b7280; line-height: 1.8;">
-                  <li>Password management</li>
-                  <li>Two-factor authentication</li>
-                  <li>Login history</li>
-                  <li>API access</li>
-                </ul>
-              </div>
-            </div>
+            <p>Profile management features will be available here.</p>
+            <button class="action-btn" onclick="alert('Profile update feature coming soon!')">
+              <i class="fas fa-edit"></i> Update Profile
+            </button>
           </div>
         </div>
       </div>
 
-      <!-- Support Section -->
-      <div id="support" class="dashboard-section-content" style="display: none;">
+      <div id="settings" class="dashboard-section-content" style="display: none;">
         <div class="dashboard-header">
-          <h1 class="dashboard-title">Support & Help</h1>
-          <p class="dashboard-subtitle">Get help and resources to grow your affiliate business</p>
+          <h1>Settings</h1>
+          <p>Configure your dashboard preferences and account settings.</p>
         </div>
-
         <div class="dashboard-section">
+          <div class="section-header">
+            <h2 class="section-title">Dashboard Settings</h2>
+          </div>
           <div class="section-content">
-            <div class="quick-actions">
-              <a href="contact.html" class="quick-action">
-                <i class="fas fa-envelope"></i>
-                <h4>Contact Support</h4>
-                <p>Get help from our team</p>
-              </a>
-              <a href="#" class="quick-action">
-                <i class="fas fa-book"></i>
-                <h4>Knowledge Base</h4>
-                <p>Browse help articles</p>
-              </a>
-              <a href="#" class="quick-action">
-                <i class="fas fa-video"></i>
-                <h4>Video Tutorials</h4>
-                <p>Learn with step-by-step guides</p>
-              </a>
-              <a href="#" class="quick-action">
-                <i class="fas fa-users"></i>
-                <h4>Community Forum</h4>
-                <p>Connect with other affiliates</p>
-              </a>
-            </div>
+            <p>Settings and preferences will be available here.</p>
+            <button class="action-btn secondary" onclick="alert('Settings feature coming soon!')">
+              <i class="fas fa-cog"></i> Configure Settings
+            </button>
           </div>
         </div>
       </div>
-    </main>
+
+    </div>
   </div>
 
   <!-- JavaScript -->
   <script>
-    // Loading screen
-    window.addEventListener('load', function() {
-      setTimeout(() => {
-        document.getElementById('loading-screen').style.opacity = '0';
-        setTimeout(() => {
-          document.getElementById('loading-screen').style.display = 'none';
-        }, 500);
-      }, 1000);
+    // Global variables
+    let currentUserData = null;
+    let currentAffiliateData = null;
+
+    // Authentication and initialization
+    document.addEventListener('DOMContentLoaded', function() {
+      initializeDashboard();
     });
 
-    // Section navigation
+    function initializeDashboard() {
+      console.log('Initializing dashboard...');
+      
+      // Load user data
+      if (!loadUserData()) {
+        return; // Will redirect if not authenticated
+      }
+      
+      // Update UI with user data
+      updateUserInterface();
+      
+      // Load affiliate data
+      loadAffiliateData();
+      
+      // Show overview section by default
+      showSection('overview');
+      
+      console.log('Dashboard initialized successfully');
+    }
+
+    function loadUserData() {
+      const currentUser = localStorage.getItem('smartdeals_currentUser');
+      const affiliateRegistered = localStorage.getItem('smartdeals_affiliateRegistered');
+      
+      if (!currentUser || !affiliateRegistered) {
+        alert('Session expired. Please register again.');
+        window.location.href = 'affiliate-register.html';
+        return false;
+      }
+      
+      try {
+        currentUserData = JSON.parse(currentUser);
+        currentAffiliateData = JSON.parse(affiliateRegistered);
+        return true;
+      } catch (e) {
+        console.error('Error parsing user data:', e);
+        localStorage.removeItem('smartdeals_currentUser');
+        localStorage.removeItem('smartdeals_affiliateRegistered');
+        alert('Invalid session data. Please register again.');
+        window.location.href = 'affiliate-register.html';
+        return false;
+      }
+    }
+
+    function updateUserInterface() {
+      if (!currentUserData || !currentAffiliateData) return;
+      
+      // Update user avatar
+      const userAvatar = document.getElementById('userAvatar');
+      if (userAvatar && currentUserData.name) {
+        userAvatar.textContent = currentUserData.name.charAt(0).toUpperCase();
+      }
+      
+      // Update user name
+      const userName = document.getElementById('userName');
+      if (userName && currentUserData.name) {
+        userName.textContent = currentUserData.name;
+      }
+      
+      // Update user email
+      const userEmail = document.getElementById('userEmail');
+      if (userEmail && currentUserData.email) {
+        userEmail.textContent = currentUserData.email;
+      }
+      
+      // Update affiliate ID
+      const affiliateId = document.getElementById('affiliateId');
+      if (affiliateId && currentAffiliateData.affiliateId) {
+        affiliateId.textContent = currentAffiliateData.affiliateId;
+      }
+    }
+
+    function loadAffiliateData() {
+      if (!currentAffiliateData) return;
+      
+      const affiliateId = currentAffiliateData.affiliateId;
+      
+      // Load product data
+      const products = getAffiliateData('products', affiliateId, {
+        total: 0,
+        active: 0,
+        pending: 0
+      });
+      
+      // Load analytics data
+      const analytics = getAffiliateData('analytics', affiliateId, {
+        views: 0,
+        profileVisits: 0,
+        clicks: 0
+      });
+      
+      // Update dashboard stats
+      updateDashboardStats(products, analytics);
+    }
+
+    function getAffiliateData(type, affiliateId, defaultData) {
+      const key = `${type}_${affiliateId}`;
+      const data = localStorage.getItem(key);
+      
+      if (data) {
+        try {
+          return JSON.parse(data);
+        } catch (e) {
+          console.error(`Error parsing ${type} data:`, e);
+        }
+      }
+      
+      // Save default data
+      localStorage.setItem(key, JSON.stringify(defaultData));
+      return defaultData;
+    }
+
+    function updateDashboardStats(products, analytics) {
+      // Update products
+      const activeProducts = document.getElementById('activeProducts');
+      if (activeProducts) {
+        activeProducts.textContent = products.active;
+      }
+      
+      const productsChange = document.getElementById('productsChange');
+      if (productsChange) {
+        if (products.active === 0) {
+          productsChange.textContent = 'Add your first product';
+        } else {
+          productsChange.textContent = `${products.pending} pending approval`;
+        }
+      }
+      
+      // Update views
+      const totalViews = document.getElementById('totalViews');
+      if (totalViews) {
+        totalViews.textContent = analytics.views.toLocaleString();
+      }
+      
+      const viewsChange = document.getElementById('viewsChange');
+      if (viewsChange) {
+        if (analytics.views === 0) {
+          viewsChange.textContent = 'Start promoting to get views';
+        } else {
+          viewsChange.textContent = 'Great visibility!';
+          viewsChange.className = 'stat-change positive';
+        }
+      }
+      
+      // Update profile visits
+      const profileVisits = document.getElementById('profileVisits');
+      if (profileVisits) {
+        profileVisits.textContent = analytics.profileVisits.toLocaleString();
+      }
+      
+      const visitsChange = document.getElementById('visitsChange');
+      if (visitsChange) {
+        if (analytics.profileVisits === 0) {
+          visitsChange.textContent = 'No visits yet';
+        } else {
+          visitsChange.textContent = 'Growing audience!';
+          visitsChange.className = 'stat-change positive';
+        }
+      }
+    }
+
+    // Navigation functions
     function showSection(sectionId) {
       // Hide all sections
       const sections = document.querySelectorAll('.dashboard-section-content');
@@ -1019,7 +812,10 @@
       });
       
       // Show selected section
-      document.getElementById(sectionId).style.display = 'block';
+      const targetSection = document.getElementById(sectionId);
+      if (targetSection) {
+        targetSection.style.display = 'block';
+      }
       
       // Update active nav item
       const navItems = document.querySelectorAll('.nav-item');
@@ -1038,17 +834,26 @@
       }
     }
 
-    // Mobile sidebar toggle
+    // Mobile functions
     function toggleSidebar() {
       const sidebar = document.getElementById('dashboardSidebar');
       sidebar.classList.toggle('active');
     }
 
-    // Mobile menu toggle (header)
     function toggleMobileMenu() {
       const mobileMenu = document.getElementById('mobileMenu');
       if (mobileMenu) {
         mobileMenu.classList.toggle('active');
+      }
+    }
+
+    // Sign out function
+    function signOut() {
+      if (confirm('Are you sure you want to sign out?')) {
+        localStorage.removeItem('smartdeals_currentUser');
+        localStorage.removeItem('smartdeals_affiliateRegistered');
+        alert('You have been signed out successfully.');
+        window.location.href = 'index.html';
       }
     }
 
@@ -1058,46 +863,23 @@
         const sidebar = document.getElementById('dashboardSidebar');
         const toggleBtn = document.querySelector('.mobile-sidebar-toggle');
         
-        if (!sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
+        if (sidebar && toggleBtn && 
+            !sidebar.contains(e.target) && 
+            !toggleBtn.contains(e.target)) {
           sidebar.classList.remove('active');
         }
       }
     });
 
-    // Simulate real-time updates
-    function updateStats() {
-      const earnings = document.querySelector('.stat-value');
-      if (earnings) {
-        const currentValue = parseFloat(earnings.textContent.replace('$', '').replace(',', ''));
-        const newValue = currentValue + (Math.random() * 10 - 5);
-        earnings.textContent = '$' + newValue.toFixed(2);
+    // Simulate real-time updates (every 30 seconds)
+    setInterval(function() {
+      if (currentAffiliateData) {
+        console.log('Refreshing dashboard data...');
+        loadAffiliateData();
       }
-    }
+    }, 30000);
 
-    // Update stats every 30 seconds (in real implementation)
-    // setInterval(updateStats, 30000);
-
-    // Handle action buttons
-    document.addEventListener('click', function(e) {
-      if (e.target.closest('.action-btn.edit')) {
-        alert('Edit product functionality would be implemented here');
-      }
-      
-      if (e.target.closest('.action-btn.delete')) {
-        if (confirm('Are you sure you want to delete this product?')) {
-          alert('Product deleted successfully');
-        }
-      }
-    });
-
-    // Initialize dashboard
-    document.addEventListener('DOMContentLoaded', function() {
-      // Show overview section by default
-      showSection('overview');
-      
-      // Load user data (in real implementation, fetch from API)
-      console.log('Dashboard initialized');
-    });
+    console.log('✅ Dashboard loaded successfully - Real functional dashboard, no demo data');
   </script>
 </body>
 </html>
