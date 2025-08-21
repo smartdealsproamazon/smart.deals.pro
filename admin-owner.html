@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Owner Admin Panel - SmartDeals Pro</title>
+  <meta name="description" content="Platform owner admin panel for managing own products, affiliate approvals, and marketplace settings.">
+  <meta name="robots" content="noindex, nofollow">
+  
+  <!-- Enhanced Favicon Implementation -->
+  <link rel="icon" type="image/x-icon" href="favicon.ico" sizes="16x16 32x32">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="favicon-192x192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="favicon-512x512.png">
+  <link rel="icon" type="image/svg+xml" href="logo.svg">
+  <link rel="apple-touch-icon" sizes="180x180" href="logo.png">
+  <link rel="manifest" href="site.webmanifest">
+  <meta name="theme-color" content="#3b82f6">
+  
+  <!-- FontAwesome and Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  
+  <style>
+    .admin-layout {
+      display: flex;
+      min-height: 100vh;
+      background: #f1f5f9;
+      padding-top: 80px;
+    }
+    
+    .admin-sidebar {
+      width: 300px;
+      background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 100%);
+      color: white;
+      position: fixed;
+      left: 0;
+      top: 80px;
+      height: calc(100vh - 80px);
+      overflow-y: auto;
+      z-index: 100;
+      transition: transform 0.3s ease;
+    }
+    
+    .sidebar-header {
+      padding: 2rem 1.5rem;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      text-align: center;
+    }
+    
+    .owner-crown {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+    
+    .owner-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+    
+    .owner-subtitle {
+      opacity: 0.8;
+      font-size: 0.9rem;
+    }
+    
+    .sidebar-nav {
+      padding: 1rem 0;
+    }
+    
+    .nav-section {
+      margin-bottom: 2rem;
+    }
+    
+    .nav-section-title {
+      padding: 0.5rem 1.5rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      opacity: 0.7;
+      margin-bottom: 0.5rem;
+    }
+    
+    .nav-item {
+      display: block;
+      padding: 0.875rem 1.5rem;
+      color: rgba(255,255,255,0.8);
+      text-decoration: none;
+      transition: all 0.3s;
+      border-left: 3px solid transparent;
+    }
+    
+    .nav-item:hover, .nav-item.active {
+      background: rgba(255,255,255,0.1);
+      color: white;
+      border-left-color: #FFD700;
+    }
+    
+    .nav-item i {
+      width: 20px;
+      margin-right: 0.75rem;
+    }
+    
+    .admin-main {
+      flex: 1;
+      margin-left: 300px;
+      padding: 2rem;
+    }
+    
+    .admin-header {
+      margin-bottom: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: white;
+      padding: 1.5rem 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
+    
+    .admin-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1f2937;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    
+    .crown-icon {
+      color: #FFD700;
+      font-size: 1.5rem;
+    }
+    
+    .admin-subtitle {
+      color: #6b7280;
+      font-size: 1rem;
+      margin-top: 0.25rem;
+    }
+    
+    .admin-actions {
+      display: flex;
+      gap: 1rem;
+    }
+    
+    .admin-btn {
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .admin-btn.primary {
+      background: linear-gradient(135deg, #FFD700, #FFA500);
+      color: #000;
+    }
+    
+    .admin-btn.secondary {
+      background: #3b82f6;
+      color: white;
+    }
+    
+    .admin-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    .stat-card {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+      border: 1px solid #e5e7eb;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(135deg, #FFD700, #FFA500);
+    }
+    
+    .stat-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    
+    .stat-title {
+      color: #6b7280;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+    
+    .stat-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      color: white;
+    }
+    
+    .stat-value {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #1f2937;
+      margin-bottom: 0.5rem;
+    }
+    
+    .stat-change {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #10b981;
+    }
+    
+    .admin-section {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+      margin-bottom: 2rem;
+      border: 1px solid #e5e7eb;
+    }
+    
+    .section-header {
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      justify-content: between;
+      align-items: center;
+    }
+    
+    .section-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #1f2937;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    
+    .section-content {
+      padding: 2rem;
+    }
+    
+    .owner-product-form {
+      max-width: 800px;
+    }
+    
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    
+    .form-label {
+      display: block;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 0.5rem;
+    }
+    
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: all 0.3s;
+      background: white;
+    }
+    
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      outline: none;
+      border-color: #FFD700;
+      box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
+    }
+    
+    .form-textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+    
+    .owner-privileges {
+      background: linear-gradient(135deg, #fff7ed, #fef3c7);
+      border: 2px solid #FFD700;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    .privileges-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    
+    .privileges-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #92400e;
+    }
+    
+    .privilege-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 0.75rem;
+    }
+    
+    .privilege-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #92400e;
+      font-weight: 500;
+    }
+    
+    .privilege-item i {
+      color: #10b981;
+    }
+    
+    .product-type-selector {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    
+    .type-card {
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      background: white;
+    }
+    
+    .type-card:hover, .type-card.selected {
+      border-color: #FFD700;
+      background: #fffbeb;
+    }
+    
+    .type-card.selected {
+      box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
+    }
+    
+    .type-icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+    
+    .type-title {
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 0.5rem;
+    }
+    
+    .type-description {
+      color: #6b7280;
+      font-size: 0.9rem;
+    }
+    
+    .submit-section {
+      text-align: center;
+      margin-top: 2rem;
+      padding-top: 2rem;
+      border-top: 1px solid #e5e7eb;
+    }
+    
+    .submit-btn {
+      background: linear-gradient(135deg, #FFD700, #FFA500);
+      color: #000;
+      border: none;
+      padding: 1rem 3rem;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(255, 215, 0, 0.4);
+    }
+    
+    .products-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    .products-table th,
+    .products-table td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    
+    .products-table th {
+      font-weight: 600;
+      color: #374151;
+      background: #f9fafb;
+    }
+    
+    .owner-badge {
+      background: linear-gradient(45deg, #FFD700, #FFA500);
+      color: #000;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    
+    .owner-badge::before {
+      content: "👑";
+      margin-right: 0.25rem;
+    }
+    
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      .admin-layout {
+        padding-top: 80px;
+      }
+      
+      .admin-sidebar {
+        transform: translateX(-100%);
+        width: 280px;
+      }
+      
+      .admin-sidebar.active {
+        transform: translateX(0);
+      }
+      
+      .admin-main {
+        margin-left: 0;
+        padding: 1rem;
+      }
+      
+      .admin-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+      }
+      
+      .admin-actions {
+        width: 100%;
+        justify-content: stretch;
+      }
+      
+      .admin-btn {
+        flex: 1;
+        justify-content: center;
+      }
+      
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+      
+      .product-type-selector {
+        grid-template-columns: 1fr;
+      }
+      
+      .privilege-list {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Loading Screen -->
+  <div id="loading-screen">
+    <div class="preloader-container">
+      <div class="old-loader"></div>
+      <p class="old-loading-text">Loading admin panel...</p>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="main-header">
+    <div class="container">
+      <div class="header-content">
+        <div class="header-left">
+          <a href="index.html" class="logo-link">
+            <img src="logo.svg?v=2024.1" alt="SmartDeals Pro Logo" class="logo" loading="eager" />
+          </a>
+          <div class="site-name">
+            <span class="logo-text">SmartDeals Pro</span>
+          </div>
+        </div>
+        
+        <nav class="main-nav">
+          <ul>
+            <li><a href="index.html" class="nav-link">Home</a></li>
+            <li><a href="marketplace.html" class="nav-link">🛍️ Marketplace</a></li>
+            <li><a href="admin-owner.html" class="nav-link active">👑 Admin</a></li>
+            <li><a href="about.html" class="nav-link">About</a></li>
+            <li><a href="contact.html" class="nav-link">Contact</a></li>
+          </ul>
+        </nav>
+
+        <div class="header-right">
+          <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+            <i class="fas fa-bars"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Admin Layout -->
+  <div class="admin-layout">
+    <!-- Sidebar -->
+    <aside class="admin-sidebar" id="adminSidebar">
+      <div class="sidebar-header">
+        <div class="owner-crown">👑</div>
+        <div class="owner-title">Platform Owner</div>
+        <div class="owner-subtitle">Full Admin Access</div>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <div class="nav-section-title">Dashboard</div>
+          <a href="#overview" class="nav-item active" onclick="showSection('overview')">
+            <i class="fas fa-chart-pie"></i>
+            Overview
+          </a>
+          <a href="#platform-stats" class="nav-item" onclick="showSection('platform-stats')">
+            <i class="fas fa-globe"></i>
+            Platform Stats
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-section-title">My Products</div>
+          <a href="#my-products" class="nav-item" onclick="showSection('my-products')">
+            <i class="fas fa-crown"></i>
+            Owner Products
+          </a>
+          <a href="#add-owner-product" class="nav-item" onclick="showSection('add-owner-product')">
+            <i class="fas fa-plus"></i>
+            Add New Product
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-section-title">Affiliate Management</div>
+          <a href="#affiliate-approvals" class="nav-item" onclick="showSection('affiliate-approvals')">
+            <i class="fas fa-user-check"></i>
+            Approve Affiliates
+          </a>
+          <a href="#affiliate-products" class="nav-item" onclick="showSection('affiliate-products')">
+            <i class="fas fa-boxes"></i>
+            Affiliate Products
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-section-title">Platform</div>
+          <a href="#settings" class="nav-item" onclick="showSection('settings')">
+            <i class="fas fa-cog"></i>
+            Settings
+          </a>
+          <a href="index.html" class="nav-item">
+            <i class="fas fa-home"></i>
+            Back to Site
+          </a>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+      <!-- Overview Section -->
+      <div id="overview" class="admin-section-content">
+        <div class="admin-header">
+          <div>
+            <h1 class="admin-title">
+              <i class="fas fa-crown crown-icon"></i>
+              Platform Owner Dashboard
+            </h1>
+            <p class="admin-subtitle">Manage your global affiliate marketplace</p>
+          </div>
+          <div class="admin-actions">
+            <a href="#add-owner-product" class="admin-btn primary" onclick="showSection('add-owner-product')">
+              <i class="fas fa-plus"></i>
+              Add Product
+            </a>
+            <a href="marketplace.html" class="admin-btn secondary">
+              <i class="fas fa-external-link-alt"></i>
+              View Site
+            </a>
+          </div>
+        </div>
+
+        <!-- Owner Stats -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-title">My Product Revenue</div>
+              <div class="stat-icon">
+                <i class="fas fa-crown"></i>
+              </div>
+            </div>
+            <div class="stat-value">$15,847</div>
+            <div class="stat-change">+18.5% this month</div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-title">My Products</div>
+              <div class="stat-icon">
+                <i class="fas fa-box"></i>
+              </div>
+            </div>
+            <div class="stat-value">12</div>
+            <div class="stat-change">3 featured products</div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-title">Platform Revenue</div>
+              <div class="stat-icon">
+                <i class="fas fa-chart-line"></i>
+              </div>
+            </div>
+            <div class="stat-value">$45,230</div>
+            <div class="stat-change">From all affiliates</div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-title">Total Affiliates</div>
+              <div class="stat-icon">
+                <i class="fas fa-users"></i>
+              </div>
+            </div>
+            <div class="stat-value">1,247</div>
+            <div class="stat-change">+89 this month</div>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="admin-section">
+          <div class="section-header">
+            <h2 class="section-title">
+              <i class="fas fa-rocket"></i>
+              Quick Actions
+            </h2>
+          </div>
+          <div class="section-content">
+            <div class="product-type-selector">
+              <div class="type-card" onclick="showSection('add-owner-product')">
+                <i class="fas fa-crown type-icon" style="color: #FFD700;"></i>
+                <div class="type-title">Add My Product</div>
+                <div class="type-description">List your own product with owner privileges</div>
+              </div>
+              <div class="type-card" onclick="showSection('affiliate-approvals')">
+                <i class="fas fa-user-check type-icon" style="color: #10b981;"></i>
+                <div class="type-title">Review Affiliates</div>
+                <div class="type-description">Approve pending affiliate applications</div>
+              </div>
+              <div class="type-card" onclick="showSection('platform-stats')">
+                <i class="fas fa-chart-bar type-icon" style="color: #3b82f6;"></i>
+                <div class="type-title">Platform Analytics</div>
+                <div class="type-description">View detailed platform performance</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add Owner Product Section -->
+      <div id="add-owner-product" class="admin-section-content" style="display: none;">
+        <div class="admin-header">
+          <div>
+            <h1 class="admin-title">
+              <i class="fas fa-crown crown-icon"></i>
+              Add Owner Product
+            </h1>
+            <p class="admin-subtitle">List your product with premium placement and special privileges</p>
+          </div>
+        </div>
+
+        <div class="admin-section">
+          <div class="section-content">
+            <!-- Owner Privileges Display -->
+            <div class="owner-privileges">
+              <div class="privileges-header">
+                <i class="fas fa-crown" style="color: #FFD700; font-size: 1.5rem;"></i>
+                <div class="privileges-title">Owner Privileges (Auto-Enabled)</div>
+              </div>
+              <div class="privilege-list">
+                <div class="privilege-item">
+                  <i class="fas fa-check"></i>
+                  <span>Instant approval & publication</span>
+                </div>
+                <div class="privilege-item">
+                  <i class="fas fa-check"></i>
+                  <span>Top placement in all listings</span>
+                </div>
+                <div class="privilege-item">
+                  <i class="fas fa-check"></i>
+                  <span>Free featured listing</span>
+                </div>
+                <div class="privilege-item">
+                  <i class="fas fa-check"></i>
+                  <span>"Platform Owner" badge</span>
+                </div>
+                <div class="privilege-item">
+                  <i class="fas fa-check"></i>
+                  <span>Homepage hero placement</span>
+                </div>
+                <div class="privilege-item">
+                  <i class="fas fa-check"></i>
+                  <span>Enhanced analytics</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Product Type Selection -->
+            <div class="form-group">
+              <label class="form-label">Product Type</label>
+              <div class="product-type-selector">
+                <div class="type-card selected" data-type="own-product">
+                  <i class="fas fa-store type-icon" style="color: #3b82f6;"></i>
+                  <div class="type-title">My Own Product</div>
+                  <div class="type-description">Physical or digital product you sell</div>
+                </div>
+                <div class="type-card" data-type="affiliate-product">
+                  <i class="fas fa-link type-icon" style="color: #10b981;"></i>
+                  <div class="type-title">My Affiliate Link</div>
+                  <div class="type-description">Product you promote as affiliate</div>
+                </div>
+                <div class="type-card" data-type="sponsored-product">
+                  <i class="fas fa-dollar-sign type-icon" style="color: #f59e0b;"></i>
+                  <div class="type-title">Sponsored Product</div>
+                  <div class="type-description">Paid promotion for other brands</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Product Form -->
+            <form class="owner-product-form" id="ownerProductForm">
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Product Title *</label>
+                  <input type="text" class="form-input" name="title" placeholder="Enter product title" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Price *</label>
+                  <input type="text" class="form-input" name="price" placeholder="$99.99" required>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Product Description *</label>
+                <textarea class="form-textarea" name="description" placeholder="Detailed product description..." required></textarea>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Category *</label>
+                  <select class="form-select" name="category" required>
+                    <option value="">Select Category</option>
+                    <option value="electronics">Electronics</option>
+                    <option value="fashion">Fashion</option>
+                    <option value="home">Home & Garden</option>
+                    <option value="health">Health & Beauty</option>
+                    <option value="education">Education</option>
+                    <option value="software">Software</option>
+                    <option value="business">Business</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Product Image URL *</label>
+                  <input type="url" class="form-input" name="image" placeholder="https://example.com/image.jpg" required>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Product/Sales Page URL *</label>
+                  <input type="url" class="form-input" name="productUrl" placeholder="https://yourstore.com/product" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Special Badge (Optional)</label>
+                  <input type="text" class="form-input" name="badge" placeholder="Editor's Choice, Best Seller, etc.">
+                </div>
+              </div>
+
+              <!-- Owner Special Options -->
+              <div class="form-group">
+                <label class="form-label">Owner Special Options</label>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin-top: 0.5rem;">
+                  <label style="display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem; background: #f8fafc; border-radius: 8px; cursor: pointer;">
+                    <input type="checkbox" name="homepageHero" style="accent-color: #FFD700;">
+                    <span>Display in homepage hero section</span>
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem; background: #f8fafc; border-radius: 8px; cursor: pointer;">
+                    <input type="checkbox" name="pushNotification" style="accent-color: #FFD700;">
+                    <span>Send push notification to users</span>
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem; background: #f8fafc; border-radius: 8px; cursor: pointer;">
+                    <input type="checkbox" name="emailBlast" style="accent-color: #FFD700;">
+                    <span>Include in email newsletter</span>
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem; background: #f8fafc; border-radius: 8px; cursor: pointer;">
+                    <input type="checkbox" name="socialMedia" style="accent-color: #FFD700;">
+                    <span>Promote on social media</span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="submit-section">
+                <button type="submit" class="submit-btn">
+                  👑 Publish Product (Goes Live Instantly)
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- My Products Section -->
+      <div id="my-products" class="admin-section-content" style="display: none;">
+        <div class="admin-header">
+          <div>
+            <h1 class="admin-title">
+              <i class="fas fa-crown crown-icon"></i>
+              My Products
+            </h1>
+            <p class="admin-subtitle">Manage your owner products with premium privileges</p>
+          </div>
+          <div class="admin-actions">
+            <a href="#add-owner-product" class="admin-btn primary" onclick="showSection('add-owner-product')">
+              <i class="fas fa-plus"></i>
+              Add Product
+            </a>
+          </div>
+        </div>
+
+        <div class="admin-section">
+          <div class="section-header">
+            <h2 class="section-title">
+              <i class="fas fa-crown"></i>
+              Owner Products (12)
+            </h2>
+          </div>
+          <div class="section-content">
+            <table class="products-table">
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Type</th>
+                  <th>Status</th>
+                  <th>Views</th>
+                  <th>Revenue</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                      <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=50&h=50&fit=crop" alt="Course" style="width: 50px; height: 50px; border-radius: 8px; object-fit: cover;">
+                      <div>
+                        <h4 style="font-weight: 600; color: #1f2937; margin-bottom: 0.25rem;">Affiliate Marketing Course</h4>
+                        <span class="owner-badge">Platform Owner</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td>Own Product</td>
+                  <td><span style="background: #d1fae5; color: #065f46; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600;">Live</span></td>
+                  <td>15,847</td>
+                  <td>$8,945.50</td>
+                  <td>
+                    <div style="display: flex; gap: 0.5rem;">
+                      <button style="padding: 0.5rem; background: #e0f2fe; color: #0277bd; border: none; border-radius: 4px; cursor: pointer;"><i class="fas fa-edit"></i></button>
+                      <button style="padding: 0.5rem; background: #f3e8ff; color: #7c3aed; border: none; border-radius: 4px; cursor: pointer;"><i class="fas fa-chart-line"></i></button>
+                    </div>
+                  </td>
+                </tr>
+                <!-- More owner products would be listed here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Other sections would be implemented similarly -->
+      <div id="platform-stats" class="admin-section-content" style="display: none;">
+        <div class="admin-header">
+          <div>
+            <h1 class="admin-title">
+              <i class="fas fa-globe crown-icon"></i>
+              Platform Statistics
+            </h1>
+            <p class="admin-subtitle">Complete overview of your affiliate marketplace</p>
+          </div>
+        </div>
+        
+        <div class="admin-section">
+          <div class="section-content">
+            <p style="color: #6b7280; text-align: center; padding: 3rem;">
+              📊 Comprehensive platform analytics would be implemented here including:<br><br>
+              • Global traffic and conversion metrics<br>
+              • Affiliate performance rankings<br>
+              • Revenue breakdown by category<br>
+              • Geographic performance data<br>
+              • Growth trends and forecasting
+            </p>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    // Loading screen
+    window.addEventListener('load', function() {
+      setTimeout(() => {
+        document.getElementById('loading-screen').style.opacity = '0';
+        setTimeout(() => {
+          document.getElementById('loading-screen').style.display = 'none';
+        }, 500);
+      }, 1000);
+    });
+
+    // Section navigation
+    function showSection(sectionId) {
+      // Hide all sections
+      const sections = document.querySelectorAll('.admin-section-content');
+      sections.forEach(section => {
+        section.style.display = 'none';
+      });
+      
+      // Show selected section
+      document.getElementById(sectionId).style.display = 'block';
+      
+      // Update active nav item
+      const navItems = document.querySelectorAll('.nav-item');
+      navItems.forEach(item => {
+        item.classList.remove('active');
+      });
+      
+      const activeNavItem = document.querySelector(`[href="#${sectionId}"]`);
+      if (activeNavItem) {
+        activeNavItem.classList.add('active');
+      }
+    }
+
+    // Product type selection
+    document.addEventListener('click', function(e) {
+      if (e.target.closest('.type-card')) {
+        const card = e.target.closest('.type-card');
+        const container = card.parentElement;
+        
+        // Remove selected class from all cards in this container
+        container.querySelectorAll('.type-card').forEach(c => c.classList.remove('selected'));
+        
+        // Add selected class to clicked card
+        card.classList.add('selected');
+      }
+    });
+
+    // Owner product form submission
+    document.getElementById('ownerProductForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const formData = new FormData(this);
+      const productData = {
+        title: formData.get('title'),
+        price: formData.get('price'),
+        description: formData.get('description'),
+        category: formData.get('category'),
+        image: formData.get('image'),
+        productUrl: formData.get('productUrl'),
+        badge: formData.get('badge'),
+        ownerProduct: true,
+        status: 'approved',
+        featured: true,
+        priority: 'high',
+        specialOptions: {
+          homepageHero: formData.get('homepageHero') === 'on',
+          pushNotification: formData.get('pushNotification') === 'on',
+          emailBlast: formData.get('emailBlast') === 'on',
+          socialMedia: formData.get('socialMedia') === 'on'
+        },
+        dateAdded: new Date().toISOString()
+      };
+      
+      console.log('Owner Product Data:', productData);
+      
+      // In real implementation, send to Firebase/database
+      alert('🎉 Product published successfully!\n\n✅ Your product is now live on the marketplace\n✅ Featured placement activated\n✅ Owner badges applied\n✅ Special privileges enabled');
+      
+      // Reset form
+      this.reset();
+      
+      // Show products section
+      showSection('my-products');
+    });
+
+    // Mobile menu toggle
+    function toggleMobileMenu() {
+      const mobileMenu = document.getElementById('mobileMenu');
+      if (mobileMenu) {
+        mobileMenu.classList.toggle('active');
+      }
+    }
+
+    // Initialize admin panel
+    document.addEventListener('DOMContentLoaded', function() {
+      showSection('overview');
+      console.log('Owner Admin Panel initialized');
+    });
+  </script>
+</body>
+</html>
