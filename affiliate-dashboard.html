@@ -198,10 +198,10 @@
       font-size: 1.2rem;
     }
     
-    .stat-icon.earnings { background: linear-gradient(135deg, #10b981, #059669); }
+
     .stat-icon.products { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
-    .stat-icon.clicks { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
-    .stat-icon.conversion { background: linear-gradient(135deg, #f59e0b, #d97706); }
+    .stat-icon.views { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+    .stat-icon.visits { background: linear-gradient(135deg, #f59e0b, #d97706); }
     
     .stat-value {
       font-size: 2rem;
@@ -461,9 +461,7 @@
         <a href="#overview" class="nav-item active" onclick="showSection('overview')">
           <i class="fas fa-tachometer-alt"></i> Overview
         </a>
-        <a href="#earnings" class="nav-item" onclick="showSection('earnings')">
-          <i class="fas fa-dollar-sign"></i> Earnings
-        </a>
+
         <a href="#products" class="nav-item" onclick="showSection('products')">
           <i class="fas fa-box"></i> My Products
         </a>
@@ -496,17 +494,6 @@
         <div class="stats-grid">
           <div class="stat-card">
             <div class="stat-header">
-              <div class="stat-title">Total Earnings</div>
-              <div class="stat-icon earnings">
-                <i class="fas fa-dollar-sign"></i>
-              </div>
-            </div>
-            <div class="stat-value" id="totalEarnings">$0.00</div>
-            <div class="stat-change positive" id="earningsChange">+0% from last month</div>
-          </div>
-          
-          <div class="stat-card">
-            <div class="stat-header">
               <div class="stat-title">Active Products</div>
               <div class="stat-icon products">
                 <i class="fas fa-box"></i>
@@ -518,24 +505,24 @@
           
           <div class="stat-card">
             <div class="stat-header">
-              <div class="stat-title">Total Clicks</div>
-              <div class="stat-icon clicks">
-                <i class="fas fa-mouse-pointer"></i>
+              <div class="stat-title">Total Views</div>
+              <div class="stat-icon views">
+                <i class="fas fa-eye"></i>
               </div>
             </div>
-            <div class="stat-value" id="totalClicks">0</div>
-            <div class="stat-change" id="clicksChange">Start promoting to get clicks</div>
+            <div class="stat-value" id="totalViews">0</div>
+            <div class="stat-change" id="viewsChange">Start promoting to get views</div>
           </div>
           
           <div class="stat-card">
             <div class="stat-header">
-              <div class="stat-title">Conversion Rate</div>
-              <div class="stat-icon conversion">
-                <i class="fas fa-percentage"></i>
+              <div class="stat-title">Profile Visits</div>
+              <div class="stat-icon visits">
+                <i class="fas fa-users"></i>
               </div>
             </div>
-            <div class="stat-value" id="conversionRate">0.0%</div>
-            <div class="stat-change" id="conversionChange">No conversions yet</div>
+            <div class="stat-value" id="profileVisits">0</div>
+            <div class="stat-change" id="visitsChange">No visits yet</div>
           </div>
         </div>
 
@@ -551,9 +538,6 @@
               </a>
               <button class="action-btn secondary" onclick="showSection('analytics')">
                 <i class="fas fa-chart-line"></i> View Analytics
-              </button>
-              <button class="action-btn secondary" onclick="showSection('earnings')">
-                <i class="fas fa-money-bill-wave"></i> View Earnings
               </button>
               <button class="action-btn secondary" onclick="showSection('profile')">
                 <i class="fas fa-user-edit"></i> Update Profile
@@ -581,18 +565,6 @@
       </div>
 
       <!-- Other Sections (Hidden by default) -->
-      <div id="earnings" class="dashboard-section-content" style="display: none;">
-        <div class="dashboard-header">
-          <h1>Earnings Report</h1>
-          <p>Track your affiliate commissions and payment history.</p>
-        </div>
-        <div class="empty-state">
-          <i class="fas fa-chart-line"></i>
-          <h3>No Earnings Yet</h3>
-          <p>Start adding products and promoting them to earn your first commission.</p>
-          <a href="product-submission.html" class="action-btn">Add Products Now</a>
-        </div>
-      </div>
 
       <div id="products" class="dashboard-section-content" style="display: none;">
         <div class="dashboard-header">
@@ -610,13 +582,13 @@
       <div id="analytics" class="dashboard-section-content" style="display: none;">
         <div class="dashboard-header">
           <h1>Analytics</h1>
-          <p>Monitor your performance metrics and optimize your strategy.</p>
+          <p>Monitor your product views and profile performance.</p>
         </div>
         <div class="empty-state">
           <i class="fas fa-chart-bar"></i>
           <h3>No Analytics Data</h3>
-          <p>Analytics will appear once you start getting clicks and conversions.</p>
-          <a href="product-submission.html" class="action-btn">Start Promoting</a>
+          <p>Analytics will appear once you start getting product views and profile visits.</p>
+          <a href="product-submission.html" class="action-btn">Start Adding Products</a>
         </div>
       </div>
 
@@ -747,13 +719,6 @@
       
       const affiliateId = currentAffiliateData.affiliateId;
       
-      // Load earnings data
-      const earnings = getAffiliateData('earnings', affiliateId, {
-        total: 0,
-        thisMonth: 0,
-        growth: 0
-      });
-      
       // Load product data
       const products = getAffiliateData('products', affiliateId, {
         total: 0,
@@ -763,13 +728,13 @@
       
       // Load analytics data
       const analytics = getAffiliateData('analytics', affiliateId, {
-        clicks: 0,
-        conversions: 0,
-        rate: 0
+        views: 0,
+        profileVisits: 0,
+        clicks: 0
       });
       
       // Update dashboard stats
-      updateDashboardStats(earnings, products, analytics);
+      updateDashboardStats(products, analytics);
     }
 
     function getAffiliateData(type, affiliateId, defaultData) {
@@ -789,24 +754,7 @@
       return defaultData;
     }
 
-    function updateDashboardStats(earnings, products, analytics) {
-      // Update earnings
-      const totalEarnings = document.getElementById('totalEarnings');
-      if (totalEarnings) {
-        totalEarnings.textContent = `$${earnings.total.toFixed(2)}`;
-      }
-      
-      const earningsChange = document.getElementById('earningsChange');
-      if (earningsChange) {
-        if (earnings.total === 0) {
-          earningsChange.textContent = 'Ready to start earning';
-          earningsChange.className = 'stat-change';
-        } else {
-          earningsChange.textContent = `+${earnings.growth}% from last month`;
-          earningsChange.className = earnings.growth >= 0 ? 'stat-change positive' : 'stat-change negative';
-        }
-      }
-      
+    function updateDashboardStats(products, analytics) {
       // Update products
       const activeProducts = document.getElementById('activeProducts');
       if (activeProducts) {
@@ -822,35 +770,35 @@
         }
       }
       
-      // Update clicks
-      const totalClicks = document.getElementById('totalClicks');
-      if (totalClicks) {
-        totalClicks.textContent = analytics.clicks.toLocaleString();
+      // Update views
+      const totalViews = document.getElementById('totalViews');
+      if (totalViews) {
+        totalViews.textContent = analytics.views.toLocaleString();
       }
       
-      const clicksChange = document.getElementById('clicksChange');
-      if (clicksChange) {
-        if (analytics.clicks === 0) {
-          clicksChange.textContent = 'Start promoting to get clicks';
+      const viewsChange = document.getElementById('viewsChange');
+      if (viewsChange) {
+        if (analytics.views === 0) {
+          viewsChange.textContent = 'Start promoting to get views';
         } else {
-          clicksChange.textContent = 'Great engagement!';
-          clicksChange.className = 'stat-change positive';
+          viewsChange.textContent = 'Great visibility!';
+          viewsChange.className = 'stat-change positive';
         }
       }
       
-      // Update conversion rate
-      const conversionRate = document.getElementById('conversionRate');
-      if (conversionRate) {
-        conversionRate.textContent = `${analytics.rate.toFixed(1)}%`;
+      // Update profile visits
+      const profileVisits = document.getElementById('profileVisits');
+      if (profileVisits) {
+        profileVisits.textContent = analytics.profileVisits.toLocaleString();
       }
       
-      const conversionChange = document.getElementById('conversionChange');
-      if (conversionChange) {
-        if (analytics.rate === 0) {
-          conversionChange.textContent = 'No conversions yet';
+      const visitsChange = document.getElementById('visitsChange');
+      if (visitsChange) {
+        if (analytics.profileVisits === 0) {
+          visitsChange.textContent = 'No visits yet';
         } else {
-          conversionChange.textContent = 'Excellent performance!';
-          conversionChange.className = 'stat-change positive';
+          visitsChange.textContent = 'Growing audience!';
+          visitsChange.className = 'stat-change positive';
         }
       }
     }
