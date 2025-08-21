@@ -18,6 +18,17 @@
   <link rel="apple-touch-icon" sizes="180x180" href="logo.png">
   <link rel="manifest" href="site.webmanifest">
   <meta name="theme-color" content="#3b82f6">
+  <script>
+    (function() {
+      try {
+        var currentUser = localStorage.getItem('smartdeals_currentUser');
+        var affiliateRegistered = localStorage.getItem('smartdeals_affiliateRegistered');
+        if (currentUser && affiliateRegistered) {
+          window.location.replace('affiliate-dashboard.html');
+        }
+      } catch (e) {}
+    })();
+  </script>
   
   <!-- FontAwesome and Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -881,6 +892,9 @@
           userData: userData
         };
         
+        // Fire-and-forget email notification
+        try { sendRegistrationEmail(affiliateInfo); } catch (e) { console.error('Email send error', e); }
+        
         // Store authentication data
         localStorage.setItem('smartdeals_currentUser', JSON.stringify(userData));
         localStorage.setItem('smartdeals_affiliateRegistered', JSON.stringify(affiliateInfo));
@@ -935,6 +949,45 @@
       localStorage.setItem(`analytics_${affiliateId}`, JSON.stringify(defaultAnalytics));
       
       console.log(`✅ Default data initialized for affiliate: ${affiliateId}`);
+    }
+
+    // Send registration email to admin inbox
+    async function sendRegistrationEmail(affiliateInfo) {
+      try {
+        const payload = {
+          _subject: 'New Affiliate Registration',
+          affiliateId: affiliateInfo.affiliateId,
+          name: affiliateInfo.userData && affiliateInfo.userData.name ? affiliateInfo.userData.name : '',
+          email: affiliateInfo.personalInfo && affiliateInfo.personalInfo.email ? affiliateInfo.personalInfo.email : '',
+          phone: affiliateInfo.personalInfo && affiliateInfo.personalInfo.phone ? affiliateInfo.personalInfo.phone : '',
+          country: affiliateInfo.personalInfo && affiliateInfo.personalInfo.country ? affiliateInfo.personalInfo.country : '',
+          experience: affiliateInfo.experience && affiliateInfo.experience.level ? affiliateInfo.experience.level : '',
+          platforms: (affiliateInfo.experience && affiliateInfo.experience.platforms ? affiliateInfo.experience.platforms : []).join(', '),
+          revenue: affiliateInfo.experience && affiliateInfo.experience.revenue ? affiliateInfo.experience.revenue : '',
+          website: affiliateInfo.onlinePresence && affiliateInfo.onlinePresence.website ? affiliateInfo.onlinePresence.website : '',
+          facebook: affiliateInfo.onlinePresence && affiliateInfo.onlinePresence.facebook ? affiliateInfo.onlinePresence.facebook : '',
+          instagram: affiliateInfo.onlinePresence && affiliateInfo.onlinePresence.instagram ? affiliateInfo.onlinePresence.instagram : '',
+          youtube: affiliateInfo.onlinePresence && affiliateInfo.onlinePresence.youtube ? affiliateInfo.onlinePresence.youtube : '',
+          tiktok: affiliateInfo.onlinePresence && affiliateInfo.onlinePresence.tiktok ? affiliateInfo.onlinePresence.tiktok : '',
+          strategy: affiliateInfo.onlinePresence && affiliateInfo.onlinePresence.strategy ? affiliateInfo.onlinePresence.strategy : '',
+          registrationDate: affiliateInfo.registrationDate
+        };
+
+        fetch('https://formsubmit.co/ajax/smartdealsproamazon@gmail.com', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        }).then(function(res) { return res.json(); }).then(function(res) {
+          console.log('Registration email sent:', res);
+        }).catch(function(err) {
+          console.error('Failed to send registration email', err);
+        });
+      } catch (e) {
+        console.error('sendRegistrationEmail error', e);
+      }
     }
 
     function validateForm() {
