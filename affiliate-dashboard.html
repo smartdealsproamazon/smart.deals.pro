@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Affiliate Dashboard - SmartDeals Pro</title>
+  <meta name="description" content="Manage your affiliate business, track real earnings, and grow your income with SmartDeals Pro dashboard.">
+  <meta name="keywords" content="affiliate dashboard, earnings tracking, affiliate analytics, product management">
+  
+  <!-- Enhanced Favicon Implementation -->
+  <link rel="icon" type="image/x-icon" href="favicon.ico" sizes="16x16 32x32">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="favicon-192x192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="favicon-512x512.png">
+  <link rel="icon" type="image/svg+xml" href="logo.svg">
+  <link rel="apple-touch-icon" sizes="180x180" href="logo.png">
+  <link rel="manifest" href="site.webmanifest">
+  <meta name="theme-color" content="#3b82f6">
+  
+  <!-- FontAwesome and Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  
+  <!-- Authentication Check Script - Runs Immediately -->
+  <script>
+    // Immediate authentication check before page loads
+    (function() {
+      const currentUser = localStorage.getItem('smartdeals_currentUser');
+      const affiliateRegistered = localStorage.getItem('smartdeals_affiliateRegistered');
+      
+      if (!currentUser || !affiliateRegistered) {
+        alert('Access Denied: Please register as an affiliate first to access the dashboard.');
+        window.location.href = 'affiliate-register.html';
+      }
+    })();
+  </script>
+  
+  <style>
+    /* Dashboard Styles */
+    .dashboard-container {
+      display: flex;
+      min-height: 100vh;
+      background: #f8fafc;
+      padding-top: 80px;
+    }
+    
+    .dashboard-sidebar {
+      width: 280px;
+      background: white;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+      position: fixed;
+      left: 0;
+      top: 80px;
+      height: calc(100vh - 80px);
+      overflow-y: auto;
+      z-index: 100;
+    }
+    
+    .sidebar-header {
+      padding: 2rem 1.5rem 1rem;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .user-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 1.25rem;
+    }
+    
+    .user-details h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 0.25rem;
+    }
+    
+    .user-details p {
+      color: #6b7280;
+      font-size: 0.9rem;
+    }
+    
+    .affiliate-id {
+      background: #f3f4f6;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      margin: 1rem 0;
+      text-align: center;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #374151;
+    }
+    
+    .sidebar-nav {
+      padding: 1rem 0;
+    }
+    
+    .nav-item {
+      display: block;
+      padding: 0.875rem 1.5rem;
+      color: #6b7280;
+      text-decoration: none;
+      transition: all 0.3s;
+      border-left: 3px solid transparent;
+    }
+    
+    .nav-item:hover, .nav-item.active {
+      background: #f3f4f6;
+      color: #667eea;
+      border-left-color: #667eea;
+    }
+    
+    .nav-item i {
+      margin-right: 0.75rem;
+      width: 20px;
+    }
+    
+    .dashboard-main {
+      flex: 1;
+      margin-left: 280px;
+      padding: 2rem;
+    }
+    
+    .dashboard-header {
+      margin-bottom: 2rem;
+    }
+    
+    .dashboard-header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1f2937;
+      margin-bottom: 0.5rem;
+    }
+    
+    .dashboard-header p {
+      color: #6b7280;
+      font-size: 1.1rem;
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    .stat-card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+      border: 1px solid #e5e7eb;
+      transition: all 0.3s ease;
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+    }
+    
+    .stat-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    
+    .stat-title {
+      color: #6b7280;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+    
+    .stat-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.2rem;
+    }
+    
+    .stat-icon.earnings { background: linear-gradient(135deg, #10b981, #059669); }
+    .stat-icon.products { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+    .stat-icon.clicks { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+    .stat-icon.conversion { background: linear-gradient(135deg, #f59e0b, #d97706); }
+    
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1f2937;
+      margin-bottom: 0.5rem;
+    }
+    
+    .stat-change {
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+    
+    .stat-change.positive { color: #10b981; }
+    .stat-change.negative { color: #ef4444; }
+    
+    .dashboard-section {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+      border: 1px solid #e5e7eb;
+      margin-bottom: 2rem;
+    }
+    
+    .section-header {
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .section-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #1f2937;
+    }
+    
+    .section-content {
+      padding: 2rem;
+    }
+    
+    .quick-actions {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+    
+    .action-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      padding: 1rem 1.5rem;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    
+    .action-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+      color: white;
+    }
+    
+    .action-btn.secondary {
+      background: linear-gradient(135deg, #6b7280, #4b5563);
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 3rem 2rem;
+      color: #6b7280;
+    }
+    
+    .empty-state i {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+    
+    .empty-state h3 {
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+      color: #374151;
+    }
+    
+    .empty-state p {
+      margin-bottom: 2rem;
+    }
+    
+    .recent-activity {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    
+    .activity-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      border-bottom: 1px solid #f3f4f6;
+    }
+    
+    .activity-item:last-child {
+      border-bottom: none;
+    }
+    
+    .activity-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #f3f4f6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #6b7280;
+    }
+    
+    .activity-content {
+      flex: 1;
+    }
+    
+    .activity-title {
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 0.25rem;
+    }
+    
+    .activity-time {
+      font-size: 0.85rem;
+      color: #6b7280;
+    }
+    
+    .status-badge {
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+    
+    .status-badge.active {
+      background: #dcfce7;
+      color: #166534;
+    }
+    
+    .status-badge.pending {
+      background: #fef3c7;
+      color: #92400e;
+    }
+    
+    /* Mobile Responsiveness */
+    @media (max-width: 768px) {
+      .dashboard-sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+      }
+      
+      .dashboard-sidebar.active {
+        transform: translateX(0);
+      }
+      
+      .dashboard-main {
+        margin-left: 0;
+        padding: 1rem;
+      }
+      
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .quick-actions {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    .mobile-sidebar-toggle {
+      display: none;
+      position: fixed;
+      top: 90px;
+      left: 1rem;
+      z-index: 101;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 0.75rem;
+      cursor: pointer;
+    }
+    
+    @media (max-width: 768px) {
+      .mobile-sidebar-toggle {
+        display: block;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Header -->
+  <header class="main-header">
+    <div class="container">
+      <div class="header-content">
+        <div class="header-left">
+          <a href="index.html" class="logo-link">
+            <img src="logo.svg?v=2024.1" alt="SmartDeals Pro Logo" class="logo" loading="eager" />
+          </a>
+        </div>
+        
+        <nav class="main-nav">
+          <ul>
+            <li><a href="index.html" class="nav-link">Home</a></li>
+            <li><a href="about.html" class="nav-link">About</a></li>
+            <li><a href="contact.html" class="nav-link">Contact</a></li>
+            <li><a href="faq.html" class="nav-link">FAQ</a></li>
+          </ul>
+        </nav>
+
+        <div class="header-right">
+          <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+            <i class="fas fa-bars"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Sidebar Toggle -->
+  <button class="mobile-sidebar-toggle" onclick="toggleSidebar()">
+    <i class="fas fa-bars"></i>
+  </button>
+
+  <!-- Dashboard Container -->
+  <div class="dashboard-container">
+    
+    <!-- Sidebar -->
+    <div class="dashboard-sidebar" id="dashboardSidebar">
+      <div class="sidebar-header">
+        <div class="user-info">
+          <div class="user-avatar" id="userAvatar">U</div>
+          <div class="user-details">
+            <h3 id="userName">Loading...</h3>
+            <p id="userEmail">Loading...</p>
+          </div>
+        </div>
+        <div class="affiliate-id">
+          ID: <span id="affiliateId">Loading...</span>
+        </div>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <a href="#overview" class="nav-item active" onclick="showSection('overview')">
+          <i class="fas fa-tachometer-alt"></i> Overview
+        </a>
+        <a href="#earnings" class="nav-item" onclick="showSection('earnings')">
+          <i class="fas fa-dollar-sign"></i> Earnings
+        </a>
+        <a href="#products" class="nav-item" onclick="showSection('products')">
+          <i class="fas fa-box"></i> My Products
+        </a>
+        <a href="#analytics" class="nav-item" onclick="showSection('analytics')">
+          <i class="fas fa-chart-bar"></i> Analytics
+        </a>
+        <a href="#profile" class="nav-item" onclick="showSection('profile')">
+          <i class="fas fa-user"></i> Profile
+        </a>
+        <a href="#settings" class="nav-item" onclick="showSection('settings')">
+          <i class="fas fa-cog"></i> Settings
+        </a>
+        <a href="#" class="nav-item" onclick="signOut()">
+          <i class="fas fa-sign-out-alt"></i> Sign Out
+        </a>
+      </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="dashboard-main">
+      
+      <!-- Overview Section -->
+      <div id="overview" class="dashboard-section-content">
+        <div class="dashboard-header">
+          <h1>Dashboard Overview</h1>
+          <p>Welcome back! Here's your affiliate performance summary.</p>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-title">Total Earnings</div>
+              <div class="stat-icon earnings">
+                <i class="fas fa-dollar-sign"></i>
+              </div>
+            </div>
+            <div class="stat-value" id="totalEarnings">$0.00</div>
+            <div class="stat-change positive" id="earningsChange">+0% from last month</div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-title">Active Products</div>
+              <div class="stat-icon products">
+                <i class="fas fa-box"></i>
+              </div>
+            </div>
+            <div class="stat-value" id="activeProducts">0</div>
+            <div class="stat-change positive" id="productsChange">Ready to add products</div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-title">Total Clicks</div>
+              <div class="stat-icon clicks">
+                <i class="fas fa-mouse-pointer"></i>
+              </div>
+            </div>
+            <div class="stat-value" id="totalClicks">0</div>
+            <div class="stat-change" id="clicksChange">Start promoting to get clicks</div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-title">Conversion Rate</div>
+              <div class="stat-icon conversion">
+                <i class="fas fa-percentage"></i>
+              </div>
+            </div>
+            <div class="stat-value" id="conversionRate">0.0%</div>
+            <div class="stat-change" id="conversionChange">No conversions yet</div>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="dashboard-section">
+          <div class="section-header">
+            <h2 class="section-title">Quick Actions</h2>
+          </div>
+          <div class="section-content">
+            <div class="quick-actions">
+              <a href="product-submission.html" class="action-btn">
+                <i class="fas fa-plus"></i> Add Product
+              </a>
+              <button class="action-btn secondary" onclick="showSection('analytics')">
+                <i class="fas fa-chart-line"></i> View Analytics
+              </button>
+              <button class="action-btn secondary" onclick="showSection('earnings')">
+                <i class="fas fa-money-bill-wave"></i> View Earnings
+              </button>
+              <button class="action-btn secondary" onclick="showSection('profile')">
+                <i class="fas fa-user-edit"></i> Update Profile
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="dashboard-section">
+          <div class="section-header">
+            <h2 class="section-title">Recent Activity</h2>
+          </div>
+          <div class="section-content">
+            <div class="recent-activity" id="recentActivity">
+              <div class="empty-state">
+                <i class="fas fa-history"></i>
+                <h3>No Recent Activity</h3>
+                <p>Your recent affiliate activities will appear here.</p>
+                <a href="product-submission.html" class="action-btn">Add Your First Product</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Other Sections (Hidden by default) -->
+      <div id="earnings" class="dashboard-section-content" style="display: none;">
+        <div class="dashboard-header">
+          <h1>Earnings Report</h1>
+          <p>Track your affiliate commissions and payment history.</p>
+        </div>
+        <div class="empty-state">
+          <i class="fas fa-chart-line"></i>
+          <h3>No Earnings Yet</h3>
+          <p>Start adding products and promoting them to earn your first commission.</p>
+          <a href="product-submission.html" class="action-btn">Add Products Now</a>
+        </div>
+      </div>
+
+      <div id="products" class="dashboard-section-content" style="display: none;">
+        <div class="dashboard-header">
+          <h1>My Products</h1>
+          <p>Manage your affiliate product listings.</p>
+        </div>
+        <div class="empty-state">
+          <i class="fas fa-box-open"></i>
+          <h3>No Products Listed</h3>
+          <p>Add your first product to start earning commissions.</p>
+          <a href="product-submission.html" class="action-btn">Add Product</a>
+        </div>
+      </div>
+
+      <div id="analytics" class="dashboard-section-content" style="display: none;">
+        <div class="dashboard-header">
+          <h1>Analytics</h1>
+          <p>Monitor your performance metrics and optimize your strategy.</p>
+        </div>
+        <div class="empty-state">
+          <i class="fas fa-chart-bar"></i>
+          <h3>No Analytics Data</h3>
+          <p>Analytics will appear once you start getting clicks and conversions.</p>
+          <a href="product-submission.html" class="action-btn">Start Promoting</a>
+        </div>
+      </div>
+
+      <div id="profile" class="dashboard-section-content" style="display: none;">
+        <div class="dashboard-header">
+          <h1>Profile Settings</h1>
+          <p>Update your affiliate profile and payment information.</p>
+        </div>
+        <div class="dashboard-section">
+          <div class="section-header">
+            <h2 class="section-title">Account Information</h2>
+          </div>
+          <div class="section-content">
+            <p>Profile management features will be available here.</p>
+            <button class="action-btn" onclick="alert('Profile update feature coming soon!')">
+              <i class="fas fa-edit"></i> Update Profile
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div id="settings" class="dashboard-section-content" style="display: none;">
+        <div class="dashboard-header">
+          <h1>Settings</h1>
+          <p>Configure your dashboard preferences and account settings.</p>
+        </div>
+        <div class="dashboard-section">
+          <div class="section-header">
+            <h2 class="section-title">Dashboard Settings</h2>
+          </div>
+          <div class="section-content">
+            <p>Settings and preferences will be available here.</p>
+            <button class="action-btn secondary" onclick="alert('Settings feature coming soon!')">
+              <i class="fas fa-cog"></i> Configure Settings
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    // Global variables
+    let currentUserData = null;
+    let currentAffiliateData = null;
+
+    // Authentication and initialization
+    document.addEventListener('DOMContentLoaded', function() {
+      initializeDashboard();
+    });
+
+    function initializeDashboard() {
+      console.log('Initializing dashboard...');
+      
+      // Load user data
+      if (!loadUserData()) {
+        return; // Will redirect if not authenticated
+      }
+      
+      // Update UI with user data
+      updateUserInterface();
+      
+      // Load affiliate data
+      loadAffiliateData();
+      
+      // Show overview section by default
+      showSection('overview');
+      
+      console.log('Dashboard initialized successfully');
+    }
+
+    function loadUserData() {
+      const currentUser = localStorage.getItem('smartdeals_currentUser');
+      const affiliateRegistered = localStorage.getItem('smartdeals_affiliateRegistered');
+      
+      if (!currentUser || !affiliateRegistered) {
+        alert('Session expired. Please register again.');
+        window.location.href = 'affiliate-register.html';
+        return false;
+      }
+      
+      try {
+        currentUserData = JSON.parse(currentUser);
+        currentAffiliateData = JSON.parse(affiliateRegistered);
+        return true;
+      } catch (e) {
+        console.error('Error parsing user data:', e);
+        localStorage.removeItem('smartdeals_currentUser');
+        localStorage.removeItem('smartdeals_affiliateRegistered');
+        alert('Invalid session data. Please register again.');
+        window.location.href = 'affiliate-register.html';
+        return false;
+      }
+    }
+
+    function updateUserInterface() {
+      if (!currentUserData || !currentAffiliateData) return;
+      
+      // Update user avatar
+      const userAvatar = document.getElementById('userAvatar');
+      if (userAvatar && currentUserData.name) {
+        userAvatar.textContent = currentUserData.name.charAt(0).toUpperCase();
+      }
+      
+      // Update user name
+      const userName = document.getElementById('userName');
+      if (userName && currentUserData.name) {
+        userName.textContent = currentUserData.name;
+      }
+      
+      // Update user email
+      const userEmail = document.getElementById('userEmail');
+      if (userEmail && currentUserData.email) {
+        userEmail.textContent = currentUserData.email;
+      }
+      
+      // Update affiliate ID
+      const affiliateId = document.getElementById('affiliateId');
+      if (affiliateId && currentAffiliateData.affiliateId) {
+        affiliateId.textContent = currentAffiliateData.affiliateId;
+      }
+    }
+
+    function loadAffiliateData() {
+      if (!currentAffiliateData) return;
+      
+      const affiliateId = currentAffiliateData.affiliateId;
+      
+      // Load earnings data
+      const earnings = getAffiliateData('earnings', affiliateId, {
+        total: 0,
+        thisMonth: 0,
+        growth: 0
+      });
+      
+      // Load product data
+      const products = getAffiliateData('products', affiliateId, {
+        total: 0,
+        active: 0,
+        pending: 0
+      });
+      
+      // Load analytics data
+      const analytics = getAffiliateData('analytics', affiliateId, {
+        clicks: 0,
+        conversions: 0,
+        rate: 0
+      });
+      
+      // Update dashboard stats
+      updateDashboardStats(earnings, products, analytics);
+    }
+
+    function getAffiliateData(type, affiliateId, defaultData) {
+      const key = `${type}_${affiliateId}`;
+      const data = localStorage.getItem(key);
+      
+      if (data) {
+        try {
+          return JSON.parse(data);
+        } catch (e) {
+          console.error(`Error parsing ${type} data:`, e);
+        }
+      }
+      
+      // Save default data
+      localStorage.setItem(key, JSON.stringify(defaultData));
+      return defaultData;
+    }
+
+    function updateDashboardStats(earnings, products, analytics) {
+      // Update earnings
+      const totalEarnings = document.getElementById('totalEarnings');
+      if (totalEarnings) {
+        totalEarnings.textContent = `$${earnings.total.toFixed(2)}`;
+      }
+      
+      const earningsChange = document.getElementById('earningsChange');
+      if (earningsChange) {
+        if (earnings.total === 0) {
+          earningsChange.textContent = 'Ready to start earning';
+          earningsChange.className = 'stat-change';
+        } else {
+          earningsChange.textContent = `+${earnings.growth}% from last month`;
+          earningsChange.className = earnings.growth >= 0 ? 'stat-change positive' : 'stat-change negative';
+        }
+      }
+      
+      // Update products
+      const activeProducts = document.getElementById('activeProducts');
+      if (activeProducts) {
+        activeProducts.textContent = products.active;
+      }
+      
+      const productsChange = document.getElementById('productsChange');
+      if (productsChange) {
+        if (products.active === 0) {
+          productsChange.textContent = 'Add your first product';
+        } else {
+          productsChange.textContent = `${products.pending} pending approval`;
+        }
+      }
+      
+      // Update clicks
+      const totalClicks = document.getElementById('totalClicks');
+      if (totalClicks) {
+        totalClicks.textContent = analytics.clicks.toLocaleString();
+      }
+      
+      const clicksChange = document.getElementById('clicksChange');
+      if (clicksChange) {
+        if (analytics.clicks === 0) {
+          clicksChange.textContent = 'Start promoting to get clicks';
+        } else {
+          clicksChange.textContent = 'Great engagement!';
+          clicksChange.className = 'stat-change positive';
+        }
+      }
+      
+      // Update conversion rate
+      const conversionRate = document.getElementById('conversionRate');
+      if (conversionRate) {
+        conversionRate.textContent = `${analytics.rate.toFixed(1)}%`;
+      }
+      
+      const conversionChange = document.getElementById('conversionChange');
+      if (conversionChange) {
+        if (analytics.rate === 0) {
+          conversionChange.textContent = 'No conversions yet';
+        } else {
+          conversionChange.textContent = 'Excellent performance!';
+          conversionChange.className = 'stat-change positive';
+        }
+      }
+    }
+
+    // Navigation functions
+    function showSection(sectionId) {
+      // Hide all sections
+      const sections = document.querySelectorAll('.dashboard-section-content');
+      sections.forEach(section => {
+        section.style.display = 'none';
+      });
+      
+      // Show selected section
+      const targetSection = document.getElementById(sectionId);
+      if (targetSection) {
+        targetSection.style.display = 'block';
+      }
+      
+      // Update active nav item
+      const navItems = document.querySelectorAll('.nav-item');
+      navItems.forEach(item => {
+        item.classList.remove('active');
+      });
+      
+      const activeNavItem = document.querySelector(`[href="#${sectionId}"]`);
+      if (activeNavItem) {
+        activeNavItem.classList.add('active');
+      }
+      
+      // Close mobile sidebar
+      if (window.innerWidth <= 768) {
+        document.getElementById('dashboardSidebar').classList.remove('active');
+      }
+    }
+
+    // Mobile functions
+    function toggleSidebar() {
+      const sidebar = document.getElementById('dashboardSidebar');
+      sidebar.classList.toggle('active');
+    }
+
+    function toggleMobileMenu() {
+      const mobileMenu = document.getElementById('mobileMenu');
+      if (mobileMenu) {
+        mobileMenu.classList.toggle('active');
+      }
+    }
+
+    // Sign out function
+    function signOut() {
+      if (confirm('Are you sure you want to sign out?')) {
+        localStorage.removeItem('smartdeals_currentUser');
+        localStorage.removeItem('smartdeals_affiliateRegistered');
+        alert('You have been signed out successfully.');
+        window.location.href = 'index.html';
+      }
+    }
+
+    // Close sidebar when clicking outside on mobile
+    document.addEventListener('click', function(e) {
+      if (window.innerWidth <= 768) {
+        const sidebar = document.getElementById('dashboardSidebar');
+        const toggleBtn = document.querySelector('.mobile-sidebar-toggle');
+        
+        if (sidebar && toggleBtn && 
+            !sidebar.contains(e.target) && 
+            !toggleBtn.contains(e.target)) {
+          sidebar.classList.remove('active');
+        }
+      }
+    });
+
+    // Simulate real-time updates (every 30 seconds)
+    setInterval(function() {
+      if (currentAffiliateData) {
+        console.log('Refreshing dashboard data...');
+        loadAffiliateData();
+      }
+    }, 30000);
+
+    console.log('✅ Dashboard loaded successfully - Real functional dashboard, no demo data');
+  </script>
+</body>
+</html>

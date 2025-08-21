@@ -860,11 +860,45 @@
           registrationDate: new Date().toISOString()
         };
         
-        // In real implementation, send to Firebase/database
-        console.log('Affiliate Registration Data:', affiliateData);
-        localStorage.setItem('affiliateRegistration', JSON.stringify(affiliateData));
+        // Generate unique affiliate ID
+        const affiliateId = 'AFF' + Date.now().toString().slice(-6);
+        
+        // Create user data for authentication
+        const userData = {
+          name: `${affiliateData.personalInfo.firstName} ${affiliateData.personalInfo.lastName}`,
+          email: affiliateData.personalInfo.email,
+          phone: affiliateData.personalInfo.phone,
+          country: affiliateData.personalInfo.country,
+          registrationDate: new Date().toISOString()
+        };
+        
+        // Create affiliate-specific data
+        const affiliateInfo = {
+          affiliateId: affiliateId,
+          status: 'active',
+          level: 'starter',
+          ...affiliateData,
+          userData: userData
+        };
+        
+        // Store authentication data
+        localStorage.setItem('smartdeals_currentUser', JSON.stringify(userData));
+        localStorage.setItem('smartdeals_affiliateRegistered', JSON.stringify(affiliateInfo));
+        
+        // Initialize default affiliate data
+        initializeAffiliateData(affiliateId);
+        
+        console.log(`✅ Affiliate registered successfully: ${userData.name} (${affiliateId})`);
         
         // Show success message
+        successMessage.innerHTML = `
+          <div style="text-align: center;">
+            <h3 style="color: #10b981; margin-bottom: 1rem;">🎉 Registration Successful!</h3>
+            <p style="margin-bottom: 1rem;">Welcome to SmartDeals Pro, <strong>${userData.name}</strong>!</p>
+            <p style="margin-bottom: 1rem;">Your Affiliate ID: <strong>${affiliateId}</strong></p>
+            <p>Redirecting to your dashboard...</p>
+          </div>
+        `;
         successMessage.style.display = 'block';
         successMessage.scrollIntoView({ behavior: 'smooth' });
         
@@ -878,6 +912,43 @@
         
       }, 2000);
     });
+
+    // Initialize default data for new affiliate
+    function initializeAffiliateData(affiliateId) {
+      // Default earnings data
+      const defaultEarnings = {
+        total: 0,
+        thisMonth: 0,
+        lastMonth: 0,
+        pending: 0,
+        growth: 0,
+        history: []
+      };
+      localStorage.setItem(`earnings_${affiliateId}`, JSON.stringify(defaultEarnings));
+      
+      // Default products data
+      const defaultProducts = {
+        total: 0,
+        active: 0,
+        pending: 0,
+        rejected: 0,
+        products: []
+      };
+      localStorage.setItem(`products_${affiliateId}`, JSON.stringify(defaultProducts));
+      
+      // Default analytics data
+      const defaultAnalytics = {
+        clicks: 0,
+        conversions: 0,
+        rate: 0,
+        visitors: 0,
+        ctr: 0,
+        history: []
+      };
+      localStorage.setItem(`analytics_${affiliateId}`, JSON.stringify(defaultAnalytics));
+      
+      console.log(`✅ Default data initialized for affiliate: ${affiliateId}`);
+    }
 
     function validateForm() {
       const requiredFields = document.querySelectorAll('[required]');
