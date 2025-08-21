@@ -319,6 +319,19 @@
       if (category && category !== 'all') {
         productsToShow = getProductsByCategory(category);
       }
+      
+      // Apply 20-product limit specifically for reviews page to keep it fast and clean
+      const MAX_PRODUCTS_ON_REVIEWS = 20;
+      if (productsToShow && productsToShow.length > MAX_PRODUCTS_ON_REVIEWS) {
+        // Sort by creation date (newest first) and take only the most recent 20
+        productsToShow = [...productsToShow]
+          .sort((a, b) => {
+            const dateA = new Date(a.createdAt || 0);
+            const dateB = new Date(b.createdAt || 0);
+            return dateB - dateA;
+          })
+          .slice(0, MAX_PRODUCTS_ON_REVIEWS);
+      }
       if (!productsToShow || productsToShow.length === 0) {
         reviewsGrid.innerHTML = `<div class="no-reviews"><i class="fas fa-star" style="font-size: 3rem; color: #9ca3af; margin-bottom: 1rem;"></i><h3>No reviews found</h3><p>Check back later for more product reviews!</p></div>`;
         return;
@@ -409,13 +422,14 @@
           border-left: 4px solid #3b82f6;
         `;
         
-        const currentCount = getProductCount();
-        const maxCount = getMaxProducts();
+        const totalCount = getProductCount();
+        const maxCountOnReviews = 20;
+        const displayCount = Math.min(totalCount, maxCountOnReviews);
         
         infoDiv.innerHTML = `
           <i class="fas fa-info-circle" style="color: #3b82f6; margin-right: 0.5rem;"></i>
-          <strong>Smart Product Management:</strong> Showing ${currentCount} of maximum ${maxCount} products. 
-          When new products are added, oldest ones are automatically removed to keep the page fast and clean.
+          <strong>Smart Reviews Display:</strong> Showing ${displayCount} most recent products${totalCount > maxCountOnReviews ? ` out of ${totalCount} total` : ''}. 
+          Reviews page displays the latest ${maxCountOnReviews} products to keep loading fast and clean.
         `;
         
         const reviewsSection = document.querySelector('.latest-reviews .container');
