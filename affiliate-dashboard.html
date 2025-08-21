@@ -414,6 +414,9 @@
           <a href="index.html" class="logo-link">
             <img src="logo.svg?v=2024.1" alt="SmartDeals Pro Logo" class="logo" loading="eager" />
           </a>
+          <div class="site-name">
+            <span class="logo-text">Dashboard</span>
+          </div>
         </div>
         
         <nav class="main-nav">
@@ -434,10 +437,19 @@
     </div>
   </header>
 
-  <!-- Mobile Sidebar Toggle -->
-  <button class="mobile-sidebar-toggle" onclick="toggleSidebar()">
-    <i class="fas fa-bars"></i>
-  </button>
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu-content">
+      <button class="mobile-menu-close" onclick="toggleMobileMenu()" aria-label="Close menu">
+        <i class="fas fa-times"></i>
+      </button>
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+      <a href="faq.html">FAQ</a>
+      <a href="affiliate-dashboard.html">Dashboard</a>
+    </div>
+  </div>
 
   <!-- Dashboard Container -->
   <div class="dashboard-container">
