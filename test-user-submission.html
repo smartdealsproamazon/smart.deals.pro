@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test User Product Submission</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-container { max-width: 600px; margin: 0 auto; }
+        .test-button { padding: 10px 20px; margin: 10px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        .test-result { margin: 10px 0; padding: 10px; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>User Product Submission Test</h1>
+        
+        <div class="test-result info">
+            <strong>Test Instructions:</strong><br>
+            1. Click "Setup Test Environment" to prepare localStorage<br>
+            2. Click "Open User Submission Form" to test the form<br>
+            3. Fill out the form and submit to test the fix
+        </div>
+
+        <button class="test-button" onclick="setupTestEnvironment()">Setup Test Environment</button>
+        <button class="test-button" onclick="openSubmissionForm()">Open User Submission Form</button>
+        <button class="test-button" onclick="checkLocalStorage()">Check Saved Products</button>
+        
+        <div id="testResults"></div>
+    </div>
+
+    <script>
+        function showResult(message, type = 'info') {
+            const resultsDiv = document.getElementById('testResults');
+            const resultDiv = document.createElement('div');
+            resultDiv.className = `test-result ${type}`;
+            resultDiv.innerHTML = message;
+            resultsDiv.appendChild(resultDiv);
+        }
+
+        function setupTestEnvironment() {
+            // Setup the required localStorage items for user submission access
+            const testEmail = 'test@example.com';
+            
+            localStorage.setItem('smartdeals_user_submission_access', testEmail);
+            localStorage.setItem('smartdeals_currentUser', JSON.stringify({
+                email: testEmail,
+                name: 'Test User'
+            }));
+            
+            showResult('✅ Test environment setup complete! User email: ' + testEmail, 'success');
+        }
+
+        function openSubmissionForm() {
+            const testEmail = 'test@example.com';
+            window.open(`user-product-submission.html?email=${testEmail}`, '_blank');
+            showResult('📋 User submission form opened in new tab', 'info');
+        }
+
+        function checkLocalStorage() {
+            const products = JSON.parse(localStorage.getItem('products') || '[]');
+            const userProducts = products.filter(p => p.category === 'users-products');
+            
+            if (userProducts.length > 0) {
+                showResult(`✅ Found ${userProducts.length} user-submitted products in localStorage`, 'success');
+                userProducts.forEach((product, index) => {
+                    showResult(`Product ${index + 1}: ${product.title} - ${product.price}`, 'info');
+                });
+            } else {
+                showResult('ℹ️ No user-submitted products found in localStorage', 'info');
+            }
+        }
+
+        // Auto-setup on page load
+        window.addEventListener('load', () => {
+            showResult('🚀 Test page loaded. Click "Setup Test Environment" to begin testing.', 'info');
+        });
+    </script>
+</body>
+</html>
