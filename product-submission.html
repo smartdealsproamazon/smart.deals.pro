@@ -645,6 +645,7 @@
                     // Create product object
           const product = {
             title,
+            name: title, // Add name field for consistency
             imageData,
             price: parseFloat(price),
             description,
@@ -662,68 +663,44 @@
             product.discount = parseInt(discount);
           }
 
-          // Try to submit to Firebase with timeout
+          // Submit directly to Firebase - no localStorage fallback
           let docRef;
           try {
+            // Add user ID to product for user-specific tracking
+            const currentUser = JSON.parse(localStorage.getItem('smartdeals_currentUser') || '{}');
+            product.userId = currentUser.email || 'anonymous';
+            product.userDisplayName = currentUser.name || 'Anonymous User';
+            
             docRef = await withTimeout(
               db.collection("products").add(product),
               15000
             );
-            console.log("Product submitted successfully:", docRef.id);
+            console.log("Product submitted successfully to Firebase:", docRef.id);
             
-            // Update local storage
-            const existing = JSON.parse(localStorage.getItem("products") || "[]");
-            existing.push({ ...product, id: docRef.id });
-            localStorage.setItem("products", JSON.stringify(existing));
-
             updateProgress(80);
-            showStatus("Product saved successfully! Now posting to Facebook...", "success");
+            showStatus("Product saved to Firebase successfully! Now posting to Facebook...", "success");
 
             // Post to Facebook
             const facebookSuccess = await postToFacebook(product, imageData);
             
             updateProgress(100);
             if (facebookSuccess) {
-              showStatus("Product submitted and posted to Facebook! Redirecting...", "success");
+              showStatus("Product submitted and posted to Facebook! Redirecting to marketplace...", "success");
             } else {
-              showStatus("Product submitted successfully! Facebook posting failed but product is saved. Redirecting...", "warning");
+              showStatus("Product submitted successfully! Facebook posting failed but product is saved. Redirecting to marketplace...", "warning");
             }
 
-            // Redirect after success
+            // Redirect to marketplace page instead of homepage
             setTimeout(() => {
-              window.location.href = "index.html";
+              window.location.href = "marketplace.html";
             }, 3000);
 
           } catch (firebaseError) {
             console.error("Firebase submission failed:", firebaseError);
-            
-            // Fallback to local storage
-            try {
-              const existing = JSON.parse(localStorage.getItem("products") || "[]");
-              existing.push({ ...product, id: 'local_' + Date.now() });
-              localStorage.setItem("products", JSON.stringify(existing));
-              
-              updateProgress(80);
-              showStatus("Saved locally. Now posting to Facebook...", "warning");
-              
-              // Still try to post to Facebook
-              const facebookSuccess = await postToFacebook(product, imageData);
-              
-              updateProgress(100);
-              if (facebookSuccess) {
-                showStatus("Product saved locally and posted to Facebook! Will sync when connection is restored.", "success");
-              } else {
-                showStatus("Product saved locally. Facebook posting failed. Will sync when connection is restored.", "warning");
-              }
-              
-              setTimeout(() => {
-                window.location.href = "index.html";
-              }, 3000);
-              
-            } catch (localError) {
-              console.error("Local storage failed:", localError);
-              throw new Error("Failed to save product. Please try again.");
-            }
+            updateProgress(100);
+            showStatus("Failed to save product to Firebase. Please check your internet connection and try again.", "error");
+            resetFormState();
+            throw new Error("Failed to save product to Firebase. Please try again.");
           }
 
         } catch (error) {

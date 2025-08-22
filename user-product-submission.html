@@ -345,23 +345,19 @@
           try {
             // Try Firebase submission with timeout
             if (db) {
+              // Add user ID to product for user-specific tracking
+              const currentUser = JSON.parse(localStorage.getItem('smartdeals_currentUser') || '{}');
+              product.userId = currentUser.email || 'anonymous';
+              product.userDisplayName = currentUser.name || 'Anonymous User';
+              
               const docRef = await withTimeout(
                 db.collection('products').add(product),
                 15000
               );
-              console.log('Product written with ID:', docRef.id);
-              
-              // Update local storage as backup
-              try {
-                const existing = JSON.parse(localStorage.getItem("products") || "[]");
-                existing.push({ ...product, id: docRef.id });
-                localStorage.setItem("products", JSON.stringify(existing));
-              } catch (localError) {
-                console.warn('Local storage update failed:', localError);
-              }
+              console.log('Product written to Firebase with ID:', docRef.id);
 
               updateProgress(100);
-              successBox.textContent = 'Product added successfully! Redirecting to Marketplace...';
+              successBox.textContent = 'Product added successfully to Firebase! Redirecting to Marketplace...';
               successBox.style.display = 'block';
               
               setTimeout(() => {
@@ -369,30 +365,15 @@
                 window.location.href = 'marketplace.html';
               }, 1500);
             } else {
-              throw new Error('Firebase not initialized');
+              throw new Error('Firebase not initialized. Please refresh the page and try again.');
             }
           } catch (firebaseError) {
             console.error('Firebase submission failed:', firebaseError);
-            
-            // Fallback to local storage
-            try {
-              const existing = JSON.parse(localStorage.getItem("products") || "[]");
-              existing.push({ ...product, id: 'local_' + Date.now() });
-              localStorage.setItem("products", JSON.stringify(existing));
-              
-              updateProgress(100);
-              successBox.textContent = 'Product saved locally! Will sync when connection is restored. Redirecting...';
-              successBox.style.display = 'block';
-              
-              setTimeout(() => {
-                localStorage.removeItem('smartdeals_user_submission_access');
-                window.location.href = 'marketplace.html';
-              }, 2000);
-              
-            } catch (localError) {
-              console.error('Local storage failed:', localError);
-              throw new Error('Failed to save product. Please check your connection and try again.');
-            }
+            updateProgress(100);
+            errorBox.textContent = 'Failed to save product to Firebase. Please check your internet connection and try again.';
+            errorBox.style.display = 'block';
+            resetFormState();
+            throw new Error('Failed to save product to Firebase. Please try again.');
           }
 
         } catch (error) {

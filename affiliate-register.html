@@ -871,36 +871,36 @@
           registrationDate: new Date().toISOString()
         };
         
-        // Generate unique affiliate ID
-        const affiliateId = 'AFF' + Date.now().toString().slice(-6);
-        
-        // Create user data for authentication
-        const userData = {
-          name: `${affiliateData.personalInfo.firstName} ${affiliateData.personalInfo.lastName}`,
-          email: affiliateData.personalInfo.email,
-          phone: affiliateData.personalInfo.phone,
-          country: affiliateData.personalInfo.country,
-          registrationDate: new Date().toISOString()
-        };
-        
-        // Create affiliate-specific data
-        const affiliateInfo = {
-          affiliateId: affiliateId,
-          status: 'active',
-          level: 'starter',
-          ...affiliateData,
-          userData: userData
-        };
-        
-        // Fire-and-forget email notification
-        try { sendRegistrationEmail(affiliateInfo); } catch (e) { console.error('Email send error', e); }
-        
-        // Store authentication data
-        localStorage.setItem('smartdeals_currentUser', JSON.stringify(userData));
-        localStorage.setItem('smartdeals_affiliateRegistered', JSON.stringify(affiliateInfo));
-        
-        // Initialize default affiliate data
-        initializeAffiliateData(affiliateId);
+        try {
+          // Use Firebase for affiliate registration
+          const result = await window.firebaseUserService.registerAffiliate(affiliateData);
+          
+          if (!result.success) {
+            throw new Error(result.error);
+          }
+
+          const affiliateInfo = result.affiliate;
+          const affiliateId = affiliateInfo.affiliateId;
+          
+          // Create user data for authentication
+          const userData = {
+            name: `${affiliateData.personalInfo.firstName} ${affiliateData.personalInfo.lastName}`,
+            email: affiliateData.personalInfo.email,
+            phone: affiliateData.personalInfo.phone,
+            country: affiliateData.personalInfo.country,
+            registrationDate: new Date().toISOString(),
+            firestoreId: result.id
+          };
+          
+          // Fire-and-forget email notification
+          try { sendRegistrationEmail(affiliateInfo); } catch (e) { console.error('Email send error', e); }
+          
+          // Store authentication data in localStorage for session management
+          localStorage.setItem('smartdeals_currentUser', JSON.stringify(userData));
+          localStorage.setItem('smartdeals_affiliateRegistered', JSON.stringify({
+            ...affiliateInfo,
+            userData: userData
+          }));
         
         console.log(`✅ Affiliate registered successfully: ${userData.name} (${affiliateId})`);
         
@@ -916,40 +916,29 @@
         successMessage.style.display = 'block';
         successMessage.scrollIntoView({ behavior: 'smooth' });
         
-        // Reset form
-        this.reset();
-        
-        // Redirect to dashboard after 3 seconds
-        setTimeout(() => {
-          window.location.href = 'affiliate-dashboard.html';
-        }, 3000);
+          // Reset form
+          this.reset();
+          
+          // Redirect to dashboard after 3 seconds
+          setTimeout(() => {
+            window.location.href = 'affiliate-dashboard.html';
+          }, 3000);
+          
+        } catch (error) {
+          console.error('Affiliate registration error:', error);
+          errorMessage.textContent = 'Registration failed: ' + error.message;
+          errorMessage.style.display = 'block';
+          errorMessage.scrollIntoView({ behavior: 'smooth' });
+          
+          // Reset button state
+          submitBtn.textContent = 'Complete Registration';
+          submitBtn.disabled = false;
+        }
         
       }, 2000);
     });
 
-    // Initialize default data for new affiliate
-    function initializeAffiliateData(affiliateId) {
-      // Default products data
-      const defaultProducts = {
-        total: 0,
-        active: 0,
-        pending: 0,
-        rejected: 0,
-        products: []
-      };
-      localStorage.setItem(`products_${affiliateId}`, JSON.stringify(defaultProducts));
-      
-      // Default analytics data (views and profile visits only)
-      const defaultAnalytics = {
-        views: 0,
-        profileVisits: 0,
-        clicks: 0,
-        history: []
-      };
-      localStorage.setItem(`analytics_${affiliateId}`, JSON.stringify(defaultAnalytics));
-      
-      console.log(`✅ Default data initialized for affiliate: ${affiliateId}`);
-    }
+    // Removed initializeAffiliateData function - now handled by Firebase service
 
     // Send registration email to admin inbox
     async function sendRegistrationEmail(affiliateInfo) {
@@ -1041,5 +1030,8 @@
       });
     });
   </script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script src="firebase-user-service.js"></script>
 </body>
 </html>
