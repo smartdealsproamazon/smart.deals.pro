@@ -662,7 +662,7 @@
   </section>
 
   <!-- Filters Section -->
-  <section class="filters-section">
+  <section class="filters-section" style="display: none;">
     <div class="container">
       <div class="filters-container">
         <div class="filter-group">
@@ -889,6 +889,12 @@
 
         console.log('Applying filters:', { category, platform, price, search });
         
+        // If both platform and category are selected, navigate to new page with params
+        if (platform && category) {
+          window.location.href = `marketplace.html?platform=${encodeURIComponent(platform)}&category=${encodeURIComponent(category)}`;
+          return;
+        }
+        
         // Filter products based on selected criteria
         if (window.products && window.products.length > 0) {
           let filteredProducts = window.products.filter(product => {
@@ -959,7 +965,7 @@
           container.appendChild(productCard);
         });
       }
-
+      
       // Clear all filters
       function clearFilters() {
         document.getElementById('categoryFilter').value = '';
@@ -967,15 +973,36 @@
         document.getElementById('priceFilter').value = '';
         document.getElementById('searchInput').value = '';
         
-        // Reset to Amazon categories
+        // Reset to Amazon categories and default platform, then apply filters
         updateCategoriesForPlatform('amazon');
-        
-        // Show all products
-        renderAllProducts();
+        document.getElementById('platformFilter').value = 'amazon';
+        applyFilters();
       }
-
-      categoryFilter.addEventListener('change', applyFilters);
-      platformFilter.addEventListener('change', applyFilters);
+      
+      categoryFilter.addEventListener('change', function() {
+        const platform = platformFilter.value;
+        const category = categoryFilter.value;
+        if (platform && category) {
+          window.location.href = `marketplace.html?platform=${encodeURIComponent(platform)}&category=${encodeURIComponent(category)}`;
+          return;
+        }
+        applyFilters();
+      });
+      platformFilter.addEventListener('change', function() {
+        const platform = platformFilter.value;
+        const category = categoryFilter.value;
+        // Update categories when platform changes
+        updateCategoriesForPlatform(platform || 'amazon');
+        if (platform && category) {
+          window.location.href = `marketplace.html?platform=${encodeURIComponent(platform)}&category=${encodeURIComponent(category)}`;
+          return;
+        }
+        if (platform) {
+          window.location.href = `marketplace.html?platform=${encodeURIComponent(platform)}`;
+          return;
+        }
+        applyFilters();
+      });
       priceFilter.addEventListener('change', applyFilters);
       
       // Debounce search input
@@ -984,8 +1011,30 @@
         clearTimeout(searchTimeout);
         searchTimeout = setTimeout(applyFilters, 500);
       });
+      
+      // Set default platform to Amazon on load and apply filters immediately (if no URL params)
+      platformFilter.value = 'amazon';
+      updateCategoriesForPlatform('amazon');
+      
+      // On load, read URL params and show appropriate view
+      const params = new URLSearchParams(window.location.search);
+      const urlPlatform = params.get('platform');
+      const urlCategory = params.get('category');
+      if (urlPlatform) {
+        platformFilter.value = urlPlatform;
+        updateCategoriesForPlatform(urlPlatform);
+        if (urlCategory) {
+          // Set category if provided
+          const catEl = document.getElementById('categoryFilter');
+          if (catEl) catEl.value = urlCategory;
+        }
+        // Show platform-specific products view
+        showPlatformProducts(urlPlatform);
+      } else {
+        applyFilters();
+      }
     });
-
+    
     // Mobile menu toggle
     function toggleMobileMenu() {
       const mobileMenu = document.getElementById('mobileMenu');
@@ -993,7 +1042,7 @@
         mobileMenu.classList.toggle('active');
       }
     }
-
+    
     // Smooth scrolling for anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       anchor.addEventListener('click', function (e) {
@@ -1090,18 +1139,35 @@
     document.addEventListener('DOMContentLoaded', function() {
       renderPlatforms();
       setupPlatformFilter();
-      renderAllProducts();
+      
+      // If a platform is selected (default Amazon), apply filters; otherwise render all
+      const platformFilterEl = document.getElementById('platformFilter');
+      if (platformFilterEl && platformFilterEl.value) {
+        platformFilterEl.dispatchEvent(new Event('change'));
+      } else {
+        renderAllProducts();
+      }
       
       // Listen for product updates
       document.addEventListener('products-ready', function() {
         renderPlatforms();
         setupPlatformFilter();
-        renderAllProducts();
+        const platformFilterEl = document.getElementById('platformFilter');
+        if (platformFilterEl && platformFilterEl.value) {
+          platformFilterEl.dispatchEvent(new Event('change'));
+        } else {
+          renderAllProducts();
+        }
       });
       document.addEventListener('products-updated', function() {
         renderPlatforms();
         setupPlatformFilter();
-        renderAllProducts();
+        const platformFilterEl = document.getElementById('platformFilter');
+        if (platformFilterEl && platformFilterEl.value) {
+          platformFilterEl.dispatchEvent(new Event('change'));
+        } else {
+          renderAllProducts();
+        }
       });
     });
 
@@ -1225,7 +1291,17 @@
     function createPlatformCard(platformKey, platform, productCount) {
       const card = document.createElement('div');
       card.className = 'platform-card';
-      card.onclick = () => showPlatformProducts(platformKey);
+      const pageMap = {
+        amazon: 'platforms/amazon.html',
+        clickbank: 'platforms/clickbank.html',
+        shareasale: 'platforms/shareasale.html',
+        etsy: 'platforms/etsy.html',
+        ebay: 'platforms/ebay.html'
+      };
+      card.onclick = () => { 
+        const target = pageMap[platformKey] || `marketplace.html?platform=${encodeURIComponent(platformKey)}`;
+        window.location.href = target;
+      };
 
       card.innerHTML = `
         <div class="platform-badge">${platform.badge}</div>
@@ -1276,14 +1352,19 @@
       // Filter products by platform
       const products = window.products ? window.products.filter(p => (p.platform || 'other') === platformKey) : [];
       
+      // Further filter by category if provided via URL
+      const params = new URLSearchParams(window.location.search);
+      const urlCategory = params.get('category');
+      const finalProducts = urlCategory ? products.filter(p => p.category === urlCategory) : products;
+      
       container.innerHTML = '';
 
-      if (products.length === 0) {
+      if (finalProducts.length === 0) {
         container.innerHTML = `
           <div style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
             <i class="fas fa-box-open" style="font-size: 4rem; color: #9ca3af; margin-bottom: 1rem;"></i>
             <h3>No Products Found</h3>
-            <p style="color: #6b7280;">No products available for this platform yet.</p>
+            <p style="color: #6b7280;">No products available for this platform${urlCategory ? ' and category' : ''} yet.</p>
             <button onclick="showPlatforms()" style="margin-top: 1rem; padding: 0.75rem 1.5rem; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer;">
               Back to Platforms
             </button>
@@ -1293,7 +1374,7 @@
       }
 
       // Render each product
-      products.forEach(product => {
+      finalProducts.forEach(product => {
         const productCard = createProductCard(product);
         container.appendChild(productCard);
       });
