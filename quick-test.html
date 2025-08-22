@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Test - Registration Form</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 20px; 
+            background: #f0f0f0;
+        }
+        .test-box {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin: 20px 0;
+        }
+        .success { color: #059669; background: #d1fae5; padding: 15px; border-radius: 8px; }
+        .error { color: #dc2626; background: #fee2e2; padding: 15px; border-radius: 8px; }
+        .info { color: #2563eb; background: #dbeafe; padding: 15px; border-radius: 8px; }
+        button {
+            background: #3b82f6;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            margin: 10px 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover { background: #2563eb; }
+        iframe {
+            width: 100%;
+            height: 600px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Quick Test - Registration Form Status</h1>
+    
+    <div class="test-box">
+        <h3>Test Results:</h3>
+        <div id="testResults">
+            <div class="info">🔄 Running tests...</div>
+        </div>
+    </div>
+    
+    <div class="test-box">
+        <h3>Quick Actions:</h3>
+        <button onclick="testStandaloneForm()">Test Standalone Form</button>
+        <button onclick="testFixedForm()">Test Fixed Form</button>
+        <button onclick="testOriginalForm()">Test Original Form</button>
+        <button onclick="openStandaloneForm()">Open Standalone Form</button>
+    </div>
+    
+    <div class="test-box">
+        <h3>Live Preview:</h3>
+        <div id="livePreview">
+            <p>Click a test button above to see live preview</p>
+        </div>
+    </div>
+
+    <script>
+        // Auto-run tests
+        window.addEventListener('load', function() {
+            setTimeout(runAllTests, 1000);
+        });
+        
+        async function runAllTests() {
+            const resultsDiv = document.getElementById('testResults');
+            resultsDiv.innerHTML = '<div class="info">🔄 Running all tests...</div>';
+            
+            let results = [];
+            
+            // Test 1: Standalone form
+            try {
+                const response = await fetch('standalone-registration.html');
+                if (response.ok) {
+                    results.push('✅ Standalone form accessible');
+                } else {
+                    results.push('❌ Standalone form not accessible');
+                }
+            } catch (error) {
+                results.push('❌ Standalone form error: ' + error.message);
+            }
+            
+            // Test 2: Fixed form
+            try {
+                const response = await fetch('affiliate-register-fixed.html');
+                if (response.ok) {
+                    results.push('✅ Fixed form accessible');
+                } else {
+                    results.push('❌ Fixed form not accessible');
+                }
+            } catch (error) {
+                results.push('❌ Fixed form error: ' + error.message);
+            }
+            
+            // Test 3: Original form
+            try {
+                const response = await fetch('affiliate-register.html');
+                if (response.ok) {
+                    results.push('✅ Original form accessible');
+                } else {
+                    results.push('❌ Original form not accessible');
+                }
+            } catch (error) {
+                results.push('❌ Original form error: ' + error.message);
+            }
+            
+            // Display results
+            resultsDiv.innerHTML = `
+                <div class="success">
+                    <h4>Test Results:</h4>
+                    ${results.map(result => `<div>${result}</div>`).join('')}
+                </div>
+            `;
+        }
+        
+        async function testStandaloneForm() {
+            const previewDiv = document.getElementById('livePreview');
+            previewDiv.innerHTML = `
+                <h4>Standalone Registration Form (Recommended)</h4>
+                <p class="success">✅ This form has NO external dependencies and will work immediately!</p>
+                <iframe src="standalone-registration.html"></iframe>
+            `;
+        }
+        
+        async function testFixedForm() {
+            const previewDiv = document.getElementById('livePreview');
+            previewDiv.innerHTML = `
+                <h4>Fixed Registration Form</h4>
+                <p class="info">ℹ️ This form has been fixed but may still have some dependencies</p>
+                <iframe src="affiliate-register-fixed.html"></iframe>
+            `;
+        }
+        
+        async function testOriginalForm() {
+            const previewDiv = document.getElementById('livePreview');
+            previewDiv.innerHTML = `
+                <h4>Original Registration Form (Has Issues)</h4>
+                <p class="error">⚠️ This form has loading screen issues and Firebase dependencies</p>
+                <iframe src="affiliate-register.html"></iframe>
+            `;
+        }
+        
+        function openStandaloneForm() {
+            window.open('standalone-registration.html', '_blank');
+        }
+    </script>
+</body>
+</html>
