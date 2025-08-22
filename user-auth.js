@@ -33,11 +33,13 @@ class SmartDealsAuth {
     });
 
     // Listen for service worker messages
-    navigator.serviceWorker.addEventListener('message', (event) => {
-      if (event.data && event.data.type === 'AUTH_SYNC') {
-        this.handleServiceWorkerMessage(event.data);
-      }
-    });
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.addEventListener('message', (event) => {
+        if (event.data && event.data.type === 'AUTH_SYNC') {
+          this.handleServiceWorkerMessage(event.data);
+        }
+      });
+    }
 
     // Check for existing session on page load
     this.checkExistingSession();
