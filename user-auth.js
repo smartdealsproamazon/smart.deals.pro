@@ -763,10 +763,10 @@ class SmartDealsAuth {
     try {
       console.log('SmartDealsAuth: Starting user registration...');
       
-      // Use Firebase Optimizer if available for better performance
-      if (window.firebaseOptimizer && window.firebaseOptimizer.isInitialized) {
-        console.log('SmartDealsAuth: Using Firebase Optimizer for registration...');
-        const result = await window.firebaseOptimizer.registerUser(userData);
+      // Use Firebase service if available
+      if (window.firebaseService && window.firebaseService.isConnected) {
+        console.log('SmartDealsAuth: Using Firebase service for registration...');
+        const result = await window.firebaseService.registerUser(userData);
         
         if (result.success) {
           this.currentUser = result.user;
@@ -783,28 +783,8 @@ class SmartDealsAuth {
         }
       }
       
-      // Fallback to original Firebase service if Firebase Optimizer not available
-      console.log('SmartDealsAuth: Using fallback Firebase service...');
-      if (window.firebaseUserService) {
-        const result = await window.firebaseUserService.registerUser(userData);
-        
-        if (result.success) {
-          this.currentUser = result.user;
-          this.saveUserToStorage(result.user);
-          this.updateHeaderUI();
-          this.setupCrossDeviceSync();
-          
-          // Show success notification
-          this.showNotification('Registration successful! Welcome to SmartDeals Pro!', 'success');
-          
-          return result;
-        } else {
-          throw new Error(result.error);
-        }
-      }
-      
-      // Final fallback - store locally
-      console.log('SmartDealsAuth: Using local storage fallback...');
+      // Fallback - store locally
+      console.log('SmartDealsAuth: Firebase not available, storing locally...');
       const localUser = {
         ...userData,
         id: 'local_' + Date.now().toString(),
@@ -818,7 +798,7 @@ class SmartDealsAuth {
       this.updateHeaderUI();
       
       // Show offline notification
-      this.showNotification('Registration stored locally. Will sync when connection is restored.', 'info');
+      this.showNotification('Registration stored locally. Will sync when Firebase is available.', 'info');
       
       return { success: true, user: localUser, offline: true };
       

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Firebase Optimizer Test</title>
+    <title>Simple Firebase Test</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -77,10 +77,20 @@
             font-family: monospace;
             font-size: 12px;
         }
+        .form-group {
+            margin: 10px 0;
+        }
+        .form-group input {
+            padding: 8px;
+            margin: 5px;
+            width: 200px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
     </style>
 </head>
 <body>
-    <h1>Firebase Optimizer Test Page</h1>
+    <h1>Simple Firebase Test Page</h1>
     
     <div class="test-section">
         <h2>Firebase Connection Status</h2>
@@ -91,7 +101,6 @@
         <button class="test-button" onclick="testConnection()">Test Connection</button>
         <button class="test-button" onclick="loadProducts()">Load Products</button>
         <button class="test-button" onclick="clearCache()">Clear Cache</button>
-        <button class="test-button" onclick="testRegistration()">Test Registration</button>
     </div>
     
     <div class="test-section">
@@ -103,27 +112,43 @@
     </div>
     
     <div class="test-section">
-        <h2>Console Log</h2>
-        <div id="log-container" class="log-container"></div>
-        <button class="test-button" onclick="clearLog()">Clear Log</button>
-    </div>
-    
-    <div class="test-section">
-        <h2>Registration Test</h2>
+        <h2>User Registration Test</h2>
         <form id="registration-form">
-            <input type="text" id="test-name" placeholder="Name" required style="padding: 8px; margin: 5px; width: 200px;">
-            <input type="email" id="test-email" placeholder="Email" required style="padding: 8px; margin: 5px; width: 200px;">
+            <div class="form-group">
+                <input type="text" id="test-name" placeholder="Name" required>
+                <input type="email" id="test-email" placeholder="Email" required>
+            </div>
             <button type="submit" class="test-button">Test Registration</button>
         </form>
         <div id="registration-result" class="status info">No registration attempt yet</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Product Submission Test</h2>
+        <form id="product-submission-form">
+            <div class="form-group">
+                <input type="text" id="product-title" placeholder="Product Title" required>
+                <input type="text" id="product-category" placeholder="Category" required>
+                <input type="number" id="product-price" placeholder="Price" step="0.01" required>
+                <input type="email" id="user-email" placeholder="Your Email" required>
+            </div>
+            <button type="submit" class="test-button">Submit Product</button>
+        </form>
+        <div id="submission-result" class="status info">No submission attempt yet</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Console Log</h2>
+        <div id="log-container" class="log-container"></div>
+        <button class="test-button" onclick="clearLog()">Clear Log</button>
     </div>
 
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
     
-    <!-- Firebase Optimizer -->
-    <script src="firebase-optimizer.js"></script>
+    <!-- Firebase Configuration -->
+    <script src="firebase-config.js"></script>
     <script src="products.js"></script>
     <script src="user-auth.js"></script>
     
@@ -149,17 +174,17 @@
         function testConnection() {
             log('Testing Firebase connection...');
             
-            if (window.firebaseOptimizer) {
-                if (window.firebaseOptimizer.isInitialized) {
-                    updateStatus('firebase-status', 'Firebase Optimizer: Initialized and Ready', 'success');
-                    log('Firebase Optimizer is ready', 'success');
+            if (window.firebaseService) {
+                if (window.firebaseService.isConnected) {
+                    updateStatus('firebase-status', 'Firebase Service: Connected and Ready', 'success');
+                    log('Firebase service is connected', 'success');
                 } else {
-                    updateStatus('firebase-status', 'Firebase Optimizer: Not yet initialized', 'error');
-                    log('Firebase Optimizer not ready yet', 'error');
+                    updateStatus('firebase-status', 'Firebase Service: Not connected', 'error');
+                    log('Firebase service not connected', 'error');
                 }
             } else {
-                updateStatus('firebase-status', 'Firebase Optimizer: Not available', 'error');
-                log('Firebase Optimizer not available', 'error');
+                updateStatus('firebase-status', 'Firebase Service: Not available', 'error');
+                log('Firebase service not available', 'error');
             }
             
             if (window.firebase && firebase.firestore) {
@@ -220,15 +245,26 @@
             localStorage.removeItem('allProducts');
             localStorage.removeItem('products_updated');
             
-            if (window.firebaseOptimizer) {
-                window.firebaseOptimizer.clearCache();
-            }
-            
             updateStatus('products-status', 'Cache cleared', 'info');
             document.getElementById('products-grid').innerHTML = '';
             document.getElementById('products-count').textContent = 'Cache cleared';
             log('Cache cleared successfully', 'success');
         }
+        
+        function clearLog() {
+            document.getElementById('log-container').innerHTML = '';
+        }
+        
+        // Event listeners
+        document.getElementById('registration-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            testRegistration();
+        });
+        
+        document.getElementById('product-submission-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            testProductSubmission();
+        });
         
         function testRegistration() {
             const name = document.getElementById('test-name').value;
@@ -259,25 +295,49 @@
             }
         }
         
-        function clearLog() {
-            document.getElementById('log-container').innerHTML = '';
+        function testProductSubmission() {
+            const title = document.getElementById('product-title').value;
+            const category = document.getElementById('product-category').value;
+            const price = document.getElementById('product-price').value;
+            const email = document.getElementById('user-email').value;
+            
+            if (!title || !category || !price || !email) {
+                updateStatus('submission-result', 'Please fill in all fields', 'error');
+                return;
+            }
+            
+            log(`Testing product submission: ${title} (${category}) - $${price}`);
+            
+            const productData = {
+                title: title,
+                category: category,
+                price: parseFloat(price),
+                userEmail: email,
+                description: 'Test product submission',
+                link: '#',
+                platform: 'test'
+            };
+            
+            if (window.firebaseService && window.firebaseService.isConnected) {
+                window.firebaseService.submitProduct(productData).then(result => {
+                    if (result.success) {
+                        updateStatus('submission-result', `Product submitted successfully! ID: ${result.productId}`, 'success');
+                        log(`Product submission successful: ${result.productId}`, 'success');
+                    } else {
+                        updateStatus('submission-result', `Submission failed: ${result.error}`, 'error');
+                        log(`Product submission failed: ${result.error}`, 'error');
+                    }
+                });
+            } else {
+                updateStatus('submission-result', 'Firebase service not available', 'error');
+                log('Firebase service not available for product submission', 'error');
+            }
         }
         
-        // Event listeners
-        document.getElementById('registration-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            testRegistration();
-        });
-        
         // Listen for Firebase events
-        document.addEventListener('firebase-optimizer-ready', () => {
-            log('Firebase Optimizer ready event received', 'success');
-            updateStatus('firebase-status', 'Firebase Optimizer: Ready', 'success');
-        });
-        
-        document.addEventListener('firebase-offline', () => {
-            log('Firebase offline event received', 'info');
-            updateStatus('connection-status', 'Firebase: Offline Mode', 'info');
+        document.addEventListener('firebase-connected', () => {
+            log('Firebase connected event received', 'success');
+            updateStatus('connection-status', 'Firebase: Connected', 'success');
         });
         
         document.addEventListener('products-ready', () => {
@@ -287,9 +347,9 @@
         
         // Initialize test
         document.addEventListener('DOMContentLoaded', () => {
-            log('Test page loaded, waiting for Firebase Optimizer...');
+            log('Test page loaded, waiting for Firebase...');
             
-            // Wait a bit for Firebase Optimizer to initialize
+            // Wait for Firebase to initialize
             setTimeout(() => {
                 testConnection();
                 loadProducts();
