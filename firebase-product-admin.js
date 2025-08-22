@@ -138,7 +138,7 @@ class FirebaseProductAdmin {
 
   // Helper function to create sample product
   createSampleProduct() {
-    const categories = ['smartwatch', 'fashion', 'electronics', 'gaming', 'home-garden'];
+    const categories = ['smartwatch', 'fashion', 'electronics', 'home-garden'];
     const category = categories[Math.floor(Math.random() * categories.length)];
     
     const sampleProducts = {
@@ -177,18 +177,6 @@ class FirebaseProductAdmin {
         discount: 33,
         rating: 4.9,
         reviews: 234
-      },
-      gaming: {
-        name: 'Pro Gaming Mechanical Keyboard',
-        price: 129.99,
-        originalPrice: 179.99,
-        description: 'High-performance mechanical keyboard for gaming enthusiasts',
-        image: 'https://images.unsplash.com/photo-1541140532154-b024d705b90a?w=400',
-        link: 'https://example.com/keyboard',
-        features: ['Mechanical Switches', 'RGB Backlight', 'Anti-Ghosting', 'Aluminum Frame'],
-        discount: 28,
-        rating: 4.7,
-        reviews: 178
       },
       'home-garden': {
         name: 'Smart Home Security Camera',
