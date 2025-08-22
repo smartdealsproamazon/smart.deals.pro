@@ -167,9 +167,7 @@ function createProductCard(product) {
     description = `High-quality ${product.category || 'product'} with excellent features and great value for money.`;
   }
   
-  // Create affiliate info section
-  const affiliateName = product.affiliateName || 'Verified Affiliate';
-  const affiliateRating = generateStars(product.affiliateRating || 5);
+  // Affiliate info section removed as requested
 
   // Make the entire card clickable to open product detail page
   div.style.cursor = 'pointer';
@@ -178,10 +176,16 @@ function createProductCard(product) {
     if (e.target.closest('a, button')) {
       return;
     }
-    // Enhanced product linking with validation
+    // Enhanced product linking with validation and scroll position saving
     if (product && product.id) {
       const currentPage = window.location.pathname.split('/').pop() || 'index.html';
       const productId = encodeURIComponent(String(product.id));
+      
+      // Save current scroll position before navigating
+      const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+      localStorage.setItem('scrollPosition_' + currentPage, scrollPosition.toString());
+      console.log(`Saving scroll position ${scrollPosition} for page ${currentPage}`);
+      
       console.log(`Navigating to product detail for ID: ${product.id}`);
       window.location.href = `product-detail.html?id=${productId}&ref=${encodeURIComponent(currentPage)}`;
     } else {
@@ -201,12 +205,6 @@ function createProductCard(product) {
       <button class="product-cta" onclick="event.stopPropagation(); trackClick('${product.name}', '${product.category}'); window.open('${product.link}', '_blank')">
         🛒 Buy Now - ${displayPrice}
       </button>
-    </div>
-    <div class="affiliate-info">
-      <span class="affiliate-name">${affiliateName}</span>
-      <div class="affiliate-rating">
-        ${affiliateRating}
-      </div>
     </div>
   `;
   
