@@ -335,8 +335,16 @@ window.getProductById = function(id) {
 };
 
 function loadFirebase(callback) {
+  // If Firebase Optimizer is available and ready, use it
+  if (window.firebaseOptimizer && window.firebaseOptimizer.isInitialized) {
+    console.log('Firebase Optimizer already available, proceeding...');
+    callback();
+    return;
+  }
+  
   // If the SDK is already present we can move on immediately
   if (window.firebase && firebase.firestore) {
+    console.log('Firebase SDK already loaded, proceeding...');
     callback();
     return;
   }
@@ -350,10 +358,29 @@ function loadFirebase(callback) {
     document.dispatchEvent(new Event('products-ready'));
   }
 
+  // Wait for Firebase Optimizer to be ready
+  if (window.firebaseOptimizer) {
+    console.log('Waiting for Firebase Optimizer to be ready...');
+    const waitForOptimizer = () => {
+      if (window.firebaseOptimizer && window.firebaseOptimizer.isInitialized) {
+        console.log('Firebase Optimizer ready, proceeding...');
+        callback();
+      } else {
+        setTimeout(waitForOptimizer, 100);
+      }
+    };
+    waitForOptimizer();
+    return;
+  }
+
   // Load Firebase SDK in parallel with a shorter timeout
   const loadTimeout = setTimeout(() => {
     console.warn('Firebase loading timeout - using cached data only');
-  }, 1000); // Reduced timeout for faster loading
+    // Try to show cached products
+    if (typeof window.autoRenderProducts === 'function') {
+      window.autoRenderProducts();
+    }
+  }, 2000); // Increased timeout for better reliability
 
   // Dynamically add the Firebase SDK scripts with faster CDN
   const appScript = document.createElement('script');
@@ -363,6 +390,7 @@ function loadFirebase(callback) {
     storeScript.src = 'https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js';
     storeScript.onload = () => {
       clearTimeout(loadTimeout);
+      console.log('Firebase SDK loaded successfully');
       callback();
     };
     storeScript.onerror = () => {
@@ -388,7 +416,39 @@ function loadFirebase(callback) {
 
 // Real-time Firebase listener function with optimized connection
 function setupRealtimeProductListener() {
-  console.log('Setting up optimized Firebase listener...');
+  console.log('Setting up optimized Firebase listener via Firebase Optimizer...');
+  
+  // Use Firebase Optimizer if available
+  if (window.firebaseOptimizer && window.firebaseOptimizer.isInitialized) {
+    console.log('Using Firebase Optimizer for product listener...');
+    window.firebaseOptimizer.setupProductListener((filteredProducts, allProducts) => {
+      console.log('Products updated via Firebase Optimizer:', filteredProducts.length);
+      
+      // Update global products array for backward compatibility
+      const previousCount = window.products?.length || 0;
+      window.products = filteredProducts;
+      
+      // Also maintain a separate array with ALL products (including user-submitted) for marketplace
+      window.allProductsIncludingUserSubmitted = allProducts;
+      
+      console.log(`Products updated: ${previousCount} → ${window.products.length}`);
+      console.log(`All products (including user-submitted): ${window.allProductsIncludingUserSubmitted.length}`);
+      
+      // Auto-render if function is available
+      if (typeof window.autoRenderProducts === 'function') {
+        window.autoRenderProducts();
+      }
+
+      // If there's a specific render function on the page, call it
+      if (typeof renderProducts === 'function') {
+        renderProducts();
+      }
+    });
+    return;
+  }
+  
+  // Fallback to original Firebase setup if Firebase Optimizer is not available
+  console.log('Firebase Optimizer not available, using fallback setup...');
   
   const firebaseConfig = {
     apiKey: "AIzaSyBJqBEWDdBlfv5xAjgcvqput1KC1NzKvlU",

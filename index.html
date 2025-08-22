@@ -74,8 +74,14 @@
   <link rel="dns-prefetch" href="//fonts.gstatic.com">
   <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
   <link rel="dns-prefetch" href="//www.googletagmanager.com">
+  <link rel="dns-prefetch" href="//www.gstatic.com">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://www.gstatic.com">
+  
+  <!-- Firebase SDK Preload for Faster Loading -->
+  <link rel="preload" href="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js" as="script">
+  <link rel="preload" href="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js" as="script">
   
   <!-- Critical Resource Preloading -->
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
@@ -870,5 +876,12 @@
   <script src="smart-deals-integration.js"></script>
   <script src="cloud-sync.js"></script>
   <script src="user-auth.js"></script>
+  
+  <!-- Firebase SDK Loading with Performance Optimization -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script src="firebase-optimizer.js"></script>
+  <script src="firebase-performance-monitor.js"></script>
+  <script src="products.js"></script>
 </body>
 </html>
