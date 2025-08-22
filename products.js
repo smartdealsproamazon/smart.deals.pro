@@ -338,18 +338,12 @@ function loadFirebase(callback) {
     productStateManager.updateProducts(cachedProducts);
     window.products = productStateManager.getAllProducts();
     document.dispatchEvent(new Event('products-ready'));
-    if (typeof window.autoRenderProducts === 'function') {
-      window.autoRenderProducts();
-    }
   }
 
   // Load Firebase SDK in parallel with a shorter timeout
   const loadTimeout = setTimeout(() => {
     console.warn('Firebase loading timeout - using cached data only');
-    if (typeof window.autoRenderProducts === 'function') {
-      window.autoRenderProducts();
-    }
-  }, 3000); // 3 second timeout instead of waiting indefinitely
+  }, 1000); // Reduced timeout for faster loading
 
   // Dynamically add the Firebase SDK scripts with faster CDN
   const appScript = document.createElement('script');
@@ -413,7 +407,7 @@ function setupRealtimeProductListener() {
   const connectionTimeout = setTimeout(() => {
     console.warn('Firebase connection timeout - proceeding with cached data');
     document.dispatchEvent(new Event('firebase-timeout'));
-  }, 2000); // 2 second timeout
+  }, 800); // Reduced timeout for faster loading
 
   // Set up real-time listener with optimized query
   firestoreListener = db.collection('products')
@@ -649,20 +643,11 @@ if (typeof window !== 'undefined') {
         productStateManager.updateProducts(exampleProducts);
         window.products = productStateManager.getAllProducts();
         
-        console.log(`Added ${exampleProducts.length} example products`);
-        console.log('Example products by category:');
-        const categories = [...new Set(window.products.map(p => p.category))];
-        categories.forEach(cat => {
-          const count = window.products.filter(p => p.category === cat).length;
-          console.log(`- ${cat}: ${count} products`);
-        });
+
         
         // Trigger rendering
         document.dispatchEvent(new Event('products-ready'));
-        if (typeof window.autoRenderProducts === 'function') {
-          window.autoRenderProducts();
-        }
       }
-    }, 2000); // Wait 2 seconds for Firebase
+    }, 300); // Reduced wait time for faster loading
   });
 }
