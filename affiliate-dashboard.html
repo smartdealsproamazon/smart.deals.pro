@@ -718,8 +718,8 @@
                 <i class="fas fa-box"></i>
               </div>
             </div>
-            <div class="stat-value" id="activeProducts">0</div>
-            <div class="stat-change positive" id="productsChange">Ready to add products</div>
+            <div class="stat-value" id="activeProducts"><i class="fas fa-spinner fa-spin"></i></div>
+            <div class="stat-change positive" id="productsChange">Loading from Firebase...</div>
           </div>
           
           <div class="stat-card">
@@ -729,8 +729,8 @@
                 <i class="fas fa-eye"></i>
               </div>
             </div>
-            <div class="stat-value" id="totalViews">0</div>
-            <div class="stat-change" id="viewsChange">Start promoting to get views</div>
+            <div class="stat-value" id="totalViews"><i class="fas fa-spinner fa-spin"></i></div>
+            <div class="stat-change" id="viewsChange">Loading analytics...</div>
           </div>
           
           <div class="stat-card">
@@ -740,8 +740,8 @@
                 <i class="fas fa-users"></i>
               </div>
             </div>
-            <div class="stat-value" id="profileVisits">0</div>
-            <div class="stat-change" id="visitsChange">No visits yet</div>
+            <div class="stat-value" id="profileVisits"><i class="fas fa-spinner fa-spin"></i></div>
+            <div class="stat-change" id="visitsChange">Loading analytics...</div>
           </div>
         </div>
 
@@ -994,7 +994,7 @@
       initializeDashboard();
     });
 
-    function initializeDashboard() {
+    async function initializeDashboard() {
       console.log('Initializing dashboard...');
       
       // Load user data
@@ -1005,8 +1005,18 @@
       // Update UI with user data
       updateUserInterface();
       
-      // Load affiliate data
-      loadAffiliateData();
+      // Wait for Firebase service to be ready before loading data
+      try {
+        if (window.firebaseUserService) {
+          await window.firebaseUserService.init();
+        }
+        // Load affiliate data
+        await loadAffiliateData();
+      } catch (error) {
+        console.error('Error initializing Firebase service:', error);
+        // Show fallback message
+        updateDashboardStats({ total: 0, active: 0, pending: 0 }, { views: 0, profileVisits: 0, clicks: 0 });
+      }
       
       // Show overview section by default
       showSection('overview');
@@ -1072,38 +1082,63 @@
       const userEmail = currentUserData.email;
       
       try {
+        // Ensure Firebase service is available
+        if (!window.firebaseUserService) {
+          throw new Error('Firebase service not available');
+        }
+
         // Load real product data from Firebase
+        console.log('Loading products for user:', userEmail);
         const productResult = await window.firebaseUserService.getUserProducts(userEmail);
         let products = { total: 0, active: 0, pending: 0 };
         
         if (productResult.success) {
+          console.log('User products loaded:', productResult.products.length);
           products = {
             total: productResult.products.length,
             active: productResult.products.filter(p => p.status !== 'pending' && p.status !== 'rejected').length,
             pending: productResult.products.filter(p => p.status === 'pending').length
           };
+        } else {
+          console.log('No products found for user or error:', productResult.error);
         }
         
         // Load real affiliate data from Firebase
+        console.log('Loading affiliate data for user:', userEmail);
         const affiliateResult = await window.firebaseUserService.getAffiliateByEmail(userEmail);
         let analytics = { views: 0, profileVisits: 0, clicks: 0 };
         
         if (affiliateResult.success && affiliateResult.affiliate) {
+          console.log('Affiliate data loaded:', affiliateResult.affiliate.affiliateId);
           analytics = affiliateResult.affiliate.analytics || analytics;
           // Update currentAffiliateData with real Firebase data
           currentAffiliateData = affiliateResult.affiliate;
+        } else {
+          console.log('No affiliate data found or error:', affiliateResult.error);
         }
         
         // Update dashboard stats with real data
         updateDashboardStats(products, analytics);
         
         // Update recent activity with real product submissions
-        updateRecentActivity(productResult.products || []);
+        updateRecentActivity(productResult.success ? productResult.products : []);
         
       } catch (error) {
         console.error('Error loading affiliate data from Firebase:', error);
-        // Fallback to empty data
+        // Fallback to empty data with proper error message
         updateDashboardStats({ total: 0, active: 0, pending: 0 }, { views: 0, profileVisits: 0, clicks: 0 });
+        
+        // Show error message to user
+        const recentActivityContainer = document.getElementById('recentActivity');
+        if (recentActivityContainer) {
+          recentActivityContainer.innerHTML = `
+            <div class="empty-state">
+              <i class="fas fa-exclamation-triangle" style="color: #f59e0b;"></i>
+              <h3>Connection Issue</h3>
+              <p>Unable to load data from Firebase. Please check your internet connection and refresh the page.</p>
+            </div>
+          `;
+        }
       }
     }
 

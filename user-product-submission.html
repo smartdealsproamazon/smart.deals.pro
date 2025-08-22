@@ -90,6 +90,20 @@
             </div>
 
             <div class="form-group" style="margin-bottom: 1.5rem;">
+              <label for="category" style="display:block; font-weight:600; margin-bottom:0.25rem;">Category</label>
+              <select id="category" required style="width:100%; padding:0.75rem; border-radius:8px; border:1px solid #e5e7eb; background:#fff;">
+                <option value="">Select Category</option>
+                <option value="boys">Boys Fashion</option>
+                <option value="girls">Girls Fashion</option>
+                <option value="electrical">Electronics</option>
+                <option value="gaming">Gaming</option>
+                <option value="home-garden">Home & Garden</option>
+                <option value="smartwatch">Smartwatches</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 1.5rem;">
               <label for="platform" style="display:block; font-weight:600; margin-bottom:0.25rem;">Platform</label>
               <select id="platform" required style="width:100%; padding:0.75rem; border-radius:8px; border:1px solid #e5e7eb; background:#fff;">
                 <option value="">Select Platform</option>
@@ -292,10 +306,11 @@
           const price = document.getElementById('price').value.trim();
           const description = document.getElementById('description').value.trim();
           const link = document.getElementById('link').value.trim();
+          const category = document.getElementById('category').value.trim();
           const platform = document.getElementById('platform').value.trim();
 
-          if (!title || !price || !description || !link || !platform) {
-            errorBox.textContent = 'Please fill in all required fields.';
+          if (!title || !price || !description || !link || !category || !platform) {
+            errorBox.textContent = 'Please fill in all required fields including category.';
             errorBox.style.display = 'block';
             resetFormState();
             return;
@@ -331,13 +346,14 @@
             description: description,
             link: link,
             platform: platform,
-            category: 'users-products',
+            category: category, // Use selected category instead of hardcoded 'users-products'
             rating: 5,
             reviews: 0,
             discount: 0,
             featured: false,
             createdAt: firebase && firebase.firestore ? firebase.firestore.FieldValue.serverTimestamp() : new Date().toISOString(),
-            ownerEmail: currentUserEmail
+            ownerEmail: currentUserEmail,
+            submittedBy: currentUserEmail // Mark as user-submitted
           };
 
           updateProgress(80);
