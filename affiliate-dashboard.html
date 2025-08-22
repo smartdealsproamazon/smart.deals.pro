@@ -402,6 +402,124 @@
         display: block;
       }
     }
+
+    /* Profile Form Styles */
+    .profile-field-readonly {
+      margin-bottom: 1.5rem;
+      padding: 1rem;
+      background: #f8fafc;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .profile-label {
+      display: block;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 0.5rem;
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .profile-value {
+      font-size: 1rem;
+      color: #1f2937;
+      font-weight: 500;
+    }
+
+    .profile-value.affiliate-id {
+      font-family: 'Courier New', monospace;
+      font-size: 1.1rem;
+      color: #3b82f6;
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+
+    .profile-value.status-active {
+      color: #10b981;
+      font-weight: 600;
+    }
+
+    .field-note {
+      display: block;
+      color: #6b7280;
+      font-size: 0.75rem;
+      margin-top: 0.25rem;
+      font-style: italic;
+    }
+
+    .profile-form {
+      max-width: none;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+      display: block;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 0.5rem;
+      font-size: 0.875rem;
+    }
+
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: all 0.2s ease;
+      background: white;
+    }
+
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 100px;
+      font-family: inherit;
+    }
+
+    .profile-actions {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+      padding-top: 2rem;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    .action-btn.secondary {
+      background: #6b7280;
+      color: white;
+    }
+
+    .action-btn.secondary:hover {
+      background: #4b5563;
+    }
+
+    @media (max-width: 768px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+      
+      .profile-actions {
+        flex-direction: column;
+      }
+    }
   </style>
 </head>
 
@@ -605,17 +723,151 @@
       <div id="profile" class="dashboard-section-content" style="display: none;">
         <div class="dashboard-header">
           <h1>Profile Settings</h1>
-          <p>Update your affiliate profile and payment information.</p>
+          <p>Update your affiliate profile and account information.</p>
         </div>
+        
+        <!-- Affiliate ID Section (Non-editable) -->
         <div class="dashboard-section">
           <div class="section-header">
-            <h2 class="section-title">Account Information</h2>
+            <h2 class="section-title">Affiliate Information</h2>
           </div>
           <div class="section-content">
-            <p>Profile management features will be available here.</p>
-            <button class="action-btn" onclick="alert('Profile update feature coming soon!')">
-              <i class="fas fa-edit"></i> Update Profile
-            </button>
+            <div class="profile-field-readonly">
+              <label class="profile-label">Affiliate ID</label>
+              <div class="profile-value affiliate-id" id="profileAffiliateId">Loading...</div>
+              <small class="field-note">Your unique affiliate identifier (cannot be changed)</small>
+            </div>
+            <div class="profile-field-readonly">
+              <label class="profile-label">Account Status</label>
+              <div class="profile-value status-active" id="profileStatus">Active</div>
+            </div>
+            <div class="profile-field-readonly">
+              <label class="profile-label">Member Since</label>
+              <div class="profile-value" id="profileMemberSince">Loading...</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Personal Information Form -->
+        <div class="dashboard-section">
+          <div class="section-header">
+            <h2 class="section-title">Personal Information</h2>
+          </div>
+          <div class="section-content">
+            <form id="profileUpdateForm" class="profile-form">
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">First Name *</label>
+                  <input type="text" class="form-input" id="profileFirstName" name="firstName" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Last Name *</label>
+                  <input type="text" class="form-input" id="profileLastName" name="lastName" required>
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label class="form-label">Email Address *</label>
+                <input type="email" class="form-input" id="profileEmail" name="email" required>
+              </div>
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Phone Number *</label>
+                  <input type="tel" class="form-input" id="profilePhone" name="phone" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Country *</label>
+                  <select class="form-select" id="profileCountry" name="country" required>
+                    <option value="">Select Country</option>
+                    <option value="US">United States</option>
+                    <option value="UK">United Kingdom</option>
+                    <option value="CA">Canada</option>
+                    <option value="AU">Australia</option>
+                    <option value="DE">Germany</option>
+                    <option value="FR">France</option>
+                    <option value="IT">Italy</option>
+                    <option value="ES">Spain</option>
+                    <option value="NL">Netherlands</option>
+                    <option value="IN">India</option>
+                    <option value="PK">Pakistan</option>
+                    <option value="BD">Bangladesh</option>
+                    <option value="BR">Brazil</option>
+                    <option value="MX">Mexico</option>
+                    <option value="JP">Japan</option>
+                    <option value="KR">South Korea</option>
+                    <option value="CN">China</option>
+                    <option value="SG">Singapore</option>
+                    <option value="MY">Malaysia</option>
+                    <option value="TH">Thailand</option>
+                    <option value="PH">Philippines</option>
+                    <option value="ID">Indonesia</option>
+                    <option value="VN">Vietnam</option>
+                    <option value="AE">UAE</option>
+                    <option value="SA">Saudi Arabia</option>
+                    <option value="ZA">South Africa</option>
+                    <option value="NG">Nigeria</option>
+                    <option value="EG">Egypt</option>
+                    <option value="KE">Kenya</option>
+                    <option value="OTHER">Other</option>
+                  </select>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Online Presence -->
+        <div class="dashboard-section">
+          <div class="section-header">
+            <h2 class="section-title">Online Presence</h2>
+          </div>
+          <div class="section-content">
+            <div class="form-group">
+              <label class="form-label">Website/Blog URL</label>
+              <input type="url" class="form-input" id="profileWebsite" name="website" placeholder="https://yourwebsite.com">
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Facebook Page/Profile</label>
+                <input type="url" class="form-input" id="profileFacebook" name="facebook" placeholder="https://facebook.com/yourpage">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Instagram Handle</label>
+                <input type="text" class="form-input" id="profileInstagram" name="instagram" placeholder="@yourusername">
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">YouTube Channel</label>
+                <input type="url" class="form-input" id="profileYoutube" name="youtube" placeholder="https://youtube.com/c/yourchannel">
+              </div>
+              <div class="form-group">
+                <label class="form-label">TikTok Handle</label>
+                <input type="text" class="form-input" id="profileTiktok" name="tiktok" placeholder="@yourusername">
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label">Marketing Strategy</label>
+              <textarea class="form-textarea" id="profileStrategy" name="strategy" placeholder="Describe how you promote products (e.g., social media, blog posts, email marketing, etc.)"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Update Buttons -->
+        <div class="dashboard-section">
+          <div class="section-content">
+            <div class="profile-actions">
+              <button type="button" class="action-btn" onclick="updateProfile()">
+                <i class="fas fa-save"></i> Save Changes
+              </button>
+              <button type="button" class="action-btn secondary" onclick="resetProfileForm()">
+                <i class="fas fa-undo"></i> Reset Changes
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -880,6 +1132,162 @@
         }
       }
     });
+
+    // Profile Management Functions
+    function loadProfileData() {
+      if (!currentAffiliateData) return;
+      
+      // Load affiliate information (non-editable)
+      const profileAffiliateId = document.getElementById('profileAffiliateId');
+      if (profileAffiliateId) {
+        profileAffiliateId.textContent = currentAffiliateData.affiliateId || 'Not Available';
+      }
+      
+      const profileStatus = document.getElementById('profileStatus');
+      if (profileStatus) {
+        profileStatus.textContent = (currentAffiliateData.status || 'Active').charAt(0).toUpperCase() + 
+                                   (currentAffiliateData.status || 'Active').slice(1);
+      }
+      
+      const profileMemberSince = document.getElementById('profileMemberSince');
+      if (profileMemberSince && currentAffiliateData.registrationDate) {
+        const date = new Date(currentAffiliateData.registrationDate);
+        profileMemberSince.textContent = date.toLocaleDateString('en-US', { 
+          year: 'numeric', 
+          month: 'long', 
+          day: 'numeric' 
+        });
+      }
+      
+      // Load personal information (editable)
+      if (currentAffiliateData.personalInfo) {
+        const firstName = document.getElementById('profileFirstName');
+        const lastName = document.getElementById('profileLastName');
+        const email = document.getElementById('profileEmail');
+        const phone = document.getElementById('profilePhone');
+        const country = document.getElementById('profileCountry');
+        
+        if (firstName) firstName.value = currentAffiliateData.personalInfo.firstName || '';
+        if (lastName) lastName.value = currentAffiliateData.personalInfo.lastName || '';
+        if (email) email.value = currentAffiliateData.personalInfo.email || '';
+        if (phone) phone.value = currentAffiliateData.personalInfo.phone || '';
+        if (country) country.value = currentAffiliateData.personalInfo.country || '';
+      }
+      
+      // Load online presence (editable)
+      if (currentAffiliateData.onlinePresence) {
+        const website = document.getElementById('profileWebsite');
+        const facebook = document.getElementById('profileFacebook');
+        const instagram = document.getElementById('profileInstagram');
+        const youtube = document.getElementById('profileYoutube');
+        const tiktok = document.getElementById('profileTiktok');
+        const strategy = document.getElementById('profileStrategy');
+        
+        if (website) website.value = currentAffiliateData.onlinePresence.website || '';
+        if (facebook) facebook.value = currentAffiliateData.onlinePresence.facebook || '';
+        if (instagram) instagram.value = currentAffiliateData.onlinePresence.instagram || '';
+        if (youtube) youtube.value = currentAffiliateData.onlinePresence.youtube || '';
+        if (tiktok) tiktok.value = currentAffiliateData.onlinePresence.tiktok || '';
+        if (strategy) strategy.value = currentAffiliateData.onlinePresence.strategy || '';
+      }
+    }
+    
+    function updateProfile() {
+      if (!currentAffiliateData) {
+        alert('No profile data available to update.');
+        return;
+      }
+      
+      // Get form data
+      const firstName = document.getElementById('profileFirstName').value.trim();
+      const lastName = document.getElementById('profileLastName').value.trim();
+      const email = document.getElementById('profileEmail').value.trim();
+      const phone = document.getElementById('profilePhone').value.trim();
+      const country = document.getElementById('profileCountry').value;
+      
+      const website = document.getElementById('profileWebsite').value.trim();
+      const facebook = document.getElementById('profileFacebook').value.trim();
+      const instagram = document.getElementById('profileInstagram').value.trim();
+      const youtube = document.getElementById('profileYoutube').value.trim();
+      const tiktok = document.getElementById('profileTiktok').value.trim();
+      const strategy = document.getElementById('profileStrategy').value.trim();
+      
+      // Validate required fields
+      if (!firstName || !lastName || !email || !phone || !country) {
+        alert('Please fill in all required fields (marked with *)');
+        return;
+      }
+      
+      // Validate email format
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        alert('Please enter a valid email address.');
+        return;
+      }
+      
+      // Update affiliate data
+      currentAffiliateData.personalInfo = {
+        ...currentAffiliateData.personalInfo,
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        phone: phone,
+        country: country
+      };
+      
+      currentAffiliateData.onlinePresence = {
+        ...currentAffiliateData.onlinePresence,
+        website: website,
+        facebook: facebook,
+        instagram: instagram,
+        youtube: youtube,
+        tiktok: tiktok,
+        strategy: strategy
+      };
+      
+      // Update user data for authentication
+      currentUserData.name = `${firstName} ${lastName}`;
+      currentUserData.email = email;
+      currentUserData.phone = phone;
+      currentUserData.country = country;
+      
+      // Save to localStorage
+      try {
+        localStorage.setItem('smartdeals_currentUser', JSON.stringify(currentUserData));
+        localStorage.setItem('smartdeals_affiliateRegistered', JSON.stringify(currentAffiliateData));
+        
+        // Update UI
+        updateUserInterface();
+        
+        // Show success message
+        alert('✅ Profile updated successfully!');
+        
+        console.log('Profile updated:', {
+          personalInfo: currentAffiliateData.personalInfo,
+          onlinePresence: currentAffiliateData.onlinePresence
+        });
+        
+      } catch (error) {
+        console.error('Error saving profile:', error);
+        alert('❌ Failed to save profile. Please try again.');
+      }
+    }
+    
+    function resetProfileForm() {
+      if (confirm('Are you sure you want to reset all changes? This will restore your original profile data.')) {
+        loadProfileData();
+        alert('Profile form has been reset to original values.');
+      }
+    }
+    
+    // Load profile data when profile section is shown
+    const originalShowSection = showSection;
+    showSection = function(sectionId) {
+      originalShowSection(sectionId);
+      if (sectionId === 'profile') {
+        setTimeout(loadProfileData, 100); // Small delay to ensure DOM is ready
+      }
+    };
 
     // Simulate real-time updates (every 30 seconds)
     setInterval(function() {
