@@ -194,6 +194,20 @@ h4 { font-size: 1.25rem; }
   border-bottom: 2px solid #3b82f6;
 }
 
+/* Navbar alias for compatibility */
+.navbar {
+  background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+  color: white;
+  padding: 1rem 0;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  overflow: visible;
+  border-bottom: 2px solid #3b82f6;
+}
+
 .header-content {
   display: flex;
   align-items: center;
@@ -431,16 +445,23 @@ h4 { font-size: 1.25rem; }
   outline-offset: 2px;
 }
 
-.mobile-menu-content a {
+.mobile-menu-content a,
+.mobile-nav-link {
   color: white;
   text-decoration: none;
   padding: 1rem;
   border-radius: 0.5rem;
   transition: background-color 0.3s ease;
+  display: block;
 }
 
-.mobile-menu-content a:hover {
+.mobile-menu-content a:hover,
+.mobile-nav-link:hover {
   background-color: #2d3748;
+}
+
+.mobile-nav-link.active {
+  background-color: #3b82f6;
 }
 
 /* Hero Section */
@@ -586,12 +607,75 @@ h4 { font-size: 1.25rem; }
   background-color: #f8fafc;
 }
 
+/* Products Section */
+.products-section {
+  padding: 4rem 0;
+  background-color: #f8fafc;
+  min-height: 500px;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.section-header h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1a202c;
+  margin-bottom: 1rem;
+}
+
+.section-header p {
+  font-size: 1.1rem;
+  color: #6b7280;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
 .products-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 2rem;
   margin-bottom: 3rem;
   padding: 0 0.5rem;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #6b7280;
+}
+
+.empty-state i {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  color: #d1d5db;
+}
+
+.empty-state h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #374151;
+}
+
+.load-more-btn {
+  display: block;
+  margin: 2rem auto;
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.load-more-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
 }
 
 /* Ensure affiliate product cards work well in all grid containers */
