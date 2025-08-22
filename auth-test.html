@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cross-Device Authentication Test - SmartDeals Pro</title>
+  <link rel="icon" type="image/svg+xml" href="logo.svg">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .test-container {
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 30px;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    .test-section {
+      margin-bottom: 30px;
+      padding: 20px;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+    }
+    .test-section h3 {
+      color: #374151;
+      margin-bottom: 15px;
+    }
+    .status-indicator {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: 8px;
+    }
+    .status-online {
+      background: #10b981;
+    }
+    .status-offline {
+      background: #ef4444;
+    }
+    .status-syncing {
+      background: #f59e0b;
+    }
+    .device-info {
+      background: #f9fafb;
+      padding: 15px;
+      border-radius: 8px;
+      margin: 10px 0;
+      font-family: monospace;
+      font-size: 12px;
+    }
+    .sync-log {
+      background: #1f2937;
+      color: #f9fafb;
+      padding: 15px;
+      border-radius: 8px;
+      max-height: 200px;
+      overflow-y: auto;
+      font-family: monospace;
+      font-size: 12px;
+    }
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      margin: 5px;
+      transition: all 0.3s;
+    }
+    .btn-primary {
+      background: #3b82f6;
+      color: white;
+    }
+    .btn-primary:hover {
+      background: #2563eb;
+    }
+    .btn-secondary {
+      background: #6b7280;
+      color: white;
+    }
+    .btn-secondary:hover {
+      background: #4b5563;
+    }
+    .btn-danger {
+      background: #ef4444;
+      color: white;
+    }
+    .btn-danger:hover {
+      background: #dc2626;
+    }
+  </style>
+</head>
+<body>
+  <header class="main-header">
+    <div class="container">
+      <div class="header-content">
+        <div class="header-left">
+          <a href="index.html" class="logo-link">
+            <img src="logo.svg?v=2024.1" alt="SmartDeals Pro Logo" class="logo" loading="eager" />
+          </a>
+          <div class="site-name">
+            <span class="logo-text">Auth Test</span>
+          </div>
+        </div>
+        <nav class="main-nav">
+          <ul>
+            <li><a href="index.html" class="nav-link">Home</a></li>
+            <li><a href="sign-in.html" class="nav-link">Sign In</a></li>
+            <li><a href="marketplace.html" class="nav-link">Marketplace</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <div class="test-container">
+    <h1><i class="fas fa-sync-alt"></i> Cross-Device Authentication Test</h1>
+    <p>This page demonstrates the cross-device authentication functionality. Test how authentication persists across different devices and browsers.</p>
+
+    <div class="test-section">
+      <h3><i class="fas fa-user"></i> Current Authentication Status</h3>
+      <div id="authStatus">
+        <p>Loading authentication status...</p>
+      </div>
+      <div id="userInfo" style="display: none;">
+        <div class="device-info">
+          <strong>Logged in as:</strong> <span id="userName"></span><br>
+          <strong>Email:</strong> <span id="userEmail"></span><br>
+          <strong>Session ID:</strong> <span id="sessionId"></span><br>
+          <strong>Last Login:</strong> <span id="lastLogin"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="test-section">
+      <h3><i class="fas fa-cloud"></i> Cloud Sync Status</h3>
+      <div id="syncStatus">
+        <p>Loading sync status...</p>
+      </div>
+      <div class="device-info" id="deviceInfo">
+        <strong>Device ID:</strong> <span id="deviceId"></span><br>
+        <strong>Browser:</strong> <span id="browserInfo"></span><br>
+        <strong>Platform:</strong> <span id="platformInfo"></span><br>
+        <strong>Online Status:</strong> <span id="onlineStatus"></span>
+      </div>
+    </div>
+
+    <div class="test-section">
+      <h3><i class="fas fa-cogs"></i> Test Controls</h3>
+      <button class="btn btn-primary" onclick="forceSync()">
+        <i class="fas fa-sync"></i> Force Sync
+      </button>
+      <button class="btn btn-secondary" onclick="refreshStatus()">
+        <i class="fas fa-refresh"></i> Refresh Status
+      </button>
+      <button class="btn btn-danger" onclick="clearAllData()">
+        <i class="fas fa-trash"></i> Clear All Data
+      </button>
+      <button class="btn btn-secondary" onclick="simulateLogin()">
+        <i class="fas fa-sign-in-alt"></i> Simulate Login
+      </button>
+    </div>
+
+    <div class="test-section">
+      <h3><i class="fas fa-list"></i> Sync Log</h3>
+      <div class="sync-log" id="syncLog">
+        <div>Initializing sync log...</div>
+      </div>
+    </div>
+
+    <div class="test-section">
+      <h3><i class="fas fa-info-circle"></i> How to Test Cross-Device Auth</h3>
+      <ol>
+        <li><strong>Register/Login:</strong> Go to <a href="sign-in.html">Sign In page</a> and create an account or sign in</li>
+        <li><strong>Open in Different Browser:</strong> Open the same website in a different browser (Chrome, Firefox, Safari, Edge)</li>
+        <li><strong>Check Authentication:</strong> You should be automatically logged in with the same account</li>
+        <li><strong>Test on Mobile:</strong> Open the website on your mobile device - you should still be logged in</li>
+        <li><strong>Monitor Sync:</strong> Watch the sync log on this page to see real-time synchronization</li>
+      </ol>
+    </div>
+  </div>
+
+  <script src="cloud-sync.js"></script>
+  <script src="user-auth.js"></script>
+  <script>
+    // Test page functionality
+    let syncLog = [];
+
+    function addToLog(message) {
+      const timestamp = new Date().toLocaleTimeString();
+      const logEntry = `[${timestamp}] ${message}`;
+      syncLog.unshift(logEntry);
+      
+      // Keep only last 20 entries
+      if (syncLog.length > 20) {
+        syncLog = syncLog.slice(0, 20);
+      }
+      
+      document.getElementById('syncLog').innerHTML = syncLog.map(entry => 
+        `<div>${entry}</div>`
+      ).join('');
+    }
+
+    function updateAuthStatus() {
+      const currentUser = localStorage.getItem('smartdeals_currentUser');
+      const sessionData = localStorage.getItem('smartdeals_session');
+      
+      const authStatusDiv = document.getElementById('authStatus');
+      const userInfoDiv = document.getElementById('userInfo');
+      
+      if (currentUser && sessionData) {
+        try {
+          const user = JSON.parse(currentUser);
+          const session = JSON.parse(sessionData);
+          
+          authStatusDiv.innerHTML = `
+            <p><span class="status-indicator status-online"></span> 
+            <strong>Authenticated</strong> - User is logged in</p>
+          `;
+          
+          document.getElementById('userName').textContent = user.name;
+          document.getElementById('userEmail').textContent = user.email;
+          document.getElementById('sessionId').textContent = session.sessionId;
+          document.getElementById('lastLogin').textContent = new Date(user.lastLogin).toLocaleString();
+          userInfoDiv.style.display = 'block';
+          
+          addToLog(`User authenticated: ${user.email}`);
+        } catch (e) {
+          authStatusDiv.innerHTML = `
+            <p><span class="status-indicator status-offline"></span> 
+            <strong>Not Authenticated</strong> - Invalid session data</p>
+          `;
+          userInfoDiv.style.display = 'none';
+        }
+      } else {
+        authStatusDiv.innerHTML = `
+          <p><span class="status-indicator status-offline"></span> 
+          <strong>Not Authenticated</strong> - No user session found</p>
+        `;
+        userInfoDiv.style.display = 'none';
+        addToLog('No authentication session found');
+      }
+    }
+
+    function updateSyncStatus() {
+      const syncStatus = getCloudSyncStatus();
+      const syncStatusDiv = document.getElementById('syncStatus');
+      
+      if (syncStatus) {
+        const statusIndicator = syncStatus.isOnline ? 'status-online' : 'status-offline';
+        const statusText = syncStatus.isOnline ? 'Online' : 'Offline';
+        
+        syncStatusDiv.innerHTML = `
+          <p><span class="status-indicator ${statusIndicator}"></span> 
+          <strong>Cloud Sync: ${statusText}</strong></p>
+          <p><strong>Device ID:</strong> ${syncStatus.deviceId}</p>
+          <p><strong>Last Sync:</strong> ${syncStatus.lastSync ? new Date(syncStatus.lastSync).toLocaleString() : 'Never'}</p>
+        `;
+        
+        document.getElementById('deviceId').textContent = syncStatus.deviceId;
+        document.getElementById('onlineStatus').textContent = statusText;
+      }
+      
+      // Update browser and platform info
+      document.getElementById('browserInfo').textContent = navigator.userAgent.split(' ').pop();
+      document.getElementById('platformInfo').textContent = navigator.platform;
+    }
+
+    function forceSync() {
+      addToLog('Manual sync triggered');
+      forceCloudSync();
+      setTimeout(() => {
+        updateAuthStatus();
+        updateSyncStatus();
+        addToLog('Sync completed');
+      }, 1000);
+    }
+
+    function refreshStatus() {
+      addToLog('Status refresh requested');
+      updateAuthStatus();
+      updateSyncStatus();
+    }
+
+    function clearAllData() {
+      if (confirm('Are you sure you want to clear all authentication data? This will log you out on all devices.')) {
+        localStorage.clear();
+        sessionStorage.clear();
+        clearCloudSyncData();
+        addToLog('All authentication data cleared');
+        updateAuthStatus();
+        updateSyncStatus();
+        location.reload();
+      }
+    }
+
+    function simulateLogin() {
+      const testUser = {
+        id: 'test_' + Date.now(),
+        name: 'Test User',
+        email: 'test@example.com',
+        password: 'testpassword123',
+        notificationConsent: true,
+        joinDate: new Date().toISOString(),
+        lastLogin: new Date().toISOString(),
+        lastNotification: null
+      };
+      
+      // Add to users array
+      const users = JSON.parse(localStorage.getItem('smartdeals_users') || '[]');
+      users.push(testUser);
+      localStorage.setItem('smartdeals_users', JSON.stringify(users));
+      
+      // Create session
+      const sessionData = {
+        user: testUser,
+        sessionId: 'test_session_' + Date.now(),
+        createdAt: new Date().getTime(),
+        expiresAt: new Date().getTime() + (30 * 24 * 60 * 60 * 1000),
+        deviceInfo: {
+          userAgent: navigator.userAgent,
+          platform: navigator.platform,
+          language: navigator.language,
+          screenSize: `${screen.width}x${screen.height}`,
+          timestamp: new Date().toISOString()
+        }
+      };
+      
+      localStorage.setItem('smartdeals_session', JSON.stringify(sessionData));
+      localStorage.setItem('smartdeals_currentUser', JSON.stringify(testUser));
+      
+      addToLog(`Test user logged in: ${testUser.email}`);
+      updateAuthStatus();
+      updateSyncStatus();
+    }
+
+    // Listen for auth updates
+    window.addEventListener('smartdeals-auth-update', (event) => {
+      addToLog(`Auth update received: ${event.detail.source}`);
+      updateAuthStatus();
+    });
+
+    // Listen for storage changes
+    window.addEventListener('storage', (event) => {
+      if (event.key === 'smartdeals_currentUser' || event.key === 'smartdeals_session') {
+        addToLog(`Storage change detected: ${event.key}`);
+        setTimeout(() => {
+          updateAuthStatus();
+          updateSyncStatus();
+        }, 100);
+      }
+    });
+
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', function() {
+      addToLog('Auth test page loaded');
+      updateAuthStatus();
+      updateSyncStatus();
+      
+      // Update status every 5 seconds
+      setInterval(() => {
+        updateAuthStatus();
+        updateSyncStatus();
+      }, 5000);
+    });
+  </script>
+</body>
+</html>

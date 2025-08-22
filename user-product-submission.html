@@ -89,6 +89,23 @@
               <input id="link" type="url" placeholder="https://your-affiliate-link" required style="width:100%; padding:0.75rem; border-radius:8px; border:1px solid #e5e7eb;">
             </div>
 
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+              <label for="platform" style="display:block; font-weight:600; margin-bottom:0.25rem;">Platform</label>
+              <select id="platform" required style="width:100%; padding:0.75rem; border-radius:8px; border:1px solid #e5e7eb; background:#fff;">
+                <option value="">Select Platform</option>
+                <option value="amazon">Amazon</option>
+                <option value="clickbank">ClickBank</option>
+                <option value="shareasale">ShareASale</option>
+                <option value="cj">Commission Junction</option>
+                <option value="rakuten">Rakuten</option>
+                <option value="impact">Impact</option>
+                <option value="shopify">Shopify Partners</option>
+                <option value="etsy">Etsy</option>
+                <option value="ebay">eBay Partner</option>
+                <option value="other">Other Platform</option>
+              </select>
+            </div>
+
             <div class="form-actions" style="display:flex; gap:0.75rem;">
               <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i>&nbsp;Submit Product</button>
               <a href="affiliate-dashboard.html" class="btn btn-secondary">Cancel</a>
@@ -193,8 +210,9 @@
         const price = document.getElementById('price').value.trim();
         const description = document.getElementById('description').value.trim();
         const link = document.getElementById('link').value.trim();
+        const platform = document.getElementById('platform').value.trim();
 
-        if (!title || !price || !description || !link) {
+        if (!title || !price || !description || !link || !platform) {
           errorBox.textContent = 'Please fill in all required fields.';
           errorBox.style.display = 'block';
           return;
@@ -221,6 +239,7 @@
           originalPrice: price,
           description: description,
           link: link,
+          platform: platform,
           category: 'users-products',
           rating: 5,
           reviews: 0,
