@@ -842,30 +842,12 @@
     
     // Hide loading screen when everything is ready
     window.addEventListener('load', function() {
-      // Wait for marketplace initialization
-      setTimeout(() => {
-        if (isInitialized) {
-          hideLoadingScreen();
-        } else {
-          // Wait a bit more if not initialized
-          setTimeout(hideLoadingScreen, 500);
-        }
-      }, 800);
-    });
-    
-    // Also hide when marketplace is fully initialized
-    document.addEventListener('DOMContentLoaded', function() {
-      setTimeout(() => {
-        if (document.querySelector('#platformsGrid .platform-card')) {
-          hideLoadingScreen();
-        }
-      }, 1200);
+      // Simple timeout to ensure page is ready
+      setTimeout(hideLoadingScreen, 500);
     });
 
     // Click tracking function
     function trackClick(productId, affiliateId) {
-      console.log(`Tracking click: Product ${productId} by ${affiliateId}`);
-      
       // Track click data
       const clickData = {
         productId: productId,
@@ -915,7 +897,7 @@
         const price = priceFilter.value;
         const search = searchInput.value.toLowerCase();
 
-        console.log('Applying filters:', { category, platform, price, search });
+
         
         // If both platform and category are selected, navigate to new page with params
         if (platform && category) {
@@ -1083,7 +1065,6 @@
     });
   </script>
   <script src="products.js"></script>
-  <script src="render.js"></script>
   <script>
     // Platform data with icons and descriptions
     const platformsData = {
@@ -1168,11 +1149,8 @@
     
     function initializeMarketplace() {
       if (isInitialized) {
-        console.log('Marketplace already initialized, skipping...');
         return;
       }
-      
-      console.log('Initializing marketplace...');
       isInitialized = true;
       
       try {
@@ -1188,11 +1166,8 @@
         }
         
         // Hide loading screen once marketplace is initialized
-        setTimeout(() => {
-          hideLoadingScreen();
-        }, 300);
+        hideLoadingScreen();
         
-        console.log('Marketplace initialization completed successfully');
       } catch (error) {
         console.error('Error during marketplace initialization:', error);
         hideLoadingScreen(); // Hide loading screen even if there's an error
@@ -1204,14 +1179,12 @@
       
       // Listen for product updates - but only initialize once
       document.addEventListener('products-ready', function() {
-        console.log('Products ready event received');
         if (!isInitialized) {
           initializeMarketplace();
         }
       });
       
       document.addEventListener('products-updated', function() {
-        console.log('Products updated event received');
         // Only refresh the display, don't re-initialize
         if (isInitialized) {
           renderPlatforms();
