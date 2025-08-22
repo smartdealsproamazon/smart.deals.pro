@@ -288,6 +288,29 @@
         <span class="error" id="categoryError"></span>
       </div>
 
+      <!-- Platform Selection -->
+      <div class="form-group">
+        <label for="platform">Platform</label>
+        <select id="platform" required>
+          <option value="">Select Platform</option>
+          <option value="amazon">Amazon</option>
+          <option value="clickbank">ClickBank</option>
+          <option value="shareasale">ShareASale</option>
+          <option value="commission-junction">Commission Junction (CJ)</option>
+          <option value="rakuten">Rakuten Advertising</option>
+          <option value="impact">Impact</option>
+          <option value="partnerstack">PartnerStack</option>
+          <option value="shopify">Shopify Partners</option>
+          <option value="etsy">Etsy</option>
+          <option value="ebay">eBay Partner Network</option>
+          <option value="walmart">Walmart</option>
+          <option value="target">Target</option>
+          <option value="bestbuy">Best Buy</option>
+          <option value="other">Other</option>
+        </select>
+        <span class="error" id="platformError"></span>
+      </div>
+
       <!-- After category select -->
       <div class="form-group" id="discountGroup" style="display:none;">
         <label for="discount">Discount (%)</label>
@@ -505,6 +528,7 @@
         image: document.getElementById("imageError"),
         price: document.getElementById("priceError"),
         category: document.getElementById("categoryError"),
+        platform: document.getElementById("platformError"),
         description: document.getElementById("descriptionError"),
         link: document.getElementById("linkError"),
         email: document.getElementById("emailError"),
@@ -541,6 +565,7 @@
           const link = document.getElementById("productLink").value.trim();
           const email = document.getElementById("email").value.trim();
           const category = document.getElementById("category").value;
+          const platform = document.getElementById("platform").value;
           const discount = document.getElementById('discount').value.trim();
 
 
@@ -589,6 +614,11 @@
             valid = false;
           }
 
+          if (!platform) {
+            errors.platform.textContent = "Please select a platform.";
+            valid = false;
+          }
+
           if (category === 'usa-flash-sale' && (!discount || isNaN(discount) || parseInt(discount) <= 0)) {
             document.getElementById('discountError').textContent = 'Please enter a valid discount for USA Flash Sale.';
             valid = false;
@@ -620,6 +650,7 @@
             description,
             link,
             category,
+            platform,
             rating: 5,
             reviews: 0,
             featured: true,

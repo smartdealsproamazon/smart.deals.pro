@@ -624,7 +624,8 @@ if (typeof window !== 'undefined') {
             discount: 20,
             rating: 4.6,
             reviews: 12,
-            link: "#"
+            link: "#",
+            platform: "etsy"
           },
           {
             id: 'electronic-1',
@@ -638,7 +639,8 @@ if (typeof window !== 'undefined') {
             discount: 25,
             rating: 4.9,
             reviews: 45,
-            link: "#"
+            link: "#",
+            platform: "clickbank"
           }
         ];
         

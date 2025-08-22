@@ -331,6 +331,107 @@
       transform: translateY(-2px);
       box-shadow: 0 8px 20px rgba(103, 126, 234, 0.4);
     }
+
+    /* Platform Card Styles */
+    .platforms-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    .platform-card {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border: 2px solid transparent;
+      text-align: center;
+    }
+
+    .platform-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+      border-color: #667eea;
+    }
+
+    .platform-icon {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 1.5rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: white;
+    }
+
+    .platform-name {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #1f2937;
+      margin-bottom: 0.5rem;
+    }
+
+    .platform-description {
+      color: #6b7280;
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+    }
+
+    .platform-stats {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 1.5rem;
+    }
+
+    .platform-stat {
+      text-align: center;
+    }
+
+    .platform-stat-number {
+      display: block;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #667eea;
+    }
+
+    .platform-stat-label {
+      font-size: 0.875rem;
+      color: #6b7280;
+    }
+
+    .platform-badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      background: #e0e7ff;
+      color: #3730a3;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .back-to-platforms-btn {
+      background: #6b7280;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-bottom: 2rem;
+    }
+
+    .back-to-platforms-btn:hover {
+      background: #4b5563;
+      transform: translateY(-2px);
+    }
     
     .load-more {
       text-align: center;
@@ -612,29 +713,37 @@
     </div>
   </section>
 
-  <!-- Products Section -->
-  <section class="products-section">
+  <!-- Platforms Section -->
+  <section class="platforms-section">
     <div class="container">
       <div class="section-header">
-        <h2>Featured Products</h2>
-        <p>Handpicked products from our top-performing affiliates worldwide</p>
+        <h2>Shop by Platform</h2>
+        <p>Browse products from your favorite affiliate networks and platforms</p>
       </div>
       
-      <div class="marketplace-grid" id="marketplaceGrid">
-        <!-- Demo products removed as requested -->
+      <div class="platforms-grid" id="platformsGrid">
+        <!-- Platform cards will be populated dynamically -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Platform Products Section (Hidden by default) -->
+  <section class="platform-products-section" id="platformProductsSection" style="display: none;">
+    <div class="container">
+      <div class="section-header">
+        <h2 id="platformProductsTitle">Platform Products</h2>
+        <p id="platformProductsDescription">Browse products from this platform</p>
+        <button class="back-to-platforms-btn" onclick="showPlatforms()">
+          <i class="fas fa-arrow-left"></i> Back to Platforms
+        </button>
       </div>
       
-      <!-- Dynamic Products (User submissions and live catalogue) -->
-      <div class="section-header" style="margin-top: 3rem;">
-        <h2>Latest Marketplace Products</h2>
-        <p>Newest items submitted by affiliates appear here automatically</p>
-      </div>
-      <div id="product-container" class="marketplace-grid">
-        <!-- Populated dynamically from products.js/render.js -->
+      <div id="platform-products-container" class="marketplace-grid">
+        <!-- Platform-specific products will be loaded here -->
       </div>
       
-      <div class="load-more">
-        <button class="load-more-btn" onclick="loadMoreProducts()">
+      <div class="load-more" id="platformLoadMore" style="display: none;">
+        <button class="load-more-btn" onclick="loadMorePlatformProducts()">
           Load More Products
         </button>
       </div>
@@ -801,23 +910,227 @@
   <script src="products.js"></script>
   <script src="render.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      // Explicitly render all products into #product-container
-      if (typeof renderProducts === 'function') {
-        renderProducts(null, 'product-container');
+    // Platform data with icons and descriptions
+    const platformsData = {
+      'amazon': {
+        name: 'Amazon',
+        icon: '📦',
+        description: 'World\'s largest online marketplace with millions of products',
+        badge: 'Most Popular'
+      },
+      'clickbank': {
+        name: 'ClickBank',
+        icon: '💳',
+        description: 'Digital products and online courses marketplace',
+        badge: 'High Commission'
+      },
+      'shareasale': {
+        name: 'ShareASale',
+        icon: '🤝',
+        description: 'Affiliate network with diverse merchant partnerships',
+        badge: 'Trusted Network'
+      },
+      'commission-junction': {
+        name: 'Commission Junction',
+        icon: '🔗',
+        description: 'Global affiliate marketing network by CJ Affiliate',
+        badge: 'Enterprise'
+      },
+      'rakuten': {
+        name: 'Rakuten',
+        icon: '🛍️',
+        description: 'Cashback and affiliate marketing platform',
+        badge: 'Cashback'
+      },
+      'impact': {
+        name: 'Impact',
+        icon: '⚡',
+        description: 'Partnership automation platform for brands',
+        badge: 'Automation'
+      },
+      'shopify': {
+        name: 'Shopify Partners',
+        icon: '🏪',
+        description: 'E-commerce platform with partner program',
+        badge: 'E-commerce'
+      },
+      'etsy': {
+        name: 'Etsy',
+        icon: '🎨',
+        description: 'Handmade and creative products marketplace',
+        badge: 'Handmade'
+      },
+      'ebay': {
+        name: 'eBay Partner',
+        icon: '🏷️',
+        description: 'Global online auction and marketplace',
+        badge: 'Auctions'
+      },
+      'other': {
+        name: 'Other Platforms',
+        icon: '🌐',
+        description: 'Various other affiliate networks and platforms',
+        badge: 'Mixed'
       }
-      // Also refresh on updates
+    };
+
+    // Current state
+    let currentPlatform = null;
+    let platformProducts = [];
+
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', function() {
+      renderPlatforms();
+      
+      // Listen for product updates
       document.addEventListener('products-ready', function() {
-        if (typeof renderProducts === 'function') {
-          renderProducts(null, 'product-container');
-        }
+        renderPlatforms();
       });
       document.addEventListener('products-updated', function() {
-        if (typeof renderProducts === 'function') {
-          renderProducts(null, 'product-container');
-        }
+        renderPlatforms();
       });
     });
+
+    // Render platform cards
+    function renderPlatforms() {
+      const container = document.getElementById('platformsGrid');
+      if (!container) return;
+
+      // Get available platforms from products
+      const availablePlatforms = getAvailablePlatforms();
+      
+      container.innerHTML = '';
+
+      Object.keys(platformsData).forEach(platformKey => {
+        const platform = platformsData[platformKey];
+        const productCount = availablePlatforms[platformKey] || 0;
+        
+        // Only show platforms that have products
+        if (productCount > 0) {
+          const platformCard = createPlatformCard(platformKey, platform, productCount);
+          container.appendChild(platformCard);
+        }
+      });
+
+      // If no platforms have products, show a message
+      if (Object.keys(availablePlatforms).length === 0) {
+        container.innerHTML = `
+          <div style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
+            <i class="fas fa-store" style="font-size: 4rem; color: #9ca3af; margin-bottom: 1rem;"></i>
+            <h3>No Platforms Available Yet</h3>
+            <p style="color: #6b7280;">Products will appear here once affiliates start submitting them.</p>
+            <a href="product-submission.html" style="color: #667eea; text-decoration: underline;">Submit your first product</a>
+          </div>
+        `;
+      }
+    }
+
+    // Get available platforms from products
+    function getAvailablePlatforms() {
+      if (!window.products || window.products.length === 0) {
+        return {};
+      }
+
+      const platformCounts = {};
+      window.products.forEach(product => {
+        const platform = product.platform || 'other';
+        platformCounts[platform] = (platformCounts[platform] || 0) + 1;
+      });
+
+      return platformCounts;
+    }
+
+    // Create platform card
+    function createPlatformCard(platformKey, platform, productCount) {
+      const card = document.createElement('div');
+      card.className = 'platform-card';
+      card.onclick = () => showPlatformProducts(platformKey);
+
+      card.innerHTML = `
+        <div class="platform-badge">${platform.badge}</div>
+        <div class="platform-icon">${platform.icon}</div>
+        <h3 class="platform-name">${platform.name}</h3>
+        <p class="platform-description">${platform.description}</p>
+        <div class="platform-stats">
+          <div class="platform-stat">
+            <span class="platform-stat-number">${productCount}</span>
+            <span class="platform-stat-label">Products</span>
+          </div>
+          <div class="platform-stat">
+            <span class="platform-stat-number">4.8</span>
+            <span class="platform-stat-label">Rating</span>
+          </div>
+        </div>
+      `;
+
+      return card;
+    }
+
+    // Show products for a specific platform
+    function showPlatformProducts(platformKey) {
+      currentPlatform = platformKey;
+      const platform = platformsData[platformKey];
+      
+      // Update title and description
+      document.getElementById('platformProductsTitle').textContent = `${platform.name} Products`;
+      document.getElementById('platformProductsDescription').textContent = `Browse all products from ${platform.name}`;
+      
+      // Hide platforms section, show products section
+      document.querySelector('.platforms-section').style.display = 'none';
+      document.getElementById('platformProductsSection').style.display = 'block';
+      
+      // Filter and render products for this platform
+      renderPlatformProducts(platformKey);
+      
+      // Scroll to products section
+      document.getElementById('platformProductsSection').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Render products for specific platform
+    function renderPlatformProducts(platformKey) {
+      const container = document.getElementById('platform-products-container');
+      if (!container) return;
+
+      // Filter products by platform
+      const products = window.products ? window.products.filter(p => (p.platform || 'other') === platformKey) : [];
+      
+      container.innerHTML = '';
+
+      if (products.length === 0) {
+        container.innerHTML = `
+          <div style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
+            <i class="fas fa-box-open" style="font-size: 4rem; color: #9ca3af; margin-bottom: 1rem;"></i>
+            <h3>No Products Found</h3>
+            <p style="color: #6b7280;">No products available for this platform yet.</p>
+            <button onclick="showPlatforms()" style="margin-top: 1rem; padding: 0.75rem 1.5rem; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer;">
+              Back to Platforms
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      // Render each product
+      products.forEach(product => {
+        const productCard = createProductCard(product);
+        container.appendChild(productCard);
+      });
+    }
+
+    // Go back to platforms view
+    function showPlatforms() {
+      document.querySelector('.platforms-section').style.display = 'block';
+      document.getElementById('platformProductsSection').style.display = 'none';
+      currentPlatform = null;
+      
+      // Scroll to platforms section
+      document.querySelector('.platforms-section').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Load more platform products (placeholder)
+    function loadMorePlatformProducts() {
+      alert('Load more functionality would be implemented here');
+    }
   </script>
   <script src="scroll-restoration.js"></script>
   <script src="smart-deals-integration.js"></script>
