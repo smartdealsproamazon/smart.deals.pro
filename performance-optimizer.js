@@ -78,6 +78,13 @@ class SmartDealsPerformanceOptimizer {
   // Enhanced service worker for better caching
   setupServiceWorker() {
     if ('serviceWorker' in navigator) {
+      // Only register service worker if not on marketplace page to prevent conflicts
+      const currentPage = window.location.pathname.split('/').pop();
+      if (currentPage.includes('marketplace')) {
+        console.log('Skipping service worker registration on marketplace page');
+        return;
+      }
+      
       navigator.serviceWorker.register('/sw.js', { scope: '/' })
         .then(registration => {
           console.log('Enhanced SW registered');

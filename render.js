@@ -496,7 +496,10 @@ function autoRenderProducts() {
     
   console.log(`Category filter "${selectedCategory}" - Found ${filteredProducts.length} products`);
   
-  if (filename.includes('boys-fashion')) {
+  if (filename.includes('marketplace')) {
+    console.log('Marketplace page detected - auto-rendering disabled (handled by marketplace.html)');
+    return;
+  } else if (filename.includes('boys-fashion')) {
     console.log('Boys fashion page detected - auto-rendering disabled');
     return;
   } else if (filename.includes('girls-fashion')) {
