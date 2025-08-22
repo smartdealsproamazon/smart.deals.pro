@@ -1291,7 +1291,17 @@
     function createPlatformCard(platformKey, platform, productCount) {
       const card = document.createElement('div');
       card.className = 'platform-card';
-      card.onclick = () => { window.location.href = `marketplace.html?platform=${encodeURIComponent(platformKey)}` };
+      const pageMap = {
+        amazon: 'platforms/amazon.html',
+        clickbank: 'platforms/clickbank.html',
+        shareasale: 'platforms/shareasale.html',
+        etsy: 'platforms/etsy.html',
+        ebay: 'platforms/ebay.html'
+      };
+      card.onclick = () => { 
+        const target = pageMap[platformKey] || `marketplace.html?platform=${encodeURIComponent(platformKey)}`;
+        window.location.href = target;
+      };
 
       card.innerHTML = `
         <div class="platform-badge">${platform.badge}</div>

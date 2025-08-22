@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ShareASale Products - SmartDeals Pro</title>
+  <link rel="stylesheet" href="../style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://kit.fontawesome.com/a2e0e6ad65.js" crossorigin="anonymous"></script>
+</head>
+<body>
+  <header class="main-header">
+    <div class="container">
+      <div class="header-content">
+        <div class="logo">
+          <a href="../index.html">SmartDeals Pro</a>
+        </div>
+        <nav class="main-nav">
+          <ul>
+            <li><a href="../marketplace.html">🛍️ Marketplace</a></li>
+            <li><a href="../reviews.html">Reviews</a></li>
+            <li><a href="../for-affiliates.html">Join Network</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <section class="platform-products-section" style="padding-top: 2rem;">
+    <div class="container">
+      <div class="section-header">
+        <h2>ShareASale Products</h2>
+        <p>Browse all products from ShareASale</p>
+        <a href="../marketplace.html" class="back-to-platforms-btn"><i class="fas fa-arrow-left"></i> Back to Marketplace</a>
+      </div>
+      <div id="platform-products-container" class="marketplace-grid"></div>
+    </div>
+  </section>
+
+  <script src="../products.js"></script>
+  <script src="../render.js"></script>
+  <script>
+    (function() {
+      const PLATFORM_KEY = 'shareasale';
+      function renderPlatform() {
+        const container = document.getElementById('platform-products-container');
+        if (!container) return;
+        const products = (window.products || []).filter(p => (p.platform || 'other') === PLATFORM_KEY);
+        container.innerHTML = '';
+        if (products.length === 0) {
+          container.innerHTML = `
+            <div style=\"grid-column: 1 / -1; text-align: center; padding: 3rem;\">\n              <i class=\"fas fa-box-open\" style=\"font-size: 4rem; color: #9ca3af; margin-bottom: 1rem;\"></i>\n              <h3>No Products Found</h3>\n              <p style=\"color: #6b7280;\">No products available for this platform yet.</p>\n              <a href=\"../marketplace.html\" class=\"back-to-platforms-btn\" style=\"display:inline-block;margin-top:1rem;\"><i class=\"fas fa-arrow-left\"></i> Back to Marketplace</a>\n            </div>
+          `;
+          return;
+        }
+        products.forEach(p => {
+          const card = createProductCard(p);
+          container.appendChild(card);
+        });
+      }
+      document.addEventListener('DOMContentLoaded', renderPlatform);
+      document.addEventListener('products-ready', renderPlatform);
+      document.addEventListener('products-updated', renderPlatform);
+    })();
+  </script>
+</body>
+</html>
