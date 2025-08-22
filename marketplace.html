@@ -828,8 +828,16 @@
         console.log('Falling back to sample products only');
       }
       
-      // Try to load from external sources (window.products from render.js)
-      if (window.products && Array.isArray(window.products)) {
+      // Load ALL products including user-submitted ones for marketplace
+      if (window.getAllProductsIncludingUserSubmitted && typeof window.getAllProductsIncludingUserSubmitted === 'function') {
+        const allProductsFromService = window.getAllProductsIncludingUserSubmitted();
+        if (allProductsFromService && allProductsFromService.length > 0) {
+          const existingIds = allProducts.map(p => p.id);
+          const newProducts = allProductsFromService.filter(p => !existingIds.includes(p.id));
+          allProducts = [...allProducts, ...newProducts];
+        }
+      } else if (window.products && Array.isArray(window.products)) {
+        // Fallback to regular products if service not available
         const existingIds = allProducts.map(p => p.id);
         const newProducts = window.products.filter(p => !existingIds.includes(p.id));
         allProducts = [...allProducts, ...newProducts];
@@ -920,6 +928,7 @@
   </script>
 
   <!-- External Scripts -->
+  <script src="products.js"></script>
   <script src="render.js"></script>
   <script src="user-auth.js"></script>
   <script src="scroll-restoration.js"></script>

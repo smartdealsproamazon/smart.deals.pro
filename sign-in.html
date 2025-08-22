@@ -336,27 +336,27 @@
           return;
         }
 
-        // Check if user exists
-        const users = JSON.parse(localStorage.getItem('smartdeals_users') || '[]');
-        const user = users.find(u => u.email === email && u.password === password);
+        try {
+          // Use Firebase for user authentication
+          const result = await window.firebaseUserService.authenticateUser(email, password);
+          
+          if (!result.success) {
+            this.showError('signinError', result.error);
+            return;
+          }
 
-        if (!user) {
-          this.showError('signinError', 'Invalid email or password');
-          return;
+          // Create cross-device session with Firebase user data
+          this.createSession(result.user);
+
+          this.showSuccess('signinSuccess', 'Sign in successful! Redirecting...');
+          
+          setTimeout(() => {
+            window.location.href = 'index.html';
+          }, 1500);
+        } catch (error) {
+          console.error('Sign in error:', error);
+          this.showError('signinError', 'Sign in failed. Please try again.');
         }
-
-        // Update last login
-        user.lastLogin = new Date().toISOString();
-        localStorage.setItem('smartdeals_users', JSON.stringify(users));
-
-        // Create cross-device session
-        this.createSession(user);
-
-        this.showSuccess('signinSuccess', 'Sign in successful! Redirecting...');
-        
-        setTimeout(() => {
-          window.location.href = 'index.html';
-        }, 1500);
       }
 
       async handleSignUp(e) {
@@ -396,36 +396,34 @@
           return;
         }
 
-        // Check if user already exists
-        const users = JSON.parse(localStorage.getItem('smartdeals_users') || '[]');
-        if (users.find(u => u.email === email)) {
-          this.showError('signupEmailError', 'An account with this email already exists');
-          return;
+        try {
+          // Use Firebase for user registration
+          const userData = {
+            name,
+            email,
+            password,
+            notificationConsent
+          };
+
+          const result = await window.firebaseUserService.registerUser(userData);
+          
+          if (!result.success) {
+            this.showError('signupEmailError', result.error);
+            return;
+          }
+
+          // Create cross-device session with Firebase user data
+          this.createSession(result.user);
+
+          this.showSuccess('signupSuccess', 'Account created successfully in Firebase! Redirecting...');
+          
+          setTimeout(() => {
+            window.location.href = 'index.html';
+          }, 1500);
+        } catch (error) {
+          console.error('Registration error:', error);
+          this.showError('signupError', 'Registration failed. Please try again.');
         }
-
-        // Create new user
-        const newUser = {
-          id: Date.now().toString(),
-          name,
-          email,
-          password,
-          notificationConsent,
-          joinDate: new Date().toISOString(),
-          lastLogin: new Date().toISOString(),
-          lastNotification: null
-        };
-
-        users.push(newUser);
-        localStorage.setItem('smartdeals_users', JSON.stringify(users));
-
-        // Create cross-device session
-        this.createSession(newUser);
-
-        this.showSuccess('signupSuccess', 'Account created successfully! Redirecting...');
-        
-        setTimeout(() => {
-          window.location.href = 'index.html';
-        }, 1500);
       }
 
       validateEmail(email) {
@@ -475,6 +473,9 @@
     // Initialize authentication system
     const userAuth = new UserAuth();
   </script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script src="firebase-user-service.js"></script>
   <script src="cloud-sync.js"></script>
 </body>
 </html>

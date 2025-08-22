@@ -300,11 +300,21 @@ let firestoreListener = null; // To track the real-time listener
 
 // Load from local storage immediately to show products right away
 const cachedProducts = JSON.parse(localStorage.getItem('products') || '[]');
+const cachedAllProducts = JSON.parse(localStorage.getItem('allProducts') || '[]');
+
 if (cachedProducts.length > 0) {
   productStateManager.updateProducts(cachedProducts);
   window.products = productStateManager.getAllProducts();
   console.log('Loaded cached products immediately:', window.products.length);
-  // Dispatch event immediately for cached data
+}
+
+if (cachedAllProducts.length > 0) {
+  window.allProductsIncludingUserSubmitted = cachedAllProducts;
+  console.log('Loaded cached all products immediately:', window.allProductsIncludingUserSubmitted.length);
+}
+
+// Dispatch event immediately for cached data
+if (cachedProducts.length > 0 || cachedAllProducts.length > 0) {
   setTimeout(() => {
     document.dispatchEvent(new Event('products-ready'));
     if (typeof window.autoRenderProducts === 'function') {
@@ -424,18 +434,30 @@ function setupRealtimeProductListener() {
           ...doc.data()
         }));
 
-        // Only merge with local products if we have new data
-        let allProducts = firebaseProducts;
+        // Filter out user-submitted products for homepage display
+        // User-submitted products should only appear on marketplace page
+        const filteredFirebaseProducts = firebaseProducts.filter(product => {
+          // Exclude products that were submitted by users (have submittedBy field)
+          // or have local_ prefix in ID (locally stored user submissions)
+          return !product.submittedBy && !product.id?.toString().startsWith('local_');
+        });
+        
+        let allProducts = filteredFirebaseProducts;
         const localProducts = JSON.parse(localStorage.getItem('products') || '[]');
         
-        // If we have cached products and Firebase is empty, keep cached
-        if (firebaseProducts.length === 0 && localProducts.length > 0) {
-          allProducts = localProducts;
-        } else if (firebaseProducts.length > 0) {
-          // Merge Firebase with any additional local products
-          const firebaseIds = new Set(firebaseProducts.map(p => p.id));
-          const additionalLocal = localProducts.filter(p => !firebaseIds.has(p.id));
-          allProducts = [...firebaseProducts, ...additionalLocal];
+        // Filter local products as well
+        const filteredLocalProducts = localProducts.filter(product => {
+          return !product.submittedBy && !product.id?.toString().startsWith('local_');
+        });
+        
+        // If we have cached products and Firebase is empty, keep cached (filtered)
+        if (filteredFirebaseProducts.length === 0 && filteredLocalProducts.length > 0) {
+          allProducts = filteredLocalProducts;
+        } else if (filteredFirebaseProducts.length > 0) {
+          // Merge Firebase with any additional local products (both filtered)
+          const firebaseIds = new Set(filteredFirebaseProducts.map(p => p.id));
+          const additionalLocal = filteredLocalProducts.filter(p => !firebaseIds.has(p.id));
+          allProducts = [...filteredFirebaseProducts, ...additionalLocal];
         }
         
         productStateManager.updateProducts(allProducts);
@@ -444,10 +466,16 @@ function setupRealtimeProductListener() {
         const previousCount = window.products?.length || 0;
         window.products = productStateManager.getAllProducts();
         
-        console.log(`Products updated: ${previousCount} → ${window.products.length}`);
+        // Also maintain a separate array with ALL products (including user-submitted) for marketplace
+        window.allProductsIncludingUserSubmitted = firebaseProducts; // Full unfiltered list
         
-        // Save to localStorage for caching
+        console.log(`Products updated: ${previousCount} → ${window.products.length}`);
+        console.log(`All products (including user-submitted): ${window.allProductsIncludingUserSubmitted.length}`);
+        
+        // Save filtered products to localStorage for caching (homepage)
         localStorage.setItem('products', JSON.stringify(window.products));
+        // Save all products for marketplace
+        localStorage.setItem('allProducts', JSON.stringify(window.allProductsIncludingUserSubmitted));
         localStorage.setItem('products_updated', Date.now().toString());
 
         // Notify any listeners
@@ -526,8 +554,17 @@ function getProductsByCategory(category) {
 }
 
 function getFeaturedProducts() {
-  // Return the 6 most recently added products
-  return (window.products || []).slice(0, 6);
+  // Return only pre-existing featured products, exclude user-submitted products
+  // User-submitted products should only appear on marketplace page
+  const allProducts = window.products || [];
+  const preExistingProducts = allProducts.filter(product => {
+    // Exclude products that were submitted by users (have submittedBy field)
+    // or have local_ prefix in ID (locally stored user submissions)
+    return !product.submittedBy && !product.id?.toString().startsWith('local_');
+  });
+  
+  // Return the 6 most recently added pre-existing products
+  return preExistingProducts.slice(0, 6);
 }
 
 function getProductsOnSale() {
@@ -542,6 +579,30 @@ function searchProducts(query) {
     (p.features || []).some(f => f.toLowerCase().includes(term))
   );
 }
+
+// Function to get all products including user-submitted ones (for marketplace page)
+function getAllProductsIncludingUserSubmitted() {
+  // This function is specifically for marketplace page to show ALL products
+  if (window.allProductsIncludingUserSubmitted) {
+    return window.allProductsIncludingUserSubmitted;
+  }
+  
+  // Fallback to localStorage if not loaded yet
+  try {
+    const allProducts = JSON.parse(localStorage.getItem('allProducts') || '[]');
+    if (allProducts.length > 0) {
+      return allProducts;
+    }
+  } catch (e) {
+    console.error('Error loading all products from localStorage:', e);
+  }
+  
+  // Final fallback to regular products
+  return window.products || [];
+}
+
+// Make this function globally available
+window.getAllProductsIncludingUserSubmitted = getAllProductsIncludingUserSubmitted;
 
 // ---- Example Products for Category Testing ----
 // These are example products to demonstrate the category filtering functionality
