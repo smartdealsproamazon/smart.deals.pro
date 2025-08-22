@@ -959,7 +959,7 @@
           container.appendChild(productCard);
         });
       }
-
+      
       // Clear all filters
       function clearFilters() {
         document.getElementById('categoryFilter').value = '';
@@ -967,13 +967,12 @@
         document.getElementById('priceFilter').value = '';
         document.getElementById('searchInput').value = '';
         
-        // Reset to Amazon categories
+        // Reset to Amazon categories and default platform, then apply filters
         updateCategoriesForPlatform('amazon');
-        
-        // Show all products
-        renderAllProducts();
+        document.getElementById('platformFilter').value = 'amazon';
+        applyFilters();
       }
-
+      
       categoryFilter.addEventListener('change', applyFilters);
       platformFilter.addEventListener('change', applyFilters);
       priceFilter.addEventListener('change', applyFilters);
@@ -984,8 +983,13 @@
         clearTimeout(searchTimeout);
         searchTimeout = setTimeout(applyFilters, 500);
       });
+      
+      // Set default platform to Amazon on load and apply filters immediately
+      platformFilter.value = 'amazon';
+      updateCategoriesForPlatform('amazon');
+      applyFilters();
     });
-
+    
     // Mobile menu toggle
     function toggleMobileMenu() {
       const mobileMenu = document.getElementById('mobileMenu');
@@ -993,7 +997,7 @@
         mobileMenu.classList.toggle('active');
       }
     }
-
+    
     // Smooth scrolling for anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       anchor.addEventListener('click', function (e) {
@@ -1090,18 +1094,35 @@
     document.addEventListener('DOMContentLoaded', function() {
       renderPlatforms();
       setupPlatformFilter();
-      renderAllProducts();
+      
+      // If a platform is selected (default Amazon), apply filters; otherwise render all
+      const platformFilterEl = document.getElementById('platformFilter');
+      if (platformFilterEl && platformFilterEl.value) {
+        platformFilterEl.dispatchEvent(new Event('change'));
+      } else {
+        renderAllProducts();
+      }
       
       // Listen for product updates
       document.addEventListener('products-ready', function() {
         renderPlatforms();
         setupPlatformFilter();
-        renderAllProducts();
+        const platformFilterEl = document.getElementById('platformFilter');
+        if (platformFilterEl && platformFilterEl.value) {
+          platformFilterEl.dispatchEvent(new Event('change'));
+        } else {
+          renderAllProducts();
+        }
       });
       document.addEventListener('products-updated', function() {
         renderPlatforms();
         setupPlatformFilter();
-        renderAllProducts();
+        const platformFilterEl = document.getElementById('platformFilter');
+        if (platformFilterEl && platformFilterEl.value) {
+          platformFilterEl.dispatchEvent(new Event('change'));
+        } else {
+          renderAllProducts();
+        }
       });
     });
 
