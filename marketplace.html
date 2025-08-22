@@ -824,14 +824,42 @@
 
   <!-- JavaScript -->
   <script>
-    // Loading screen
-    window.addEventListener('load', function() {
-      setTimeout(() => {
-        document.getElementById('loading-screen').style.opacity = '0';
+    // Loading screen - Fixed to prevent flickering
+    let loadingScreenHidden = false;
+    
+    function hideLoadingScreen() {
+      if (loadingScreenHidden) return;
+      loadingScreenHidden = true;
+      
+      const loadingScreen = document.getElementById('loading-screen');
+      if (loadingScreen) {
+        loadingScreen.style.opacity = '0';
         setTimeout(() => {
-          document.getElementById('loading-screen').style.display = 'none';
+          loadingScreen.style.display = 'none';
         }, 500);
-      }, 1000);
+      }
+    }
+    
+    // Hide loading screen when everything is ready
+    window.addEventListener('load', function() {
+      // Wait for marketplace initialization
+      setTimeout(() => {
+        if (isInitialized) {
+          hideLoadingScreen();
+        } else {
+          // Wait a bit more if not initialized
+          setTimeout(hideLoadingScreen, 500);
+        }
+      }, 800);
+    });
+    
+    // Also hide when marketplace is fully initialized
+    document.addEventListener('DOMContentLoaded', function() {
+      setTimeout(() => {
+        if (document.querySelector('#platformsGrid .platform-card')) {
+          hideLoadingScreen();
+        }
+      }, 1200);
     });
 
     // Click tracking function
@@ -1135,38 +1163,64 @@
     let currentPlatform = null;
     let platformProducts = [];
 
-    // Initialize page
-    document.addEventListener('DOMContentLoaded', function() {
-      renderPlatforms();
-      setupPlatformFilter();
-      
-      // If a platform is selected (default Amazon), apply filters; otherwise render all
-      const platformFilterEl = document.getElementById('platformFilter');
-      if (platformFilterEl && platformFilterEl.value) {
-        platformFilterEl.dispatchEvent(new Event('change'));
-      } else {
-        renderAllProducts();
+    // Initialize page - Fixed to prevent loading conflicts
+    let isInitialized = false;
+    
+    function initializeMarketplace() {
+      if (isInitialized) {
+        console.log('Marketplace already initialized, skipping...');
+        return;
       }
       
-      // Listen for product updates
-      document.addEventListener('products-ready', function() {
+      console.log('Initializing marketplace...');
+      isInitialized = true;
+      
+      try {
         renderPlatforms();
         setupPlatformFilter();
+        
+        // If a platform is selected (default Amazon), apply filters; otherwise render all
         const platformFilterEl = document.getElementById('platformFilter');
         if (platformFilterEl && platformFilterEl.value) {
           platformFilterEl.dispatchEvent(new Event('change'));
         } else {
           renderAllProducts();
         }
+        
+        // Hide loading screen once marketplace is initialized
+        setTimeout(() => {
+          hideLoadingScreen();
+        }, 300);
+        
+        console.log('Marketplace initialization completed successfully');
+      } catch (error) {
+        console.error('Error during marketplace initialization:', error);
+        hideLoadingScreen(); // Hide loading screen even if there's an error
+      }
+    }
+    
+    document.addEventListener('DOMContentLoaded', function() {
+      initializeMarketplace();
+      
+      // Listen for product updates - but only initialize once
+      document.addEventListener('products-ready', function() {
+        console.log('Products ready event received');
+        if (!isInitialized) {
+          initializeMarketplace();
+        }
       });
+      
       document.addEventListener('products-updated', function() {
-        renderPlatforms();
-        setupPlatformFilter();
-        const platformFilterEl = document.getElementById('platformFilter');
-        if (platformFilterEl && platformFilterEl.value) {
-          platformFilterEl.dispatchEvent(new Event('change'));
-        } else {
-          renderAllProducts();
+        console.log('Products updated event received');
+        // Only refresh the display, don't re-initialize
+        if (isInitialized) {
+          renderPlatforms();
+          const platformFilterEl = document.getElementById('platformFilter');
+          if (platformFilterEl && platformFilterEl.value) {
+            platformFilterEl.dispatchEvent(new Event('change'));
+          } else {
+            renderAllProducts();
+          }
         }
       });
     });
