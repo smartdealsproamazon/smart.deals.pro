@@ -588,10 +588,22 @@ h4 { font-size: 1.25rem; }
 
 .products-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
   margin-bottom: 3rem;
   padding: 0 0.5rem;
+}
+
+/* Ensure affiliate product cards work well in all grid containers */
+#product-container,
+#usaProductsGrid,
+#featuredProductsGrid,
+.products-grid,
+.product-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
 }
 
 .product-card {
@@ -2015,6 +2027,193 @@ h4 { font-size: 1.25rem; }
   .btn, .btn-primary, .btn-outline {
     font-size: 1.1rem;
     padding: 1rem 2rem;
+  }
+}
+
+/* Enhanced Affiliate Product Card Styles (Matching Marketplace Demo) */
+.affiliate-product-card {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  transition: all 0.3s ease;
+  position: relative;
+  border: 1px solid #e5e7eb;
+  margin-bottom: 2rem;
+}
+
+.affiliate-product-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+}
+
+.affiliate-product-card .product-image-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.affiliate-product-card .product-image {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  transition: transform 0.3s;
+}
+
+.affiliate-product-card:hover .product-image {
+  transform: scale(1.05);
+}
+
+.affiliate-product-card .product-content {
+  padding: 1.5rem;
+}
+
+.affiliate-product-card .product-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 0.75rem;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.affiliate-product-card .product-price {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #059669;
+  margin-bottom: 1rem;
+}
+
+.affiliate-product-card .product-badges {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.affiliate-product-card .badge {
+  padding: 0.375rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.affiliate-product-card .badge.platform {
+  background: #3b82f6;
+  color: white;
+}
+
+.affiliate-product-card .badge.commission {
+  background: #f59e0b;
+  color: white;
+}
+
+.affiliate-product-card .badge.featured {
+  background: linear-gradient(45deg, #ff6b6b, #feca57);
+  color: white;
+  animation: pulse 2s infinite;
+}
+
+.affiliate-product-card .badge.owner {
+  background: linear-gradient(45deg, #FFD700, #FFA500);
+  color: #000;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
+}
+
+.affiliate-product-card .badge.owner::before {
+  content: "👑";
+  margin-right: 0.25rem;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.affiliate-product-card .product-description {
+  color: #6b7280;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.affiliate-product-card .affiliate-info {
+  background: #f9fafb;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.affiliate-product-card .affiliate-name {
+  font-size: 0.9rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.affiliate-product-card .affiliate-rating {
+  color: #fbbf24;
+}
+
+.affiliate-product-card .product-cta {
+  width: 100%;
+  padding: 0.875rem 1.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-top: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.affiliate-product-card .product-cta:hover {
+  background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(103, 126, 234, 0.4);
+}
+
+/* Responsive Design for Affiliate Product Cards */
+@media (max-width: 768px) {
+  .affiliate-product-card .product-badges {
+    gap: 0.25rem;
+  }
+  
+  .affiliate-product-card .badge {
+    font-size: 0.6rem;
+    padding: 0.25rem 0.5rem;
+  }
+  
+  .affiliate-product-card .product-title {
+    font-size: 1.1rem;
+  }
+  
+  .affiliate-product-card .product-price {
+    font-size: 1.5rem;
+  }
+  
+  .affiliate-product-card .product-content {
+    padding: 1rem;
+  }
+  
+  .affiliate-product-card .affiliate-info {
+    padding: 0.75rem 1rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
   }
 }
 

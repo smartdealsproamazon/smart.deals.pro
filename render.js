@@ -92,10 +92,10 @@ function animateLoadingProgress() {
   }, 100);
 }
 
-// Function to create enhanced product card
+// Function to create enhanced product card (matching marketplace demo design)
 function createProductCard(product) {
   const div = document.createElement("div");
-  div.className = "product-card";
+  div.className = "affiliate-product-card";
   
   // Add data attributes so existing filters on some pages work
   div.setAttribute('data-category', product.category || '');
@@ -111,9 +111,6 @@ function createProductCard(product) {
   const numericPrice = safeParsePriceForAttribute(product.price);
   div.setAttribute('data-price', numericPrice);
   
-  const discountBadge = product.discount > 0 ? 
-    `<div class="discount-badge">-${product.discount}%</div>` : '';
-  
   // Safe price display with validation
   const safeDisplayPrice = (price) => {
     if (!price) return '$0.00';
@@ -127,18 +124,52 @@ function createProductCard(product) {
   const displayPrice = safeDisplayPrice(product.price);
   const displayOriginalPrice = safeDisplayPrice(product.originalPrice);
   
-  const originalPrice = product.originalPrice && 
-                       product.originalPrice !== product.price && 
-                       !displayOriginalPrice.includes('$0.00') ? 
-    `<span class="original-price">${displayOriginalPrice}</span>` : '';
+  // Create original price with strikethrough styling (matching demo)
+  const originalPriceHTML = product.originalPrice && 
+                           product.originalPrice !== product.price && 
+                           !displayOriginalPrice.includes('$0.00') ? 
+    `<span style="text-decoration: line-through; color: #9ca3af; font-size: 1rem; margin-left: 0.5rem;">${displayOriginalPrice}</span>` : '';
   
-  const stars = generateStars(product.rating || 5);
+  // Create badges similar to demo products
+  const badges = [];
   
-  const features = Array.isArray(product.features) ? 
-    product.features.slice(0, 3).map(feature => `<span class="feature-tag">${feature}</span>`).join('') : '';
-
-  // Timer functionality removed
-  let timerHTML = '';
+  // Platform badge
+  if (product.platform) {
+    badges.push(`<span class="badge platform">${product.platform}</span>`);
+  } else {
+    badges.push(`<span class="badge platform">Amazon</span>`);
+  }
+  
+  // Category badge
+  if (product.category) {
+    badges.push(`<span class="badge commission">${product.category}</span>`);
+  }
+  
+  // Discount badge
+  if (product.discount && product.discount > 0) {
+    badges.push(`<span class="badge featured">${product.discount}% OFF</span>`);
+  }
+  
+  // Rating badge if high rating
+  if (product.rating && product.rating >= 4.5) {
+    badges.push(`<span class="badge featured">⭐ Top Rated</span>`);
+  }
+  
+  const badgesHTML = badges.length > 0 ? 
+    `<div class="product-badges">${badges.join('')}</div>` : '';
+  
+  // Create description from features or use existing description
+  let description = product.description || '';
+  if (!description && Array.isArray(product.features) && product.features.length > 0) {
+    description = product.features.slice(0, 2).join('. ') + '.';
+  }
+  if (!description) {
+    description = `High-quality ${product.category || 'product'} with excellent features and great value for money.`;
+  }
+  
+  // Create affiliate info section
+  const affiliateName = product.affiliateName || 'Verified Affiliate';
+  const affiliateRating = generateStars(product.affiliateRating || 5);
 
   // Make the entire card clickable to open product detail page
   div.style.cursor = 'pointer';
@@ -159,39 +190,22 @@ function createProductCard(product) {
   });
 
   div.innerHTML = `
-    ${discountBadge}
     <div class="product-image-container">
       <img src="${product.image}" alt="${product.name}" class="product-image" loading="lazy">
-      <div class="product-overlay">
-        <button class="view-details-btn" onclick="event.stopPropagation(); if('${product.id}') { const currentPage = window.location.pathname.split('/').pop() || 'index.html'; const productId = encodeURIComponent('${product.id}'); console.log('View Details clicked for ID: ${product.id}'); window.location.href='product-detail.html?id=' + productId + '&ref=' + encodeURIComponent(currentPage); } else { console.error('Product ID not available'); }">
-          <i class="fas fa-eye"></i> View Details
-        </button>
-      </div>
     </div>
-    <div class="product-info">
+    <div class="product-content">
       <h3 class="product-title">${product.name}</h3>
-      <div class="product-rating">
-        <div class="stars">${stars}</div>
-        <span class="rating-text">${product.rating} (${product.reviews} reviews)</span>
-      </div>
-      <div class="product-features">
-        ${features}
-      </div>
-      <div class="product-price">
-        ${originalPrice}
-        <span class="current-price">${displayPrice}</span>
-      </div>
-      ${timerHTML}
-      <div class="product-buttons">
-        <a href="${product.link}" target="_blank" class="btn btn-primary btn-small" onclick="event.stopPropagation(); trackClick('${product.name}', '${product.category}')">
-          <i class="fas fa-shopping-cart"></i> Buy Now
-        </a>
-        <button class="btn btn-outline btn-small" onclick="event.stopPropagation(); addToWishlist(${product.id})">
-          <i class="fas fa-heart"></i> Save
-        </button>
-        <button class="btn btn-secondary btn-small" onclick="event.stopPropagation(); if('${product.id}') { const currentPage = window.location.pathname.split('/').pop() || 'index.html'; const productId = encodeURIComponent('${product.id}'); console.log('Details button clicked for ID: ${product.id}'); window.location.href='product-detail.html?id=' + productId + '&ref=' + encodeURIComponent(currentPage); } else { console.error('Product ID not available for details'); }">
-          <i class="fas fa-info-circle"></i> Details
-        </button>
+      <div class="product-price">${displayPrice}${originalPriceHTML}</div>
+      ${badgesHTML}
+      <p class="product-description">${description}</p>
+      <button class="product-cta" onclick="event.stopPropagation(); trackClick('${product.name}', '${product.category}'); window.open('${product.link}', '_blank')">
+        🛒 Buy Now - ${displayPrice}
+      </button>
+    </div>
+    <div class="affiliate-info">
+      <span class="affiliate-name">${affiliateName}</span>
+      <div class="affiliate-rating">
+        ${affiliateRating}
       </div>
     </div>
   `;

@@ -568,12 +568,15 @@ if (typeof window !== 'undefined') {
             price: 19.99,
             originalPrice: 24.99,
             image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=300&h=300&fit=crop",
-            description: "Comfortable cotton t-shirt for boys",
+            description: "Comfortable cotton t-shirt for boys. Perfect for everyday wear with soft fabric and durable construction.",
             features: ["100% Cotton", "Machine Washable", "Comfortable Fit"],
             discount: 20,
             rating: 4.5,
             reviews: 15,
-            link: "#"
+            link: "#",
+            platform: "Amazon",
+            affiliateName: "FashionKids Pro",
+            affiliateRating: 4.8
           },
           {
             id: 'boys-2',
@@ -582,12 +585,15 @@ if (typeof window !== 'undefined') {
             price: 39.99,
             originalPrice: 49.99,
             image: "https://images.unsplash.com/photo-1542272604-787c3835535d?w=300&h=300&fit=crop",
-            description: "Durable denim jeans for active boys",
+            description: "Durable denim jeans for active boys. Built to last with reinforced stitching and comfortable fit.",
             features: ["Durable Denim", "Adjustable Waist", "Classic Fit"],
             discount: 20,
             rating: 4.7,
             reviews: 22,
-            link: "#"
+            link: "#",
+            platform: "Amazon",
+            affiliateName: "KidsWear Expert",
+            affiliateRating: 4.9
           },
           {
             id: 'girls-1',
@@ -596,12 +602,15 @@ if (typeof window !== 'undefined') {
             price: 29.99,
             originalPrice: 39.99,
             image: "https://images.unsplash.com/photo-1518831959646-742c3a14ebf7?w=300&h=300&fit=crop",
-            description: "Beautiful pink dress perfect for special occasions",
+            description: "Beautiful pink dress perfect for special occasions. Elegant design with soft fabric that's comfortable all day long.",
             features: ["Soft Fabric", "Elegant Design", "Perfect for Parties"],
             discount: 25,
             rating: 4.8,
             reviews: 18,
-            link: "#"
+            link: "#",
+            platform: "Amazon",
+            affiliateName: "GirlsFashion Hub",
+            affiliateRating: 4.7
           },
           {
             id: 'girls-2',
