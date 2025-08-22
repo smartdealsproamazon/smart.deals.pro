@@ -1,8 +1,9 @@
-// SmartDeals Pro User Authentication & Notification System
+// SmartDeals Pro User Authentication & Notification System with Cross-Device Support
 
 class SmartDealsAuth {
   constructor() {
     this.currentUser = null;
+    this.sessionKey = 'smartdeals_session';
     this.init();
     this.observeUserMenu(); // Add observer for user menu
   }
@@ -13,24 +14,300 @@ class SmartDealsAuth {
     this.updateHeaderUI();
     this.setupNotifications();
     this.checkDailyNotifications();
+    this.setupCrossDeviceSync();
     console.log('SmartDealsAuth init() completed');
   }
 
+  // Cross-device authentication setup
+  setupCrossDeviceSync() {
+    // Register service worker for cross-device sync
+    this.registerServiceWorker();
+    
+    // Listen for storage events from other tabs/windows
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'smartdeals_currentUser' || e.key === this.sessionKey) {
+        console.log('Cross-device auth update detected:', e.key);
+        this.loadCurrentUser();
+        this.updateHeaderUI();
+      }
+    });
+
+    // Listen for service worker messages
+    navigator.serviceWorker.addEventListener('message', (event) => {
+      if (event.data && event.data.type === 'AUTH_SYNC') {
+        this.handleServiceWorkerMessage(event.data);
+      }
+    });
+
+    // Check for existing session on page load
+    this.checkExistingSession();
+  }
+
+  // Register service worker for cross-device sync
+  async registerServiceWorker() {
+    if ('serviceWorker' in navigator) {
+      try {
+        const registration = await navigator.serviceWorker.register('/auth-sync-sw.js');
+        console.log('Auth sync service worker registered:', registration);
+        
+        // Register this client with the service worker
+        if (registration.active) {
+          registration.active.postMessage({
+            type: 'AUTH_SYNC',
+            action: 'register-client'
+          });
+        }
+      } catch (error) {
+        console.error('Service worker registration failed:', error);
+      }
+    }
+  }
+
+  // Handle service worker messages
+  handleServiceWorkerMessage(data) {
+    switch (data.action) {
+      case 'session-updated':
+        console.log('Session updated via service worker');
+        this.currentUser = data.data.user;
+        this.updateHeaderUI();
+        break;
+      case 'session-cleared':
+        console.log('Session cleared via service worker');
+        this.currentUser = null;
+        this.updateHeaderUI();
+        break;
+      case 'sync-request':
+        console.log('Sync request received from service worker');
+        this.syncWithServiceWorker();
+        break;
+    }
+  }
+
+  // Sync with service worker
+  async syncWithServiceWorker() {
+    if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+      try {
+        const sessionData = this.getSessionData();
+        if (sessionData) {
+          navigator.serviceWorker.controller.postMessage({
+            type: 'AUTH_SYNC',
+            action: 'session-update',
+            data: sessionData
+          });
+        }
+      } catch (error) {
+        console.error('Error syncing with service worker:', error);
+      }
+    }
+  }
+
+  // Check for existing session across devices
+  checkExistingSession() {
+    const sessionData = this.getSessionData();
+    if (sessionData && sessionData.user && sessionData.expiresAt) {
+      const now = new Date().getTime();
+      if (now < sessionData.expiresAt) {
+        // Session is still valid
+        console.log('Valid session found, auto-login');
+        this.currentUser = sessionData.user;
+        this.updateHeaderUI();
+        this.updateLastLogin();
+      } else {
+        // Session expired, clear it
+        console.log('Session expired, clearing');
+        this.clearSession();
+      }
+    }
+  }
+
+  // Create a persistent session
+  createSession(user) {
+    const sessionData = {
+      user: user,
+      sessionId: this.generateSessionId(),
+      createdAt: new Date().getTime(),
+      expiresAt: new Date().getTime() + (30 * 24 * 60 * 60 * 1000), // 30 days
+      deviceInfo: this.getDeviceInfo()
+    };
+
+    // Store in multiple places for cross-device support
+    localStorage.setItem(this.sessionKey, JSON.stringify(sessionData));
+    localStorage.setItem('smartdeals_currentUser', JSON.stringify(user));
+    
+    // Also store in sessionStorage for current session
+    sessionStorage.setItem(this.sessionKey, JSON.stringify(sessionData));
+    
+    // Store in IndexedDB for more persistent storage
+    this.storeInIndexedDB(sessionData);
+
+    // Sync with service worker for cross-device support
+    this.syncWithServiceWorker();
+
+    console.log('Session created for user:', user.email);
+  }
+
+  // Get session data
+  getSessionData() {
+    try {
+      // Try localStorage first
+      const localData = localStorage.getItem(this.sessionKey);
+      if (localData) {
+        return JSON.parse(localData);
+      }
+
+      // Try sessionStorage
+      const sessionData = sessionStorage.getItem(this.sessionKey);
+      if (sessionData) {
+        return JSON.parse(sessionData);
+      }
+
+      return null;
+    } catch (e) {
+      console.error('Error getting session data:', e);
+      return null;
+    }
+  }
+
+  // Clear session
+  clearSession() {
+    localStorage.removeItem(this.sessionKey);
+    localStorage.removeItem('smartdeals_currentUser');
+    sessionStorage.removeItem(this.sessionKey);
+    this.removeFromIndexedDB();
+    
+    // Clear from service worker
+    if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+      navigator.serviceWorker.controller.postMessage({
+        type: 'AUTH_SYNC',
+        action: 'session-clear'
+      });
+    }
+    
+    this.currentUser = null;
+  }
+
+  // Generate unique session ID
+  generateSessionId() {
+    return 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+  }
+
+  // Get device information
+  getDeviceInfo() {
+    return {
+      userAgent: navigator.userAgent,
+      platform: navigator.platform,
+      language: navigator.language,
+      screenSize: `${screen.width}x${screen.height}`,
+      timestamp: new Date().toISOString()
+    };
+  }
+
+  // Store session in IndexedDB for persistence
+  async storeInIndexedDB(sessionData) {
+    try {
+      if ('indexedDB' in window) {
+        const db = await this.openIndexedDB();
+        const transaction = db.transaction(['sessions'], 'readwrite');
+        const store = transaction.objectStore('sessions');
+        
+        await store.put({
+          id: sessionData.sessionId,
+          data: sessionData,
+          timestamp: new Date().toISOString()
+        });
+        
+        console.log('Session stored in IndexedDB');
+      }
+    } catch (e) {
+      console.error('Error storing session in IndexedDB:', e);
+    }
+  }
+
+  // Remove session from IndexedDB
+  async removeFromIndexedDB() {
+    try {
+      if ('indexedDB' in window) {
+        const db = await this.openIndexedDB();
+        const transaction = db.transaction(['sessions'], 'readwrite');
+        const store = transaction.objectStore('sessions');
+        
+        await store.clear();
+        console.log('Session removed from IndexedDB');
+      }
+    } catch (e) {
+      console.error('Error removing session from IndexedDB:', e);
+    }
+  }
+
+  // Open IndexedDB
+  openIndexedDB() {
+    return new Promise((resolve, reject) => {
+      const request = indexedDB.open('SmartDealsAuth', 1);
+      
+      request.onerror = () => reject(request.error);
+      request.onsuccess = () => resolve(request.result);
+      
+      request.onupgradeneeded = (event) => {
+        const db = event.target.result;
+        if (!db.objectStoreNames.contains('sessions')) {
+          db.createObjectStore('sessions', { keyPath: 'id' });
+        }
+      };
+    });
+  }
+
+  // Update last login time
+  updateLastLogin() {
+    if (!this.currentUser) return;
+
+    this.currentUser.lastLogin = new Date().toISOString();
+    
+    // Update in localStorage
+    localStorage.setItem('smartdeals_currentUser', JSON.stringify(this.currentUser));
+    
+    // Update in users array
+    const users = JSON.parse(localStorage.getItem('smartdeals_users') || '[]');
+    const userIndex = users.findIndex(u => u.id === this.currentUser.id);
+    if (userIndex !== -1) {
+      users[userIndex] = this.currentUser;
+      localStorage.setItem('smartdeals_users', JSON.stringify(users));
+    }
+
+    // Update session
+    const sessionData = this.getSessionData();
+    if (sessionData) {
+      sessionData.user = this.currentUser;
+      this.createSession(this.currentUser);
+    }
+  }
+
   loadCurrentUser() {
+    // Try to get user from session first
+    const sessionData = this.getSessionData();
+    if (sessionData && sessionData.user) {
+      this.currentUser = sessionData.user;
+      console.log('Current user loaded from session:', this.currentUser.name, this.currentUser.email);
+      return;
+    }
+
+    // Fallback to localStorage
     const userData = localStorage.getItem('smartdeals_currentUser');
     console.log('Loading current user from localStorage:', !!userData);
     
     if (userData) {
       try {
         this.currentUser = JSON.parse(userData);
-        console.log('Current user loaded:', this.currentUser.name, this.currentUser.email);
+        console.log('Current user loaded from localStorage:', this.currentUser.name, this.currentUser.email);
+        
+        // Create session for cross-device support
+        this.createSession(this.currentUser);
       } catch (e) {
         console.error('Error parsing user data from localStorage:', e);
         localStorage.removeItem('smartdeals_currentUser');
         this.currentUser = null;
       }
     } else {
-      console.log('No current user found in localStorage');
+      console.log('No current user found');
       this.currentUser = null;
     }
   }
@@ -191,8 +468,7 @@ class SmartDealsAuth {
 
   signOut() {
     if (confirm('Are you sure you want to sign out?')) {
-      localStorage.removeItem('smartdeals_currentUser');
-      this.currentUser = null;
+      this.clearSession();
       window.location.reload();
     }
   }
@@ -287,14 +563,23 @@ class SmartDealsAuth {
     if (!this.currentUser) return;
 
     this.currentUser.lastNotification = new Date().toISOString();
+    
+    // Update in localStorage
     localStorage.setItem('smartdeals_currentUser', JSON.stringify(this.currentUser));
-
+    
     // Update in users array
     const users = JSON.parse(localStorage.getItem('smartdeals_users') || '[]');
     const userIndex = users.findIndex(u => u.id === this.currentUser.id);
     if (userIndex !== -1) {
       users[userIndex] = this.currentUser;
       localStorage.setItem('smartdeals_users', JSON.stringify(users));
+    }
+
+    // Update session
+    const sessionData = this.getSessionData();
+    if (sessionData) {
+      sessionData.user = this.currentUser;
+      this.createSession(this.currentUser);
     }
   }
 

@@ -238,7 +238,7 @@
   </div>
 
   <script>
-    // User Authentication System
+    // User Authentication System with Cross-Device Support
     class UserAuth {
       constructor() {
         this.init();
@@ -246,11 +246,77 @@
 
       init() {
         this.setupEventListeners();
+        this.checkExistingSession();
       }
 
       setupEventListeners() {
         document.getElementById('signinForm').addEventListener('submit', (e) => this.handleSignIn(e));
         document.getElementById('signupForm').addEventListener('submit', (e) => this.handleSignUp(e));
+      }
+
+      // Check for existing session on page load
+      checkExistingSession() {
+        const sessionData = this.getSessionData();
+        if (sessionData && sessionData.user && sessionData.expiresAt) {
+          const now = new Date().getTime();
+          if (now < sessionData.expiresAt) {
+            // User is already logged in, redirect
+            console.log('User already logged in, redirecting...');
+            this.showSuccess('signinSuccess', 'Already logged in! Redirecting...');
+            setTimeout(() => {
+              window.location.href = 'index.html';
+            }, 1000);
+          }
+        }
+      }
+
+      // Get session data
+      getSessionData() {
+        try {
+          const sessionKey = 'smartdeals_session';
+          const localData = localStorage.getItem(sessionKey);
+          if (localData) {
+            return JSON.parse(localData);
+          }
+          return null;
+        } catch (e) {
+          console.error('Error getting session data:', e);
+          return null;
+        }
+      }
+
+      // Create session for cross-device support
+      createSession(user) {
+        const sessionData = {
+          user: user,
+          sessionId: this.generateSessionId(),
+          createdAt: new Date().getTime(),
+          expiresAt: new Date().getTime() + (30 * 24 * 60 * 60 * 1000), // 30 days
+          deviceInfo: this.getDeviceInfo()
+        };
+
+        // Store in multiple places for cross-device support
+        localStorage.setItem('smartdeals_session', JSON.stringify(sessionData));
+        localStorage.setItem('smartdeals_currentUser', JSON.stringify(user));
+        sessionStorage.setItem('smartdeals_session', JSON.stringify(sessionData));
+
+        console.log('Session created for user:', user.email);
+      }
+
+      // Generate unique session ID
+      generateSessionId() {
+        return 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+      }
+
+      // Get device information
+      getDeviceInfo() {
+        return {
+          userAgent: navigator.userAgent,
+          platform: navigator.platform,
+          language: navigator.language,
+          screenSize: `${screen.width}x${screen.height}`,
+          timestamp: new Date().toISOString()
+        };
       }
 
       async handleSignIn(e) {
@@ -283,8 +349,8 @@
         user.lastLogin = new Date().toISOString();
         localStorage.setItem('smartdeals_users', JSON.stringify(users));
 
-        // Set current user
-        localStorage.setItem('smartdeals_currentUser', JSON.stringify(user));
+        // Create cross-device session
+        this.createSession(user);
 
         this.showSuccess('signinSuccess', 'Sign in successful! Redirecting...');
         
@@ -351,7 +417,9 @@
 
         users.push(newUser);
         localStorage.setItem('smartdeals_users', JSON.stringify(users));
-        localStorage.setItem('smartdeals_currentUser', JSON.stringify(newUser));
+
+        // Create cross-device session
+        this.createSession(newUser);
 
         this.showSuccess('signupSuccess', 'Account created successfully! Redirecting...');
         
@@ -407,5 +475,6 @@
     // Initialize authentication system
     const userAuth = new UserAuth();
   </script>
+  <script src="cloud-sync.js"></script>
 </body>
 </html>
