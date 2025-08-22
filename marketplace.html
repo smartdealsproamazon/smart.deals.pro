@@ -331,6 +331,107 @@
       transform: translateY(-2px);
       box-shadow: 0 8px 20px rgba(103, 126, 234, 0.4);
     }
+
+    /* Platform Card Styles */
+    .platforms-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    .platform-card {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border: 2px solid transparent;
+      text-align: center;
+    }
+
+    .platform-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+      border-color: #667eea;
+    }
+
+    .platform-icon {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 1.5rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: white;
+    }
+
+    .platform-name {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #1f2937;
+      margin-bottom: 0.5rem;
+    }
+
+    .platform-description {
+      color: #6b7280;
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+    }
+
+    .platform-stats {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 1.5rem;
+    }
+
+    .platform-stat {
+      text-align: center;
+    }
+
+    .platform-stat-number {
+      display: block;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #667eea;
+    }
+
+    .platform-stat-label {
+      font-size: 0.875rem;
+      color: #6b7280;
+    }
+
+    .platform-badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      background: #e0e7ff;
+      color: #3730a3;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .back-to-platforms-btn {
+      background: #6b7280;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-bottom: 2rem;
+    }
+
+    .back-to-platforms-btn:hover {
+      background: #4b5563;
+      transform: translateY(-2px);
+    }
     
     .load-more {
       text-align: center;
@@ -612,203 +713,37 @@
     </div>
   </section>
 
-  <!-- Products Section -->
-  <section class="products-section">
+  <!-- Platforms Section -->
+  <section class="platforms-section">
     <div class="container">
       <div class="section-header">
-        <h2>Featured Products</h2>
-        <p>Handpicked products from our top-performing affiliates worldwide</p>
+        <h2>Shop by Platform</h2>
+        <p>Browse products from your favorite affiliate networks and platforms</p>
       </div>
       
-      <div class="marketplace-grid" id="marketplaceGrid">
-        <!-- Platform Owner Product -->
-        <div class="affiliate-product-card owner-product">
-          <div class="product-image-container">
-            <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=220&fit=crop" alt="Affiliate Marketing Course" class="product-image">
-          </div>
-          <div class="product-content">
-            <h3 class="product-title">Complete Affiliate Marketing Masterclass 2024</h3>
-            <div class="product-price">$97.00 <span style="text-decoration: line-through; color: #9ca3af; font-size: 1rem;">$297</span></div>
-            <div class="product-badges">
-              <span class="badge owner">Platform Owner</span>
-              <span class="badge featured">Featured</span>
-              <span class="badge platform">Own Product</span>
-            </div>
-            <p class="product-description">Master affiliate marketing with this comprehensive course. 50+ video lessons, proven strategies, templates, and live support included. Transform your online business today!</p>
-            <button class="product-cta" onclick="trackClick('course-001', 'owner')">
-              🚀 Enroll Now - Limited Time!
-            </button>
-          </div>
-          <div class="affiliate-info">
-            <span class="affiliate-name">👑 Platform Owner</span>
-            <div class="affiliate-rating">
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-            </div>
-          </div>
-        </div>
+      <div class="platforms-grid" id="platformsGrid">
+        <!-- Platform cards will be populated dynamically -->
+      </div>
+    </div>
+  </section>
 
-        <!-- Amazon Affiliate Product -->
-        <div class="affiliate-product-card">
-          <div class="product-image-container">
-            <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=220&fit=crop" alt="Wireless Headphones" class="product-image">
-          </div>
-          <div class="product-content">
-            <h3 class="product-title">Premium Wireless Noise-Cancelling Headphones</h3>
-            <div class="product-price">$149.99</div>
-            <div class="product-badges">
-              <span class="badge platform">Amazon</span>
-              <span class="badge commission">8% Commission</span>
-            </div>
-            <p class="product-description">High-quality wireless headphones with active noise cancellation. Perfect for music lovers, professionals, and travelers. 30-hour battery life.</p>
-            <button class="product-cta" onclick="trackClick('headphones-001', 'affiliate-123')">
-              🛒 Buy on Amazon
-            </button>
-          </div>
-          <div class="affiliate-info">
-            <span class="affiliate-name">TechReviewer Pro (USA)</span>
-            <div class="affiliate-rating">
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-            </div>
-          </div>
-        </div>
-
-        <!-- ClickBank Product -->
-        <div class="affiliate-product-card">
-          <div class="product-image-container">
-            <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=220&fit=crop" alt="Fitness Program" class="product-image">
-          </div>
-          <div class="product-content">
-            <h3 class="product-title">30-Day Fitness Transformation Program</h3>
-            <div class="product-price">$67.00</div>
-            <div class="product-badges">
-              <span class="badge platform">ClickBank</span>
-              <span class="badge commission">50% Commission</span>
-              <span class="badge featured">Trending</span>
-            </div>
-            <p class="product-description">Complete fitness transformation with meal plans, workout routines, and personal coaching support. Guaranteed results in 30 days or money back.</p>
-            <button class="product-cta" onclick="trackClick('fitness-001', 'affiliate-456')">
-              💪 Start Transformation
-            </button>
-          </div>
-          <div class="affiliate-info">
-            <span class="affiliate-name">FitnessGuru (Canada)</span>
-            <div class="affiliate-rating">
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="far fa-star"></i>
-            </div>
-          </div>
-        </div>
-
-        <!-- Gaming Product -->
-        <div class="affiliate-product-card">
-          <div class="product-image-container">
-            <img src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=220&fit=crop" alt="Gaming Setup" class="product-image">
-          </div>
-          <div class="product-content">
-            <h3 class="product-title">RGB Mechanical Gaming Keyboard</h3>
-            <div class="product-price">$89.99</div>
-            <div class="product-badges">
-              <span class="badge platform">Amazon</span>
-              <span class="badge commission">6% Commission</span>
-            </div>
-            <p class="product-description">Professional mechanical gaming keyboard with customizable RGB lighting, programmable keys, and ultra-responsive switches. Perfect for gamers and programmers.</p>
-            <button class="product-cta" onclick="trackClick('keyboard-001', 'affiliate-789')">
-              🎮 Buy Now
-            </button>
-          </div>
-          <div class="affiliate-info">
-            <span class="affiliate-name">GamerHub (UK)</span>
-            <div class="affiliate-rating">
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-            </div>
-          </div>
-        </div>
-
-        <!-- Software Product -->
-        <div class="affiliate-product-card">
-          <div class="product-image-container">
-            <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=220&fit=crop" alt="Software Dashboard" class="product-image">
-          </div>
-          <div class="product-content">
-            <h3 class="product-title">All-in-One Marketing Software Suite</h3>
-            <div class="product-price">$49/month</div>
-            <div class="product-badges">
-              <span class="badge platform">ShareASale</span>
-              <span class="badge commission">40% Commission</span>
-            </div>
-            <p class="product-description">Complete marketing automation platform with email marketing, social media management, analytics, and CRM. Everything you need to grow your business.</p>
-            <button class="product-cta" onclick="trackClick('software-001', 'affiliate-101')">
-              🚀 Start Free Trial
-            </button>
-          </div>
-          <div class="affiliate-info">
-            <span class="affiliate-name">MarketingPro (Australia)</span>
-            <div class="affiliate-rating">
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-            </div>
-          </div>
-        </div>
-
-        <!-- Fashion Product -->
-        <div class="affiliate-product-card">
-          <div class="product-image-container">
-            <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=220&fit=crop" alt="Fashion Items" class="product-image">
-          </div>
-          <div class="product-content">
-            <h3 class="product-title">Premium Designer Handbag Collection</h3>
-            <div class="product-price">$199.99</div>
-            <div class="product-badges">
-              <span class="badge platform">Amazon</span>
-              <span class="badge commission">10% Commission</span>
-            </div>
-            <p class="product-description">Luxury designer handbags crafted from genuine leather. Multiple styles and colors available. Perfect for professional and casual occasions.</p>
-            <button class="product-cta" onclick="trackClick('handbag-001', 'affiliate-202')">
-              👜 Shop Collection
-            </button>
-          </div>
-          <div class="affiliate-info">
-            <span class="affiliate-name">FashionHub (Italy)</span>
-            <div class="affiliate-rating">
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="far fa-star"></i>
-            </div>
-          </div>
-        </div>
+  <!-- Platform Products Section (Hidden by default) -->
+  <section class="platform-products-section" id="platformProductsSection" style="display: none;">
+    <div class="container">
+      <div class="section-header">
+        <h2 id="platformProductsTitle">Platform Products</h2>
+        <p id="platformProductsDescription">Browse products from this platform</p>
+        <button class="back-to-platforms-btn" onclick="showPlatforms()">
+          <i class="fas fa-arrow-left"></i> Back to Platforms
+        </button>
       </div>
       
-      <!-- Dynamic Products (User submissions and live catalogue) -->
-      <div class="section-header" style="margin-top: 3rem;">
-        <h2>Latest Marketplace Products</h2>
-        <p>Newest items submitted by affiliates appear here automatically</p>
-      </div>
-      <div id="product-container" class="marketplace-grid">
-        <!-- Populated dynamically from products.js/render.js -->
+      <div id="platform-products-container" class="marketplace-grid">
+        <!-- Platform-specific products will be loaded here -->
       </div>
       
-      <div class="load-more">
-        <button class="load-more-btn" onclick="loadMoreProducts()">
+      <div class="load-more" id="platformLoadMore" style="display: none;">
+        <button class="load-more-btn" onclick="loadMorePlatformProducts()">
           Load More Products
         </button>
       </div>
@@ -975,24 +910,229 @@
   <script src="products.js"></script>
   <script src="render.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      // Explicitly render all products into #product-container
-      if (typeof renderProducts === 'function') {
-        renderProducts(null, 'product-container');
+    // Platform data with icons and descriptions
+    const platformsData = {
+      'amazon': {
+        name: 'Amazon',
+        icon: '📦',
+        description: 'World\'s largest online marketplace with millions of products',
+        badge: 'Most Popular'
+      },
+      'clickbank': {
+        name: 'ClickBank',
+        icon: '💳',
+        description: 'Digital products and online courses marketplace',
+        badge: 'High Commission'
+      },
+      'shareasale': {
+        name: 'ShareASale',
+        icon: '🤝',
+        description: 'Affiliate network with diverse merchant partnerships',
+        badge: 'Trusted Network'
+      },
+      'commission-junction': {
+        name: 'Commission Junction',
+        icon: '🔗',
+        description: 'Global affiliate marketing network by CJ Affiliate',
+        badge: 'Enterprise'
+      },
+      'rakuten': {
+        name: 'Rakuten',
+        icon: '🛍️',
+        description: 'Cashback and affiliate marketing platform',
+        badge: 'Cashback'
+      },
+      'impact': {
+        name: 'Impact',
+        icon: '⚡',
+        description: 'Partnership automation platform for brands',
+        badge: 'Automation'
+      },
+      'shopify': {
+        name: 'Shopify Partners',
+        icon: '🏪',
+        description: 'E-commerce platform with partner program',
+        badge: 'E-commerce'
+      },
+      'etsy': {
+        name: 'Etsy',
+        icon: '🎨',
+        description: 'Handmade and creative products marketplace',
+        badge: 'Handmade'
+      },
+      'ebay': {
+        name: 'eBay Partner',
+        icon: '🏷️',
+        description: 'Global online auction and marketplace',
+        badge: 'Auctions'
+      },
+      'other': {
+        name: 'Other Platforms',
+        icon: '🌐',
+        description: 'Various other affiliate networks and platforms',
+        badge: 'Mixed'
       }
-      // Also refresh on updates
+    };
+
+    // Current state
+    let currentPlatform = null;
+    let platformProducts = [];
+
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', function() {
+      renderPlatforms();
+      
+      // Listen for product updates
       document.addEventListener('products-ready', function() {
-        if (typeof renderProducts === 'function') {
-          renderProducts(null, 'product-container');
-        }
+        renderPlatforms();
       });
       document.addEventListener('products-updated', function() {
-        if (typeof renderProducts === 'function') {
-          renderProducts(null, 'product-container');
-        }
+        renderPlatforms();
       });
     });
+
+    // Render platform cards
+    function renderPlatforms() {
+      const container = document.getElementById('platformsGrid');
+      if (!container) return;
+
+      // Get available platforms from products
+      const availablePlatforms = getAvailablePlatforms();
+      
+      container.innerHTML = '';
+
+      Object.keys(platformsData).forEach(platformKey => {
+        const platform = platformsData[platformKey];
+        const productCount = availablePlatforms[platformKey] || 0;
+        
+        // Only show platforms that have products
+        if (productCount > 0) {
+          const platformCard = createPlatformCard(platformKey, platform, productCount);
+          container.appendChild(platformCard);
+        }
+      });
+
+      // If no platforms have products, show a message
+      if (Object.keys(availablePlatforms).length === 0) {
+        container.innerHTML = `
+          <div style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
+            <i class="fas fa-store" style="font-size: 4rem; color: #9ca3af; margin-bottom: 1rem;"></i>
+            <h3>No Platforms Available Yet</h3>
+            <p style="color: #6b7280;">Products will appear here once affiliates start submitting them.</p>
+            <a href="product-submission.html" style="color: #667eea; text-decoration: underline;">Submit your first product</a>
+          </div>
+        `;
+      }
+    }
+
+    // Get available platforms from products
+    function getAvailablePlatforms() {
+      if (!window.products || window.products.length === 0) {
+        return {};
+      }
+
+      const platformCounts = {};
+      window.products.forEach(product => {
+        const platform = product.platform || 'other';
+        platformCounts[platform] = (platformCounts[platform] || 0) + 1;
+      });
+
+      return platformCounts;
+    }
+
+    // Create platform card
+    function createPlatformCard(platformKey, platform, productCount) {
+      const card = document.createElement('div');
+      card.className = 'platform-card';
+      card.onclick = () => showPlatformProducts(platformKey);
+
+      card.innerHTML = `
+        <div class="platform-badge">${platform.badge}</div>
+        <div class="platform-icon">${platform.icon}</div>
+        <h3 class="platform-name">${platform.name}</h3>
+        <p class="platform-description">${platform.description}</p>
+        <div class="platform-stats">
+          <div class="platform-stat">
+            <span class="platform-stat-number">${productCount}</span>
+            <span class="platform-stat-label">Products</span>
+          </div>
+          <div class="platform-stat">
+            <span class="platform-stat-number">4.8</span>
+            <span class="platform-stat-label">Rating</span>
+          </div>
+        </div>
+      `;
+
+      return card;
+    }
+
+    // Show products for a specific platform
+    function showPlatformProducts(platformKey) {
+      currentPlatform = platformKey;
+      const platform = platformsData[platformKey];
+      
+      // Update title and description
+      document.getElementById('platformProductsTitle').textContent = `${platform.name} Products`;
+      document.getElementById('platformProductsDescription').textContent = `Browse all products from ${platform.name}`;
+      
+      // Hide platforms section, show products section
+      document.querySelector('.platforms-section').style.display = 'none';
+      document.getElementById('platformProductsSection').style.display = 'block';
+      
+      // Filter and render products for this platform
+      renderPlatformProducts(platformKey);
+      
+      // Scroll to products section
+      document.getElementById('platformProductsSection').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Render products for specific platform
+    function renderPlatformProducts(platformKey) {
+      const container = document.getElementById('platform-products-container');
+      if (!container) return;
+
+      // Filter products by platform
+      const products = window.products ? window.products.filter(p => (p.platform || 'other') === platformKey) : [];
+      
+      container.innerHTML = '';
+
+      if (products.length === 0) {
+        container.innerHTML = `
+          <div style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
+            <i class="fas fa-box-open" style="font-size: 4rem; color: #9ca3af; margin-bottom: 1rem;"></i>
+            <h3>No Products Found</h3>
+            <p style="color: #6b7280;">No products available for this platform yet.</p>
+            <button onclick="showPlatforms()" style="margin-top: 1rem; padding: 0.75rem 1.5rem; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer;">
+              Back to Platforms
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      // Render each product
+      products.forEach(product => {
+        const productCard = createProductCard(product);
+        container.appendChild(productCard);
+      });
+    }
+
+    // Go back to platforms view
+    function showPlatforms() {
+      document.querySelector('.platforms-section').style.display = 'block';
+      document.getElementById('platformProductsSection').style.display = 'none';
+      currentPlatform = null;
+      
+      // Scroll to platforms section
+      document.querySelector('.platforms-section').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Load more platform products (placeholder)
+    function loadMorePlatformProducts() {
+      alert('Load more functionality would be implemented here');
+    }
   </script>
+  <script src="scroll-restoration.js"></script>
   <script src="smart-deals-integration.js"></script>
 </body>
 </html>

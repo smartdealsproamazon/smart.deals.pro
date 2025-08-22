@@ -319,18 +319,39 @@ class ProductDetailManager {
       }
     }
     
-    // Update all back buttons
+    // Update all back buttons with scroll position restoration
     const backButton = document.getElementById('backButton');
     const backButtonSecondary = document.getElementById('backButtonSecondary');
     
+    // Create a function to handle back navigation with scroll restoration
+    const handleBackNavigation = (e) => {
+      e.preventDefault();
+      
+      // Navigate back to the referrer page
+      window.location.href = backUrl;
+      
+      // Set up scroll restoration for when the page loads
+      const referrerPage = backUrl.split('?')[0]; // Remove query params
+      const savedScrollPosition = localStorage.getItem('scrollPosition_' + referrerPage);
+      
+      if (savedScrollPosition) {
+        // Store the scroll position to restore after page load
+        sessionStorage.setItem('restoreScrollPosition', savedScrollPosition);
+        sessionStorage.setItem('restoreScrollPage', referrerPage);
+        console.log(`Will restore scroll position ${savedScrollPosition} for page ${referrerPage}`);
+      }
+    };
+    
     if (backButton) {
-      backButton.href = backUrl;
+      backButton.href = backUrl; // Keep href for accessibility
       backButton.innerHTML = `<i class="fas fa-arrow-left"></i> ${backText}`;
+      backButton.addEventListener('click', handleBackNavigation);
     }
     
     if (backButtonSecondary) {
-      backButtonSecondary.href = backUrl;
+      backButtonSecondary.href = backUrl; // Keep href for accessibility
       backButtonSecondary.innerHTML = `<i class="fas fa-arrow-left"></i> ${backText}`;
+      backButtonSecondary.addEventListener('click', handleBackNavigation);
     }
     
     console.log(`Navigation updated: Back to ${backUrl} with text "${backText}"`);
