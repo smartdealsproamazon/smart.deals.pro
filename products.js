@@ -605,9 +605,21 @@ function loadFirebase(callback) {
 function connectToFirebase() {
   console.log('Attempting Firebase connection...');
   
-  // Use a longer timeout for the initial connection
+  // Dynamic timeout based on session type - longer for fresh sessions
+  const checkFreshSession = () => {
+    const hasAnyProducts = localStorage.getItem('products');
+    const hasAnyCache = localStorage.getItem('allProducts');
+    const hasTimestamp = localStorage.getItem('products_updated');
+    return !hasAnyProducts && !hasAnyCache && !hasTimestamp;
+  };
+  
+  const isFreshSession = checkFreshSession();
+  const connectionTimeoutDuration = isFreshSession ? 8000 : 5000; // 8s for fresh, 5s for normal
+  
+  console.log(`Setting Firebase connection timeout: ${connectionTimeoutDuration}ms ${isFreshSession ? '(fresh session)' : '(cached session)'}`);
+  
   const connectionTimeout = setTimeout(() => {
-    console.warn('Firebase connection timeout - proceeding with cached data');
+    console.warn(`Firebase connection timeout after ${connectionTimeoutDuration}ms - proceeding with cached data`);
     // Load cached products immediately
     const cachedProducts = JSON.parse(localStorage.getItem('products') || '[]');
     if (cachedProducts.length > 0) {
@@ -616,7 +628,7 @@ function connectToFirebase() {
       document.dispatchEvent(new Event('products-ready'));
     }
     document.dispatchEvent(new Event('firebase-timeout'));
-  }, 5000); // Increased timeout from 800ms to 5s for more reliable connections
+  }, connectionTimeoutDuration);
   
   // Fallback to original Firebase setup if Firebase Optimizer is not available
   console.log('Firebase Optimizer not available, using fallback setup...');
@@ -766,10 +778,22 @@ function initProducts() {
   // Start Firebase connection
   initProducts();
   
-  // Remove the fallback to demo products - show empty state instead
+  // Enhanced Firebase loading timeout - longer for fresh sessions
+  const checkFreshSession = () => {
+    const hasAnyProducts = localStorage.getItem('products');
+    const hasAnyCache = localStorage.getItem('allProducts');
+    const hasTimestamp = localStorage.getItem('products_updated');
+    return !hasAnyProducts && !hasAnyCache && !hasTimestamp;
+  };
+  
+  const isFreshSession = checkFreshSession();
+  const timeoutDuration = isFreshSession ? 10000 : 5000; // 10s for fresh, 5s for normal
+  
+  console.log(`Setting Firebase timeout: ${timeoutDuration}ms ${isFreshSession ? '(fresh session)' : '(cached session)'}`);
+  
   setTimeout(() => {
     if (!window.products || window.products.length === 0) {
-      console.log('No real products loaded, showing empty state instead of demo products');
+      console.log(`No real products loaded after ${timeoutDuration}ms timeout, showing empty state instead of demo products`);
       window.products = [];
       document.dispatchEvent(new Event('products-ready'));
       
@@ -778,7 +802,7 @@ function initProducts() {
         window.autoRenderProducts();
       }
     }
-  }, 5000);
+  }, timeoutDuration);
 })();
 
 // Check if cached data is fresh (less than 1 hour old)
