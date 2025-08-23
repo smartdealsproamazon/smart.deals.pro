@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check Existing Products - SmartDeals Pro</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .header {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .status {
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .collection-section {
+            margin-bottom: 30px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .collection-header {
+            background: #007bff;
+            color: white;
+            padding: 15px;
+            font-weight: bold;
+        }
+        .collection-content {
+            padding: 20px;
+        }
+        .product-item {
+            background: #f8f9fa;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 4px solid #007bff;
+        }
+        .btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .btn:hover {
+            background: #0056b3;
+        }
+        .btn-success {
+            background: #28a745;
+        }
+        .btn-danger {
+            background: #dc3545;
+        }
+        .log {
+            background: #212529;
+            color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 14px;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 Check Existing Products</h1>
+            <p>SmartDeals Pro - Firebase Data Analysis</p>
+        </div>
+
+        <div class="status">
+            <h3>Firebase Connection Status:</h3>
+            <div id="connection-status">Checking...</div>
+        </div>
+
+        <button onclick="checkAllCollections()" class="btn">Check All Collections</button>
+        <button onclick="migrateProducts()" class="btn btn-success">Migrate to New System</button>
+        <button onclick="clearLogs()" class="btn btn-danger">Clear Logs</button>
+
+        <!-- Collections Display -->
+        <div id="collections-container"></div>
+
+        <!-- Console Logs -->
+        <div style="margin-top: 30px;">
+            <h3>Console Logs:</h3>
+            <div id="console-log" class="log">System starting...\n</div>
+        </div>
+    </div>
+
+    <!-- Firebase Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"></script>
+
+    <!-- Our Firebase Config -->
+    <script src="firebase-config.js"></script>
+
+    <script>
+        let allProductsData = {};
+        
+        // Console logging
+        function addLog(message, type = 'info') {
+            const logDiv = document.getElementById('console-log');
+            const timestamp = new Date().toLocaleTimeString();
+            const logMessage = `[${timestamp}] ${message}\n`;
+            logDiv.textContent += logMessage;
+            logDiv.scrollTop = logDiv.scrollHeight;
+            
+            // Also log to browser console
+            console.log(message);
+        }
+
+        function clearLogs() {
+            document.getElementById('console-log').textContent = 'Logs cleared...\n';
+        }
+
+        // Check Firebase connection
+        async function checkFirebaseConnection() {
+            try {
+                if (!window.firebaseService || !window.firebaseService.isReady()) {
+                    throw new Error('Firebase service not ready');
+                }
+                
+                // Test database connection
+                await window.firebaseService.db.collection('test').limit(1).get();
+                
+                document.getElementById('connection-status').innerHTML = 
+                    '<span style="color: green;">✅ Connected to Firebase</span>';
+                addLog('Firebase connection successful');
+                return true;
+            } catch (error) {
+                document.getElementById('connection-status').innerHTML = 
+                    `<span style="color: red;">❌ Connection failed: ${error.message}</span>`;
+                addLog(`Firebase connection failed: ${error.message}`);
+                return false;
+            }
+        }
+
+        // Check all possible product collections
+        async function checkAllCollections() {
+            addLog('Checking all collections for existing products...');
+            
+            const collectionsToCheck = [
+                'products',
+                'featuredProducts', 
+                'categoryProducts',
+                'userProducts',
+                'allProducts',
+                'smartdeals_products',
+                'product_catalog',
+                'marketplace_products',
+                'admin_products'
+            ];
+
+            const container = document.getElementById('collections-container');
+            container.innerHTML = '';
+            allProductsData = {};
+
+            for (const collectionName of collectionsToCheck) {
+                try {
+                    addLog(`Checking collection: ${collectionName}`);
+                    
+                    const snapshot = await window.firebaseService.db
+                        .collection(collectionName)
+                        .limit(50) // Limit to avoid overwhelming
+                        .get();
+                    
+                    const products = snapshot.docs.map(doc => ({
+                        id: doc.id,
+                        ...doc.data()
+                    }));
+
+                    if (products.length > 0) {
+                        allProductsData[collectionName] = products;
+                        displayCollection(collectionName, products);
+                        addLog(`Found ${products.length} products in ${collectionName}`);
+                    } else {
+                        addLog(`No products found in ${collectionName}`);
+                    }
+                } catch (error) {
+                    addLog(`Error checking ${collectionName}: ${error.message}`);
+                }
+            }
+
+            if (Object.keys(allProductsData).length === 0) {
+                container.innerHTML = '<div class="collection-section"><div class="collection-content"><p>No existing products found in any collection.</p></div></div>';
+                addLog('No existing products found in any collection');
+            }
+        }
+
+        // Display collection data
+        function displayCollection(collectionName, products) {
+            const container = document.getElementById('collections-container');
+            
+            const sectionDiv = document.createElement('div');
+            sectionDiv.className = 'collection-section';
+            
+            sectionDiv.innerHTML = `
+                <div class="collection-header">
+                    📦 Collection: ${collectionName} (${products.length} products)
+                </div>
+                <div class="collection-content">
+                    ${products.slice(0, 5).map(product => `
+                        <div class="product-item">
+                            <strong>${product.title || product.name || 'No Title'}</strong><br>
+                            <small>Price: ${product.price || 'No Price'} | Category: ${product.category || 'No Category'}</small><br>
+                            <small>ID: ${product.id}</small>
+                        </div>
+                    `).join('')}
+                    ${products.length > 5 ? `<p><em>... and ${products.length - 5} more products</em></p>` : ''}
+                </div>
+            `;
+            
+            container.appendChild(sectionDiv);
+        }
+
+        // Migrate products to new system
+        async function migrateProducts() {
+            if (Object.keys(allProductsData).length === 0) {
+                addLog('No products found to migrate. Please check collections first.');
+                return;
+            }
+
+            addLog('Starting product migration to new system...');
+
+            // Load products service
+            if (!window.firebaseProductsService) {
+                addLog('Loading Firebase Products Service...');
+                await new Promise(resolve => setTimeout(resolve, 2000));
+            }
+
+            for (const [collectionName, products] of Object.entries(allProductsData)) {
+                addLog(`Migrating ${products.length} products from ${collectionName}...`);
+
+                for (const product of products) {
+                    try {
+                        const productData = {
+                            title: product.title || product.name || 'Migrated Product',
+                            price: product.price || '$0.00',
+                            category: product.category || 'electronics',
+                            description: product.description || 'Migrated from existing data',
+                            image: product.image || product.imageUrl || 'https://via.placeholder.com/300x200',
+                            link: product.link || product.url || '#',
+                            originalCollection: collectionName,
+                            migrated: true,
+                            originalId: product.id
+                        };
+
+                        // Decide where to migrate based on collection name or product type
+                        if (collectionName.includes('featured') || product.featured) {
+                            await window.firebaseProductsService.addFeaturedProduct(productData);
+                            addLog(`✅ Migrated ${product.title || product.id} to Featured Products`);
+                        } else if (collectionName.includes('user') || product.submittedBy) {
+                            const userInfo = product.submittedBy || {
+                                name: 'Migrated User',
+                                email: 'migrated@example.com',
+                                uid: 'migrated-uid'
+                            };
+                            await window.firebaseProductsService.addUserProduct(productData, userInfo);
+                            addLog(`✅ Migrated ${product.title || product.id} to User Products`);
+                        } else {
+                            // Default to category products
+                            await window.firebaseProductsService.addCategoryProduct(productData);
+                            addLog(`✅ Migrated ${product.title || product.id} to Category Products`);
+                        }
+
+                        // Small delay to avoid overwhelming Firebase
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                    } catch (error) {
+                        addLog(`❌ Failed to migrate ${product.title || product.id}: ${error.message}`);
+                    }
+                }
+            }
+
+            addLog('✅ Migration completed! Check firebase-test-complete.html to see migrated products.');
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', async () => {
+            addLog('System initialized');
+            
+            // Wait for Firebase to load
+            let attempts = 0;
+            while (attempts < 50 && (!window.firebaseService || !window.firebaseService.isReady())) {
+                await new Promise(resolve => setTimeout(resolve, 100));
+                attempts++;
+            }
+            
+            if (window.firebaseService && window.firebaseService.isReady()) {
+                await checkFirebaseConnection();
+            } else {
+                addLog('Firebase service failed to initialize. Please check your configuration.');
+            }
+        });
+    </script>
+</body>
+</html>

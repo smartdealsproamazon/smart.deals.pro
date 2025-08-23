@@ -1,14 +1,27 @@
 // Firebase Configuration and Initialization
 // SmartDeals Pro - Real-time Product Management System
 
-// Firebase configuration
+// Firebase configuration - REPLACE WITH YOUR ACTUAL CONFIG
 const firebaseConfig = {
+  // YAHA APNI ACTUAL API KEY PASTE KARO
   apiKey: "AIzaSyDGpS8_wlm5E8KqH5LKz2YrJ9x3qA7Q2Z4",
+  
+  // YAHA APNA ACTUAL AUTH DOMAIN PASTE KARO  
   authDomain: "smartdeals-pro-2024.firebaseapp.com",
+  
+  // Realtime Database URL (agar use kar rahe ho)
   databaseURL: "https://smartdeals-pro-2024-default-rtdb.firebaseio.com",
+  
+  // YAHA APNI ACTUAL PROJECT ID PASTE KARO
   projectId: "smartdeals-pro-2024",
+  
+  // YAHA APNA ACTUAL STORAGE BUCKET PASTE KARO
   storageBucket: "smartdeals-pro-2024.appspot.com",
+  
+  // YAHA APNI ACTUAL MESSAGING SENDER ID PASTE KARO
   messagingSenderId: "123456789012",
+  
+  // YAHA APNI ACTUAL APP ID PASTE KARO
   appId: "1:123456789012:web:abcdef123456789"
 };
 
