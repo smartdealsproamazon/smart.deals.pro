@@ -13,24 +13,44 @@ function renderProducts(filterCategory = null, containerId = 'product-container'
 
   // Ensure we have products array
   if (!window.products || window.products.length === 0) {
-    console.log('Products array not available, showing loading state');
+    console.log('Products array not available, showing enhanced loading state');
     container.innerHTML = `
       <div class="no-products">
-        <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: #9ca3af; margin-bottom: 1rem;"></i>
-        <h3>Loading products...</h3>
-        <p>Getting the latest deals for you...</p>
-        <div class="loading-progress">
-          <div class="progress-bar" id="loadingProgress"></div>
+        <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: #3b82f6; margin-bottom: 1rem;"></i>
+        <h3>Loading Latest Products...</h3>
+        <p>Fetching amazing deals from our global marketplace...</p>
+        <div class="loading-progress" style="width: 100%; max-width: 300px; margin: 1rem auto;">
+          <div class="progress-bar" id="loadingProgress" style="height: 4px; background: #3b82f6; border-radius: 2px; width: 0%; transition: width 0.3s ease;"></div>
         </div>
-        <div class="realtime-status">
+        <div class="realtime-status" style="margin-top: 1rem; padding: 0.5rem; background: #f0f9ff; border-radius: 6px; color: #1e40af;">
           <i class="fas fa-wifi"></i>
-          <span>Connecting to real-time updates...</span>
+          <span id="connectionStatus">Connecting to real-time updates...</span>
+        </div>
+        <div style="margin-top: 1rem; font-size: 0.9rem; color: #6b7280;">
+          <p>• Real-time product updates</p>
+          <p>• Global marketplace access</p>
+          <p>• Verified affiliate products</p>
         </div>
       </div>
     `;
     
-    // Start progress animation
-    animateLoadingProgress();
+    // Start enhanced progress animation
+    animateEnhancedLoadingProgress();
+    
+    // Set up retry mechanism
+    setTimeout(() => {
+      if (!window.products || window.products.length === 0) {
+        const statusEl = document.getElementById('connectionStatus');
+        if (statusEl) {
+          statusEl.innerHTML = '<span style="color: #f59e0b;">Retrying connection...</span>';
+        }
+        // Try to trigger products loading again
+        if (typeof window.initializeFirebaseConnection === 'function') {
+          window.initializeFirebaseConnection();
+        }
+      }
+    }, 5000);
+    
     return;
   }
 
@@ -679,4 +699,35 @@ if (typeof module !== 'undefined' && module.exports) {
     displayProducts,
     autoRenderProducts
   };
+}
+
+// Function to animate enhanced loading progress
+function animateEnhancedLoadingProgress() {
+  const progressBar = document.getElementById('loadingProgress');
+  if (!progressBar) return;
+  
+  let width = 0;
+  const interval = setInterval(() => {
+    if (window.products && window.products.length > 0) {
+      // Products loaded, complete the progress
+      width = 100;
+      progressBar.style.width = width + '%';
+      clearInterval(interval);
+      return;
+    }
+    
+    width += Math.random() * 8 + 2; // Faster progress
+    if (width >= 85) {
+      width = 85; // Don't complete until products actually load
+    }
+    progressBar.style.width = width + '%';
+  }, 150); // Faster updates
+  
+  // Safety cleanup after 10 seconds
+  setTimeout(() => {
+    clearInterval(interval);
+    if (progressBar) {
+      progressBar.style.width = '90%';
+    }
+  }, 10000);
 }

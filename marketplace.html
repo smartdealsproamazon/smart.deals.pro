@@ -577,13 +577,57 @@
     let currentPage = 1;
     const productsPerPage = 12;
 
-    // Initialize page
+    // Initialize marketplace when page loads
     document.addEventListener('DOMContentLoaded', async function() {
-      initializeMarketplace();
+      console.log('Marketplace page loaded');
+      showLoadingScreen();
+      
       setupEventListeners();
       
       // Load products from Firebase
-      await loadProductsFromSources();
+      try {
+        allProducts = await loadProductsFromSources();
+        console.log('Marketplace products loaded:', allProducts.length);
+        
+        // Update the global variables
+        window.marketplaceProducts = allProducts;
+        
+        // Update stats and render products
+        updateStats();
+        renderProducts();
+        
+        // If no products, show helpful message
+        if (allProducts.length === 0) {
+          const container = document.getElementById('productsGrid'); // Changed from productsContainer to productsGrid
+          if (container) {
+            container.innerHTML = `
+              <div style="text-align: center; padding: 3rem; grid-column: 1 / -1;">
+                <i class="fas fa-box-open" style="font-size: 3rem; color: #9ca3af; margin-bottom: 1rem;"></i>
+                <h3>No Products Available</h3>
+                <p style="margin-bottom: 1rem;">We're currently loading products from our global network.</p>
+                <button onclick="location.reload()" class="btn btn-primary">Refresh Page</button>
+              </div>
+            `;
+          }
+        }
+        
+      } catch (error) {
+        console.error('Error loading marketplace products:', error);
+        
+        // Show error state
+        const container = document.getElementById('productsGrid'); // Changed from productsContainer to productsGrid
+        if (container) {
+          container.innerHTML = `
+            <div style="text-align: center; padding: 3rem; grid-column: 1 / -1;">
+              <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #f59e0b; margin-bottom: 1rem;"></i>
+              <h3>Loading Error</h3>
+              <p style="margin-bottom: 1rem;">Unable to load products. Please check your connection.</p>
+              <button onclick="location.reload()" class="btn btn-primary">Try Again</button>
+            </div>
+          `;
+        }
+      }
+      
       hideLoadingScreen();
     });
 
@@ -774,91 +818,94 @@
     }
 
     async function loadProductsFromSources() {
-      console.log('Loading products from Firebase...');
-      
-      // Start with sample products
-      allProducts = [...sampleProducts];
+      console.log('Loading products from multiple sources...');
+      let allProducts = [];
       
       try {
-        if (db) {
-          // Load products from Firebase Firestore
-          const productsRef = db.collection('products');
-          const snapshot = await productsRef.get();
-          
-          const firebaseProducts = [];
-          snapshot.forEach(doc => {
-            const productData = doc.data();
-            firebaseProducts.push({
-              id: doc.id,
-              ...productData
-            });
-          });
-          
-          console.log('Firebase products loaded:', firebaseProducts.length);
-          
-          // Merge Firebase products with sample products, avoiding duplicates
-          const existingIds = allProducts.map(p => p.id);
-          const newFirebaseProducts = firebaseProducts.filter(p => !existingIds.includes(p.id));
-          allProducts = [...allProducts, ...newFirebaseProducts];
-          
-          // Set up real-time listener for product updates
-          productsRef.onSnapshot(snapshot => {
-            console.log('Firebase products updated in real-time');
-            const updatedProducts = [];
-            snapshot.forEach(doc => {
-              const productData = doc.data();
-              updatedProducts.push({
-                id: doc.id,
-                ...productData
-              });
-            });
-            
-            // Update products array with real-time data
-            allProducts = [...sampleProducts];
-            const existingIds = allProducts.map(p => p.id);
-            const newUpdatedProducts = updatedProducts.filter(p => !existingIds.includes(p.id));
-            allProducts = [...allProducts, ...newUpdatedProducts];
-            
-            updateStats();
-            renderProducts();
-          });
+        // Method 1: Try to get products from window.products (main products system)
+        if (window.products && window.products.length > 0) {
+          console.log('Found products from main system:', window.products.length);
+          allProducts = [...window.products];
         }
-      } catch (error) {
-        console.error('Error loading products from Firebase:', error);
-        console.log('Falling back to sample products only');
-      }
-      
-      // Load ALL products including user-submitted ones for marketplace
-      if (window.getAllProductsIncludingUserSubmitted && typeof window.getAllProductsIncludingUserSubmitted === 'function') {
-        const allProductsFromService = window.getAllProductsIncludingUserSubmitted();
-        if (allProductsFromService && allProductsFromService.length > 0) {
+        
+        // Method 2: Try to get from localStorage cache
+        const cachedProducts = JSON.parse(localStorage.getItem('products') || '[]');
+        if (cachedProducts.length > 0) {
+          console.log('Found cached products:', cachedProducts.length);
           const existingIds = allProducts.map(p => p.id);
-          const newProducts = allProductsFromService.filter(p => !existingIds.includes(p.id));
+          const newProducts = cachedProducts.filter(p => !existingIds.includes(p.id));
           allProducts = [...allProducts, ...newProducts];
         }
-      } else if (window.products && Array.isArray(window.products)) {
-        // Fallback to regular products if service not available
-        const existingIds = allProducts.map(p => p.id);
-        const newProducts = window.products.filter(p => !existingIds.includes(p.id));
-        allProducts = [...allProducts, ...newProducts];
-      }
-      
-      // Try to load from render.js if available
-      if (window.loadProducts && typeof window.loadProducts === 'function') {
-        try {
-          const products = await window.loadProducts();
-          if (products && products.length > 0) {
-            const existingIds = allProducts.map(p => p.id);
-            const newProducts = products.filter(p => !existingIds.includes(p.id));
-            allProducts = [...allProducts, ...newProducts];
+        
+        // Method 3: Try to load from Firebase directly with timeout
+        if (db && allProducts.length === 0) {
+          console.log('Attempting direct Firebase load...');
+          
+          // Use Promise.race for timeout
+          const firebasePromise = db.collection('products')
+            .orderBy('createdAt', 'desc')
+            .limit(50)
+            .get();
+            
+          const timeoutPromise = new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('Firebase timeout')), 8000)
+          );
+          
+          try {
+            const snapshot = await Promise.race([firebasePromise, timeoutPromise]);
+            const firebaseProducts = snapshot.docs.map(doc => ({
+              id: doc.id,
+              ...doc.data()
+            }));
+            
+            if (firebaseProducts.length > 0) {
+              console.log('Loaded products from Firebase:', firebaseProducts.length);
+              allProducts = [...allProducts, ...firebaseProducts];
+            }
+          } catch (firebaseError) {
+            console.warn('Firebase direct load failed:', firebaseError.message);
           }
-        } catch (err) {
-          console.log('Could not load external products:', err);
         }
+        
+        // Method 4: Try to load from render.js if available
+        if (window.loadProducts && typeof window.loadProducts === 'function' && allProducts.length === 0) {
+          try {
+            console.log('Trying to load from render.js...');
+            const products = await window.loadProducts();
+            if (products && products.length > 0) {
+              console.log('Loaded products from render.js:', products.length);
+              allProducts = [...allProducts, ...products];
+            }
+          } catch (renderError) {
+            console.warn('Render.js load failed:', renderError.message);
+          }
+        }
+        
+        // Fallback: Load sample products if nothing else works
+        if (allProducts.length === 0) {
+          console.log('Loading fallback sample products...');
+          allProducts = sampleProducts;
+        }
+        
+        // Remove duplicates based on ID
+        const uniqueProducts = [];
+        const seenIds = new Set();
+        
+        for (const product of allProducts) {
+          if (product.id && !seenIds.has(product.id)) {
+            seenIds.add(product.id);
+            uniqueProducts.push(product);
+          }
+        }
+        
+        console.log(`Final product count: ${uniqueProducts.length}`);
+        return uniqueProducts;
+        
+      } catch (error) {
+        console.error('Error loading products from all sources:', error);
+        console.log('Falling back to sample products only');
+        return sampleProducts;
       }
-      
-      updateStats();
-      renderProducts();
     }
 
     // Function to save a product to Firebase (for future use)
@@ -899,6 +946,13 @@
       } catch (error) {
         console.error('Error updating product in Firebase:', error);
         return false;
+      }
+    }
+
+    function showLoadingScreen() {
+      const loadingScreen = document.getElementById('loading-screen');
+      if (loadingScreen) {
+        loadingScreen.style.display = 'flex';
       }
     }
 

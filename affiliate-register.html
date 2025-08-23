@@ -860,192 +860,103 @@
       }, 500);
     });
 
-    // Form submission handling
-    document.getElementById('registrationForm').addEventListener('submit', function(e) {
-      e.preventDefault();
+    // Enhanced form submission with better error handling
+    async function handleFormSubmission(event) {
+      event.preventDefault();
       
       const submitBtn = document.getElementById('submitBtn');
-      const successMessage = document.getElementById('successMessage');
-      const errorMessage = document.getElementById('errorMessage');
+      const form = document.getElementById('affiliateForm');
       
-      // Hide previous messages
-      successMessage.style.display = 'none';
-      errorMessage.style.display = 'none';
+      // Prevent double submission
+      if (submitBtn.disabled) return;
       
-      // Validate form
-      if (!validateForm()) {
-        errorMessage.style.display = 'block';
-        errorMessage.scrollIntoView({ behavior: 'smooth' });
-        return;
-      }
-      
-      // Show loading state
-      submitBtn.textContent = 'Creating Account...';
-      submitBtn.disabled = true;
-      
-      // Simulate form submission
-      setTimeout(() => {
-        // Collect form data
-        const formData = new FormData(this);
-        const affiliateData = {
-          personalInfo: {
-            firstName: formData.get('firstName'),
-            lastName: formData.get('lastName'),
-            email: formData.get('email'),
-            phone: formData.get('phone'),
-            country: formData.get('country')
-          },
-          experience: {
-            level: formData.get('experience'),
-            platforms: formData.getAll('platforms[]'),
-            revenue: formData.get('revenue')
-          },
-          onlinePresence: {
-            website: formData.get('website'),
-            facebook: formData.get('facebook'),
-            instagram: formData.get('instagram'),
-            youtube: formData.get('youtube'),
-            tiktok: formData.get('tiktok'),
-            strategy: formData.get('strategy')
-          },
-          agreements: {
-            terms: formData.get('terms'),
-            marketing: formData.get('marketing'),
-            quality: formData.get('quality')
-          },
-          registrationDate: new Date().toISOString()
-        };
-        
-        try {
-          console.log('Starting registration process...');
-          
-          // Check if Firebase service is available
-          if (!window.firebaseUserService) {
-            throw new Error('Firebase service not available. Check your internet connection.');
-          }
-          
-          console.log('Firebase service available, attempting registration...');
-          
-          // Use Firebase for affiliate registration
-          const result = await window.firebaseUserService.registerAffiliate(affiliateData);
-          
-          if (!result.success) {
-            throw new Error(result.error);
-          }
-
-          const affiliateInfo = result.affiliate;
-          const affiliateId = affiliateInfo.affiliateId;
-          
-          console.log('Firebase registration successful:', affiliateId);
-          
-          // Create user data for authentication
-          const userData = {
-            name: `${affiliateData.personalInfo.firstName} ${affiliateData.personalInfo.lastName}`,
-            email: affiliateData.personalInfo.email,
-            phone: affiliateData.personalInfo.phone,
-            country: affiliateData.personalInfo.country,
-            registrationDate: new Date().toISOString(),
-            firestoreId: result.id
-          };
-          
-          // Fire-and-forget email notification
-          try { sendRegistrationEmail(affiliateInfo); } catch (e) { console.error('Email send error', e); }
-          
-          // Store authentication data in localStorage for session management
-          localStorage.setItem('smartdeals_currentUser', JSON.stringify(userData));
-          localStorage.setItem('smartdeals_affiliateRegistered', JSON.stringify({
-            ...affiliateInfo,
-            userData: userData
-          }));
-          
-          console.log(`✅ Data saved to Firebase + localStorage: ${userData.name} (${affiliateId})`);
-        
-        // Show success message
-        successMessage.innerHTML = `
-          <div style="text-align: center;">
-            <h3 style="color: #10b981; margin-bottom: 1rem;">🎉 Registration Successful!</h3>
-            <p style="margin-bottom: 1rem;">Welcome to SmartDeals Pro, <strong>${userData.name}</strong>!</p>
-            <p style="margin-bottom: 1rem;">Your Affiliate ID: <strong>${affiliateId}</strong></p>
-            <p style="margin-bottom: 1rem;">✅ Data saved to: <strong>Firebase + localStorage</strong></p>
-            <p>Redirecting to your dashboard...</p>
-          </div>
-        `;
-        successMessage.style.display = 'block';
-        successMessage.scrollIntoView({ behavior: 'smooth' });
-        
-          // Reset form
-          this.reset();
-          
-          // Redirect to dashboard after 3 seconds
-          setTimeout(() => {
-            window.location.href = 'affiliate-dashboard.html';
-          }, 3000);
-          
-        } catch (error) {
-          console.error('Firebase registration error:', error);
-          
-          // Fallback to localStorage only
-          console.log('Attempting localStorage fallback...');
-          
-          try {
-            const affiliateId = 'AFF' + Date.now().toString().slice(-6);
-            
-            const userData = {
-              name: `${affiliateData.personalInfo.firstName} ${affiliateData.personalInfo.lastName}`,
-              email: affiliateData.personalInfo.email,
-              phone: affiliateData.personalInfo.phone,
-              country: affiliateData.personalInfo.country,
-              registrationDate: new Date().toISOString(),
-              affiliateId: affiliateId
-            };
-            
-            // Save to localStorage
-            localStorage.setItem('smartdeals_currentUser', JSON.stringify(userData));
-            localStorage.setItem('smartdeals_affiliateRegistered', JSON.stringify({
-              affiliateId: affiliateId,
-              personalInfo: affiliateData.personalInfo,
-              registrationDate: new Date().toISOString(),
-              userData: userData
-            }));
-            
-            console.log('✅ Fallback registration successful (localStorage only)');
-            
-            // Show success message with localStorage info
-            successMessage.innerHTML = `
-              <div style="text-align: center;">
-                <h3 style="color: #f59e0b; margin-bottom: 1rem;">⚠️ Registration Completed (Offline Mode)</h3>
-                <p style="margin-bottom: 1rem;">Welcome to SmartDeals Pro, <strong>${userData.name}</strong>!</p>
-                <p style="margin-bottom: 1rem;">Your Affiliate ID: <strong>${affiliateId}</strong></p>
-                <p style="margin-bottom: 1rem;">📱 Data saved to: <strong>localStorage only</strong></p>
-                <p style="font-size: 0.9em; color: #6b7280;">Note: Data will sync to Firebase when connection is restored.</p>
-                <p>Redirecting to your dashboard...</p>
-              </div>
-            `;
-            successMessage.style.display = 'block';
-            successMessage.scrollIntoView({ behavior: 'smooth' });
-            
-            // Reset form
-            this.reset();
-            
-            // Redirect to dashboard after 3 seconds
-            setTimeout(() => {
-              window.location.href = 'affiliate-dashboard.html';
-            }, 3000);
-            
-          } catch (fallbackError) {
-            console.error('Fallback registration failed:', fallbackError);
-            errorMessage.textContent = 'Registration failed: ' + fallbackError.message + '. Please check your internet connection and try again.';
-            errorMessage.style.display = 'block';
-            errorMessage.scrollIntoView({ behavior: 'smooth' });
-            
-            // Reset button state
-            submitBtn.textContent = 'Complete Registration';
-            submitBtn.disabled = false;
-          }
+      try {
+        // Validate form
+        if (!validateForm()) {
+          throw new Error('Please fill in all required fields');
         }
         
-      }, 2000);
-    });
+        // Show loading state
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+        showMessage('Processing your registration...', 'info');
+        
+        // Collect form data
+        const formData = {
+          firstName: document.querySelector('[name="firstName"]')?.value.trim() || '',
+          lastName: document.querySelector('[name="lastName"]')?.value.trim() || '',
+          email: document.querySelector('[name="email"]')?.value.trim().toLowerCase() || '',
+          phone: document.querySelector('[name="phone"]')?.value.trim() || '',
+          country: document.querySelector('[name="country"]')?.value || '',
+          experience: document.querySelector('[name="experience"]')?.value || '',
+          platforms: Array.from(document.querySelectorAll('[name="platforms[]"]:checked')).map(cb => cb.value),
+          revenue: document.querySelector('[name="revenue"]')?.value || '',
+          website: document.querySelector('[name="website"]')?.value.trim() || '',
+          timestamp: new Date().toISOString(),
+          status: 'pending_approval'
+        };
+        
+        // Attempt Firebase submission with timeout
+        let submitted = false;
+        
+        try {
+          if (window.firebaseService && window.firebaseService.isReady()) {
+            console.log('Attempting Firebase submission...');
+            
+            // Create a timeout promise
+            const timeoutPromise = new Promise((_, reject) => 
+              setTimeout(() => reject(new Error('Firebase timeout')), 10000)
+            );
+            
+            // Create Firebase submission promise
+            const firebasePromise = window.firebaseService.addDocument('affiliateRegistrations', formData);
+            
+            // Race between Firebase and timeout
+            await Promise.race([firebasePromise, timeoutPromise]);
+            
+            console.log('Registration saved to Firebase successfully');
+            submitted = true;
+          }
+        } catch (firebaseError) {
+          console.warn('Firebase submission failed:', firebaseError.message);
+          // Continue to local storage fallback
+        }
+        
+        // Fallback to localStorage if Firebase failed
+        if (!submitted) {
+          console.log('Using localStorage fallback...');
+          const savedRegistrations = JSON.parse(localStorage.getItem('affiliateRegistrations') || '[]');
+          savedRegistrations.push(formData);
+          localStorage.setItem('affiliateRegistrations', JSON.stringify(savedRegistrations));
+          console.log('Registration saved to localStorage');
+        }
+        
+        // Store registration status
+        localStorage.setItem('smartdeals_affiliateRegistered', 'true');
+        localStorage.setItem('smartdeals_currentUser', JSON.stringify({
+          name: `${formData.firstName} ${formData.lastName}`,
+          email: formData.email,
+          type: 'affiliate',
+          registeredAt: formData.timestamp
+        }));
+        
+        // Show success message
+        showMessage('Registration successful! Redirecting to your dashboard...', 'success');
+        
+        // Redirect after short delay
+        setTimeout(() => {
+          window.location.href = 'affiliate-dashboard.html';
+        }, 2000);
+        
+      } catch (error) {
+        console.error('Registration error:', error);
+        showMessage('Registration failed: ' + error.message, 'error');
+        
+        // Reset form state
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = 'Complete Registration';
+      }
+    }
 
     // Removed initializeAffiliateData function - now handled by Firebase service
 
@@ -1088,30 +999,129 @@
       }
     }
 
+    // Enhanced form validation
     function validateForm() {
-      const requiredFields = document.querySelectorAll('[required]');
-      let isValid = true;
+      const fields = [
+        { name: 'firstName', label: 'First Name' },
+        { name: 'lastName', label: 'Last Name' },
+        { name: 'email', label: 'Email' },
+        { name: 'phone', label: 'Phone' },
+        { name: 'country', label: 'Country' },
+        { name: 'experience', label: 'Experience Level' },
+        { name: 'platforms[]', label: 'Platforms' }
+      ];
       
-      requiredFields.forEach(field => {
-        if (!field.value.trim()) {
-          field.style.borderColor = '#ef4444';
+      let isValid = true;
+      const errors = [];
+      
+      fields.forEach(field => {
+        const element = document.querySelector(`[name="${field.name}"]`);
+        let value = '';
+        
+        if (element) {
+          if (field.name === 'platforms[]') {
+            // Check if at least one platform is selected
+            const checkboxes = document.querySelectorAll(`[name="${field.name}"]:checked`);
+            value = checkboxes.length > 0 ? 'selected' : '';
+          } else {
+            value = element.value ? element.value.trim() : '';
+          }
+        }
+        
+        if (!value) {
           isValid = false;
+          errors.push(`${field.label} is required`);
+          
+          // Add visual error indicator
+          if (element) {
+            element.style.borderColor = '#ef4444';
+            element.classList.add('error');
+          }
         } else {
-          field.style.borderColor = '#e5e7eb';
+          // Remove error styling if field is now valid
+          if (element) {
+            element.style.borderColor = '';
+            element.classList.remove('error');
+          }
         }
       });
       
-      // Validate at least one platform is selected
-      const platforms = document.querySelectorAll('input[name="platforms[]"]:checked');
-      if (platforms.length === 0) {
-        document.querySelector('.checkbox-group').style.borderColor = '#ef4444';
+      // Email validation
+      const emailElement = document.querySelector('[name="email"]');
+      const email = emailElement ? emailElement.value.trim() : '';
+      if (email && !isValidEmail(email)) {
         isValid = false;
-      } else {
-        document.querySelector('.checkbox-group').style.borderColor = 'transparent';
+        errors.push('Please enter a valid email address');
+        if (emailElement) {
+          emailElement.style.borderColor = '#ef4444';
+        }
+      }
+      
+      // Phone validation
+      const phoneElement = document.querySelector('[name="phone"]');
+      const phone = phoneElement ? phoneElement.value.trim() : '';
+      if (phone && phone.length < 8) {
+        isValid = false;
+        errors.push('Please enter a valid phone number');
+        if (phoneElement) {
+          phoneElement.style.borderColor = '#ef4444';
+        }
+      }
+      
+      if (!isValid) {
+        showMessage('Please fix the following errors:\n• ' + errors.join('\n• '), 'error');
       }
       
       return isValid;
     }
+    
+    // Email validation helper
+    function isValidEmail(email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(email);
+    }
+    
+    // Improved initialization
+    function initializeForm() {
+      console.log('Initializing affiliate registration form...');
+      
+      // Check if already registered
+      const isRegistered = localStorage.getItem('smartdeals_affiliateRegistered');
+      const currentUser = localStorage.getItem('smartdeals_currentUser');
+      
+      if (isRegistered && currentUser) {
+        console.log('User already registered, redirecting...');
+        window.location.replace('affiliate-dashboard.html');
+        return;
+      }
+      
+             // Set up form event listener
+       const form = document.getElementById('registrationForm');
+       if (form) {
+         form.addEventListener('submit', handleFormSubmission);
+         console.log('Form event listener attached');
+       } else {
+         console.error('Registration form not found');
+         console.log('Available forms:', document.querySelectorAll('form'));
+       }
+      
+      // Add real-time validation
+      const inputs = document.querySelectorAll('input, select, textarea');
+      inputs.forEach(input => {
+        input.addEventListener('blur', function() {
+          // Remove error styling when user starts fixing
+          if (this.value.trim()) {
+            this.style.borderColor = '';
+            this.classList.remove('error');
+          }
+        });
+      });
+      
+      console.log('Affiliate registration form initialized successfully');
+    }
+    
+    // Initialize when DOM is ready
+    document.addEventListener('DOMContentLoaded', initializeForm);
 
     // Real-time validation
     document.querySelectorAll('.form-input, .form-select, .form-textarea').forEach(field => {

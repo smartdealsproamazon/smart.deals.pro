@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Loading Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .status { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        .product-card { border: 1px solid #ddd; margin: 10px; padding: 10px; }
+        #debug { background: #f8f9fa; padding: 15px; margin: 10px 0; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Product Loading Test</h1>
+    
+    <div id="debug">
+        <h3>Debug Information:</h3>
+        <div id="debug-info">Loading...</div>
+    </div>
+    
+    <div id="status-container"></div>
+    
+    <div id="products-container">
+        <h3>Products:</h3>
+        <div id="products-list">No products loaded yet...</div>
+    </div>
+    
+    <!-- Load all the necessary scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="firebase-products-service.js"></script>
+    <script src="firebase-auth-service.js"></script>
+    <script src="products.js"></script>
+    <script src="render.js"></script>
+    
+    <script>
+        function updateDebugInfo() {
+            const debugInfo = document.getElementById('debug-info');
+            const info = [
+                `Firebase available: ${typeof firebase !== 'undefined'}`,
+                `Products array exists: ${typeof window.products !== 'undefined'}`,
+                `Products count: ${window.products ? window.products.length : 'N/A'}`,
+                `Product state manager: ${typeof window.productStateManager !== 'undefined'}`,
+                `Render functions: ${typeof renderProducts !== 'undefined'}`,
+                `Cache data: ${localStorage.getItem('products') ? 'Available' : 'None'}`,
+                `Firebase service: ${window.firebaseService ? 'Available' : 'Not ready'}`
+            ];
+            debugInfo.innerHTML = info.join('<br>');
+        }
+        
+        function addStatus(message, type = 'info') {
+            const container = document.getElementById('status-container');
+            const div = document.createElement('div');
+            div.className = `status ${type}`;
+            div.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            container.appendChild(div);
+        }
+        
+        function updateProductsList() {
+            const productsList = document.getElementById('products-list');
+            if (window.products && window.products.length > 0) {
+                productsList.innerHTML = window.products.map(p => `
+                    <div class="product-card">
+                        <strong>${p.name || p.title || 'Unnamed Product'}</strong><br>
+                        Category: ${p.category || 'None'}<br>
+                        Price: ${p.price || 'N/A'}<br>
+                        ID: ${p.id || 'No ID'}
+                    </div>
+                `).join('');
+            } else {
+                productsList.innerHTML = 'No products loaded yet...';
+            }
+        }
+        
+        // Monitor everything
+        setInterval(() => {
+            updateDebugInfo();
+            updateProductsList();
+        }, 1000);
+        
+        // Listen for events
+        document.addEventListener('products-ready', function() {
+            addStatus('Products ready event fired!', 'success');
+            updateProductsList();
+        });
+        
+        document.addEventListener('firebase-ready', function() {
+            addStatus('Firebase ready event fired!', 'success');
+        });
+        
+        document.addEventListener('firebase-failed', function(e) {
+            addStatus('Firebase failed: ' + (e.detail?.message || 'Unknown error'), 'error');
+        });
+        
+        document.addEventListener('firebase-timeout', function() {
+            addStatus('Firebase connection timeout', 'error');
+        });
+        
+        // Initial setup
+        document.addEventListener('DOMContentLoaded', function() {
+            addStatus('Page loaded, starting tests...', 'info');
+            updateDebugInfo();
+            
+            // Test if Firebase loads
+            setTimeout(() => {
+                if (typeof firebase === 'undefined') {
+                    addStatus('Firebase SDK failed to load', 'error');
+                } else {
+                    addStatus('Firebase SDK loaded successfully', 'success');
+                }
+            }, 2000);
+            
+            // Test products loading over time
+            setTimeout(() => {
+                if (!window.products || window.products.length === 0) {
+                    addStatus('Products still not loaded after 5 seconds', 'error');
+                } else {
+                    addStatus(`Products loaded successfully: ${window.products.length} items`, 'success');
+                }
+            }, 5000);
+        });
+    </script>
+</body>
+</html>
