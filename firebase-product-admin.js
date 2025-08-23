@@ -149,8 +149,19 @@ const realProducts = [
   }
 ];
 
-// Add a single sample product
+// Add a single sample product - DISABLED to prevent demo products
 window.addSampleProduct = async function() {
+  console.log('Sample product addition has been disabled to prevent demo products from appearing');
+  if (typeof addLog === 'function') {
+    addLog('🚫 Sample product addition disabled - no demo products will be added', 'warning');
+  }
+  return {
+    success: false,
+    error: 'Sample product addition has been disabled'
+  };
+  
+  // Original code commented out to prevent demo products
+  /*
   try {
     await waitForFirebase();
     
@@ -184,10 +195,22 @@ window.addSampleProduct = async function() {
       error: error.message
     };
   }
+  */
 };
 
-// Add multiple products
+// Add multiple products - DISABLED to prevent demo products
 window.addMultipleProducts = async function(count = 3) {
+  console.log('Multiple product addition has been disabled to prevent demo products from appearing');
+  if (typeof addLog === 'function') {
+    addLog('🚫 Multiple product addition disabled - no demo products will be added', 'warning');
+  }
+  return [{
+    success: false,
+    error: 'Multiple product addition has been disabled'
+  }];
+  
+  // Original code commented out to prevent demo products
+  /*
   try {
     await waitForFirebase();
     
@@ -231,6 +254,7 @@ window.addMultipleProducts = async function(count = 3) {
       error: error.message
     }];
   }
+  */
 };
 
 // Get all products from Firebase
@@ -315,8 +339,16 @@ document.addEventListener('DOMContentLoaded', async function() {
   }
 });
 
-// Auto demo functionality
+// Auto demo functionality - DISABLED to prevent demo products
 window.startAutoDemo = function() {
+  console.log('Auto demo functionality has been disabled to prevent demo products from appearing');
+  if (typeof addLog === 'function') {
+    addLog('🚫 Auto demo functionality disabled - no demo products will be added', 'warning');
+  }
+  return;
+  
+  // Original code commented out to prevent demo products
+  /*
   if (window.autoDemoInterval) {
     clearInterval(window.autoDemoInterval);
     window.autoDemoInterval = null;
@@ -344,6 +376,7 @@ window.startAutoDemo = function() {
   if (typeof addLog === 'function') {
     addLog('🚀 Starting auto demo - adding product every 10 seconds', 'info');
   }
+  */
 };
 
 // Export functions for global access

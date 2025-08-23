@@ -169,34 +169,21 @@ class SmartDealsPerformanceOptimizer {
 
   async preloadProductData() {
     try {
-      // Simulate product data preloading
-      const sampleProducts = [
-        {
-          id: 'prod_sample_1',
-          title: 'Stylish Boys T-Shirt',
-          category: 'Boys Fashion',
-          price: '29.99',
-          rating: 4.5,
-          image: 'https://images.unsplash.com/photo-1434493789847-2f02dc6ca35d?w=300&h=200&fit=crop',
-          description: 'Premium quality cotton t-shirt perfect for casual wear'
-        },
-        {
-          id: 'prod_sample_2',
-          title: 'Girls Summer Dress',
-          category: 'Girls Fashion',
-          price: '39.99',
-          rating: 4.8,
-          image: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=300&h=200&fit=crop',
-          description: 'Beautiful summer dress with floral patterns'
-        }
-      ];
-
-      // Only cache sample data if no existing products
+      // Remove any existing demo/sample products from localStorage
       const existingProducts = JSON.parse(localStorage.getItem('products') || '[]');
-      if (existingProducts.length === 0) {
-        localStorage.setItem('products', JSON.stringify(sampleProducts));
+      const filteredProducts = existingProducts.filter(product => {
+        // Remove products with demo/sample indicators
+        return !product.id?.includes('prod_sample_') &&
+               !product.title?.includes('Demo') &&
+               !product.name?.includes('Demo') &&
+               !product.id?.includes('demo_');
+      });
+      
+      // Update localStorage with filtered products (removing demo products)
+      if (filteredProducts.length !== existingProducts.length) {
+        localStorage.setItem('products', JSON.stringify(filteredProducts));
         localStorage.setItem('products_cached_at', Date.now().toString());
-        console.log('Sample products cached for faster initial load');
+        console.log(`Removed ${existingProducts.length - filteredProducts.length} demo products from cache`);
       }
     } catch (error) {
       console.warn('Product preloading failed:', error);
