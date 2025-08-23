@@ -570,7 +570,75 @@
 
     // Render featured products on page load
     document.addEventListener('DOMContentLoaded', function() {
-      renderFeaturedProducts();
+      console.log('Homepage DOM loaded, initializing products...');
+      
+      // Function to attempt rendering featured products
+      function attemptFeaturedProductsRender() {
+        console.log('Attempting to render featured products...');
+        
+        // Check if we have products and the render function
+        if (window.products && window.products.length > 0 && typeof renderFeaturedProducts === 'function') {
+          console.log('Products available, rendering featured products');
+          renderFeaturedProducts();
+          return true;
+        } else {
+          console.log('Products not ready yet, showing loading state');
+          
+          // Show loading state in featured products section
+          const container = document.getElementById('featuredProductsGrid');
+          if (container) {
+            container.innerHTML = `
+              <div style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
+                <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: #3b82f6; margin-bottom: 1rem;"></i>
+                <h3 style="color: #374151; margin-bottom: 0.5rem;">Loading Featured Products...</h3>
+                <p style="color: #6b7280;">Fetching the best deals for you...</p>
+              </div>
+            `;
+          }
+          return false;
+        }
+      }
+      
+      // Try immediate render
+      if (!attemptFeaturedProductsRender()) {
+        // If not successful, set up retry mechanism
+        let attempts = 0;
+        const maxAttempts = 10;
+        
+        const retryInterval = setInterval(() => {
+          attempts++;
+          console.log(`Retry attempt ${attempts}/${maxAttempts} for featured products`);
+          
+          if (attemptFeaturedProductsRender()) {
+            console.log('Featured products rendered successfully');
+            clearInterval(retryInterval);
+          } else if (attempts >= maxAttempts) {
+            console.warn('Max attempts reached, showing fallback products');
+            clearInterval(retryInterval);
+            
+            // Show fallback/sample products
+            const container = document.getElementById('featuredProductsGrid');
+            if (container) {
+              container.innerHTML = `
+                <div style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
+                  <i class="fas fa-exclamation-triangle" style="font-size: 2rem; color: #f59e0b; margin-bottom: 1rem;"></i>
+                  <h3 style="color: #374151; margin-bottom: 0.5rem;">Products Loading...</h3>
+                  <p style="color: #6b7280; margin-bottom: 1rem;">Having trouble connecting. Our team is working on it.</p>
+                  <a href="deals.html" class="btn btn-primary">Browse All Products</a>
+                </div>
+              `;
+            }
+          }
+        }, 1000); // Check every second
+      }
+      
+      // Also listen for products-ready event
+      document.addEventListener('products-ready', function() {
+        console.log('Products ready event received, rendering featured products');
+        if (typeof renderFeaturedProducts === 'function') {
+          renderFeaturedProducts();
+        }
+      });
     });
 
     // Performance Optimization Scripts

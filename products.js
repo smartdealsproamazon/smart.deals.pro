@@ -569,6 +569,114 @@ function initProducts() {
   connectToFirebase();
 }
 
+// Automatically initialize products when script loads
+(function() {
+  console.log('Products.js loaded, auto-initializing...');
+  
+  // Load cached products immediately for faster display
+  const cachedProducts = JSON.parse(localStorage.getItem('products') || '[]');
+  if (cachedProducts.length > 0) {
+    console.log('Loading cached products immediately:', cachedProducts.length);
+    productStateManager.updateProducts(cachedProducts);
+    window.products = productStateManager.getAllProducts();
+    document.dispatchEvent(new Event('products-ready'));
+  }
+  
+  // Start Firebase connection
+  initProducts();
+  
+  // Fallback: If no products after 3 seconds, load example products
+  setTimeout(() => {
+    if (!window.products || window.products.length === 0) {
+      console.log('No products loaded, adding example products for demonstration...');
+      
+      const exampleProducts = [
+        {
+          id: 'boys-1',
+          name: "Blue Boys T-Shirt",
+          category: "boys",
+          price: "$19.99",
+          originalPrice: "$29.99",
+          discount: 33,
+          platform: "Amazon",
+          affiliate: true,
+          image: "https://images.unsplash.com/photo-1581803118522-7b72a50f7e9f?w=300&h=300&fit=crop",
+          link: "#",
+          submissionDate: new Date().toISOString(),
+          createdAt: new Date()
+        },
+        {
+          id: 'girls-1',
+          name: "Pink Girls Dress",
+          category: "girls-fashion",
+          price: "$24.99",
+          originalPrice: "$39.99",
+          discount: 38,
+          platform: "Amazon",
+          affiliate: true,
+          image: "https://images.unsplash.com/photo-1621452773781-0f992fd1f5cb?w=300&h=300&fit=crop",
+          link: "#",
+          submissionDate: new Date().toISOString(),
+          createdAt: new Date()
+        },
+        {
+          id: 'tech-1',
+          name: "Wireless Bluetooth Headphones",
+          category: "electronics",
+          price: "$49.99",
+          originalPrice: "$79.99",
+          discount: 38,
+          platform: "Amazon",
+          affiliate: true,
+          image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300&h=300&fit=crop",
+          link: "#",
+          submissionDate: new Date().toISOString(),
+          createdAt: new Date()
+        },
+        {
+          id: 'watch-1',
+          name: "Smartwatch Pro",
+          category: "smartwatches",
+          price: "$199.99",
+          originalPrice: "$299.99",
+          discount: 33,
+          platform: "Amazon",
+          affiliate: true,
+          image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300&h=300&fit=crop",
+          link: "#",
+          submissionDate: new Date().toISOString(),
+          createdAt: new Date()
+        },
+        {
+          id: 'home-1',
+          name: "Smart Home Device",
+          category: "home-garden",
+          price: "$89.99",
+          originalPrice: "$119.99",
+          discount: 25,
+          platform: "Amazon",
+          affiliate: true,
+          image: "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=300&h=300&fit=crop",
+          link: "#",
+          submissionDate: new Date().toISOString(),
+          createdAt: new Date()
+        }
+      ];
+      
+      // Add through state manager to ensure proper ID handling
+      productStateManager.updateProducts(exampleProducts);
+      window.products = productStateManager.getAllProducts();
+      
+      // Save to localStorage for future use
+      localStorage.setItem('products', JSON.stringify(window.products));
+      
+      // Trigger rendering
+      document.dispatchEvent(new Event('products-ready'));
+      console.log('Example products loaded:', window.products.length);
+    }
+  }, 3000);
+})();
+
 // Check if cached data is fresh (less than 1 hour old)
 function shouldRefreshCache() {
   const lastUpdated = localStorage.getItem('products_updated');
@@ -660,107 +768,4 @@ window.getAllProductsIncludingUserSubmitted = getAllProductsIncludingUserSubmitt
 // These are example products to demonstrate the category filtering functionality
 // In a real environment, products would come from Firebase Firestore
 
-// Add example products if none exist (for testing/demonstration purposes)
-if (typeof window !== 'undefined') {
-  document.addEventListener('DOMContentLoaded', function() {
-    // Wait a bit for Firebase to load, then add examples if no products exist
-    setTimeout(() => {
-      if (!window.products || window.products.length === 0) {
-        console.log('No products found, adding example products for demonstration...');
-        
-        const exampleProducts = [
-          {
-            id: 'boys-1',
-            name: "Blue Boys T-Shirt",
-            category: "fashion",
-            price: 19.99,
-            originalPrice: 24.99,
-            image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=300&h=300&fit=crop",
-            description: "Comfortable cotton t-shirt for boys. Perfect for everyday wear with soft fabric and durable construction.",
-            features: ["100% Cotton", "Machine Washable", "Comfortable Fit"],
-            discount: 20,
-            rating: 4.5,
-            reviews: 15,
-            link: "#",
-            platform: "amazon",
-            affiliateName: "FashionKids Pro",
-            affiliateRating: 4.8
-          },
-          {
-            id: 'boys-2',
-            name: "Boys Denim Jeans",
-            category: "fashion",
-            price: 39.99,
-            originalPrice: 49.99,
-            image: "https://images.unsplash.com/photo-1542272604-787c3835535d?w=300&h=300&fit=crop",
-            description: "Durable denim jeans for active boys. Built to last with reinforced stitching and comfortable fit.",
-            features: ["Durable Denim", "Adjustable Waist", "Classic Fit"],
-            discount: 20,
-            rating: 4.7,
-            reviews: 22,
-            link: "#",
-            platform: "amazon",
-            affiliateName: "KidsWear Expert",
-            affiliateRating: 4.9
-          },
-          {
-            id: 'girls-1',
-            name: "Pink Girls Dress",
-            category: "fashion",
-            price: 29.99,
-            originalPrice: 39.99,
-            image: "https://images.unsplash.com/photo-1518831959646-742c3a14ebf7?w=300&h=300&fit=crop",
-            description: "Beautiful pink dress perfect for special occasions. Elegant design with soft fabric that's comfortable all day long.",
-            features: ["Soft Fabric", "Elegant Design", "Perfect for Parties"],
-            discount: 25,
-            rating: 4.8,
-            reviews: 18,
-            link: "#",
-            platform: "amazon",
-            affiliateName: "GirlsFashion Hub",
-            affiliateRating: 4.7
-          },
-          {
-            id: 'girls-2',
-            name: "Girls Fashion Leggings",
-            category: "fashion",
-            price: 15.99,
-            originalPrice: 19.99,
-            image: "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=300&h=300&fit=crop",
-            description: "Comfortable and stylish leggings for girls",
-            features: ["Stretchy Material", "Comfortable Waistband", "Multiple Colors"],
-            discount: 20,
-            rating: 4.6,
-            reviews: 12,
-            link: "#",
-            platform: "etsy"
-          },
-          {
-            id: 'electronic-1',
-            name: "Smart Phone",
-            category: "electronics",
-            price: 299.99,
-            originalPrice: 399.99,
-            image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=300&h=300&fit=crop",
-            description: "Latest smartphone with amazing features",
-            features: ["High-Quality Camera", "Long Battery Life", "Fast Performance"],
-            discount: 25,
-            rating: 4.9,
-            reviews: 45,
-            link: "#",
-            platform: "clickbank"
-          }
-        ];
-        
-        // Add through state manager to ensure proper ID handling
-        productStateManager.updateProducts(exampleProducts);
-        window.products = productStateManager.getAllProducts();
-        
-
-        
-        // Trigger rendering
-        document.dispatchEvent(new Event('products-ready'));
-      }
-    }, 300); // Reduced wait time for faster loading
-  });
-}
+// Removed: Duplicate example products loading - now handled in auto-initialization above

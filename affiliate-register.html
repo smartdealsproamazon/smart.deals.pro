@@ -883,15 +883,15 @@
         
         // Collect form data
         const formData = {
-          firstName: document.getElementById('firstName').value.trim(),
-          lastName: document.getElementById('lastName').value.trim(),
-          email: document.getElementById('email').value.trim().toLowerCase(),
-          phone: document.getElementById('phone').value.trim(),
-          country: document.getElementById('country').value,
-          experience: document.getElementById('experience').value,
-          platforms: document.getElementById('platforms').value,
-          monthlyTraffic: document.getElementById('monthlyTraffic').value,
-          heardAbout: document.getElementById('heardAbout').value,
+          firstName: document.querySelector('[name="firstName"]')?.value.trim() || '',
+          lastName: document.querySelector('[name="lastName"]')?.value.trim() || '',
+          email: document.querySelector('[name="email"]')?.value.trim().toLowerCase() || '',
+          phone: document.querySelector('[name="phone"]')?.value.trim() || '',
+          country: document.querySelector('[name="country"]')?.value || '',
+          experience: document.querySelector('[name="experience"]')?.value || '',
+          platforms: Array.from(document.querySelectorAll('[name="platforms[]"]:checked')).map(cb => cb.value),
+          revenue: document.querySelector('[name="revenue"]')?.value || '',
+          website: document.querySelector('[name="website"]')?.value.trim() || '',
           timestamp: new Date().toISOString(),
           status: 'pending_approval'
         };
@@ -1002,27 +1002,35 @@
     // Enhanced form validation
     function validateForm() {
       const fields = [
-        { id: 'firstName', name: 'First Name' },
-        { id: 'lastName', name: 'Last Name' },
-        { id: 'email', name: 'Email' },
-        { id: 'phone', name: 'Phone' },
-        { id: 'country', name: 'Country' },
-        { id: 'experience', name: 'Experience Level' },
-        { id: 'platforms', name: 'Platforms' },
-        { id: 'monthlyTraffic', name: 'Monthly Traffic' },
-        { id: 'heardAbout', name: 'How did you hear about us' }
+        { name: 'firstName', label: 'First Name' },
+        { name: 'lastName', label: 'Last Name' },
+        { name: 'email', label: 'Email' },
+        { name: 'phone', label: 'Phone' },
+        { name: 'country', label: 'Country' },
+        { name: 'experience', label: 'Experience Level' },
+        { name: 'platforms[]', label: 'Platforms' }
       ];
       
       let isValid = true;
       const errors = [];
       
       fields.forEach(field => {
-        const element = document.getElementById(field.id);
-        const value = element ? element.value.trim() : '';
+        const element = document.querySelector(`[name="${field.name}"]`);
+        let value = '';
+        
+        if (element) {
+          if (field.name === 'platforms[]') {
+            // Check if at least one platform is selected
+            const checkboxes = document.querySelectorAll(`[name="${field.name}"]:checked`);
+            value = checkboxes.length > 0 ? 'selected' : '';
+          } else {
+            value = element.value ? element.value.trim() : '';
+          }
+        }
         
         if (!value) {
           isValid = false;
-          errors.push(`${field.name} is required`);
+          errors.push(`${field.label} is required`);
           
           // Add visual error indicator
           if (element) {
@@ -1039,19 +1047,25 @@
       });
       
       // Email validation
-      const email = document.getElementById('email').value.trim();
+      const emailElement = document.querySelector('[name="email"]');
+      const email = emailElement ? emailElement.value.trim() : '';
       if (email && !isValidEmail(email)) {
         isValid = false;
         errors.push('Please enter a valid email address');
-        document.getElementById('email').style.borderColor = '#ef4444';
+        if (emailElement) {
+          emailElement.style.borderColor = '#ef4444';
+        }
       }
       
       // Phone validation
-      const phone = document.getElementById('phone').value.trim();
+      const phoneElement = document.querySelector('[name="phone"]');
+      const phone = phoneElement ? phoneElement.value.trim() : '';
       if (phone && phone.length < 8) {
         isValid = false;
         errors.push('Please enter a valid phone number');
-        document.getElementById('phone').style.borderColor = '#ef4444';
+        if (phoneElement) {
+          phoneElement.style.borderColor = '#ef4444';
+        }
       }
       
       if (!isValid) {
@@ -1081,14 +1095,15 @@
         return;
       }
       
-      // Set up form event listener
-      const form = document.getElementById('registrationForm');
-      if (form) {
-        form.addEventListener('submit', handleFormSubmission);
-        console.log('Form event listener attached');
-      } else {
-        console.error('Form not found');
-      }
+             // Set up form event listener
+       const form = document.getElementById('registrationForm');
+       if (form) {
+         form.addEventListener('submit', handleFormSubmission);
+         console.log('Form event listener attached');
+       } else {
+         console.error('Registration form not found');
+         console.log('Available forms:', document.querySelectorAll('form'));
+       }
       
       // Add real-time validation
       const inputs = document.querySelectorAll('input, select, textarea');

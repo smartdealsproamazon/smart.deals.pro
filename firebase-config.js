@@ -15,10 +15,36 @@ const firebaseConfig = {
 // Initialize Firebase
 let app, db, auth, storage;
 
+// Wait for Firebase SDK to be available before initializing
+function waitForFirebaseSDK() {
+  return new Promise((resolve, reject) => {
+    let attempts = 0;
+    const maxAttempts = 50;
+    
+    function checkSDK() {
+      attempts++;
+      
+      if (typeof firebase !== 'undefined' && firebase.initializeApp) {
+        console.log('Firebase SDK loaded successfully');
+        resolve();
+      } else if (attempts >= maxAttempts) {
+        console.error('Firebase SDK failed to load after maximum attempts');
+        reject(new Error('Firebase SDK not available'));
+      } else {
+        setTimeout(checkSDK, 100);
+      }
+    }
+    
+    checkSDK();
+  });
+}
+
 // Improved Firebase initialization with better error handling
 function initializeFirebaseWithRetry(retries = 3) {
   return new Promise((resolve, reject) => {
     try {
+      console.log('Initializing Firebase...');
+      
       // Initialize Firebase App
       app = firebase.initializeApp(firebaseConfig);
       
@@ -28,26 +54,30 @@ function initializeFirebaseWithRetry(retries = 3) {
       storage = firebase.storage(app);
       
       // Configure Firestore settings for better performance
-      db.settings({
-        cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED,
-        ignoreUndefinedProperties: true
-      });
+      if (db && db.settings) {
+        db.settings({
+          cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED,
+          ignoreUndefinedProperties: true
+        });
+      }
       
       // Enable offline persistence for better performance
-      db.enablePersistence({ 
-        synchronizeTabs: true,
-        forceOwnership: false 
-      }).then(() => {
-        console.log('Firebase persistence enabled');
-      }).catch((err) => {
-        if (err.code === 'failed-precondition') {
-          console.warn('Multiple tabs open, persistence can only be enabled in one tab at a time.');
-        } else if (err.code === 'unimplemented') {
-          console.warn('The current browser does not support all of the features required to enable persistence');
-        } else {
-          console.warn('Firebase persistence failed:', err);
-        }
-      });
+      if (db && db.enablePersistence) {
+        db.enablePersistence({ 
+          synchronizeTabs: true,
+          forceOwnership: false 
+        }).then(() => {
+          console.log('Firebase persistence enabled');
+        }).catch((err) => {
+          if (err.code === 'failed-precondition') {
+            console.warn('Multiple tabs open, persistence can only be enabled in one tab at a time.');
+          } else if (err.code === 'unimplemented') {
+            console.warn('The current browser does not support all of the features required to enable persistence');
+          } else {
+            console.warn('Firebase persistence failed:', err);
+          }
+        });
+      }
       
       console.log('Firebase initialized successfully');
       resolve({ app, db, auth, storage });
@@ -66,10 +96,26 @@ function initializeFirebaseWithRetry(retries = 3) {
   });
 }
 
-// Start initialization
-initializeFirebaseWithRetry().catch(error => {
-  console.error('Firebase initialization failed after all retries:', error);
-});
+// Start initialization process
+async function startFirebaseInitialization() {
+  try {
+    console.log('Waiting for Firebase SDK...');
+    await waitForFirebaseSDK();
+    console.log('Firebase SDK ready, initializing...');
+    await initializeFirebaseWithRetry();
+    console.log('Firebase initialization complete');
+    
+    // Notify other scripts that Firebase is ready
+    window.dispatchEvent(new CustomEvent('firebase-ready'));
+  } catch (error) {
+    console.error('Firebase initialization failed after all retries:', error);
+    // Notify that Firebase failed
+    window.dispatchEvent(new CustomEvent('firebase-failed', { detail: error }));
+  }
+}
+
+// Start the initialization process
+startFirebaseInitialization();
 
 // Firebase service wrapper
 class FirebaseService {
