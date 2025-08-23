@@ -889,5 +889,47 @@
   <script src="firebase-products-service.js"></script>
   <script src="firebase-auth-service.js"></script>
   <script src="products.js"></script>
+  
+  <!-- Enhanced product loading initialization -->
+  <script>
+    // Ensure products are loaded for homepage
+    document.addEventListener('DOMContentLoaded', function() {
+      // Set up automatic retry for product loading
+      let loadAttempts = 0;
+      const maxAttempts = 3;
+      
+      function attemptProductLoad() {
+        loadAttempts++;
+        console.log(`Product load attempt ${loadAttempts}/${maxAttempts}`);
+        
+        if (window.products && window.products.length > 0) {
+          console.log('Products loaded successfully on homepage');
+          return;
+        }
+        
+        // Try to initialize products if not already loaded
+        if (typeof window.initProducts === 'function') {
+          window.initProducts();
+        }
+        
+        // Schedule next attempt if needed
+        if (loadAttempts < maxAttempts) {
+          setTimeout(attemptProductLoad, 3000);
+        } else {
+          console.warn('Failed to load products after maximum attempts, using cached data');
+          // Try to use cached data
+          const cachedProducts = JSON.parse(localStorage.getItem('products') || '[]');
+          if (cachedProducts.length > 0 && window.productStateManager) {
+            window.productStateManager.updateProducts(cachedProducts);
+            window.products = window.productStateManager.getAllProducts();
+            document.dispatchEvent(new Event('products-ready'));
+          }
+        }
+      }
+      
+      // Start initial attempt after a short delay
+      setTimeout(attemptProductLoad, 1000);
+    });
+  </script>
 </body>
 </html>

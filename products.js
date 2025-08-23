@@ -373,14 +373,20 @@ function loadFirebase(callback) {
     return;
   }
 
-  // Load Firebase SDK in parallel with a shorter timeout
+  // Load Firebase SDK in parallel with a longer timeout for better reliability
   const loadTimeout = setTimeout(() => {
     console.warn('Firebase loading timeout - using cached data only');
-    // Try to show cached products
+    // Show cached products immediately
+    const cachedProducts = JSON.parse(localStorage.getItem('products') || '[]');
+    if (cachedProducts.length > 0) {
+      productStateManager.updateProducts(cachedProducts);
+      window.products = productStateManager.getAllProducts();
+      document.dispatchEvent(new Event('products-ready'));
+    }
     if (typeof window.autoRenderProducts === 'function') {
       window.autoRenderProducts();
     }
-  }, 2000); // Increased timeout for better reliability
+  }, 8000); // Increased timeout from 2s to 8s for better reliability
 
   // Dynamically add the Firebase SDK scripts with faster CDN
   const appScript = document.createElement('script');
@@ -414,38 +420,22 @@ function loadFirebase(callback) {
   document.head.appendChild(appScript);
 }
 
-// Real-time Firebase listener function with optimized connection
-function setupRealtimeProductListener() {
-  console.log('Setting up optimized Firebase listener via Firebase Optimizer...');
+// Real-time Firebase listener function with improved connection handling
+function connectToFirebase() {
+  console.log('Attempting Firebase connection...');
   
-  // Use Firebase Optimizer if available
-  if (window.firebaseOptimizer && window.firebaseOptimizer.isInitialized) {
-    console.log('Using Firebase Optimizer for product listener...');
-    window.firebaseOptimizer.setupProductListener((filteredProducts, allProducts) => {
-      console.log('Products updated via Firebase Optimizer:', filteredProducts.length);
-      
-      // Update global products array for backward compatibility
-      const previousCount = window.products?.length || 0;
-      window.products = filteredProducts;
-      
-      // Also maintain a separate array with ALL products (including user-submitted) for marketplace
-      window.allProductsIncludingUserSubmitted = allProducts;
-      
-      console.log(`Products updated: ${previousCount} → ${window.products.length}`);
-      console.log(`All products (including user-submitted): ${window.allProductsIncludingUserSubmitted.length}`);
-      
-      // Auto-render if function is available
-      if (typeof window.autoRenderProducts === 'function') {
-        window.autoRenderProducts();
-      }
-
-      // If there's a specific render function on the page, call it
-      if (typeof renderProducts === 'function') {
-        renderProducts();
-      }
-    });
-    return;
-  }
+  // Use a longer timeout for the initial connection
+  const connectionTimeout = setTimeout(() => {
+    console.warn('Firebase connection timeout - proceeding with cached data');
+    // Load cached products immediately
+    const cachedProducts = JSON.parse(localStorage.getItem('products') || '[]');
+    if (cachedProducts.length > 0) {
+      productStateManager.updateProducts(cachedProducts);
+      window.products = productStateManager.getAllProducts();
+      document.dispatchEvent(new Event('products-ready'));
+    }
+    document.dispatchEvent(new Event('firebase-timeout'));
+  }, 5000); // Increased timeout from 800ms to 5s for more reliable connections
   
   // Fallback to original Firebase setup if Firebase Optimizer is not available
   console.log('Firebase Optimizer not available, using fallback setup...');
@@ -472,12 +462,6 @@ function setupRealtimeProductListener() {
   } catch (err) {
     console.warn('Firebase persistence failed:', err);
   }
-
-  // Use a timeout for the initial connection
-  const connectionTimeout = setTimeout(() => {
-    console.warn('Firebase connection timeout - proceeding with cached data');
-    document.dispatchEvent(new Event('firebase-timeout'));
-  }, 800); // Reduced timeout for faster loading
 
   // Set up real-time listener with optimized query
   firestoreListener = db.collection('products')
@@ -572,9 +556,17 @@ function setupRealtimeProductListener() {
     );
 }
 
+// Global function to reinitialize Firebase connection (for retry mechanisms)
+window.initializeFirebaseConnection = function() {
+  console.log('Reinitializing Firebase connection...');
+  if (typeof connectToFirebase === 'function') {
+    connectToFirebase();
+  }
+};
+
 // Initialize real-time Firebase connection
 function initProducts() {
-  setupRealtimeProductListener();
+  connectToFirebase();
 }
 
 // Check if cached data is fresh (less than 1 hour old)
