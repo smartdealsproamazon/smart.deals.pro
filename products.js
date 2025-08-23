@@ -6,6 +6,9 @@ class ProductStateManager {
     this.products = [];
     this.productMap = new Map();
     this.listeners = [];
+    this.firebaseConnected = false;
+    this.connectionAttempts = 0;
+    this.maxConnectionAttempts = 5;
   }
 
   // Generate a unique, consistent ID for products
@@ -98,23 +101,47 @@ class ProductStateManager {
     };
     
     // Sort products by creation date (newest first) before adding
-    const sortedProducts = newProducts.sort((a, b) => {
-      const dateA = toJsDate(a.createdAt);
-      const dateB = toJsDate(b.createdAt);
-      return dateB - dateA;
-    });
-    
-    // Add all products (no global limit)
+    const sortedProducts = newProducts
+      .map(product => ({
+        ...product,
+        createdAt: toJsDate(product.createdAt),
+        submissionDate: toJsDate(product.submissionDate)
+      }))
+      .sort((a, b) => b.createdAt - a.createdAt);
+
     sortedProducts.forEach(product => {
       const id = this.generateProductId(product);
       const normalizedProduct = this.normalizeProduct(product, id);
       this.products.push(normalizedProduct);
       this.productMap.set(id, normalizedProduct);
     });
-    
-    console.log(`Loaded ${sortedProducts.length} products`);
-    
-    this.notifyListeners();
+  }
+
+  // Normalize product data structure
+  normalizeProduct(productData, id) {
+    return {
+      id: id,
+      name: productData.name || productData.title || 'Untitled Product',
+      title: productData.title || productData.name || 'Untitled Product',
+      price: productData.price || '$0.00',
+      originalPrice: productData.originalPrice || productData.price || '$0.00',
+      discount: productData.discount || 0,
+      category: productData.category || 'uncategorized',
+      platform: productData.platform || 'Amazon',
+      affiliate: productData.affiliate !== false,
+      image: productData.image || 'https://via.placeholder.com/300x300?text=Product+Image',
+      link: productData.link || '#',
+      description: productData.description || '',
+      features: productData.features || [],
+      rating: productData.rating || 4.5,
+      reviews: productData.reviews || 0,
+      submissionDate: productData.submissionDate || new Date().toISOString(),
+      createdAt: productData.createdAt || new Date(),
+      submittedBy: productData.submittedBy || null,
+      status: productData.status || 'active',
+      views: productData.views || 0,
+      clicks: productData.clicks || 0
+    };
   }
 
   // Add listener for product updates
@@ -122,155 +149,302 @@ class ProductStateManager {
     this.listeners.push(callback);
   }
 
-  // Notify all listeners of updates
+  // Remove listener
+  removeListener(callback) {
+    const index = this.listeners.indexOf(callback);
+    if (index > -1) {
+      this.listeners.splice(index, 1);
+    }
+  }
+
+  // Notify all listeners
   notifyListeners() {
-    this.listeners.forEach(callback => callback(this.products));
-  }
-
-  // Normalize product data with consistent structure
-  normalizeProduct(prod, id) {
-    // Normalize createdAt to ISO string for consistent sorting/rendering
-    let createdAtIso;
-    try {
-      if (prod.createdAt && typeof prod.createdAt.toDate === 'function') {
-        createdAtIso = prod.createdAt.toDate().toISOString();
-      } else if (typeof prod.createdAt === 'number') {
-        createdAtIso = new Date(prod.createdAt).toISOString();
-      } else if (typeof prod.createdAt === 'string') {
-        const d = new Date(prod.createdAt);
-        createdAtIso = isNaN(d.getTime()) ? new Date().toISOString() : d.toISOString();
-      } else {
-        createdAtIso = new Date().toISOString();
+    this.listeners.forEach(callback => {
+      try {
+        callback(this.products);
+      } catch (error) {
+        console.error('Error in product listener:', error);
       }
-    } catch (_) {
-      createdAtIso = new Date().toISOString();
-    }
-    // Helper function to safely parse price
-    const safeParsePrice = (price) => {
-      if (price === null || price === undefined || price === '') {
-        return 0;
-      }
-      
-      // Convert to string and remove currency symbols
-      let priceStr = String(price).replace(/[$₨₹€£¥]/g, '').trim();
-      
-      // Handle common price formats
-      priceStr = priceStr.replace(/[,\s]/g, ''); // Remove commas and spaces
-      
-      const numPrice = parseFloat(priceStr);
-      return isNaN(numPrice) ? 0 : numPrice;
-    };
-
-    const normalizedPrice = safeParsePrice(prod.price);
-    const normalizedOriginalPrice = safeParsePrice(prod.originalPrice || prod.price);
-
-    return {
-      id: id,
-      name: prod.title || prod.name || 'Untitled Product',
-      price: `$${normalizedPrice.toFixed(2)}`,
-      originalPrice: `$${normalizedOriginalPrice.toFixed(2)}`,
-      image: prod.imageData || prod.image || '',
-      link: prod.link || '#',
-      platform: prod.platform || 'amazon',
-      category: prod.category || 'uncategorized',
-      rating: isNaN(parseFloat(prod.rating)) ? 5 : parseFloat(prod.rating),
-      reviews: isNaN(parseInt(prod.reviews)) ? 0 : parseInt(prod.reviews),
-      description: prod.description || '',
-      features: Array.isArray(prod.features) ? prod.features : [],
-      discount: isNaN(parseInt(prod.discount)) ? 0 : parseInt(prod.discount),
-      featured: Boolean(prod.featured),
-      productReviews: prod.productReviews || this.generateRandomReviews(prod.title || prod.name || 'Product'),
-      createdAt: createdAtIso
-    };
+    });
   }
 
-  // Generate random reviews for a product
-  generateRandomReviews(productName) {
-    const names = [
-      'Emily Johnson', 'Michael Smith', 'Jessica Brown', 'David Miller', 'Ashley Wilson',
-      'James Anderson', 'Sarah Lee', 'John Davis', 'Amanda Clark', 'Daniel Martinez',
-      'Olivia Harris', 'Matthew Lewis', 'Sophia Young', 'Benjamin Hall', 'Ava King',
-      'William Wright', 'Mia Scott', 'Ethan Green', 'Isabella Adams', 'Alexander Baker'
-    ];
-    const reviewTemplates = [
-      `Absolutely love my {product}! Highly recommended for anyone in the USA!`,
-      `Great value for money. {product} exceeded my expectations!`,
-      `Fast shipping and the quality is top-notch. Will buy again.`,
-      `I was skeptical at first, but {product} is worth every penny.`,
-      `Customer service was excellent and the product works perfectly.`,
-      `This is the best {product} I've ever used.`,
-      `My family and friends are impressed with my new {product}.`,
-      `Five stars! Will recommend to everyone.`,
-      `The design and features are amazing.`,
-      `Perfect for my needs. Thank you!`
-    ];
-    const reviewCount = Math.floor(Math.random() * 2) + 2; // 2 or 3 reviews (reduced from 3-4)
-    const usedNames = [];
-    const reviews = [];
-    for (let i = 0; i < reviewCount; i++) {
-      let name;
-      do {
-        name = names[Math.floor(Math.random() * names.length)];
-      } while (usedNames.includes(name));
-      usedNames.push(name);
-      const template = reviewTemplates[Math.floor(Math.random() * reviewTemplates.length)];
-      reviews.push({
-        name,
-        text: template.replace('{product}', productName),
-        date: new Date(Date.now() - Math.floor(Math.random() * 10000000000)).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
-        timestamp: Date.now() - Math.floor(Math.random() * 10000000000) // Add timestamp for sorting
-      });
-    }
-    return reviews;
+  // Mark Firebase as connected
+  setFirebaseConnected(connected) {
+    this.firebaseConnected = connected;
+    console.log(`Firebase connection status: ${connected ? 'Connected' : 'Disconnected'}`);
   }
 
-  // Add a new review to a product with automatic limit management
-  addReviewToProduct(productId, reviewData) {
-    const product = this.getProductById(productId);
-    if (!product) {
-      console.error('Product not found:', productId);
-      return false;
-    }
+  // Check if Firebase is connected
+  isFirebaseConnected() {
+    return this.firebaseConnected;
+  }
 
-    // Ensure productReviews array exists
-    if (!product.productReviews) {
-      product.productReviews = [];
-    }
+  // Increment connection attempts
+  incrementConnectionAttempts() {
+    this.connectionAttempts++;
+    return this.connectionAttempts;
+  }
 
-    // Create new review with timestamp
-    const newReview = {
-      name: reviewData.name,
-      text: reviewData.text,
-      date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
-      timestamp: Date.now()
-    };
+  // Reset connection attempts
+  resetConnectionAttempts() {
+    this.connectionAttempts = 0;
+  }
 
-    // Add new review to the beginning of the array (most recent first)
-    product.productReviews.unshift(newReview);
-
-    // Maintain maximum of 5 reviews per product
-    const MAX_REVIEWS = 5;
-    if (product.productReviews.length > MAX_REVIEWS) {
-      // Remove oldest reviews (from the end of array)
-      product.productReviews = product.productReviews.slice(0, MAX_REVIEWS);
-    }
-
-    // Update the product in our state
-    this.addProduct(product);
-    
-    // Persist changes
-    persistProductReviews();
-    
-    return true;
+  // Check if max connection attempts reached
+  hasReachedMaxAttempts() {
+    return this.connectionAttempts >= this.maxConnectionAttempts;
   }
 }
 
 // Create global product state manager
 const productStateManager = new ProductStateManager();
 
+// Firebase connection variables
+let firestoreListener = null;
+let connectionTimeout = null;
+
+// Connect to Firebase with improved error handling and retry logic
+function connectToFirebase() {
+  console.log('Connecting to Firebase...');
+  
+  // Increment connection attempts
+  const attempts = productStateManager.incrementConnectionAttempts();
+  console.log(`Firebase connection attempt ${attempts}/${productStateManager.maxConnectionAttempts}`);
+  
+  // Check if we've reached max attempts
+  if (productStateManager.hasReachedMaxAttempts()) {
+    console.error('Max Firebase connection attempts reached. Using cached data only.');
+    loadCachedProducts();
+    return;
+  }
+
+  // Set connection timeout
+  connectionTimeout = setTimeout(() => {
+    console.warn('Firebase connection timeout. Retrying...');
+    setTimeout(connectToFirebase, 2000);
+  }, 10000);
+
+  // Wait for Firebase to be available
+  if (typeof firebase === 'undefined') {
+    console.log('Firebase not loaded yet, waiting...');
+    setTimeout(connectToFirebase, 1000);
+    return;
+  }
+
+  // Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyBJqBEWDdBlfv5xAjgcvqput1KC1NzKvlU",
+    authDomain: "smart-deals-pro.firebaseapp.com",
+    projectId: "smart-deals-pro",
+    storageBucket: "smart-deals-pro.firebasestorage.app",
+    messagingSenderId: "680016915696",
+    appId: "1:680016915696:web:4b3721313ea0e2e3342635",
+    measurementId: "G-HV5N0LQJTG"
+  };
+
+  try {
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    const db = firebase.firestore();
+
+    // Enable offline persistence for faster loading
+    try {
+      db.enablePersistence({ synchronizeTabs: true });
+      console.log('Firebase offline persistence enabled');
+    } catch (err) {
+      console.warn('Firebase persistence failed:', err);
+    }
+
+    // Set up real-time listener with optimized query
+    firestoreListener = db.collection('products')
+      .orderBy('createdAt', 'desc')
+      .limit(100) // Increased limit for better product coverage
+      .onSnapshot(
+        (snapshot) => {
+          clearTimeout(connectionTimeout);
+          productStateManager.setFirebaseConnected(true);
+          productStateManager.resetConnectionAttempts();
+          
+          console.log('Firebase connected! Received', snapshot.size, 'products');
+          
+          // Get Firebase products
+          const firebaseProducts = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+          }));
+
+          // Filter out user-submitted products for homepage display
+          // User-submitted products should only appear on marketplace page
+          const filteredFirebaseProducts = firebaseProducts.filter(product => {
+            // Exclude products that were submitted by users (have submittedBy field)
+            // or have local_ prefix in ID (locally stored user submissions)
+            return !product.submittedBy && !product.id?.toString().startsWith('local_');
+          });
+          
+          let allProducts = filteredFirebaseProducts;
+          const localProducts = JSON.parse(localStorage.getItem('products') || '[]');
+          
+          // Filter local products as well
+          const filteredLocalProducts = localProducts.filter(product => {
+            return !product.submittedBy && !product.id?.toString().startsWith('local_');
+          });
+          
+          // If we have Firebase products, use them (don't fall back to demo)
+          if (filteredFirebaseProducts.length > 0) {
+            allProducts = filteredFirebaseProducts;
+            console.log(`Using ${filteredFirebaseProducts.length} real Firebase products`);
+          } else if (filteredLocalProducts.length > 0) {
+            // Only use cached products if they're not demo products
+            const nonDemoProducts = filteredLocalProducts.filter(product => 
+              !product.name?.includes('Demo') && 
+              !product.name?.includes('Example') &&
+              product.link !== '#'
+            );
+            if (nonDemoProducts.length > 0) {
+              allProducts = nonDemoProducts;
+              console.log(`Using ${nonDemoProducts.length} cached non-demo products`);
+            } else {
+              console.log('No real products found, will show empty state');
+              allProducts = [];
+            }
+          } else {
+            console.log('No products found in Firebase or cache');
+            allProducts = [];
+          }
+          
+          productStateManager.updateProducts(allProducts);
+          
+          // Update global products array for backward compatibility
+          const previousCount = window.products?.length || 0;
+          window.products = productStateManager.getAllProducts();
+          
+          // Also maintain a separate array with ALL products (including user-submitted) for marketplace
+          window.allProductsIncludingUserSubmitted = firebaseProducts; // Full unfiltered list
+          
+          console.log(`Products updated: ${previousCount} → ${window.products.length}`);
+          console.log(`All products (including user-submitted): ${window.allProductsIncludingUserSubmitted.length}`);
+          
+          // Save filtered products to localStorage for caching (homepage)
+          localStorage.setItem('products', JSON.stringify(window.products));
+          // Save all products for marketplace
+          localStorage.setItem('allProducts', JSON.stringify(window.allProductsIncludingUserSubmitted));
+          localStorage.setItem('products_updated', Date.now().toString());
+
+          // Notify any listeners
+          document.dispatchEvent(new Event('products-updated'));
+          document.dispatchEvent(new Event('products-ready'));
+          document.dispatchEvent(new Event('firebase-connected'));
+
+          // Auto-render if function is available
+          if (typeof window.autoRenderProducts === 'function') {
+            window.autoRenderProducts();
+          }
+
+          // If there's a specific render function on the page, call it
+          if (typeof renderProducts === 'function') {
+            renderProducts();
+          }
+        },
+        (error) => {
+          clearTimeout(connectionTimeout);
+          console.error('Firebase listener error:', error);
+          productStateManager.setFirebaseConnected(false);
+          document.dispatchEvent(new Event('firebase-error'));
+          
+          // Retry connection after delay
+          setTimeout(() => {
+            if (!productStateManager.hasReachedMaxAttempts()) {
+              connectToFirebase();
+            } else {
+              loadCachedProducts();
+            }
+          }, 3000);
+        }
+      );
+  } catch (error) {
+    clearTimeout(connectionTimeout);
+    console.error('Firebase initialization error:', error);
+    productStateManager.setFirebaseConnected(false);
+    
+    // Retry connection after delay
+    setTimeout(() => {
+      if (!productStateManager.hasReachedMaxAttempts()) {
+        connectToFirebase();
+      } else {
+        loadCachedProducts();
+      }
+    }, 3000);
+  }
+}
+
+// Load cached products (non-demo only)
+function loadCachedProducts() {
+  console.log('Loading cached products...');
+  const cachedProducts = JSON.parse(localStorage.getItem('products') || '[]');
+  
+  // Filter out demo products from cache
+  const nonDemoProducts = cachedProducts.filter(product => 
+    !product.name?.includes('Demo') && 
+    !product.name?.includes('Example') &&
+    product.link !== '#'
+  );
+  
+  if (nonDemoProducts.length > 0) {
+    productStateManager.updateProducts(nonDemoProducts);
+    window.products = productStateManager.getAllProducts();
+    console.log(`Loaded ${nonDemoProducts.length} cached non-demo products`);
+  } else {
+    console.log('No non-demo products in cache, showing empty state');
+    window.products = [];
+  }
+  
+  document.dispatchEvent(new Event('products-ready'));
+  
+  // Auto-render if function is available
+  if (typeof window.autoRenderProducts === 'function') {
+    window.autoRenderProducts();
+  }
+}
+
 // Global function to add a review to any product
 function addProductReview(productId, reviewData) {
-  return productStateManager.addReviewToProduct(productId, reviewData);
+  const product = productStateManager.getProductById(productId);
+  if (!product) {
+    console.error('Product not found:', productId);
+    return false;
+  }
+
+  // Ensure productReviews array exists
+  if (!product.productReviews) {
+    product.productReviews = [];
+  }
+
+  // Create new review with timestamp
+  const newReview = {
+    name: reviewData.name,
+    text: reviewData.text,
+    date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+    timestamp: Date.now()
+  };
+
+  // Add new review to the beginning of the array (most recent first)
+  product.productReviews.unshift(newReview);
+
+  // Maintain maximum of 5 reviews per product
+  const MAX_REVIEWS = 5;
+  if (product.productReviews.length > MAX_REVIEWS) {
+    // Remove oldest reviews (from the end of array)
+    product.productReviews = product.productReviews.slice(0, MAX_REVIEWS);
+  }
+
+  // Update the product in our state
+  productStateManager.addProduct(product);
+  
+  // Persist changes
+  persistProductReviews();
+  
+  return true;
 }
 
 // Global function to get reviews for a product
@@ -296,7 +470,6 @@ function getMaxProductsForReviews() {
 
 // Always expose products array for backward compatibility
 window.products = [];
-let firestoreListener = null; // To track the real-time listener
 
 // Load from local storage immediately to show products right away
 const cachedProducts = JSON.parse(localStorage.getItem('products') || '[]');
@@ -585,96 +758,19 @@ function initProducts() {
   // Start Firebase connection
   initProducts();
   
-  // Fallback: If no products after 3 seconds, load example products
+  // Remove the fallback to demo products - show empty state instead
   setTimeout(() => {
     if (!window.products || window.products.length === 0) {
-      console.log('No products loaded, adding example products for demonstration...');
-      
-      const exampleProducts = [
-        {
-          id: 'boys-1',
-          name: "Blue Boys T-Shirt",
-          category: "boys",
-          price: "$19.99",
-          originalPrice: "$29.99",
-          discount: 33,
-          platform: "Amazon",
-          affiliate: true,
-          image: "https://images.unsplash.com/photo-1581803118522-7b72a50f7e9f?w=300&h=300&fit=crop",
-          link: "#",
-          submissionDate: new Date().toISOString(),
-          createdAt: new Date()
-        },
-        {
-          id: 'girls-1',
-          name: "Pink Girls Dress",
-          category: "girls-fashion",
-          price: "$24.99",
-          originalPrice: "$39.99",
-          discount: 38,
-          platform: "Amazon",
-          affiliate: true,
-          image: "https://images.unsplash.com/photo-1621452773781-0f992fd1f5cb?w=300&h=300&fit=crop",
-          link: "#",
-          submissionDate: new Date().toISOString(),
-          createdAt: new Date()
-        },
-        {
-          id: 'tech-1',
-          name: "Wireless Bluetooth Headphones",
-          category: "electronics",
-          price: "$49.99",
-          originalPrice: "$79.99",
-          discount: 38,
-          platform: "Amazon",
-          affiliate: true,
-          image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300&h=300&fit=crop",
-          link: "#",
-          submissionDate: new Date().toISOString(),
-          createdAt: new Date()
-        },
-        {
-          id: 'watch-1',
-          name: "Smartwatch Pro",
-          category: "smartwatches",
-          price: "$199.99",
-          originalPrice: "$299.99",
-          discount: 33,
-          platform: "Amazon",
-          affiliate: true,
-          image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300&h=300&fit=crop",
-          link: "#",
-          submissionDate: new Date().toISOString(),
-          createdAt: new Date()
-        },
-        {
-          id: 'home-1',
-          name: "Smart Home Device",
-          category: "home-garden",
-          price: "$89.99",
-          originalPrice: "$119.99",
-          discount: 25,
-          platform: "Amazon",
-          affiliate: true,
-          image: "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=300&h=300&fit=crop",
-          link: "#",
-          submissionDate: new Date().toISOString(),
-          createdAt: new Date()
-        }
-      ];
-      
-      // Add through state manager to ensure proper ID handling
-      productStateManager.updateProducts(exampleProducts);
-      window.products = productStateManager.getAllProducts();
-      
-      // Save to localStorage for future use
-      localStorage.setItem('products', JSON.stringify(window.products));
-      
-      // Trigger rendering
+      console.log('No real products loaded, showing empty state instead of demo products');
+      window.products = [];
       document.dispatchEvent(new Event('products-ready'));
-      console.log('Example products loaded:', window.products.length);
+      
+      // Auto-render if function is available
+      if (typeof window.autoRenderProducts === 'function') {
+        window.autoRenderProducts();
+      }
     }
-  }, 3000);
+  }, 5000);
 })();
 
 // Check if cached data is fresh (less than 1 hour old)
