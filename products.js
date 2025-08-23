@@ -299,6 +299,10 @@ function connectToFirebase() {
             const nonDemoProducts = filteredLocalProducts.filter(product => 
               !product.name?.includes('Demo') && 
               !product.name?.includes('Example') &&
+              !product.title?.includes('Demo') &&
+              !product.title?.includes('Example') &&
+              !product.id?.includes('prod_sample_') &&
+              !product.id?.includes('demo_') &&
               product.link !== '#'
             );
             if (nonDemoProducts.length > 0) {
@@ -387,6 +391,10 @@ function loadCachedProducts() {
   const nonDemoProducts = cachedProducts.filter(product => 
     !product.name?.includes('Demo') && 
     !product.name?.includes('Example') &&
+    !product.title?.includes('Demo') &&
+    !product.title?.includes('Example') &&
+    !product.id?.includes('prod_sample_') &&
+    !product.id?.includes('demo_') &&
     product.link !== '#'
   );
   
