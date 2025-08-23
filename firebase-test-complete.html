@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase System Test - SmartDeals Pro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .status-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-left: 5px solid #28a745;
+        }
+
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .status-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .status-label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .status-value {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-loading {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .test-section {
+            margin-bottom: 40px;
+        }
+
+        .test-section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            border-bottom: 3px solid #ff6b6b;
+            padding-bottom: 10px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .form-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            border: 1px solid #e9ecef;
+        }
+
+        .form-card h3 {
+            color: #495057;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #ff6b6b;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: transform 0.2s ease;
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .results {
+            margin-top: 30px;
+        }
+
+        .result-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 5px solid #007bff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .result-card h4 {
+            color: #007bff;
+            margin-bottom: 10px;
+        }
+
+        .log-container {
+            background: #212529;
+            color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+
+        .log-entry {
+            margin-bottom: 5px;
+            padding: 3px 0;
+        }
+
+        .log-success {
+            color: #28a745;
+        }
+
+        .log-error {
+            color: #dc3545;
+        }
+
+        .log-warning {
+            color: #ffc107;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border: 1px solid #e9ecef;
+        }
+
+        .product-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .product-price {
+            color: #ff6b6b;
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .product-category {
+            background: #e9ecef;
+            color: #495057;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔥 Firebase System Test</h1>
+            <p>SmartDeals Pro - Real-time Product Management System</p>
+        </div>
+
+        <div class="content">
+            <!-- Status Section -->
+            <div class="status-section">
+                <h2>System Status</h2>
+                <div class="status-item">
+                    <span class="status-label">Firebase Config</span>
+                    <span id="firebase-status" class="status-value status-loading">Checking...</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">Products Service</span>
+                    <span id="products-status" class="status-value status-loading">Checking...</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">Auth Service</span>
+                    <span id="auth-status" class="status-value status-loading">Checking...</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">Database Connection</span>
+                    <span id="db-status" class="status-value status-loading">Checking...</span>
+                </div>
+            </div>
+
+            <!-- User Registration Test -->
+            <div class="test-section">
+                <h2>👤 User Registration Test</h2>
+                <div class="form-grid">
+                    <div class="form-card">
+                        <h3>Register New User</h3>
+                        <form id="registration-form">
+                            <div class="form-group">
+                                <label>First Name</label>
+                                <input type="text" id="firstName" value="Test" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Last Name</label>
+                                <input type="text" id="lastName" value="User" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" id="email" value="test@smartdeals.com" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Password</label>
+                                <input type="password" id="password" value="password123" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Phone</label>
+                                <input type="tel" id="phone" value="+1234567890">
+                            </div>
+                            <div class="form-group">
+                                <label>Country</label>
+                                <input type="text" id="country" value="USA">
+                            </div>
+                            <button type="submit" class="btn">Register User</button>
+                        </form>
+                    </div>
+
+                    <div class="form-card">
+                        <h3>Sign In Test</h3>
+                        <form id="signin-form">
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" id="signin-email" value="test@smartdeals.com" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Password</label>
+                                <input type="password" id="signin-password" value="password123" required>
+                            </div>
+                            <button type="submit" class="btn">Sign In</button>
+                        </form>
+                        <button id="signout-btn" class="btn" style="margin-top: 15px;" disabled>Sign Out</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Management Test -->
+            <div class="test-section">
+                <h2>📦 Product Management Test</h2>
+                <div class="form-grid">
+                    <div class="form-card">
+                        <h3>Add Featured Product</h3>
+                        <form id="featured-product-form">
+                            <div class="form-group">
+                                <label>Product Title</label>
+                                <input type="text" id="featured-title" value="Test Featured Product" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Price</label>
+                                <input type="text" id="featured-price" value="$99.99" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Category</label>
+                                <select id="featured-category" required>
+                                    <option value="electronics">Electronics</option>
+                                    <option value="fashion">Fashion</option>
+                                    <option value="home-garden">Home & Garden</option>
+                                    <option value="beauty">Beauty</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Description</label>
+                                <textarea id="featured-description" rows="3">Test product description</textarea>
+                            </div>
+                            <button type="submit" class="btn">Add Featured Product</button>
+                        </form>
+                    </div>
+
+                    <div class="form-card">
+                        <h3>Add Category Product</h3>
+                        <form id="category-product-form">
+                            <div class="form-group">
+                                <label>Product Title</label>
+                                <input type="text" id="category-title" value="Test Category Product" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Price</label>
+                                <input type="text" id="category-price" value="$49.99" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Category</label>
+                                <select id="category-category" required>
+                                    <option value="electronics">Electronics</option>
+                                    <option value="fashion">Fashion</option>
+                                    <option value="home-garden">Home & Garden</option>
+                                    <option value="beauty">Beauty</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Description</label>
+                                <textarea id="category-description" rows="3">Test category product description</textarea>
+                            </div>
+                            <button type="submit" class="btn">Add Category Product</button>
+                        </form>
+                    </div>
+
+                    <div class="form-card">
+                        <h3>Add User Product</h3>
+                        <form id="user-product-form">
+                            <div class="form-group">
+                                <label>Product Title</label>
+                                <input type="text" id="user-title" value="Test User Product" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Price</label>
+                                <input type="text" id="user-price" value="$29.99" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Category</label>
+                                <select id="user-category" required>
+                                    <option value="electronics">Electronics</option>
+                                    <option value="fashion">Fashion</option>
+                                    <option value="home-garden">Home & Garden</option>
+                                    <option value="beauty">Beauty</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Description</label>
+                                <textarea id="user-description" rows="3">Test user submitted product</textarea>
+                            </div>
+                            <button type="submit" class="btn">Add User Product</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Real-time Products Display -->
+            <div class="test-section">
+                <h2>📊 Real-time Products Display</h2>
+                
+                <h3>Featured Products</h3>
+                <div id="featured-products" class="products-grid">
+                    <p>Loading featured products...</p>
+                </div>
+
+                <h3 style="margin-top: 30px;">Category Products</h3>
+                <div id="category-products" class="products-grid">
+                    <p>Loading category products...</p>
+                </div>
+
+                <h3 style="margin-top: 30px;">User Products</h3>
+                <div id="user-products" class="products-grid">
+                    <p>Loading user products...</p>
+                </div>
+            </div>
+
+            <!-- Console Logs -->
+            <div class="test-section">
+                <h2>📝 System Logs</h2>
+                <div id="console-logs" class="log-container">
+                    <div class="log-entry">System starting...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"></script>
+
+    <!-- Our Firebase Services -->
+    <script src="firebase-config.js"></script>
+    <script src="firebase-products-service.js"></script>
+    <script src="firebase-auth-service.js"></script>
+
+    <script>
+        // Console logging system
+        const logContainer = document.getElementById('console-logs');
+        
+        function addLog(message, type = 'info') {
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry log-${type}`;
+            logEntry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+
+        // Override console methods to capture logs
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+
+        console.log = function(...args) {
+            addLog(args.join(' '), 'success');
+            originalLog.apply(console, args);
+        };
+
+        console.error = function(...args) {
+            addLog(args.join(' '), 'error');
+            originalError.apply(console, args);
+        };
+
+        console.warn = function(...args) {
+            addLog(args.join(' '), 'warning');
+            originalWarn.apply(console, args);
+        };
+
+        // Status checking
+        async function checkSystemStatus() {
+            addLog('Checking system status...');
+
+            // Check Firebase
+            setTimeout(() => {
+                const firebaseStatus = document.getElementById('firebase-status');
+                if (window.firebaseService && window.firebaseService.isReady()) {
+                    firebaseStatus.textContent = 'Ready';
+                    firebaseStatus.className = 'status-value status-success';
+                    addLog('Firebase service ready', 'success');
+                } else {
+                    firebaseStatus.textContent = 'Error';
+                    firebaseStatus.className = 'status-value status-error';
+                    addLog('Firebase service not ready', 'error');
+                }
+            }, 1000);
+
+            // Check Products Service
+            setTimeout(() => {
+                const productsStatus = document.getElementById('products-status');
+                if (window.firebaseProductsService) {
+                    productsStatus.textContent = 'Ready';
+                    productsStatus.className = 'status-value status-success';
+                    addLog('Products service ready', 'success');
+                } else {
+                    productsStatus.textContent = 'Error';
+                    productsStatus.className = 'status-value status-error';
+                    addLog('Products service not ready', 'error');
+                }
+            }, 1500);
+
+            // Check Auth Service
+            setTimeout(() => {
+                const authStatus = document.getElementById('auth-status');
+                if (window.firebaseAuthService) {
+                    authStatus.textContent = 'Ready';
+                    authStatus.className = 'status-value status-success';
+                    addLog('Auth service ready', 'success');
+                } else {
+                    authStatus.textContent = 'Error';
+                    authStatus.className = 'status-value status-error';
+                    addLog('Auth service not ready', 'error');
+                }
+            }, 2000);
+
+            // Check Database Connection
+            setTimeout(async () => {
+                const dbStatus = document.getElementById('db-status');
+                try {
+                    // Try to read from database
+                    if (window.firebaseService && window.firebaseService.isReady()) {
+                        await window.firebaseService.db.collection('test').limit(1).get();
+                        dbStatus.textContent = 'Connected';
+                        dbStatus.className = 'status-value status-success';
+                        addLog('Database connection successful', 'success');
+                    } else {
+                        throw new Error('Firebase not ready');
+                    }
+                } catch (error) {
+                    dbStatus.textContent = 'Error';
+                    dbStatus.className = 'status-value status-error';
+                    addLog(`Database connection failed: ${error.message}`, 'error');
+                }
+            }, 2500);
+        }
+
+        // Form handlers
+        document.getElementById('registration-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            addLog('Attempting user registration...');
+
+            const userData = {
+                firstName: document.getElementById('firstName').value,
+                lastName: document.getElementById('lastName').value,
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value,
+                phone: document.getElementById('phone').value,
+                country: document.getElementById('country').value
+            };
+
+            try {
+                const result = await window.firebaseAuthService.registerUser(userData);
+                if (result.success) {
+                    addLog(`User registered successfully: ${result.user.email}`, 'success');
+                } else {
+                    addLog(`Registration failed: ${result.message}`, 'error');
+                }
+            } catch (error) {
+                addLog(`Registration error: ${error.message}`, 'error');
+            }
+        });
+
+        document.getElementById('signin-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            addLog('Attempting user sign in...');
+
+            const email = document.getElementById('signin-email').value;
+            const password = document.getElementById('signin-password').value;
+
+            try {
+                const result = await window.firebaseAuthService.signInUser(email, password);
+                if (result.success) {
+                    addLog(`User signed in successfully: ${result.user.email}`, 'success');
+                    document.getElementById('signout-btn').disabled = false;
+                } else {
+                    addLog(`Sign in failed: ${result.message}`, 'error');
+                }
+            } catch (error) {
+                addLog(`Sign in error: ${error.message}`, 'error');
+            }
+        });
+
+        document.getElementById('signout-btn').addEventListener('click', async () => {
+            addLog('Attempting user sign out...');
+            
+            try {
+                const result = await window.firebaseAuthService.signOutUser();
+                if (result.success) {
+                    addLog('User signed out successfully', 'success');
+                    document.getElementById('signout-btn').disabled = true;
+                } else {
+                    addLog(`Sign out failed: ${result.message}`, 'error');
+                }
+            } catch (error) {
+                addLog(`Sign out error: ${error.message}`, 'error');
+            }
+        });
+
+        // Product form handlers
+        document.getElementById('featured-product-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            addLog('Adding featured product...');
+
+            const productData = {
+                title: document.getElementById('featured-title').value,
+                price: document.getElementById('featured-price').value,
+                category: document.getElementById('featured-category').value,
+                description: document.getElementById('featured-description').value,
+                image: 'https://via.placeholder.com/300x200',
+                link: '#'
+            };
+
+            try {
+                const productId = await window.firebaseProductsService.addFeaturedProduct(productData);
+                addLog(`Featured product added with ID: ${productId}`, 'success');
+            } catch (error) {
+                addLog(`Failed to add featured product: ${error.message}`, 'error');
+            }
+        });
+
+        document.getElementById('category-product-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            addLog('Adding category product...');
+
+            const productData = {
+                title: document.getElementById('category-title').value,
+                price: document.getElementById('category-price').value,
+                category: document.getElementById('category-category').value,
+                description: document.getElementById('category-description').value,
+                image: 'https://via.placeholder.com/300x200',
+                link: '#'
+            };
+
+            try {
+                const productId = await window.firebaseProductsService.addCategoryProduct(productData);
+                addLog(`Category product added with ID: ${productId}`, 'success');
+            } catch (error) {
+                addLog(`Failed to add category product: ${error.message}`, 'error');
+            }
+        });
+
+        document.getElementById('user-product-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            addLog('Adding user product...');
+
+            const productData = {
+                title: document.getElementById('user-title').value,
+                price: document.getElementById('user-price').value,
+                category: document.getElementById('user-category').value,
+                description: document.getElementById('user-description').value,
+                image: 'https://via.placeholder.com/300x200',
+                link: '#'
+            };
+
+            const userInfo = {
+                name: 'Test User',
+                email: 'test@example.com',
+                uid: 'test-uid'
+            };
+
+            try {
+                const productId = await window.firebaseProductsService.addUserProduct(productData, userInfo);
+                addLog(`User product added with ID: ${productId}`, 'success');
+            } catch (error) {
+                addLog(`Failed to add user product: ${error.message}`, 'error');
+            }
+        });
+
+        // Real-time product display
+        function displayProducts(containerId, products) {
+            const container = document.getElementById(containerId);
+            
+            if (products.length === 0) {
+                container.innerHTML = '<p>No products available</p>';
+                return;
+            }
+
+            container.innerHTML = products.map(product => `
+                <div class="product-card">
+                    <div class="product-title">${product.title}</div>
+                    <div class="product-price">${product.price}</div>
+                    <div class="product-category">${product.category}</div>
+                    <p style="margin-top: 10px; font-size: 0.9rem; color: #666;">${product.description}</p>
+                </div>
+            `).join('');
+        }
+
+        // Set up real-time listeners
+        setTimeout(() => {
+            if (window.firebaseProductsService) {
+                // Subscribe to product updates
+                window.firebaseProductsService.subscribe((type, data) => {
+                    addLog(`Real-time update: ${type}`, 'success');
+                    
+                    if (type === 'featured') {
+                        displayProducts('featured-products', data);
+                    } else if (type === 'userProducts') {
+                        displayProducts('user-products', data);
+                    } else if (type === 'category') {
+                        // Update specific category
+                        const allCategories = window.firebaseProductsService.getAllCategoryProducts();
+                        const allCategoryProducts = Object.values(allCategories).flat();
+                        displayProducts('category-products', allCategoryProducts);
+                    }
+                });
+
+                // Initial display
+                setTimeout(() => {
+                    displayProducts('featured-products', window.firebaseProductsService.getFeaturedProducts());
+                    displayProducts('user-products', window.firebaseProductsService.getUserProducts());
+                    
+                    const allCategories = window.firebaseProductsService.getAllCategoryProducts();
+                    const allCategoryProducts = Object.values(allCategories).flat();
+                    displayProducts('category-products', allCategoryProducts);
+                }, 1000);
+            }
+        }, 3000);
+
+        // Start system check
+        document.addEventListener('DOMContentLoaded', () => {
+            addLog('System initialized, starting checks...');
+            checkSystemStatus();
+        });
+    </script>
+</body>
+</html>
