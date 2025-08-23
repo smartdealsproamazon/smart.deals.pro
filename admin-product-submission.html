@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Product Submission - SmartDeals Pro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .form-section {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-left: 5px solid #ff6b6b;
+        }
+
+        .form-section h2 {
+            color: #333;
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #495057;
+            font-size: 1rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #ff6b6b;
+            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-group.image-upload {
+            position: relative;
+        }
+
+        .image-preview {
+            width: 100%;
+            height: 200px;
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .image-preview:hover {
+            border-color: #ff6b6b;
+            background: #fff5f5;
+        }
+
+        .image-preview img {
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 6px;
+        }
+
+        .image-preview-text {
+            color: #6c757d;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d, #495057);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #28a745, #20c997);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .status-message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+            display: none;
+        }
+
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .recent-products {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 30px;
+            border: 1px solid #e9ecef;
+        }
+
+        .recent-products h3 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .product-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .product-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            border: 1px solid #e9ecef;
+            transition: transform 0.2s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .product-card img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 6px;
+            margin-bottom: 10px;
+        }
+
+        .product-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+            font-size: 0.95rem;
+        }
+
+        .product-price {
+            color: #ff6b6b;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+
+        .product-category {
+            background: #e9ecef;
+            color: #495057;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            display: inline-block;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #ff6b6b;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .type-selector {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .type-option {
+            flex: 1;
+            padding: 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .type-option:hover {
+            border-color: #ff6b6b;
+            background: #fff5f5;
+        }
+
+        .type-option.active {
+            border-color: #ff6b6b;
+            background: #fff5f5;
+            color: #ff6b6b;
+        }
+
+        .type-option h4 {
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        .type-option p {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 10px;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .type-selector {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛠️ Admin Product Submission</h1>
+            <p>SmartDeals Pro - Add Featured & Category Products</p>
+        </div>
+
+        <div class="content">
+            <!-- Status Messages -->
+            <div id="status-message" class="status-message"></div>
+
+            <!-- Product Type Selection -->
+            <div class="form-section">
+                <h2>📦 Select Product Type</h2>
+                <div class="type-selector">
+                    <div class="type-option active" data-type="featured">
+                        <h4>🌟 Featured Product</h4>
+                        <p>Will appear on homepage as featured item</p>
+                    </div>
+                    <div class="type-option" data-type="category">
+                        <h4>📂 Category Product</h4>
+                        <p>Will appear in specific category sections</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Submission Form -->
+            <div class="form-section">
+                <h2 id="form-title">🌟 Add Featured Product</h2>
+                
+                <form id="product-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="product-title">Product Title *</label>
+                            <input type="text" id="product-title" name="title" required 
+                                   placeholder="Enter product title">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="product-price">Price *</label>
+                            <input type="text" id="product-price" name="price" required 
+                                   placeholder="e.g., $99.99">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="product-category">Category *</label>
+                            <select id="product-category" name="category" required>
+                                <option value="">Select Category</option>
+                                <option value="electronics">Electronics</option>
+                                <option value="fashion">Fashion</option>
+                                <option value="home-garden">Home & Garden</option>
+                                <option value="beauty">Beauty</option>
+                                <option value="sports">Sports</option>
+                                <option value="books">Books</option>
+                                <option value="toys">Toys</option>
+                                <option value="automotive">Automotive</option>
+                                <option value="jewelry">Jewelry</option>
+                                <option value="health">Health</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="product-link">Product Link *</label>
+                            <input type="url" id="product-link" name="link" required 
+                                   placeholder="https://example.com/product">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="product-discount">Discount %</label>
+                            <input type="number" id="product-discount" name="discount" 
+                                   placeholder="e.g., 20" min="0" max="100">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="product-rating">Rating</label>
+                            <select id="product-rating" name="rating">
+                                <option value="">Select Rating</option>
+                                <option value="5">⭐⭐⭐⭐⭐ (5.0)</option>
+                                <option value="4.5">⭐⭐⭐⭐⭐ (4.5)</option>
+                                <option value="4">⭐⭐⭐⭐ (4.0)</option>
+                                <option value="3.5">⭐⭐⭐⭐ (3.5)</option>
+                                <option value="3">⭐⭐⭐ (3.0)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label for="product-description">Description</label>
+                            <textarea id="product-description" name="description" 
+                                      placeholder="Enter product description..."></textarea>
+                        </div>
+
+                        <div class="form-group full-width image-upload">
+                            <label for="product-image">Product Image</label>
+                            <input type="file" id="product-image" name="image" 
+                                   accept="image/*" style="display: none;">
+                            <input type="url" id="product-image-url" name="imageUrl" 
+                                   placeholder="Or enter image URL">
+                            <div class="image-preview" onclick="document.getElementById('product-image').click()">
+                                <div class="image-preview-text">
+                                    📷 Click to upload image or enter URL above
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="clearForm()">
+                            🔄 Clear Form
+                        </button>
+                        <button type="submit" class="btn" id="submit-btn">
+                            ✅ Add Product
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Recent Products -->
+            <div class="recent-products">
+                <h3>📊 Recently Added Products</h3>
+                <div id="recent-products-list" class="product-list">
+                    <p>Loading recent products...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"></script>
+
+    <!-- Our Firebase Services -->
+    <script src="firebase-config.js"></script>
+    <script src="firebase-products-service.js"></script>
+    <script src="firebase-auth-service.js"></script>
+
+    <script>
+        let currentProductType = 'featured';
+        let recentProducts = [];
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', async () => {
+            console.log('Admin Product Submission initialized');
+            
+            // Wait for Firebase services
+            await waitForFirebaseServices();
+            
+            // Setup event listeners
+            setupEventListeners();
+            
+            // Load recent products
+            loadRecentProducts();
+        });
+
+        // Wait for Firebase services to be ready
+        async function waitForFirebaseServices() {
+            let attempts = 0;
+            const maxAttempts = 50;
+            
+            while (attempts < maxAttempts) {
+                if (window.firebaseService && window.firebaseService.isReady() && 
+                    window.firebaseProductsService) {
+                    console.log('Firebase services ready');
+                    return;
+                }
+                await new Promise(resolve => setTimeout(resolve, 100));
+                attempts++;
+            }
+            
+            showMessage('Firebase services failed to initialize', 'error');
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Product type selection
+            document.querySelectorAll('.type-option').forEach(option => {
+                option.addEventListener('click', () => {
+                    document.querySelectorAll('.type-option').forEach(opt => 
+                        opt.classList.remove('active'));
+                    option.classList.add('active');
+                    
+                    currentProductType = option.dataset.type;
+                    updateFormTitle();
+                });
+            });
+
+            // Form submission
+            document.getElementById('product-form').addEventListener('submit', handleFormSubmit);
+
+            // Image upload
+            document.getElementById('product-image').addEventListener('change', handleImageUpload);
+            document.getElementById('product-image-url').addEventListener('input', handleImageUrlChange);
+        }
+
+        // Update form title based on product type
+        function updateFormTitle() {
+            const formTitle = document.getElementById('form-title');
+            const submitBtn = document.getElementById('submit-btn');
+            
+            if (currentProductType === 'featured') {
+                formTitle.innerHTML = '🌟 Add Featured Product';
+                submitBtn.innerHTML = '✅ Add Featured Product';
+            } else {
+                formTitle.innerHTML = '📂 Add Category Product';
+                submitBtn.innerHTML = '✅ Add Category Product';
+            }
+        }
+
+        // Handle form submission
+        async function handleFormSubmit(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submit-btn');
+            const originalText = submitBtn.innerHTML;
+            
+            try {
+                // Show loading
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="loading"></span> Adding Product...';
+                
+                // Get form data
+                const formData = new FormData(e.target);
+                const productData = {
+                    title: formData.get('title'),
+                    price: formData.get('price'),
+                    category: formData.get('category'),
+                    link: formData.get('link'),
+                    description: formData.get('description'),
+                    discount: formData.get('discount') || 0,
+                    rating: formData.get('rating') || 0,
+                    image: getImageUrl(),
+                    tags: generateTags(formData.get('title'), formData.get('category'))
+                };
+
+                // Validate required fields
+                if (!productData.title || !productData.price || !productData.category || !productData.link) {
+                    throw new Error('Please fill in all required fields');
+                }
+
+                // Add product based on type
+                let result;
+                if (currentProductType === 'featured') {
+                    result = await window.firebaseProductsService.addFeaturedProduct(productData);
+                } else {
+                    result = await window.firebaseProductsService.addCategoryProduct(productData);
+                }
+
+                showMessage(`${currentProductType === 'featured' ? 'Featured' : 'Category'} product added successfully!`, 'success');
+                clearForm();
+                loadRecentProducts();
+
+            } catch (error) {
+                console.error('Error adding product:', error);
+                showMessage(`Error: ${error.message}`, 'error');
+            } finally {
+                // Reset button
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }
+        }
+
+        // Handle image upload
+        function handleImageUpload(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    updateImagePreview(e.target.result);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Handle image URL change
+        function handleImageUrlChange(e) {
+            const url = e.target.value;
+            if (url) {
+                updateImagePreview(url);
+            }
+        }
+
+        // Update image preview
+        function updateImagePreview(src) {
+            const preview = document.querySelector('.image-preview');
+            preview.innerHTML = `<img src="${src}" alt="Product preview">`;
+        }
+
+        // Get image URL (either uploaded file or URL)
+        function getImageUrl() {
+            const imageUrl = document.getElementById('product-image-url').value;
+            const imageFile = document.getElementById('product-image').files[0];
+            
+            if (imageUrl) return imageUrl;
+            if (imageFile) {
+                // For now, return placeholder - in production, upload to Firebase Storage
+                return 'https://via.placeholder.com/300x200';
+            }
+            return 'https://via.placeholder.com/300x200';
+        }
+
+        // Generate tags for better searchability
+        function generateTags(title, category) {
+            const tags = [];
+            if (title) {
+                tags.push(...title.toLowerCase().split(' ').filter(word => word.length > 2));
+            }
+            if (category) {
+                tags.push(category.toLowerCase());
+            }
+            return [...new Set(tags)]; // Remove duplicates
+        }
+
+        // Clear form
+        function clearForm() {
+            document.getElementById('product-form').reset();
+            document.querySelector('.image-preview').innerHTML = 
+                '<div class="image-preview-text">📷 Click to upload image or enter URL above</div>';
+        }
+
+        // Show status message
+        function showMessage(message, type) {
+            const statusDiv = document.getElementById('status-message');
+            statusDiv.textContent = message;
+            statusDiv.className = `status-message status-${type}`;
+            statusDiv.style.display = 'block';
+            
+            // Hide after 5 seconds
+            setTimeout(() => {
+                statusDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        // Load recent products
+        function loadRecentProducts() {
+            if (!window.firebaseProductsService) {
+                setTimeout(loadRecentProducts, 1000);
+                return;
+            }
+
+            // Subscribe to product updates
+            window.firebaseProductsService.subscribe((type, data) => {
+                if (type === 'featured') {
+                    updateRecentProducts('Featured Products', data.slice(0, 6));
+                } else if (type === 'category') {
+                    updateRecentProducts('Category Products', data.products.slice(0, 6));
+                }
+            });
+
+            // Initial load
+            setTimeout(() => {
+                const featured = window.firebaseProductsService.getFeaturedProducts();
+                const allCategories = window.firebaseProductsService.getAllCategoryProducts();
+                const allCategoryProducts = Object.values(allCategories).flat();
+                
+                const recentProducts = [...featured, ...allCategoryProducts]
+                    .sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0))
+                    .slice(0, 8);
+                
+                updateRecentProducts('Recent Products', recentProducts);
+            }, 2000);
+        }
+
+        // Update recent products display
+        function updateRecentProducts(title, products) {
+            const container = document.getElementById('recent-products-list');
+            
+            if (products.length === 0) {
+                container.innerHTML = '<p>No products added yet.</p>';
+                return;
+            }
+
+            container.innerHTML = products.map(product => `
+                <div class="product-card">
+                    <img src="${product.image}" alt="${product.title}" 
+                         onerror="this.src='https://via.placeholder.com/300x200'">
+                    <div class="product-title">${product.title}</div>
+                    <div class="product-price">${product.price}</div>
+                    <span class="product-category">${product.category}</span>
+                </div>
+            `).join('');
+        }
+    </script>
+</body>
+</html>
