@@ -1,89 +1,155 @@
 // Firebase Authentication & User Registration Service
-// SmartDeals Pro - Complete user management system
+// SmartDeals Pro - Enhanced with better error handling and timeout management
 
 class FirebaseAuthService {
   constructor() {
-    this.currentUser = null;
-    this.authListeners = [];
     this.isInitialized = false;
+    this.initializationPromise = null;
+    this.authStateListeners = [];
     
-    // Wait for Firebase to be ready
-    this.waitForFirebase();
+    // Initialize the service
+    this.initialize();
+  }
+
+  async initialize() {
+    try {
+      console.log('Initializing Firebase Auth Service...');
+      
+      // Wait for Firebase to be available
+      await this.waitForFirebase();
+      
+      // Wait for Firebase service to be ready
+      await this.waitForFirebaseService();
+      
+      this.isInitialized = true;
+      console.log('Firebase Auth Service initialized successfully');
+      
+      // Set up auth state listener
+      this.setupAuthStateListener();
+      
+    } catch (error) {
+      console.error('Firebase Auth Service failed to initialize:', error);
+      this.isInitialized = false;
+    }
   }
 
   async waitForFirebase() {
-    let attempts = 0;
-    const maxAttempts = 50;
-    
-    while (attempts < maxAttempts) {
-      if (window.firebaseService && window.firebaseService.isReady()) {
-        this.isInitialized = true;
-        console.log('Firebase Auth Service initialized');
-        this.setupAuthListener();
-        break;
-      }
-      await new Promise(resolve => setTimeout(resolve, 100));
-      attempts++;
-    }
-    
-    if (!this.isInitialized) {
-      console.error('Firebase Auth Service failed to initialize');
-    }
-  }
-
-  // Setup authentication state listener
-  setupAuthListener() {
-    if (!this.isInitialized) return;
-
-    window.firebaseService.auth.onAuthStateChanged(async (user) => {
-      if (user) {
-        // User is signed in
-        this.currentUser = user;
-        
-        // Get additional user data from Firestore
-        try {
-          const userData = await this.getUserData(user.uid);
-          this.currentUser.userData = userData;
-        } catch (error) {
-          console.error('Error getting user data:', error);
-        }
-        
-        console.log('User signed in:', user.email);
-      } else {
-        // User is signed out
-        this.currentUser = null;
-        console.log('User signed out');
-      }
+    return new Promise((resolve, reject) => {
+      let attempts = 0;
+      const maxAttempts = 50;
       
-      // Notify all listeners
-      this.notifyAuthListeners(this.currentUser);
+      const checkFirebase = () => {
+        attempts++;
+        
+        if (typeof firebase !== 'undefined' && firebase.auth) {
+          console.log('Firebase SDK loaded successfully');
+          resolve();
+        } else if (attempts >= maxAttempts) {
+          reject(new Error('Firebase SDK not available after maximum attempts'));
+        } else {
+          setTimeout(checkFirebase, 100);
+        }
+      };
+      
+      checkFirebase();
     });
   }
 
-  // Register new user
+  async waitForFirebaseService() {
+    return new Promise((resolve, reject) => {
+      let attempts = 0;
+      const maxAttempts = 50;
+      
+      const checkService = () => {
+        attempts++;
+        
+        if (window.firebaseService && window.firebaseService.isReady()) {
+          console.log('Firebase Service ready');
+          resolve();
+        } else if (attempts >= maxAttempts) {
+          reject(new Error('Firebase Service not ready after maximum attempts'));
+        } else {
+          setTimeout(checkService, 100);
+        }
+      };
+      
+      checkService();
+    });
+  }
+
+  setupAuthStateListener() {
+    if (!this.isInitialized || !window.firebaseService) {
+      console.error('Cannot setup auth state listener - service not initialized');
+      return;
+    }
+
+    window.firebaseService.auth.onAuthStateChanged(async (user) => {
+      console.log('Auth state changed:', user ? 'User logged in' : 'User logged out');
+      
+      // Notify all listeners
+      this.authStateListeners.forEach(listener => {
+        try {
+          listener(user);
+        } catch (error) {
+          console.error('Error in auth state listener:', error);
+        }
+      });
+    });
+  }
+
+  // Register new user with improved error handling and timeout
   async registerUser(userData) {
     try {
+      console.log('Starting user registration...');
+      
+      // Ensure service is initialized
       if (!this.isInitialized) {
         throw new Error('Firebase Auth Service not initialized');
       }
 
+      if (!window.firebaseService || !window.firebaseService.auth) {
+        throw new Error('Firebase Auth not available');
+      }
+
       const { email, password, ...profileData } = userData;
 
-      // Create user account
-      const userCredential = await window.firebaseService.auth.createUserWithEmailAndPassword(email, password);
+      // Validate required fields
+      if (!email || !password) {
+        throw new Error('Email and password are required');
+      }
+
+      if (password.length < 6) {
+        throw new Error('Password must be at least 6 characters long');
+      }
+
+      console.log('Creating user account...');
+      
+      // Create user account with timeout
+      const userCredential = await Promise.race([
+        window.firebaseService.auth.createUserWithEmailAndPassword(email, password),
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Registration timeout - please try again')), 30000)
+        )
+      ]);
+      
       const user = userCredential.user;
+      console.log('User account created:', user.uid);
 
       // Update display name
-      await user.updateProfile({
-        displayName: `${profileData.firstName} ${profileData.lastName}`
-      });
+      if (profileData.firstName || profileData.lastName) {
+        console.log('Updating user profile...');
+        await user.updateProfile({
+          displayName: `${profileData.firstName || ''} ${profileData.lastName || ''}`.trim()
+        });
+      }
 
       // Save additional user data to Firestore
+      console.log('Saving user data to Firestore...');
       const userDocData = {
         uid: user.uid,
         email: user.email,
-        firstName: profileData.firstName,
-        lastName: profileData.lastName,
+        firstName: profileData.firstName || '',
+        lastName: profileData.lastName || '',
         phone: profileData.phone || '',
         country: profileData.country || '',
         city: profileData.city || '',
@@ -107,7 +173,7 @@ class FirebaseAuthService {
           }
         },
         preferences: {
-          newsletter: true,
+          newsletter: profileData.newsletter !== false,
           notifications: true,
           marketingEmails: false
         },
@@ -119,12 +185,27 @@ class FirebaseAuthService {
         }
       };
 
-      await window.firebaseService.setDocument('users', user.uid, userDocData);
+      // Save to Firestore with timeout
+      await Promise.race([
+        window.firebaseService.setDocument('users', user.uid, userDocData),
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Data save timeout - account created but data not saved')), 15000)
+        )
+      ]);
+
+      console.log('User data saved to Firestore');
 
       // Send verification email
-      await user.sendEmailVerification();
+      try {
+        console.log('Sending verification email...');
+        await user.sendEmailVerification();
+        console.log('Verification email sent');
+      } catch (emailError) {
+        console.warn('Failed to send verification email:', emailError);
+        // Don't fail registration if email verification fails
+      }
 
-      console.log('User registered successfully:', user.uid);
+      console.log('User registration completed successfully');
       return {
         success: true,
         user: user,
@@ -150,32 +231,60 @@ class FirebaseAuthService {
         case 'auth/operation-not-allowed':
           errorMessage = 'Email registration is not enabled. Please contact support.';
           break;
+        case 'auth/network-request-failed':
+          errorMessage = 'Network error. Please check your internet connection and try again.';
+          break;
+        case 'auth/too-many-requests':
+          errorMessage = 'Too many registration attempts. Please wait a few minutes and try again.';
+          break;
+        default:
+          if (error.message.includes('timeout')) {
+            errorMessage = error.message;
+          } else {
+            errorMessage = `Registration failed: ${error.message}`;
+          }
       }
 
       return {
         success: false,
-        error: error.code,
+        error: error.code || 'unknown',
         message: errorMessage
       };
     }
   }
 
-  // Sign in user
+  // Sign in user with improved error handling
   async signInUser(email, password) {
     try {
       if (!this.isInitialized) {
         throw new Error('Firebase Auth Service not initialized');
       }
 
-      const userCredential = await window.firebaseService.auth.signInWithEmailAndPassword(email, password);
+      if (!window.firebaseService || !window.firebaseService.auth) {
+        throw new Error('Firebase Auth not available');
+      }
+
+      console.log('Signing in user...');
+      
+      const userCredential = await Promise.race([
+        window.firebaseService.auth.signInWithEmailAndPassword(email, password),
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Sign in timeout - please try again')), 15000)
+        )
+      ]);
+      
       const user = userCredential.user;
+      console.log('User signed in successfully:', user.uid);
 
-      // Update last login
-      await this.updateUserData(user.uid, {
-        lastLogin: window.firebaseService.getTimestamp()
-      });
+      // Update last login time
+      try {
+        await window.firebaseService.setDocument('users', user.uid, {
+          lastLogin: window.firebaseService.getTimestamp()
+        });
+      } catch (updateError) {
+        console.warn('Failed to update last login time:', updateError);
+      }
 
-      console.log('User signed in successfully:', user.email);
       return {
         success: true,
         user: user,
@@ -201,13 +310,22 @@ class FirebaseAuthService {
           errorMessage = 'This account has been disabled. Please contact support.';
           break;
         case 'auth/too-many-requests':
-          errorMessage = 'Too many failed attempts. Please try again later.';
+          errorMessage = 'Too many failed attempts. Please wait a few minutes and try again.';
           break;
+        case 'auth/network-request-failed':
+          errorMessage = 'Network error. Please check your internet connection and try again.';
+          break;
+        default:
+          if (error.message.includes('timeout')) {
+            errorMessage = error.message;
+          } else {
+            errorMessage = `Sign in failed: ${error.message}`;
+          }
       }
 
       return {
         success: false,
-        error: error.code,
+        error: error.code || 'unknown',
         message: errorMessage
       };
     }
@@ -216,55 +334,60 @@ class FirebaseAuthService {
   // Sign out user
   async signOutUser() {
     try {
+      if (!this.isInitialized || !window.firebaseService) {
+        throw new Error('Firebase Auth Service not initialized');
+      }
+
       await window.firebaseService.auth.signOut();
+      console.log('User signed out successfully');
+      
       return {
         success: true,
-        message: 'Signed out successfully!'
+        message: 'Signed out successfully'
       };
+
     } catch (error) {
       console.error('Sign out error:', error);
       return {
         success: false,
+        error: error.code || 'unknown',
         message: 'Sign out failed. Please try again.'
       };
     }
   }
 
-  // Get user data from Firestore
-  async getUserData(uid) {
-    try {
-      const userData = await window.firebaseService.getDocument('users', uid);
-      return userData;
-    } catch (error) {
-      console.error('Error getting user data:', error);
+  // Get current user
+  getCurrentUser() {
+    if (!this.isInitialized || !window.firebaseService) {
       return null;
     }
+    return window.firebaseService.getCurrentUser();
   }
 
-  // Update user data
-  async updateUserData(uid, updateData) {
-    try {
-      await window.firebaseService.setDocument('users', uid, updateData);
-      console.log('User data updated successfully');
-      return { success: true };
-    } catch (error) {
-      console.error('Error updating user data:', error);
-      return { success: false, error: error.message };
-    }
+  // Check if user is authenticated
+  isAuthenticated() {
+    return this.getCurrentUser() !== null;
   }
 
-  // Reset password
-  async resetPassword(email) {
+  // Send password reset email
+  async sendPasswordResetEmail(email) {
     try {
+      if (!this.isInitialized || !window.firebaseService) {
+        throw new Error('Firebase Auth Service not initialized');
+      }
+
       await window.firebaseService.auth.sendPasswordResetEmail(email);
+      console.log('Password reset email sent');
+      
       return {
         success: true,
-        message: 'Password reset email sent! Please check your inbox.'
+        message: 'Password reset email sent. Please check your inbox.'
       };
+
     } catch (error) {
       console.error('Password reset error:', error);
       
-      let errorMessage = 'Password reset failed. Please try again.';
+      let errorMessage = 'Failed to send password reset email.';
       
       switch (error.code) {
         case 'auth/user-not-found':
@@ -273,71 +396,37 @@ class FirebaseAuthService {
         case 'auth/invalid-email':
           errorMessage = 'Invalid email address format.';
           break;
+        case 'auth/too-many-requests':
+          errorMessage = 'Too many requests. Please wait a few minutes and try again.';
+          break;
+        default:
+          errorMessage = `Password reset failed: ${error.message}`;
       }
 
       return {
         success: false,
+        error: error.code || 'unknown',
         message: errorMessage
       };
     }
   }
 
-  // Get current user
-  getCurrentUser() {
-    return this.currentUser;
-  }
-
-  // Check if user is signed in
-  isSignedIn() {
-    return !!this.currentUser;
-  }
-
-  // Check if user is admin
-  isAdmin() {
-    return this.currentUser?.userData?.accountType === 'admin';
-  }
-
-  // Check if user is affiliate
-  isAffiliate() {
-    return this.currentUser?.userData?.accountType === 'affiliate';
-  }
-
-  // Subscribe to auth state changes
-  onAuthStateChanged(callback) {
-    this.authListeners.push(callback);
-    
-    // Call immediately with current state
-    if (this.isInitialized) {
-      callback(this.currentUser);
-    }
-  }
-
-  // Notify all auth listeners
-  notifyAuthListeners(user) {
-    this.authListeners.forEach(callback => {
-      try {
-        callback(user);
-      } catch (error) {
-        console.error('Error in auth listener:', error);
-      }
-    });
-  }
-
   // Update user profile
   async updateUserProfile(profileData) {
     try {
-      if (!this.currentUser) {
-        throw new Error('No user signed in');
+      const user = this.getCurrentUser();
+      if (!user) {
+        throw new Error('No user is currently signed in');
       }
 
       // Update Firebase Auth profile
       if (profileData.displayName) {
-        await this.currentUser.updateProfile({
+        await user.updateProfile({
           displayName: profileData.displayName
         });
       }
 
-      // Update Firestore data
+      // Update Firestore user data
       const updateData = {};
       if (profileData.firstName) updateData.firstName = profileData.firstName;
       if (profileData.lastName) updateData.lastName = profileData.lastName;
@@ -347,60 +436,82 @@ class FirebaseAuthService {
       if (profileData.address) updateData.address = profileData.address;
       if (profileData.dateOfBirth) updateData.dateOfBirth = profileData.dateOfBirth;
       if (profileData.gender) updateData.gender = profileData.gender;
-      if (profileData.bio) updateData['profile.bio'] = profileData.bio;
-      if (profileData.website) updateData['profile.website'] = profileData.website;
+      if (profileData.interests) updateData.interests = profileData.interests;
 
-      await this.updateUserData(this.currentUser.uid, updateData);
-
-      return { success: true, message: 'Profile updated successfully!' };
-    } catch (error) {
-      console.error('Error updating profile:', error);
-      return { success: false, message: 'Failed to update profile. Please try again.' };
-    }
-  }
-
-  // Get all users (Admin only)
-  async getAllUsers() {
-    try {
-      if (!this.isAdmin()) {
-        throw new Error('Unauthorized: Admin access required');
+      if (Object.keys(updateData).length > 0) {
+        await window.firebaseService.setDocument('users', user.uid, updateData);
       }
 
-      const users = await window.firebaseService.getCollection('users', 'joinDate', 'desc');
-      return users;
+      return {
+        success: true,
+        message: 'Profile updated successfully'
+      };
+
     } catch (error) {
-      console.error('Error getting all users:', error);
-      return [];
+      console.error('Profile update error:', error);
+      return {
+        success: false,
+        error: error.code || 'unknown',
+        message: `Profile update failed: ${error.message}`
+      };
     }
   }
 
   // Delete user account
-  async deleteUserAccount(uid = null) {
+  async deleteUserAccount() {
     try {
-      const targetUid = uid || this.currentUser?.uid;
-      
-      if (!targetUid) {
-        throw new Error('No user to delete');
+      const user = this.getCurrentUser();
+      if (!user) {
+        throw new Error('No user is currently signed in');
       }
 
       // Delete user data from Firestore
-      await window.firebaseService.deleteDocument('users', targetUid);
+      await window.firebaseService.deleteDocument('users', user.uid);
 
-      // If deleting current user, delete Firebase Auth account
-      if (!uid && this.currentUser) {
-        await this.currentUser.delete();
-      }
+      // Delete Firebase Auth account
+      await user.delete();
 
-      return { success: true, message: 'Account deleted successfully' };
+      return {
+        success: true,
+        message: 'Account deleted successfully'
+      };
+
     } catch (error) {
-      console.error('Error deleting user account:', error);
-      return { success: false, message: 'Failed to delete account. Please try again.' };
+      console.error('Account deletion error:', error);
+      return {
+        success: false,
+        error: error.code || 'unknown',
+        message: `Account deletion failed: ${error.message}`
+      };
     }
+  }
+
+  // Add auth state change listener
+  onAuthStateChanged(callback) {
+    this.authStateListeners.push(callback);
+    
+    // Return unsubscribe function
+    return () => {
+      const index = this.authStateListeners.indexOf(callback);
+      if (index > -1) {
+        this.authStateListeners.splice(index, 1);
+      }
+    };
+  }
+
+  // Check if service is ready
+  isReady() {
+    return this.isInitialized && window.firebaseService && window.firebaseService.isReady();
   }
 }
 
-// Create global instance
+// Create and export the service
 const firebaseAuthService = new FirebaseAuthService();
 
-// Export for use in other files
+// Make it globally available
 window.firebaseAuthService = firebaseAuthService;
+
+// Export for module systems
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = firebaseAuthService;
+}

@@ -585,6 +585,11 @@
                     throw new Error('Please fix the form errors before submitting');
                 }
                 
+                // Check if Firebase Auth Service is ready
+                if (!window.firebaseAuthService || !window.firebaseAuthService.isReady()) {
+                    throw new Error('Authentication service is not ready. Please refresh the page and try again.');
+                }
+                
                 // Get form data
                 const formData = new FormData(e.target);
                 const userData = {
@@ -601,8 +606,15 @@
                     newsletter: formData.get('newsletter') === 'on'
                 };
 
-                // Register user
-                const result = await window.firebaseAuthService.registerUser(userData);
+                console.log('Starting registration process...');
+                
+                // Register user with timeout
+                const registrationPromise = window.firebaseAuthService.registerUser(userData);
+                const timeoutPromise = new Promise((_, reject) => 
+                    setTimeout(() => reject(new Error('Registration timeout - please try again')), 45000)
+                );
+                
+                const result = await Promise.race([registrationPromise, timeoutPromise]);
                 
                 if (result.success) {
                     showMessage(result.message, 'success');
@@ -617,7 +629,15 @@
 
             } catch (error) {
                 console.error('Registration error:', error);
-                showMessage(error.message, 'error');
+                
+                let errorMessage = error.message;
+                if (error.message.includes('timeout')) {
+                    errorMessage = 'Registration is taking longer than expected. Please try again.';
+                } else if (error.message.includes('network')) {
+                    errorMessage = 'Network error. Please check your internet connection and try again.';
+                }
+                
+                showMessage(errorMessage, 'error');
             } finally {
                 // Reset button
                 submitBtn.disabled = false;
@@ -825,6 +845,32 @@
         function signInWithGoogle() {
             showMessage('Google Sign-In will be available soon!', 'error');
         }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Registration page loaded');
+            
+            // Check Firebase Auth Service readiness
+            function checkServiceReadiness() {
+                if (window.firebaseAuthService && window.firebaseAuthService.isReady()) {
+                    console.log('Firebase Auth Service is ready');
+                    
+                    // Set up auth state listener
+                    window.firebaseAuthService.onAuthStateChanged((user) => {
+                        if (user) {
+                            console.log('User already signed in, redirecting...');
+                            window.location.href = 'index.html';
+                        }
+                    });
+                } else {
+                    console.log('Firebase Auth Service not ready yet, retrying...');
+                    setTimeout(checkServiceReadiness, 1000);
+                }
+            }
+            
+            // Start checking service readiness
+            checkServiceReadiness();
+        });
     </script>
 </body>
 </html>
