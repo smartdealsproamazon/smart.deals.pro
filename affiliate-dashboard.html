@@ -903,6 +903,34 @@
                   </select>
                 </div>
               </div>
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">City</label>
+                  <input type="text" class="form-input" id="profileCity" name="city" placeholder="Your city">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Date of Birth</label>
+                  <input type="date" class="form-input" id="profileDateOfBirth" name="dateOfBirth">
+                </div>
+              </div>
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Gender</label>
+                  <select class="form-select" id="profileGender" name="gender">
+                    <option value="">Select Gender</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                    <option value="prefer-not-to-say">Prefer not to say</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Interests</label>
+                  <input type="text" class="form-input" id="profileInterests" name="interests" placeholder="Technology, Fashion, Sports (comma separated)">
+                </div>
+              </div>
             </form>
           </div>
         </div>
@@ -1400,25 +1428,112 @@
       }
     });
 
+    // Fallback data recovery function
+    function recoverMissingRegistrationData() {
+      console.log('Attempting to recover missing registration data...');
+      
+      const currentUser = localStorage.getItem('smartdeals_currentUser');
+      const affiliateData = localStorage.getItem('smartdeals_affiliateData');
+      
+      if (!currentUser && !affiliateData) {
+        console.warn('No user data found in localStorage');
+        return false;
+      }
+      
+      try {
+        let userData = currentUser ? JSON.parse(currentUser) : {};
+        let affData = affiliateData ? JSON.parse(affiliateData) : {};
+        
+        // Create basic registration data structure if missing
+        let registrationData = localStorage.getItem('smartdeals_userRegistrationData');
+        if (!registrationData && (userData || affData.personalInfo)) {
+          console.log('Creating registration data from available sources...');
+          
+          const personalInfo = affData.personalInfo || {};
+          const recoveredData = {
+            firstName: personalInfo.firstName || userData.name?.split(' ')[0] || '',
+            lastName: personalInfo.lastName || userData.name?.split(' ').slice(1).join(' ') || '',
+            email: personalInfo.email || userData.email || '',
+            phone: personalInfo.phone || userData.phone || '',
+            country: personalInfo.country || userData.country || '',
+            city: personalInfo.city || userData.city || '',
+            dateOfBirth: personalInfo.dateOfBirth || '',
+            gender: personalInfo.gender || '',
+            interests: personalInfo.interests || [],
+            newsletter: true,
+            registeredAt: userData.registeredAt || affData.registrationDate || new Date().toISOString(),
+            lastUpdated: new Date().toISOString(),
+            recoveredAt: new Date().toISOString()
+          };
+          
+          localStorage.setItem('smartdeals_userRegistrationData', JSON.stringify(recoveredData));
+          console.log('Registration data recovered and saved:', recoveredData);
+          return true;
+        }
+        
+        return true;
+      } catch (error) {
+        console.error('Error recovering registration data:', error);
+        return false;
+      }
+    }
+
     // Profile Management Functions
     function loadProfileData() {
-      if (!currentAffiliateData) return;
+      console.log('Loading profile data from local storage...');
+      
+      // Try to recover missing data first
+      recoverMissingRegistrationData();
+      
+      // Get registration data from local storage
+      const currentUser = localStorage.getItem('smartdeals_currentUser');
+      const affiliateData = localStorage.getItem('smartdeals_affiliateData');
+      const userRegistrationData = localStorage.getItem('smartdeals_userRegistrationData'); // Additional registration data
+      
+      let userData = null;
+      let registrationData = null;
+      
+      // Parse user data
+      if (currentUser) {
+        try {
+          userData = JSON.parse(currentUser);
+          console.log('Loaded user data from localStorage:', userData);
+        } catch (e) {
+          console.error('Error parsing current user data:', e);
+        }
+      }
+      
+      // Parse additional registration data
+      if (userRegistrationData) {
+        try {
+          registrationData = JSON.parse(userRegistrationData);
+          console.log('Loaded registration data from localStorage:', registrationData);
+        } catch (e) {
+          console.error('Error parsing registration data:', e);
+        }
+      }
+      
+      // Use currentAffiliateData as primary source, with fallbacks
+      const affiliateInfo = currentAffiliateData || {};
       
       // Load affiliate information (non-editable)
       const profileAffiliateId = document.getElementById('profileAffiliateId');
       if (profileAffiliateId) {
-        profileAffiliateId.textContent = currentAffiliateData.affiliateId || 'Not Available';
+        profileAffiliateId.textContent = affiliateInfo.affiliateId || 'Not Available';
       }
       
       const profileStatus = document.getElementById('profileStatus');
       if (profileStatus) {
-        profileStatus.textContent = (currentAffiliateData.status || 'Active').charAt(0).toUpperCase() + 
-                                   (currentAffiliateData.status || 'Active').slice(1);
+        profileStatus.textContent = (affiliateInfo.status || 'Active').charAt(0).toUpperCase() + 
+                                   (affiliateInfo.status || 'Active').slice(1);
       }
       
       const profileMemberSince = document.getElementById('profileMemberSince');
-      if (profileMemberSince && currentAffiliateData.registrationDate) {
-        const date = new Date(currentAffiliateData.registrationDate);
+      if (profileMemberSince) {
+        const registrationDate = affiliateInfo.registrationDate || 
+                               userData?.registeredAt || 
+                               new Date().toISOString();
+        const date = new Date(registrationDate);
         profileMemberSince.textContent = date.toLocaleDateString('en-US', { 
           year: 'numeric', 
           month: 'long', 
@@ -1426,52 +1541,109 @@
         });
       }
       
-      // Load personal information (editable)
-      if (currentAffiliateData.personalInfo) {
-        const firstName = document.getElementById('profileFirstName');
-        const lastName = document.getElementById('profileLastName');
-        const email = document.getElementById('profileEmail');
-        const phone = document.getElementById('profilePhone');
-        const country = document.getElementById('profileCountry');
-        
-        if (firstName) firstName.value = currentAffiliateData.personalInfo.firstName || '';
-        if (lastName) lastName.value = currentAffiliateData.personalInfo.lastName || '';
-        if (email) email.value = currentAffiliateData.personalInfo.email || '';
-        if (phone) phone.value = currentAffiliateData.personalInfo.phone || '';
-        if (country) country.value = currentAffiliateData.personalInfo.country || '';
+      // Load personal information (editable) - with multiple fallback sources
+      const personalInfo = affiliateInfo.personalInfo || {};
+      
+      const firstName = document.getElementById('profileFirstName');
+      const lastName = document.getElementById('profileLastName');
+      const email = document.getElementById('profileEmail');
+      const phone = document.getElementById('profilePhone');
+      const country = document.getElementById('profileCountry');
+      
+      // Load from multiple sources with priority: affiliateData > userData > registrationData
+      if (firstName) {
+        firstName.value = personalInfo.firstName || 
+                         userData?.name?.split(' ')[0] || 
+                         registrationData?.firstName || '';
+      }
+      if (lastName) {
+        lastName.value = personalInfo.lastName || 
+                        userData?.name?.split(' ').slice(1).join(' ') || 
+                        registrationData?.lastName || '';
+      }
+      if (email) {
+        email.value = personalInfo.email || 
+                     userData?.email || 
+                     registrationData?.email || '';
+      }
+      if (phone) {
+        phone.value = personalInfo.phone || 
+                     userData?.phone || 
+                     registrationData?.phone || '';
+      }
+      if (country) {
+        country.value = personalInfo.country || 
+                       userData?.country || 
+                       registrationData?.country || '';
+      }
+      
+      // Load additional registration fields if available
+      const dateOfBirth = document.getElementById('profileDateOfBirth');
+      if (dateOfBirth) {
+        dateOfBirth.value = personalInfo.dateOfBirth || 
+                           registrationData?.dateOfBirth || '';
+      }
+      
+      const gender = document.getElementById('profileGender');
+      if (gender) {
+        gender.value = personalInfo.gender || 
+                      registrationData?.gender || '';
+      }
+      
+      const city = document.getElementById('profileCity');
+      if (city) {
+        city.value = personalInfo.city || 
+                    userData?.city || 
+                    registrationData?.city || '';
+      }
+      
+      // Load interests if available
+      const interests = document.getElementById('profileInterests');
+      if (interests) {
+        const userInterests = personalInfo.interests || 
+                             registrationData?.interests || [];
+        if (Array.isArray(userInterests)) {
+          interests.value = userInterests.join(', ');
+        }
       }
       
       // Load online presence (editable)
-      if (currentAffiliateData.onlinePresence) {
-        const website = document.getElementById('profileWebsite');
-        const facebook = document.getElementById('profileFacebook');
-        const instagram = document.getElementById('profileInstagram');
-        const youtube = document.getElementById('profileYoutube');
-        const tiktok = document.getElementById('profileTiktok');
-        const strategy = document.getElementById('profileStrategy');
-        
-        if (website) website.value = currentAffiliateData.onlinePresence.website || '';
-        if (facebook) facebook.value = currentAffiliateData.onlinePresence.facebook || '';
-        if (instagram) instagram.value = currentAffiliateData.onlinePresence.instagram || '';
-        if (youtube) youtube.value = currentAffiliateData.onlinePresence.youtube || '';
-        if (tiktok) tiktok.value = currentAffiliateData.onlinePresence.tiktok || '';
-        if (strategy) strategy.value = currentAffiliateData.onlinePresence.strategy || '';
-      }
+      const onlinePresence = affiliateInfo.onlinePresence || {};
+      
+      const website = document.getElementById('profileWebsite');
+      const facebook = document.getElementById('profileFacebook');
+      const instagram = document.getElementById('profileInstagram');
+      const youtube = document.getElementById('profileYoutube');
+      const tiktok = document.getElementById('profileTiktok');
+      const strategy = document.getElementById('profileStrategy');
+      
+      if (website) website.value = onlinePresence.website || '';
+      if (facebook) facebook.value = onlinePresence.facebook || '';
+      if (instagram) instagram.value = onlinePresence.instagram || '';
+      if (youtube) youtube.value = onlinePresence.youtube || '';
+      if (tiktok) tiktok.value = onlinePresence.tiktok || '';
+      if (strategy) strategy.value = onlinePresence.strategy || '';
+      
+      console.log('Profile data loaded successfully from local storage');
     }
     
     function updateProfile() {
-      if (!currentAffiliateData) {
-        alert('No profile data available to update.');
-        return;
-      }
+      console.log('Updating profile with data from form...');
       
-      // Get form data
+      // Get form data (including new fields)
       const firstName = document.getElementById('profileFirstName').value.trim();
       const lastName = document.getElementById('profileLastName').value.trim();
       const email = document.getElementById('profileEmail').value.trim();
       const phone = document.getElementById('profilePhone').value.trim();
       const country = document.getElementById('profileCountry').value;
       
+      // Additional registration fields
+      const dateOfBirth = document.getElementById('profileDateOfBirth')?.value || '';
+      const gender = document.getElementById('profileGender')?.value || '';
+      const city = document.getElementById('profileCity')?.value.trim() || '';
+      const interests = document.getElementById('profileInterests')?.value || '';
+      
+      // Online presence fields
       const website = document.getElementById('profileWebsite').value.trim();
       const facebook = document.getElementById('profileFacebook').value.trim();
       const instagram = document.getElementById('profileInstagram').value.trim();
@@ -1480,8 +1652,8 @@
       const strategy = document.getElementById('profileStrategy').value.trim();
       
       // Validate required fields
-      if (!firstName || !lastName || !email || !phone || !country) {
-        alert('Please fill in all required fields (marked with *)');
+      if (!firstName || !lastName || !email) {
+        alert('Please fill in all required fields: First Name, Last Name, and Email');
         return;
       }
       
@@ -1492,51 +1664,107 @@
         return;
       }
       
-      // Update affiliate data
-      currentAffiliateData.personalInfo = {
-        ...currentAffiliateData.personalInfo,
-        firstName: firstName,
-        lastName: lastName,
-        email: email,
-        phone: phone,
-        country: country
-      };
-      
-      currentAffiliateData.onlinePresence = {
-        ...currentAffiliateData.onlinePresence,
-        website: website,
-        facebook: facebook,
-        instagram: instagram,
-        youtube: youtube,
-        tiktok: tiktok,
-        strategy: strategy
-      };
-      
-      // Update user data for authentication
-      currentUserData.name = `${firstName} ${lastName}`;
-      currentUserData.email = email;
-      currentUserData.phone = phone;
-      currentUserData.country = country;
-      
-      // Save to localStorage
       try {
-        localStorage.setItem('smartdeals_currentUser', JSON.stringify(currentUserData));
-        localStorage.setItem('smartdeals_affiliateRegistered', JSON.stringify(currentAffiliateData));
+        // Get current data from localStorage
+        const currentUser = localStorage.getItem('smartdeals_currentUser');
+        const currentAffiliateData = localStorage.getItem('smartdeals_affiliateData');
+        
+        let userData = currentUser ? JSON.parse(currentUser) : {};
+        let affiliateData = currentAffiliateData ? JSON.parse(currentAffiliateData) : {};
+        
+        // Update user data
+        userData.name = `${firstName} ${lastName}`;
+        userData.email = email;
+        userData.phone = phone;
+        userData.country = country;
+        userData.city = city;
+        userData.lastUpdated = new Date().toISOString();
+        
+        // Update affiliate data
+        if (!affiliateData.personalInfo) affiliateData.personalInfo = {};
+        affiliateData.personalInfo = {
+          ...affiliateData.personalInfo,
+          firstName: firstName,
+          lastName: lastName,
+          email: email,
+          phone: phone,
+          country: country,
+          city: city,
+          dateOfBirth: dateOfBirth,
+          gender: gender
+        };
+        
+        // Process interests
+        if (interests) {
+          const interestsArray = interests.split(',').map(interest => interest.trim()).filter(interest => interest);
+          affiliateData.personalInfo.interests = interestsArray;
+        }
+        
+        // Update online presence
+        if (!affiliateData.onlinePresence) affiliateData.onlinePresence = {};
+        affiliateData.onlinePresence = {
+          ...affiliateData.onlinePresence,
+          website: website,
+          facebook: facebook,
+          instagram: instagram,
+          youtube: youtube,
+          tiktok: tiktok,
+          strategy: strategy
+        };
+        
+        // Update last modified timestamp
+        affiliateData.lastUpdate = new Date().toISOString();
+        
+        // Save comprehensive registration data
+        const registrationData = {
+          firstName: firstName,
+          lastName: lastName,
+          email: email,
+          phone: phone,
+          country: country,
+          city: city,
+          dateOfBirth: dateOfBirth,
+          gender: gender,
+          interests: affiliateData.personalInfo.interests || [],
+          lastUpdated: new Date().toISOString()
+        };
+        
+        // Save all data to localStorage
+        localStorage.setItem('smartdeals_currentUser', JSON.stringify(userData));
+        localStorage.setItem('smartdeals_affiliateData', JSON.stringify(affiliateData));
+        localStorage.setItem('smartdeals_userRegistrationData', JSON.stringify(registrationData));
+        
+        // Update global variables
+        currentUserData = userData;
+        window.currentAffiliateData = affiliateData;
         
         // Update UI
         updateUserInterface();
         
         // Show success message
-        alert('✅ Profile updated successfully!');
+        alert('✅ Profile updated successfully!\n\nUpdated fields:\n- Personal Information\n- Online Presence\n- Registration Data');
         
-        console.log('Profile updated:', {
-          personalInfo: currentAffiliateData.personalInfo,
-          onlinePresence: currentAffiliateData.onlinePresence
+        console.log('Profile updated successfully:', {
+          userData: userData,
+          personalInfo: affiliateData.personalInfo,
+          onlinePresence: affiliateData.onlinePresence,
+          registrationData: registrationData
         });
+        
+        // Also try to sync with Firebase if available
+        if (window.firebaseAuthService && typeof window.firebaseAuthService.updateUserProfile === 'function') {
+          try {
+            console.log('Syncing profile update with Firebase...');
+            await window.firebaseAuthService.updateUserProfile(registrationData);
+            console.log('Firebase sync completed');
+          } catch (firebaseError) {
+            console.warn('Firebase sync failed (localStorage update successful):', firebaseError);
+          }
+        }
         
       } catch (error) {
         console.error('Error saving profile:', error);
-        alert('❌ Failed to save profile. Please try again.');
+        alert('❌ Failed to save profile. Please try again.\n\nError: ' + error.message);
       }
     }
     
@@ -1546,6 +1774,50 @@
         alert('Profile form has been reset to original values.');
       }
     }
+    
+    // Debug function to inspect localStorage data
+    function inspectLocalStorageData() {
+      console.log('=== LOCAL STORAGE DATA INSPECTION ===');
+      
+      const keys = ['smartdeals_currentUser', 'smartdeals_affiliateData', 'smartdeals_userRegistrationData', 'smartdeals_affiliateRegistered'];
+      const data = {};
+      
+      keys.forEach(key => {
+        const value = localStorage.getItem(key);
+        if (value) {
+          try {
+            if (key === 'smartdeals_affiliateRegistered') {
+              data[key] = value;
+            } else {
+              data[key] = JSON.parse(value);
+            }
+          } catch (e) {
+            data[key] = `Error parsing: ${value}`;
+          }
+        } else {
+          data[key] = 'Not found';
+        }
+      });
+      
+      console.log('Current localStorage data:', data);
+      
+      // Display in a more user-friendly format
+      const report = Object.keys(data).map(key => {
+        if (data[key] === 'Not found') {
+          return `${key}: Not found`;
+        } else if (typeof data[key] === 'string' && data[key].startsWith('Error')) {
+          return `${key}: ${data[key]}`;
+        } else {
+          return `${key}: Available (${typeof data[key]})`;
+        }
+      }).join('\n');
+      
+      alert('📊 Local Storage Data Status:\n\n' + report + '\n\nCheck console for detailed data.');
+      return data;
+    }
+    
+    // Add console command for debugging
+    window.debugProfile = inspectLocalStorageData;
     
     // Load profile data when profile section is shown
     const originalShowSection = showSection;
