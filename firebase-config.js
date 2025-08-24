@@ -120,10 +120,27 @@ startFirebaseInitialization();
 // Firebase service wrapper
 class FirebaseService {
   constructor() {
-    this.db = db;
-    this.auth = auth;
-    this.storage = storage;
-    this.isInitialized = !!db;
+    this.db = null;
+    this.auth = null;
+    this.storage = null;
+    this.isInitialized = false;
+    
+    // Set up event listeners for when Firebase is ready
+    window.addEventListener('firebase-ready', () => {
+      this.db = db;
+      this.auth = auth;
+      this.storage = storage;
+      this.isInitialized = true;
+      console.log('FirebaseService updated with initialized services');
+    });
+    
+    // If Firebase is already initialized, set it up immediately
+    if (db && auth) {
+      this.db = db;
+      this.auth = auth;
+      this.storage = storage;
+      this.isInitialized = true;
+    }
   }
 
   // Check if Firebase is ready
@@ -223,9 +240,27 @@ class FirebaseService {
   }
 }
 
-// Create global Firebase service instance
-const firebaseService = new FirebaseService();
+// Create global Firebase service instance after DOM is ready
+let firebaseService;
 
-// Export for use in other files
-window.firebaseService = firebaseService;
-window.firebase = firebase;
+// Initialize service when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+  firebaseService = new FirebaseService();
+  window.firebaseService = firebaseService;
+  console.log('FirebaseService instance created and attached to window');
+});
+
+// Also create immediately if DOM is already ready
+if (document.readyState === 'loading') {
+  // DOM is still loading, wait for DOMContentLoaded
+} else {
+  // DOM is already ready
+  firebaseService = new FirebaseService();
+  window.firebaseService = firebaseService;
+  console.log('FirebaseService instance created immediately (DOM already ready)');
+}
+
+// Make firebase available globally
+if (typeof window !== 'undefined') {
+  window.firebase = firebase;
+}

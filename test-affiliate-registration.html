@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Affiliate Registration - SmartDeals Pro</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      box-sizing: border-box;
+    }
+    button {
+      background-color: #007bff;
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+    .message {
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      display: none;
+    }
+    .success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    .error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    .status {
+      background-color: #e7f3ff;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+    }
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .checkbox-group input[type="checkbox"] {
+      width: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🧪 Test Affiliate Registration</h1>
+    <p>This page tests the affiliate registration functionality with Firebase integration.</p>
+    
+    <div class="status" id="statusDisplay">
+      <strong>Status:</strong> <span id="statusText">Initializing Firebase...</span>
+    </div>
+
+    <div class="message success" id="successMessage"></div>
+    <div class="message error" id="errorMessage"></div>
+
+    <form id="testRegistrationForm">
+      <div class="form-group">
+        <label>First Name:</label>
+        <input type="text" name="firstName" value="Test" required>
+      </div>
+
+      <div class="form-group">
+        <label>Last Name:</label>
+        <input type="text" name="lastName" value="User" required>
+      </div>
+
+      <div class="form-group">
+        <label>Email:</label>
+        <input type="email" name="email" value="test@example.com" required>
+      </div>
+
+      <div class="form-group">
+        <label>Phone:</label>
+        <input type="tel" name="phone" value="+1234567890" required>
+      </div>
+
+      <div class="form-group">
+        <label>Country:</label>
+        <select name="country" required>
+          <option value="US">United States</option>
+          <option value="UK">United Kingdom</option>
+          <option value="CA">Canada</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Experience Level:</label>
+        <select name="experience" required>
+          <option value="beginner">Beginner</option>
+          <option value="intermediate">Intermediate</option>
+          <option value="advanced">Advanced</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Platforms (check at least one):</label>
+        <div class="checkbox-group">
+          <input type="checkbox" name="platforms[]" value="amazon" id="amazon" checked>
+          <label for="amazon">Amazon Associates</label>
+        </div>
+        <div class="checkbox-group">
+          <input type="checkbox" name="platforms[]" value="clickbank" id="clickbank">
+          <label for="clickbank">ClickBank</label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Website (optional):</label>
+        <input type="url" name="website" value="https://example.com">
+      </div>
+
+      <div class="form-group">
+        <label>Marketing Strategy:</label>
+        <textarea name="strategy" rows="3">Social media marketing and content creation</textarea>
+      </div>
+
+      <div class="checkbox-group">
+        <input type="checkbox" name="terms" id="terms" required checked>
+        <label for="terms">I agree to the terms and conditions</label>
+      </div>
+
+      <div class="checkbox-group">
+        <input type="checkbox" name="quality" id="quality" required checked>
+        <label for="quality">I commit to high-quality marketing</label>
+      </div>
+
+      <button type="submit" id="submitBtn">🚀 Test Registration</button>
+    </form>
+
+    <div id="debugInfo" style="margin-top: 30px; padding: 15px; background: #f8f9fa; border-radius: 5px;">
+      <h3>Debug Information:</h3>
+      <div id="debugContent">Waiting for services to initialize...</div>
+    </div>
+  </div>
+
+  <!-- Firebase Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="firebase-user-service.js"></script>
+
+  <script>
+    let debugLog = [];
+    
+    function addDebugLog(message) {
+      const timestamp = new Date().toLocaleTimeString();
+      debugLog.push(`[${timestamp}] ${message}`);
+      updateDebugDisplay();
+      console.log(message);
+    }
+    
+    function updateDebugDisplay() {
+      const debugContent = document.getElementById('debugContent');
+      debugContent.innerHTML = debugLog.slice(-10).join('<br>');
+    }
+    
+    function updateStatus(message, isError = false) {
+      const statusText = document.getElementById('statusText');
+      statusText.textContent = message;
+      statusText.style.color = isError ? '#dc3545' : '#28a745';
+      addDebugLog(`Status: ${message}`);
+    }
+    
+    function showMessage(message, type = 'info') {
+      const successMessage = document.getElementById('successMessage');
+      const errorMessage = document.getElementById('errorMessage');
+      
+      successMessage.style.display = 'none';
+      errorMessage.style.display = 'none';
+      
+      if (type === 'error' && errorMessage) {
+        errorMessage.textContent = message;
+        errorMessage.style.display = 'block';
+      } else if (successMessage) {
+        successMessage.textContent = message;
+        successMessage.style.display = 'block';
+      }
+      
+      addDebugLog(`${type.toUpperCase()}: ${message}`);
+    }
+    
+    // Initialize and test services
+    async function initializeTest() {
+      addDebugLog('Starting initialization test...');
+      
+      // Check Firebase SDK
+      if (typeof firebase === 'undefined') {
+        updateStatus('Firebase SDK not loaded', true);
+        return;
+      }
+      addDebugLog('✓ Firebase SDK loaded');
+      
+      // Wait for services to be ready
+      let attempts = 0;
+      const maxAttempts = 30;
+      
+      const checkServices = () => {
+        attempts++;
+        addDebugLog(`Checking services... (attempt ${attempts})`);
+        
+        if (window.firebaseService && window.firebaseService.isReady()) {
+          addDebugLog('✓ Firebase Service ready');
+          
+          if (window.firebaseUserService && window.firebaseUserService.isReady()) {
+            addDebugLog('✓ Firebase User Service ready');
+            updateStatus('All services ready! ✓');
+            return true;
+          } else {
+            addDebugLog('⚠ Firebase User Service not ready');
+          }
+        } else {
+          addDebugLog('⚠ Firebase Service not ready');
+        }
+        
+        if (attempts < maxAttempts) {
+          setTimeout(checkServices, 1000);
+        } else {
+          updateStatus('Services failed to initialize', true);
+          addDebugLog('❌ Maximum attempts reached');
+        }
+      };
+      
+      checkServices();
+    }
+    
+    // Form submission handler
+    document.getElementById('testRegistrationForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Processing...';
+      
+      try {
+        // Collect form data
+        const formData = {
+          firstName: document.querySelector('[name="firstName"]').value.trim(),
+          lastName: document.querySelector('[name="lastName"]').value.trim(),
+          email: document.querySelector('[name="email"]').value.trim().toLowerCase(),
+          phone: document.querySelector('[name="phone"]').value.trim(),
+          country: document.querySelector('[name="country"]').value,
+          experience: document.querySelector('[name="experience"]').value,
+          platforms: Array.from(document.querySelectorAll('[name="platforms[]"]:checked')).map(cb => cb.value),
+          website: document.querySelector('[name="website"]').value.trim(),
+          strategy: document.querySelector('[name="strategy"]').value.trim(),
+          terms: document.querySelector('[name="terms"]').checked,
+          quality: document.querySelector('[name="quality"]').checked
+        };
+        
+        addDebugLog('Form data collected: ' + JSON.stringify(formData, null, 2));
+        
+        // Test Firebase registration
+        if (window.firebaseUserService && window.firebaseUserService.isReady()) {
+          addDebugLog('Attempting Firebase registration...');
+          const result = await window.firebaseUserService.registerAffiliate(formData);
+          
+          if (result.success) {
+            showMessage(`✅ Registration successful! Affiliate ID: ${result.affiliateId}`, 'success');
+            addDebugLog(`✓ Firebase registration successful with ID: ${result.affiliateId}`);
+          } else {
+            throw new Error(result.message || 'Firebase registration failed');
+          }
+        } else {
+          throw new Error('Firebase User Service not available');
+        }
+        
+      } catch (error) {
+        addDebugLog(`❌ Registration failed: ${error.message}`);
+        showMessage(`❌ Registration failed: ${error.message}`, 'error');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = '🚀 Test Registration';
+      }
+    });
+    
+    // Start initialization when page loads
+    window.addEventListener('load', initializeTest);
+    
+    // Also try to initialize immediately if DOM is ready
+    if (document.readyState === 'complete') {
+      initializeTest();
+    }
+  </script>
+</body>
+</html>
