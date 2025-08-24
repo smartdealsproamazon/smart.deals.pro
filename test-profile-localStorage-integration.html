@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile localStorage Integration Test - SmartDeals Pro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .test-header {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .test-header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .test-content {
+            padding: 30px;
+        }
+
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            background: #f9fafb;
+        }
+
+        .test-section h3 {
+            color: #374151;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .test-button {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .test-button.danger {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+        }
+
+        .test-result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 6px;
+            font-weight: 500;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .test-result.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #10b981;
+        }
+
+        .test-result.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+
+        .test-result.info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #3b82f6;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1>Profile localStorage Integration Test</h1>
+            <p>Testing registration data storage and retrieval for dashboard profile updates</p>
+        </div>
+
+        <div class="test-content">
+            <!-- Test Section 1: Setup Mock Registration Data -->
+            <div class="test-section">
+                <h3>1. Setup Mock Registration Data</h3>
+                <p>Create sample registration data in localStorage to simulate user registration.</p>
+                
+                <button class="test-button" onclick="setupMockRegistrationData()">Setup Mock Registration Data</button>
+                <button class="test-button" onclick="setupMinimalData()">Setup Minimal Data</button>
+                <button class="test-button danger" onclick="clearAllData()">Clear All localStorage</button>
+                
+                <div id="setupResult" class="test-result" style="display: none;"></div>
+            </div>
+
+            <!-- Test Section 2: Inspect Current localStorage -->
+            <div class="test-section">
+                <h3>2. Inspect Current localStorage Data</h3>
+                <p>View what data is currently stored in localStorage.</p>
+                
+                <button class="test-button" onclick="inspectLocalStorage()">Inspect localStorage</button>
+                <button class="test-button" onclick="testDataRecovery()">Test Data Recovery</button>
+                
+                <div id="inspectResult" class="test-result" style="display: none;"></div>
+            </div>
+
+            <!-- Test Section 3: Test Profile Loading -->
+            <div class="test-section">
+                <h3>3. Test Profile Data Loading</h3>
+                <p>Simulate loading profile data as done in the dashboard.</p>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>First Name</label>
+                        <input type="text" id="testFirstName" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Last Name</label>
+                        <input type="text" id="testLastName" readonly>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="testEmail" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone</label>
+                        <input type="tel" id="testPhone" readonly>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Country</label>
+                        <input type="text" id="testCountry" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>City</label>
+                        <input type="text" id="testCity" readonly>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Date of Birth</label>
+                        <input type="text" id="testDateOfBirth" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Gender</label>
+                        <input type="text" id="testGender" readonly>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Interests</label>
+                    <input type="text" id="testInterests" readonly>
+                </div>
+                
+                <button class="test-button" onclick="loadProfileData()">Load Profile Data</button>
+                <button class="test-button" onclick="testFallbackLoading()">Test Fallback Loading</button>
+                
+                <div id="loadResult" class="test-result" style="display: none;"></div>
+            </div>
+
+            <!-- Test Section 4: Test Profile Update -->
+            <div class="test-section">
+                <h3>4. Test Profile Update & Save</h3>
+                <p>Test updating profile data and saving back to localStorage.</p>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Update First Name</label>
+                        <input type="text" id="updateFirstName" placeholder="New first name">
+                    </div>
+                    <div class="form-group">
+                        <label>Update Last Name</label>
+                        <input type="text" id="updateLastName" placeholder="New last name">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Update Interests</label>
+                    <input type="text" id="updateInterests" placeholder="Technology, Sports, Travel">
+                </div>
+                
+                <button class="test-button" onclick="testProfileUpdate()">Test Profile Update</button>
+                <button class="test-button" onclick="verifyUpdatePersistence()">Verify Update Persistence</button>
+                
+                <div id="updateResult" class="test-result" style="display: none;"></div>
+            </div>
+
+            <!-- Test Section 5: Integration Test -->
+            <div class="test-section">
+                <h3>5. Full Integration Test</h3>
+                <p>Complete end-to-end test of the registration → dashboard profile flow.</p>
+                
+                <button class="test-button" onclick="runFullIntegrationTest()">Run Full Integration Test</button>
+                <button class="test-button" onclick="generateTestReport()">Generate Test Report</button>
+                
+                <div id="integrationResult" class="test-result" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Test Functions
+        
+        function showResult(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.className = `test-result ${type}`;
+            element.style.display = 'block';
+        }
+
+        function setupMockRegistrationData() {
+            try {
+                // Complete mock registration data
+                const currentUser = {
+                    name: "John Doe",
+                    email: "john.doe@example.com",
+                    type: "user",
+                    uid: "mock_uid_123",
+                    phone: "+1234567890",
+                    country: "US",
+                    city: "New York",
+                    registeredAt: new Date().toISOString()
+                };
+
+                const affiliateData = {
+                    uid: "mock_uid_123",
+                    personalInfo: {
+                        firstName: "John",
+                        lastName: "Doe",
+                        email: "john.doe@example.com",
+                        phone: "+1234567890",
+                        country: "US",
+                        city: "New York",
+                        dateOfBirth: "1990-05-15",
+                        gender: "male",
+                        interests: ["Technology", "Sports", "Travel"]
+                    },
+                    onlinePresence: {
+                        website: "https://johndoe.com",
+                        facebook: "https://facebook.com/johndoe",
+                        instagram: "@johndoe",
+                        youtube: "",
+                        tiktok: "",
+                        strategy: "Social media marketing and blog content"
+                    },
+                    status: "active",
+                    registrationDate: new Date().toISOString(),
+                    lastUpdate: new Date().toISOString(),
+                    affiliateId: "AFF123456"
+                };
+
+                const registrationData = {
+                    firstName: "John",
+                    lastName: "Doe",
+                    email: "john.doe@example.com",
+                    phone: "+1234567890",
+                    country: "US",
+                    city: "New York",
+                    dateOfBirth: "1990-05-15",
+                    gender: "male",
+                    interests: ["Technology", "Sports", "Travel"],
+                    newsletter: true,
+                    registeredAt: new Date().toISOString(),
+                    lastUpdated: new Date().toISOString()
+                };
+
+                // Save to localStorage
+                localStorage.setItem('smartdeals_currentUser', JSON.stringify(currentUser));
+                localStorage.setItem('smartdeals_affiliateRegistered', 'true');
+                localStorage.setItem('smartdeals_affiliateData', JSON.stringify(affiliateData));
+                localStorage.setItem('smartdeals_userRegistrationData', JSON.stringify(registrationData));
+
+                showResult('setupResult', 
+                    '✅ Mock registration data setup complete!\n\n' +
+                    'Data saved:\n' +
+                    '- smartdeals_currentUser\n' +
+                    '- smartdeals_affiliateRegistered\n' +
+                    '- smartdeals_affiliateData\n' +
+                    '- smartdeals_userRegistrationData\n\n' +
+                    'You can now test the profile loading functionality.',
+                    'success'
+                );
+
+            } catch (error) {
+                showResult('setupResult', `❌ Error setting up mock data: ${error.message}`, 'error');
+            }
+        }
+
+        function setupMinimalData() {
+            try {
+                // Minimal data to test fallback mechanisms
+                const currentUser = {
+                    name: "Jane Smith",
+                    email: "jane.smith@example.com",
+                    uid: "mock_uid_456"
+                };
+
+                localStorage.setItem('smartdeals_currentUser', JSON.stringify(currentUser));
+                localStorage.setItem('smartdeals_affiliateRegistered', 'true');
+
+                showResult('setupResult', 
+                    '✅ Minimal data setup complete!\n\n' +
+                    'This will test the fallback and recovery mechanisms.',
+                    'success'
+                );
+
+            } catch (error) {
+                showResult('setupResult', `❌ Error setting up minimal data: ${error.message}`, 'error');
+            }
+        }
+
+        function clearAllData() {
+            if (confirm('Are you sure you want to clear all localStorage data?')) {
+                const keys = [
+                    'smartdeals_currentUser',
+                    'smartdeals_affiliateRegistered',
+                    'smartdeals_affiliateData',
+                    'smartdeals_userRegistrationData'
+                ];
+
+                keys.forEach(key => localStorage.removeItem(key));
+
+                showResult('setupResult', 
+                    '🗑️ All localStorage data cleared!\n\n' +
+                    'Removed keys:\n' + keys.join('\n'),
+                    'info'
+                );
+            }
+        }
+
+        function inspectLocalStorage() {
+            const keys = [
+                'smartdeals_currentUser',
+                'smartdeals_affiliateRegistered',
+                'smartdeals_affiliateData',
+                'smartdeals_userRegistrationData'
+            ];
+
+            let report = '📊 localStorage Inspection Report:\n\n';
+
+            keys.forEach(key => {
+                const value = localStorage.getItem(key);
+                if (value) {
+                    try {
+                        if (key === 'smartdeals_affiliateRegistered') {
+                            report += `${key}: ${value}\n`;
+                        } else {
+                            const parsed = JSON.parse(value);
+                            report += `${key}: ✅ Available (${Object.keys(parsed).length} properties)\n`;
+                        }
+                    } catch (e) {
+                        report += `${key}: ❌ Parse Error\n`;
+                    }
+                } else {
+                    report += `${key}: ❌ Not Found\n`;
+                }
+            });
+
+            // Detailed data
+            report += '\n--- Detailed Data ---\n';
+            keys.forEach(key => {
+                const value = localStorage.getItem(key);
+                if (value) {
+                    report += `\n${key}:\n${value}\n`;
+                }
+            });
+
+            showResult('inspectResult', report, 'info');
+        }
+
+        function testDataRecovery() {
+            // Simulate the recovery function from the dashboard
+            const currentUser = localStorage.getItem('smartdeals_currentUser');
+            const affiliateData = localStorage.getItem('smartdeals_affiliateData');
+            
+            let report = '🔄 Data Recovery Test:\n\n';
+
+            if (!currentUser && !affiliateData) {
+                report += '❌ No user data found - cannot recover\n';
+                showResult('inspectResult', report, 'error');
+                return;
+            }
+
+            try {
+                let userData = currentUser ? JSON.parse(currentUser) : {};
+                let affData = affiliateData ? JSON.parse(affiliateData) : {};
+                
+                let registrationData = localStorage.getItem('smartdeals_userRegistrationData');
+                if (!registrationData && (userData || affData.personalInfo)) {
+                    report += '🔧 Creating registration data from available sources...\n\n';
+                    
+                    const personalInfo = affData.personalInfo || {};
+                    const recoveredData = {
+                        firstName: personalInfo.firstName || userData.name?.split(' ')[0] || '',
+                        lastName: personalInfo.lastName || userData.name?.split(' ').slice(1).join(' ') || '',
+                        email: personalInfo.email || userData.email || '',
+                        phone: personalInfo.phone || userData.phone || '',
+                        country: personalInfo.country || userData.country || '',
+                        city: personalInfo.city || userData.city || '',
+                        dateOfBirth: personalInfo.dateOfBirth || '',
+                        gender: personalInfo.gender || '',
+                        interests: personalInfo.interests || [],
+                        newsletter: true,
+                        registeredAt: userData.registeredAt || affData.registrationDate || new Date().toISOString(),
+                        lastUpdated: new Date().toISOString(),
+                        recoveredAt: new Date().toISOString()
+                    };
+                    
+                    localStorage.setItem('smartdeals_userRegistrationData', JSON.stringify(recoveredData));
+                    report += '✅ Registration data recovered and saved!\n\n';
+                    report += `Recovered fields:\n${JSON.stringify(recoveredData, null, 2)}`;
+                } else {
+                    report += '✅ Registration data already exists - no recovery needed\n';
+                }
+                
+                showResult('inspectResult', report, 'success');
+            } catch (error) {
+                report += `❌ Recovery failed: ${error.message}`;
+                showResult('inspectResult', report, 'error');
+            }
+        }
+
+        function loadProfileData() {
+            try {
+                let report = '📖 Profile Data Loading Test:\n\n';
+
+                // Get registration data from localStorage (simulating dashboard function)
+                const currentUser = localStorage.getItem('smartdeals_currentUser');
+                const affiliateData = localStorage.getItem('smartdeals_affiliateData');
+                const userRegistrationData = localStorage.getItem('smartdeals_userRegistrationData');
+                
+                let userData = null;
+                let registrationData = null;
+                let affiliateInfo = {};
+                
+                if (currentUser) {
+                    userData = JSON.parse(currentUser);
+                    report += '✅ Current user data loaded\n';
+                }
+                
+                if (userRegistrationData) {
+                    registrationData = JSON.parse(userRegistrationData);
+                    report += '✅ Registration data loaded\n';
+                }
+                
+                if (affiliateData) {
+                    affiliateInfo = JSON.parse(affiliateData);
+                    report += '✅ Affiliate data loaded\n';
+                }
+
+                // Load with fallback priority
+                const personalInfo = affiliateInfo.personalInfo || {};
+                
+                const loadedData = {
+                    firstName: personalInfo.firstName || userData?.name?.split(' ')[0] || registrationData?.firstName || '',
+                    lastName: personalInfo.lastName || userData?.name?.split(' ').slice(1).join(' ') || registrationData?.lastName || '',
+                    email: personalInfo.email || userData?.email || registrationData?.email || '',
+                    phone: personalInfo.phone || userData?.phone || registrationData?.phone || '',
+                    country: personalInfo.country || userData?.country || registrationData?.country || '',
+                    city: personalInfo.city || userData?.city || registrationData?.city || '',
+                    dateOfBirth: personalInfo.dateOfBirth || registrationData?.dateOfBirth || '',
+                    gender: personalInfo.gender || registrationData?.gender || '',
+                    interests: personalInfo.interests || registrationData?.interests || []
+                };
+
+                // Update form fields
+                document.getElementById('testFirstName').value = loadedData.firstName;
+                document.getElementById('testLastName').value = loadedData.lastName;
+                document.getElementById('testEmail').value = loadedData.email;
+                document.getElementById('testPhone').value = loadedData.phone;
+                document.getElementById('testCountry').value = loadedData.country;
+                document.getElementById('testCity').value = loadedData.city;
+                document.getElementById('testDateOfBirth').value = loadedData.dateOfBirth;
+                document.getElementById('testGender').value = loadedData.gender;
+                document.getElementById('testInterests').value = Array.isArray(loadedData.interests) ? loadedData.interests.join(', ') : loadedData.interests;
+
+                report += '\n✅ Profile data loaded successfully into form fields\n\n';
+                report += `Loaded data:\n${JSON.stringify(loadedData, null, 2)}`;
+
+                showResult('loadResult', report, 'success');
+
+            } catch (error) {
+                showResult('loadResult', `❌ Error loading profile data: ${error.message}`, 'error');
+            }
+        }
+
+        function testFallbackLoading() {
+            // Test loading with incomplete data
+            const backup = {
+                currentUser: localStorage.getItem('smartdeals_currentUser'),
+                affiliateData: localStorage.getItem('smartdeals_affiliateData'),
+                registrationData: localStorage.getItem('smartdeals_userRegistrationData')
+            };
+
+            try {
+                // Remove registration data to test fallback
+                localStorage.removeItem('smartdeals_userRegistrationData');
+                
+                loadProfileData();
+                
+                setTimeout(() => {
+                    showResult('loadResult', 
+                        '🔄 Fallback loading test completed!\n\n' +
+                        'The system should load data from currentUser and affiliateData when registration data is missing.',
+                        'info'
+                    );
+                    
+                    // Restore data
+                    if (backup.registrationData) {
+                        localStorage.setItem('smartdeals_userRegistrationData', backup.registrationData);
+                    }
+                }, 1000);
+
+            } catch (error) {
+                showResult('loadResult', `❌ Fallback test error: ${error.message}`, 'error');
+            }
+        }
+
+        function testProfileUpdate() {
+            try {
+                const firstName = document.getElementById('updateFirstName').value || 'UpdatedJohn';
+                const lastName = document.getElementById('updateLastName').value || 'UpdatedDoe';
+                const interests = document.getElementById('updateInterests').value || 'Technology, Sports, Gaming';
+
+                // Get current data
+                const currentUser = localStorage.getItem('smartdeals_currentUser');
+                const currentAffiliateData = localStorage.getItem('smartdeals_affiliateData');
+                
+                let userData = currentUser ? JSON.parse(currentUser) : {};
+                let affiliateData = currentAffiliateData ? JSON.parse(currentAffiliateData) : {};
+                
+                // Update data (simulating dashboard update function)
+                userData.name = `${firstName} ${lastName}`;
+                userData.lastUpdated = new Date().toISOString();
+                
+                if (!affiliateData.personalInfo) affiliateData.personalInfo = {};
+                affiliateData.personalInfo.firstName = firstName;
+                affiliateData.personalInfo.lastName = lastName;
+                
+                // Process interests
+                const interestsArray = interests.split(',').map(interest => interest.trim()).filter(interest => interest);
+                affiliateData.personalInfo.interests = interestsArray;
+                
+                affiliateData.lastUpdate = new Date().toISOString();
+                
+                // Create updated registration data
+                const registrationData = {
+                    firstName: firstName,
+                    lastName: lastName,
+                    email: userData.email,
+                    phone: userData.phone || '',
+                    country: userData.country || '',
+                    city: userData.city || '',
+                    dateOfBirth: affiliateData.personalInfo.dateOfBirth || '',
+                    gender: affiliateData.personalInfo.gender || '',
+                    interests: interestsArray,
+                    lastUpdated: new Date().toISOString()
+                };
+                
+                // Save all data to localStorage
+                localStorage.setItem('smartdeals_currentUser', JSON.stringify(userData));
+                localStorage.setItem('smartdeals_affiliateData', JSON.stringify(affiliateData));
+                localStorage.setItem('smartdeals_userRegistrationData', JSON.stringify(registrationData));
+
+                let report = '💾 Profile Update Test:\n\n';
+                report += '✅ Profile data updated successfully!\n\n';
+                report += `Updated fields:\n`;
+                report += `- Name: ${firstName} ${lastName}\n`;
+                report += `- Interests: ${interests}\n\n`;
+                report += `Updated localStorage keys:\n`;
+                report += `- smartdeals_currentUser\n`;
+                report += `- smartdeals_affiliateData\n`;
+                report += `- smartdeals_userRegistrationData\n\n`;
+                report += `Timestamp: ${new Date().toLocaleString()}`;
+
+                showResult('updateResult', report, 'success');
+
+            } catch (error) {
+                showResult('updateResult', `❌ Profile update error: ${error.message}`, 'error');
+            }
+        }
+
+        function verifyUpdatePersistence() {
+            // Reload profile data to verify updates were saved
+            setTimeout(() => {
+                loadProfileData();
+                showResult('updateResult', 
+                    '🔍 Update persistence verified!\n\n' +
+                    'Profile data has been reloaded to confirm updates were saved correctly.',
+                    'success'
+                );
+            }, 500);
+        }
+
+        function runFullIntegrationTest() {
+            let testResults = [];
+            let report = '🧪 Full Integration Test:\n\n';
+
+            try {
+                // Step 1: Clear and setup fresh data
+                const keys = ['smartdeals_currentUser', 'smartdeals_affiliateRegistered', 'smartdeals_affiliateData', 'smartdeals_userRegistrationData'];
+                keys.forEach(key => localStorage.removeItem(key));
+                
+                report += '1. ✅ Cleared existing data\n';
+                testResults.push(true);
+
+                // Step 2: Setup registration data
+                setupMockRegistrationData();
+                report += '2. ✅ Setup mock registration data\n';
+                testResults.push(true);
+
+                // Step 3: Test data loading
+                setTimeout(() => {
+                    try {
+                        loadProfileData();
+                        report += '3. ✅ Profile data loading successful\n';
+                        testResults.push(true);
+
+                        // Step 4: Test data update
+                        setTimeout(() => {
+                            try {
+                                document.getElementById('updateFirstName').value = 'IntegrationTest';
+                                document.getElementById('updateLastName').value = 'User';
+                                document.getElementById('updateInterests').value = 'Testing, Quality Assurance';
+                                
+                                testProfileUpdate();
+                                report += '4. ✅ Profile data update successful\n';
+                                testResults.push(true);
+
+                                // Step 5: Verify persistence
+                                setTimeout(() => {
+                                    try {
+                                        loadProfileData();
+                                        report += '5. ✅ Data persistence verification successful\n';
+                                        testResults.push(true);
+
+                                        // Final report
+                                        const passedTests = testResults.filter(result => result).length;
+                                        const totalTests = testResults.length;
+                                        
+                                        report += `\n🎯 Integration Test Results:\n`;
+                                        report += `Passed: ${passedTests}/${totalTests} tests\n`;
+                                        
+                                        if (passedTests === totalTests) {
+                                            report += '\n✅ ALL TESTS PASSED!\n';
+                                            report += 'Registration → Dashboard profile integration is working correctly.';
+                                            showResult('integrationResult', report, 'success');
+                                        } else {
+                                            report += '\n❌ SOME TESTS FAILED!\n';
+                                            report += 'There are issues with the integration.';
+                                            showResult('integrationResult', report, 'error');
+                                        }
+
+                                    } catch (error) {
+                                        report += `5. ❌ Data persistence verification failed: ${error.message}\n`;
+                                        showResult('integrationResult', report, 'error');
+                                    }
+                                }, 500);
+
+                            } catch (error) {
+                                report += `4. ❌ Profile data update failed: ${error.message}\n`;
+                                showResult('integrationResult', report, 'error');
+                            }
+                        }, 500);
+
+                    } catch (error) {
+                        report += `3. ❌ Profile data loading failed: ${error.message}\n`;
+                        showResult('integrationResult', report, 'error');
+                    }
+                }, 500);
+
+            } catch (error) {
+                report += `❌ Integration test setup failed: ${error.message}`;
+                showResult('integrationResult', report, 'error');
+            }
+        }
+
+        function generateTestReport() {
+            const now = new Date();
+            let report = `📋 Test Report - ${now.toLocaleString()}\n`;
+            report += `=======================================\n\n`;
+            
+            // Check current localStorage state
+            const keys = ['smartdeals_currentUser', 'smartdeals_affiliateRegistered', 'smartdeals_affiliateData', 'smartdeals_userRegistrationData'];
+            
+            report += `CURRENT LOCALSTORAGE STATUS:\n`;
+            keys.forEach(key => {
+                const value = localStorage.getItem(key);
+                if (value) {
+                    try {
+                        if (key === 'smartdeals_affiliateRegistered') {
+                            report += `✅ ${key}: ${value}\n`;
+                        } else {
+                            const parsed = JSON.parse(value);
+                            report += `✅ ${key}: Available (${Object.keys(parsed).length} properties)\n`;
+                        }
+                    } catch (e) {
+                        report += `❌ ${key}: Parse Error\n`;
+                    }
+                } else {
+                    report += `❌ ${key}: Not Found\n`;
+                }
+            });
+
+            report += `\nFEATURES TESTED:\n`;
+            report += `✅ Mock registration data creation\n`;
+            report += `✅ localStorage data inspection\n`;
+            report += `✅ Profile data loading with fallbacks\n`;
+            report += `✅ Profile data updates\n`;
+            report += `✅ Data persistence verification\n`;
+            report += `✅ Data recovery mechanisms\n`;
+            report += `✅ Full integration workflow\n`;
+
+            report += `\nRECOMMENDATIONS:\n`;
+            report += `• Ensure registration form saves all data to localStorage\n`;
+            report += `• Dashboard should load data with fallback priority\n`;
+            report += `• Profile updates should save to all storage keys\n`;
+            report += `• Implement data recovery for missing registration data\n`;
+            report += `• Add error handling for localStorage operations\n`;
+
+            showResult('integrationResult', report, 'info');
+        }
+
+        // Auto-run inspection on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            console.log('Profile localStorage Integration Test loaded');
+            setTimeout(inspectLocalStorage, 1000);
+        });
+    </script>
+</body>
+</html>

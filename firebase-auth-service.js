@@ -240,18 +240,38 @@ class FirebaseAuthService {
 
       console.log('Affiliate data saved to Firestore');
 
-      // Save affiliate data to localStorage for dashboard compatibility
+      // Save comprehensive registration data to localStorage for dashboard compatibility
       const currentUser = {
         name: `${profileData.firstName || ''} ${profileData.lastName || ''}`.trim(),
         email: user.email,
         type: 'user',
         uid: user.uid,
+        phone: profileData.phone || '',
+        country: profileData.country || '',
+        city: profileData.city || '',
         registeredAt: new Date().toISOString()
+      };
+      
+      // Save complete registration data separately for profile management
+      const registrationData = {
+        firstName: profileData.firstName || '',
+        lastName: profileData.lastName || '',
+        email: user.email,
+        phone: profileData.phone || '',
+        country: profileData.country || '',
+        city: profileData.city || '',
+        dateOfBirth: profileData.dateOfBirth || '',
+        gender: profileData.gender || '',
+        interests: profileData.interests || [],
+        newsletter: profileData.newsletter !== false,
+        registeredAt: new Date().toISOString(),
+        lastUpdated: new Date().toISOString()
       };
       
       localStorage.setItem('smartdeals_currentUser', JSON.stringify(currentUser));
       localStorage.setItem('smartdeals_affiliateRegistered', 'true');
       localStorage.setItem('smartdeals_affiliateData', JSON.stringify(affiliateData));
+      localStorage.setItem('smartdeals_userRegistrationData', JSON.stringify(registrationData));
 
       // Send email notification about new registration
       if (window.emailNotificationService && window.emailNotificationService.isReady()) {
