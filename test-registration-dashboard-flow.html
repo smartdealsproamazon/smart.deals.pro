@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration → Dashboard Flow Test - SmartDeals Pro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .test-header {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .test-header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .test-content {
+            padding: 30px;
+        }
+
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            background: #f9fafb;
+        }
+
+        .test-section h3 {
+            color: #374151;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .test-button {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .test-button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .test-result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+
+        .test-result.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #10b981;
+        }
+
+        .test-result.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+
+        .test-result.info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #3b82f6;
+        }
+
+        .test-data {
+            background: #f3f4f6;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 10px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .navigation-buttons {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        .nav-button {
+            background: #374151;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background 0.3s ease;
+        }
+
+        .nav-button:hover {
+            background: #4b5563;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-indicator.success {
+            background: #10b981;
+        }
+
+        .status-indicator.error {
+            background: #ef4444;
+        }
+
+        .status-indicator.pending {
+            background: #f59e0b;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1>🛍️ SmartDeals Pro</h1>
+            <h2>Registration → Dashboard Flow Test</h2>
+            <p>Complete test suite for user registration and dashboard profile sync</p>
+        </div>
+
+        <div class="test-content">
+            <div class="navigation-buttons">
+                <a href="user-registration.html" class="nav-button">Go to Registration</a>
+                <a href="affiliate-dashboard.html" class="nav-button">Go to Dashboard</a>
+                <button class="nav-button" onclick="clearTestData()">Clear Test Data</button>
+            </div>
+
+            <div class="test-section">
+                <h3><span class="status-indicator pending" id="service-status"></span>Service Availability Test</h3>
+                <button class="test-button" onclick="testServices()">Test All Services</button>
+                <div id="service-result" class="test-result info">Click button to test service availability...</div>
+            </div>
+
+            <div class="test-section">
+                <h3><span class="status-indicator pending" id="registration-status"></span>Registration Data Test</h3>
+                <button class="test-button" onclick="testRegistrationData()">Test Registration Data</button>
+                <div id="registration-result" class="test-result info">Click button to test registration data structure...</div>
+                <div id="registration-data" class="test-data" style="display: none;"></div>
+            </div>
+
+            <div class="test-section">
+                <h3><span class="status-indicator pending" id="dashboard-status"></span>Dashboard Data Loading Test</h3>
+                <button class="test-button" onclick="testDashboardData()">Test Dashboard Data</button>
+                <div id="dashboard-result" class="test-result info">Click button to test dashboard data loading...</div>
+                <div id="dashboard-data" class="test-data" style="display: none;"></div>
+            </div>
+
+            <div class="test-section">
+                <h3><span class="status-indicator pending" id="email-status"></span>Email Notification Test</h3>
+                <button class="test-button" onclick="testEmailNotification()">Test Email System</button>
+                <div id="email-result" class="test-result info">Click button to test email notification system...</div>
+                <div id="email-data" class="test-data" style="display: none;"></div>
+            </div>
+
+            <div class="test-section">
+                <h3><span class="status-indicator pending" id="firebase-status"></span>Firebase Integration Test</h3>
+                <button class="test-button" onclick="testFirebaseIntegration()">Test Firebase</button>
+                <div id="firebase-result" class="test-result info">Click button to test Firebase integration...</div>
+                <div id="firebase-data" class="test-data" style="display: none;"></div>
+            </div>
+
+            <div class="test-section">
+                <h3><span class="status-indicator pending" id="complete-status"></span>Complete Flow Test</h3>
+                <button class="test-button" onclick="testCompleteFlow()">Test Complete Flow</button>
+                <div id="complete-result" class="test-result info">Click button to test the complete registration to dashboard flow...</div>
+                <div id="complete-data" class="test-data" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"></script>
+    
+    <!-- Our Services -->
+    <script src="firebase-config.js"></script>
+    <script src="email-notification-service.js"></script>
+    <script src="firebase-auth-service.js"></script>
+    <script src="firebase-user-service.js"></script>
+
+    <script>
+        // Test Results Tracker
+        const testResults = {
+            services: false,
+            registration: false,
+            dashboard: false,
+            email: false,
+            firebase: false,
+            complete: false
+        };
+
+        // Update status indicator
+        function updateStatus(testName, success) {
+            const indicator = document.getElementById(testName + '-status');
+            if (indicator) {
+                indicator.className = `status-indicator ${success ? 'success' : 'error'}`;
+            }
+            testResults[testName] = success;
+            updateOverallStatus();
+        }
+
+        // Update overall status
+        function updateOverallStatus() {
+            const allPassed = Object.values(testResults).every(result => result === true);
+            document.title = allPassed ? '✅ All Tests Passed' : '⚠️ Tests Running - SmartDeals Pro';
+        }
+
+        // Test Services Availability
+        async function testServices() {
+            const resultElement = document.getElementById('service-result');
+            resultElement.className = 'test-result info';
+            resultElement.innerHTML = '🔄 Testing service availability...';
+
+            try {
+                const services = {
+                    firebaseConfig: typeof window.firebaseConfig !== 'undefined',
+                    firebaseService: typeof window.firebaseService !== 'undefined',
+                    firebaseAuthService: typeof window.firebaseAuthService !== 'undefined',
+                    firebaseUserService: typeof window.firebaseUserService !== 'undefined',
+                    emailNotificationService: typeof window.emailNotificationService !== 'undefined'
+                };
+
+                const allServicesAvailable = Object.values(services).every(Boolean);
+
+                if (allServicesAvailable) {
+                    resultElement.className = 'test-result success';
+                    resultElement.innerHTML = '✅ All services are available and loaded correctly!';
+                    updateStatus('services', true);
+                } else {
+                    const missingServices = Object.entries(services)
+                        .filter(([name, available]) => !available)
+                        .map(([name]) => name);
+                    
+                    resultElement.className = 'test-result error';
+                    resultElement.innerHTML = `❌ Missing services: ${missingServices.join(', ')}`;
+                    updateStatus('services', false);
+                }
+
+                console.log('Service availability test:', services);
+
+            } catch (error) {
+                resultElement.className = 'test-result error';
+                resultElement.innerHTML = `❌ Service test failed: ${error.message}`;
+                updateStatus('services', false);
+            }
+        }
+
+        // Test Registration Data
+        function testRegistrationData() {
+            const resultElement = document.getElementById('registration-result');
+            const dataElement = document.getElementById('registration-data');
+            
+            resultElement.className = 'test-result info';
+            resultElement.innerHTML = '🔄 Testing registration data structure...';
+
+            try {
+                const currentUser = localStorage.getItem('smartdeals_currentUser');
+                const affiliateRegistered = localStorage.getItem('smartdeals_affiliateRegistered');
+                const affiliateData = localStorage.getItem('smartdeals_affiliateData');
+
+                if (currentUser && affiliateRegistered && affiliateData) {
+                    const userData = JSON.parse(currentUser);
+                    const regData = JSON.parse(affiliateData);
+
+                    // Check required fields
+                    const hasRequiredFields = regData.personalInfo && 
+                                            regData.personalInfo.firstName &&
+                                            regData.personalInfo.lastName &&
+                                            regData.personalInfo.email &&
+                                            regData.affiliateId;
+
+                    if (hasRequiredFields) {
+                        resultElement.className = 'test-result success';
+                        resultElement.innerHTML = '✅ Registration data structure is correct!';
+                        updateStatus('registration', true);
+
+                        dataElement.innerHTML = `User Data: ${JSON.stringify(userData, null, 2)}\n\nAffiliate Data: ${JSON.stringify(regData, null, 2)}`;
+                        dataElement.style.display = 'block';
+                    } else {
+                        resultElement.className = 'test-result error';
+                        resultElement.innerHTML = '❌ Registration data is missing required fields!';
+                        updateStatus('registration', false);
+                    }
+                } else {
+                    resultElement.className = 'test-result error';
+                    resultElement.innerHTML = '❌ No registration data found. Please register first.';
+                    updateStatus('registration', false);
+                }
+
+            } catch (error) {
+                resultElement.className = 'test-result error';
+                resultElement.innerHTML = `❌ Registration data test failed: ${error.message}`;
+                updateStatus('registration', false);
+            }
+        }
+
+        // Test Dashboard Data Loading
+        async function testDashboardData() {
+            const resultElement = document.getElementById('dashboard-result');
+            const dataElement = document.getElementById('dashboard-data');
+            
+            resultElement.className = 'test-result info';
+            resultElement.innerHTML = '🔄 Testing dashboard data loading...';
+
+            try {
+                const currentUser = localStorage.getItem('smartdeals_currentUser');
+                if (!currentUser) {
+                    throw new Error('No user data found. Please register first.');
+                }
+
+                const userData = JSON.parse(currentUser);
+                const userUid = userData.uid;
+
+                if (!userUid) {
+                    throw new Error('User UID not found in registration data.');
+                }
+
+                // Test Firebase User Service
+                if (window.firebaseUserService && window.firebaseUserService.isReady()) {
+                    const affiliateResult = await window.firebaseUserService.getAffiliateRegistrationByUID(userUid);
+                    
+                    if (affiliateResult.success) {
+                        resultElement.className = 'test-result success';
+                        resultElement.innerHTML = '✅ Dashboard can successfully load affiliate data from Firebase!';
+                        updateStatus('dashboard', true);
+
+                        dataElement.innerHTML = `Firebase Affiliate Data: ${JSON.stringify(affiliateResult.data, null, 2)}`;
+                        dataElement.style.display = 'block';
+                    } else {
+                        resultElement.className = 'test-result error';
+                        resultElement.innerHTML = `❌ Failed to load affiliate data: ${affiliateResult.message}`;
+                        updateStatus('dashboard', false);
+                    }
+                } else {
+                    throw new Error('Firebase User Service not ready');
+                }
+
+            } catch (error) {
+                resultElement.className = 'test-result error';
+                resultElement.innerHTML = `❌ Dashboard data test failed: ${error.message}`;
+                updateStatus('dashboard', false);
+            }
+        }
+
+        // Test Email Notification
+        async function testEmailNotification() {
+            const resultElement = document.getElementById('email-result');
+            const dataElement = document.getElementById('email-data');
+            
+            resultElement.className = 'test-result info';
+            resultElement.innerHTML = '🔄 Testing email notification system...';
+
+            try {
+                if (!window.emailNotificationService) {
+                    throw new Error('Email Notification Service not available');
+                }
+
+                // Test with sample data
+                const testUserData = {
+                    uid: 'test-uid-123',
+                    personalInfo: {
+                        firstName: 'Test',
+                        lastName: 'User',
+                        email: 'test@example.com',
+                        phone: '+1234567890',
+                        country: 'US'
+                    },
+                    affiliateId: 'AFF123456TEST',
+                    status: 'active',
+                    agreements: {
+                        terms: true,
+                        marketing: true,
+                        quality: true
+                    }
+                };
+
+                const emailResult = await window.emailNotificationService.sendRegistrationNotification(testUserData);
+
+                if (emailResult.success) {
+                    resultElement.className = 'test-result success';
+                    resultElement.innerHTML = '✅ Email notification system is working! Check console for email details.';
+                    updateStatus('email', true);
+
+                    // Show pending emails
+                    const pendingEmails = window.emailNotificationService.getPendingEmails();
+                    dataElement.innerHTML = `Pending Emails: ${JSON.stringify(pendingEmails, null, 2)}`;
+                    dataElement.style.display = 'block';
+                } else {
+                    resultElement.className = 'test-result error';
+                    resultElement.innerHTML = `❌ Email notification failed: ${emailResult.error}`;
+                    updateStatus('email', false);
+                }
+
+            } catch (error) {
+                resultElement.className = 'test-result error';
+                resultElement.innerHTML = `❌ Email notification test failed: ${error.message}`;
+                updateStatus('email', false);
+            }
+        }
+
+        // Test Firebase Integration
+        async function testFirebaseIntegration() {
+            const resultElement = document.getElementById('firebase-result');
+            const dataElement = document.getElementById('firebase-data');
+            
+            resultElement.className = 'test-result info';
+            resultElement.innerHTML = '🔄 Testing Firebase integration...';
+
+            try {
+                if (!window.firebaseService) {
+                    throw new Error('Firebase Service not available');
+                }
+
+                // Test Firebase connectivity
+                const testResult = await window.firebaseService.isReady();
+                
+                if (testResult) {
+                    resultElement.className = 'test-result success';
+                    resultElement.innerHTML = '✅ Firebase integration is working correctly!';
+                    updateStatus('firebase', true);
+
+                    dataElement.innerHTML = `Firebase Status: Connected\nTimestamp: ${new Date().toISOString()}`;
+                    dataElement.style.display = 'block';
+                } else {
+                    resultElement.className = 'test-result error';
+                    resultElement.innerHTML = '❌ Firebase is not properly connected';
+                    updateStatus('firebase', false);
+                }
+
+            } catch (error) {
+                resultElement.className = 'test-result error';
+                resultElement.innerHTML = `❌ Firebase integration test failed: ${error.message}`;
+                updateStatus('firebase', false);
+            }
+        }
+
+        // Test Complete Flow
+        async function testCompleteFlow() {
+            const resultElement = document.getElementById('complete-result');
+            const dataElement = document.getElementById('complete-data');
+            
+            resultElement.className = 'test-result info';
+            resultElement.innerHTML = '🔄 Testing complete registration to dashboard flow...';
+
+            try {
+                // Run all tests
+                await testServices();
+                await new Promise(resolve => setTimeout(resolve, 500)); // Small delay
+                
+                testRegistrationData();
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                await testDashboardData();
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                await testEmailNotification();
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                await testFirebaseIntegration();
+
+                // Check if all tests passed
+                const allTestsPassed = Object.values(testResults).every(result => result === true);
+
+                if (allTestsPassed) {
+                    resultElement.className = 'test-result success';
+                    resultElement.innerHTML = '✅ Complete flow test PASSED! Registration → Dashboard sync is working correctly!';
+                    updateStatus('complete', true);
+
+                    dataElement.innerHTML = `All Tests Results:\n${JSON.stringify(testResults, null, 2)}`;
+                    dataElement.style.display = 'block';
+                } else {
+                    const failedTests = Object.entries(testResults)
+                        .filter(([name, result]) => !result)
+                        .map(([name]) => name);
+
+                    resultElement.className = 'test-result error';
+                    resultElement.innerHTML = `❌ Complete flow test FAILED. Failed tests: ${failedTests.join(', ')}`;
+                    updateStatus('complete', false);
+                }
+
+            } catch (error) {
+                resultElement.className = 'test-result error';
+                resultElement.innerHTML = `❌ Complete flow test failed: ${error.message}`;
+                updateStatus('complete', false);
+            }
+        }
+
+        // Clear test data
+        function clearTestData() {
+            if (confirm('Are you sure you want to clear all test data? This will remove registration data.')) {
+                localStorage.removeItem('smartdeals_currentUser');
+                localStorage.removeItem('smartdeals_affiliateRegistered');
+                localStorage.removeItem('smartdeals_affiliateData');
+                localStorage.removeItem('pendingEmails');
+                
+                // Reset test results
+                Object.keys(testResults).forEach(key => {
+                    testResults[key] = false;
+                    const indicator = document.getElementById(key + '-status');
+                    if (indicator) {
+                        indicator.className = 'status-indicator pending';
+                    }
+                });
+
+                alert('Test data cleared successfully!');
+                location.reload();
+            }
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Registration → Dashboard Flow Test Page Loaded');
+            
+            // Auto-run service test
+            setTimeout(testServices, 1000);
+        });
+    </script>
+</body>
+</html>

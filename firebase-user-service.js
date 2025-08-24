@@ -224,6 +224,57 @@ class FirebaseUserService {
     }
   }
 
+  // Get affiliate registration by UID
+  async getAffiliateRegistrationByUID(uid) {
+    try {
+      if (!this.isInitialized || !window.firebaseService) {
+        throw new Error('Service not initialized');
+      }
+
+      const doc = await window.firebaseService.getDocument('affiliateRegistrations', uid);
+      
+      if (!doc.exists()) {
+        return { success: false, message: 'Affiliate not found' };
+      }
+
+      return {
+        success: true,
+        data: { id: doc.id, ...doc.data() }
+      };
+
+    } catch (error) {
+      console.error('Error getting affiliate registration by UID:', error);
+      return { success: false, error: error.message };
+    }
+  }
+
+  // Get affiliate registration by email
+  async getAffiliateRegistrationByEmail(email) {
+    try {
+      if (!this.isInitialized || !window.firebaseService) {
+        throw new Error('Service not initialized');
+      }
+
+      const snapshot = await window.firebaseService.db.collection('affiliateRegistrations')
+        .where('personalInfo.email', '==', email)
+        .get();
+
+      if (snapshot.empty) {
+        return { success: false, message: 'Affiliate not found' };
+      }
+
+      const doc = snapshot.docs[0];
+      return {
+        success: true,
+        data: { id: doc.id, ...doc.data() }
+      };
+
+    } catch (error) {
+      console.error('Error getting affiliate registration by email:', error);
+      return { success: false, error: error.message };
+    }
+  }
+
   // Update affiliate status
   async updateAffiliateStatus(documentId, status) {
     try {

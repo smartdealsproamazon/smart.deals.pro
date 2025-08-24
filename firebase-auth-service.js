@@ -195,6 +195,72 @@ class FirebaseAuthService {
 
       console.log('User data saved to Firestore');
 
+      // Create affiliate data structure for dashboard compatibility
+      console.log('Creating affiliate data structure...');
+      const affiliateData = {
+        uid: user.uid,
+        personalInfo: {
+          firstName: profileData.firstName || '',
+          lastName: profileData.lastName || '',
+          email: user.email,
+          phone: profileData.phone || '',
+          country: profileData.country || ''
+        },
+        experience: {
+          level: 'beginner',
+          platforms: [],
+          revenue: ''
+        },
+        onlinePresence: {
+          website: '',
+          facebook: '',
+          instagram: '',
+          youtube: '',
+          tiktok: '',
+          strategy: ''
+        },
+        agreements: {
+          terms: true,
+          marketing: profileData.newsletter !== false,
+          quality: true
+        },
+        status: 'active',
+        registrationDate: window.firebaseService.getTimestamp(),
+        lastUpdate: window.firebaseService.getTimestamp(),
+        affiliateId: this.generateAffiliateId()
+      };
+
+      // Save affiliate data
+      await Promise.race([
+        window.firebaseService.setDocument('affiliateRegistrations', user.uid, affiliateData),
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Affiliate data save timeout')), 15000)
+        )
+      ]);
+
+      console.log('Affiliate data saved to Firestore');
+
+      // Save affiliate data to localStorage for dashboard compatibility
+      const currentUser = {
+        name: `${profileData.firstName || ''} ${profileData.lastName || ''}`.trim(),
+        email: user.email,
+        type: 'user',
+        uid: user.uid,
+        registeredAt: new Date().toISOString()
+      };
+      
+      localStorage.setItem('smartdeals_currentUser', JSON.stringify(currentUser));
+      localStorage.setItem('smartdeals_affiliateRegistered', 'true');
+      localStorage.setItem('smartdeals_affiliateData', JSON.stringify(affiliateData));
+
+      // Send email notification about new registration
+      if (window.emailNotificationService && window.emailNotificationService.isReady()) {
+        await window.emailNotificationService.sendRegistrationNotification(affiliateData);
+      } else {
+        // Fallback to the old method
+        await this.sendRegistrationNotification(affiliateData);
+      }
+
       // Send verification email
       try {
         console.log('Sending verification email...');
@@ -210,6 +276,7 @@ class FirebaseAuthService {
         success: true,
         user: user,
         userData: userDocData,
+        affiliateData: affiliateData,
         message: 'Registration successful! Please check your email for verification.'
       };
 
@@ -250,6 +317,66 @@ class FirebaseAuthService {
         error: error.code || 'unknown',
         message: errorMessage
       };
+    }
+  }
+
+  // Generate unique affiliate ID
+  generateAffiliateId() {
+    const timestamp = Date.now().toString();
+    const random = Math.random().toString(36).substring(2, 8).toUpperCase();
+    return `AFF${timestamp.slice(-6)}${random}`;
+  }
+
+  // Send registration notification email
+  async sendRegistrationNotification(affiliateData) {
+    try {
+      console.log('Sending registration notification email...');
+      
+      // Create email data
+      const emailData = {
+        to: 'smartdealsproamazon@gmail.com',
+        subject: 'New User Registration - SmartDeals Pro',
+        body: `
+New User Registration Details:
+
+Personal Information:
+- Name: ${affiliateData.personalInfo.firstName} ${affiliateData.personalInfo.lastName}
+- Email: ${affiliateData.personalInfo.email}
+- Phone: ${affiliateData.personalInfo.phone || 'Not provided'}
+- Country: ${affiliateData.personalInfo.country || 'Not provided'}
+
+Registration Details:
+- Affiliate ID: ${affiliateData.affiliateId}
+- Registration Date: ${new Date().toLocaleString()}
+- Status: ${affiliateData.status}
+
+Additional Information:
+- Newsletter Subscription: ${affiliateData.agreements.marketing ? 'Yes' : 'No'}
+- User ID: ${affiliateData.uid}
+
+This user has been automatically registered and can access the dashboard.
+        `,
+        timestamp: window.firebaseService.getTimestamp(),
+        userEmail: affiliateData.personalInfo.email,
+        userName: `${affiliateData.personalInfo.firstName} ${affiliateData.personalInfo.lastName}`,
+        affiliateId: affiliateData.affiliateId
+      };
+
+      // Save to Firebase collection for email processing
+      await window.firebaseService.addDocument('emailNotifications', emailData);
+      
+      console.log('Registration notification queued successfully');
+      
+      // For immediate testing, also log to console
+      console.log('=== REGISTRATION NOTIFICATION ===');
+      console.log('To: smartdealsproamazon@gmail.com');
+      console.log('Subject:', emailData.subject);
+      console.log('Content:', emailData.body);
+      console.log('===================================');
+      
+    } catch (error) {
+      console.error('Failed to send registration notification:', error);
+      // Don't fail registration if email notification fails
     }
   }
 

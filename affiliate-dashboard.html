@@ -1036,7 +1036,7 @@
       
       try {
         currentUserData = JSON.parse(currentUser);
-        currentAffiliateData = JSON.parse(affiliateRegistered);
+        // We'll load currentAffiliateData later from Firebase in loadAffiliateData
         return true;
       } catch (e) {
         console.error('Error parsing user data:', e);
@@ -1049,7 +1049,7 @@
     }
 
     function updateUserInterface() {
-      if (!currentUserData || !currentAffiliateData) return;
+      if (!currentUserData) return;
       
       // Update user avatar
       const userAvatar = document.getElementById('userAvatar');
@@ -1077,54 +1077,86 @@
     }
 
     async function loadAffiliateData() {
-      if (!currentAffiliateData) return;
+      if (!currentUserData) return;
       
       const userEmail = currentUserData.email;
+      const userUid = currentUserData.uid;
       
       try {
-        // Ensure Firebase service is available
-        if (!window.firebaseUserService) {
-          throw new Error('Firebase service not available');
+        // Load affiliate data from Firebase using uid
+        console.log('Loading affiliate data for user:', userEmail);
+        let affiliateDataLoaded = false;
+        
+        if (window.firebaseUserService) {
+          try {
+            const affiliateResult = await window.firebaseUserService.getAffiliateRegistrationByUID(userUid);
+            if (affiliateResult.success) {
+              currentAffiliateData = affiliateResult.data;
+              console.log('Affiliate data loaded from Firebase:', currentAffiliateData.affiliateId);
+              affiliateDataLoaded = true;
+            }
+          } catch (firebaseError) {
+            console.error('Firebase affiliate data load error:', firebaseError);
+          }
+        } else if (window.firebaseService) {
+          try {
+            const affiliateDoc = await window.firebaseService.getDocument('affiliateRegistrations', userUid);
+            if (affiliateDoc.exists()) {
+              currentAffiliateData = affiliateDoc.data();
+              console.log('Affiliate data loaded from Firebase:', currentAffiliateData.affiliateId);
+              affiliateDataLoaded = true;
+            }
+          } catch (firebaseError) {
+            console.error('Firebase affiliate data load error:', firebaseError);
+          }
+        }
+        
+        // Fallback to localStorage if Firebase data not available
+        if (!affiliateDataLoaded) {
+          console.log('No affiliate document found in Firebase, checking localStorage...');
+          const localAffiliateData = localStorage.getItem('smartdeals_affiliateData');
+          if (localAffiliateData) {
+            currentAffiliateData = JSON.parse(localAffiliateData);
+            console.log('Using affiliate data from localStorage');
+          } else {
+            console.log('No affiliate data found in localStorage either');
+            return;
+          }
         }
 
         // Load real product data from Firebase
-        console.log('Loading products for user:', userEmail);
-        const productResult = await window.firebaseUserService.getUserProducts(userEmail);
         let products = { total: 0, active: 0, pending: 0 };
         
-        if (productResult.success) {
-          console.log('User products loaded:', productResult.products.length);
-          products = {
-            total: productResult.products.length,
-            active: productResult.products.filter(p => p.status !== 'pending' && p.status !== 'rejected').length,
-            pending: productResult.products.filter(p => p.status === 'pending').length
-          };
-        } else {
-          console.log('No products found for user or error:', productResult.error);
+        if (window.firebaseUserService) {
+          console.log('Loading products for user:', userEmail);
+          const productResult = await window.firebaseUserService.getUserProducts(userEmail);
+          
+          if (productResult.success) {
+            console.log('User products loaded:', productResult.products.length);
+            products = {
+              total: productResult.products.length,
+              active: productResult.products.filter(p => p.status !== 'pending' && p.status !== 'rejected').length,
+              pending: productResult.products.filter(p => p.status === 'pending').length
+            };
+          } else {
+            console.log('No products found for user or error:', productResult.error);
+          }
         }
-        
-        // Load real affiliate data from Firebase
-        console.log('Loading affiliate data for user:', userEmail);
-        const affiliateResult = await window.firebaseUserService.getAffiliateByEmail(userEmail);
+
+        // Load affiliate analytics (mock data for now)
         let analytics = { views: 0, profileVisits: 0, clicks: 0 };
-        
-        if (affiliateResult.success && affiliateResult.affiliate) {
-          console.log('Affiliate data loaded:', affiliateResult.affiliate.affiliateId);
-          analytics = affiliateResult.affiliate.analytics || analytics;
-          // Update currentAffiliateData with real Firebase data
-          currentAffiliateData = affiliateResult.affiliate;
-        } else {
-          console.log('No affiliate data found or error:', affiliateResult.error);
+        if (currentAffiliateData && currentAffiliateData.analytics) {
+          analytics = currentAffiliateData.analytics;
         }
         
         // Update dashboard stats with real data
         updateDashboardStats(products, analytics);
         
-        // Update recent activity with real product submissions
-        updateRecentActivity(productResult.success ? productResult.products : []);
+        // Update recent activity
+        updateRecentActivity([]);
         
       } catch (error) {
-        console.error('Error loading affiliate data from Firebase:', error);
+        console.error('Error loading affiliate data:', error);
         // Fallback to empty data with proper error message
         updateDashboardStats({ total: 0, active: 0, pending: 0 }, { views: 0, profileVisits: 0, clicks: 0 });
         
@@ -1536,6 +1568,8 @@
   </script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="email-notification-service.js"></script>
   <script src="firebase-user-service.js"></script>
   <script src="cloud-sync.js"></script>
   <script src="user-auth.js"></script>
