@@ -19,7 +19,7 @@ let app, db, auth, storage;
 function waitForFirebaseSDK() {
   return new Promise((resolve, reject) => {
     let attempts = 0;
-    const maxAttempts = 50;
+    const maxAttempts = 20; // Reduced from 50
     
     function checkSDK() {
       attempts++;
@@ -28,10 +28,10 @@ function waitForFirebaseSDK() {
         console.log('Firebase SDK loaded successfully');
         resolve();
       } else if (attempts >= maxAttempts) {
-        console.error('Firebase SDK failed to load after maximum attempts');
-        reject(new Error('Firebase SDK not available'));
+        console.warn('Firebase SDK failed to load after maximum attempts, continuing without Firebase');
+        resolve(); // Resolve instead of reject to allow fallback
       } else {
-        setTimeout(checkSDK, 100);
+        setTimeout(checkSDK, 200); // Increased interval
       }
     }
     
