@@ -105,6 +105,341 @@
       transform: translateY(-2px);
       box-shadow: 0 8px 20px rgba(0,0,0,0.2);
     }
+
+    /* Registration Section Styles */
+    .registration-section {
+      padding: 4rem 0;
+      background: #f8fafc;
+    }
+
+    .registration-header-text {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .registration-header-text h2 {
+      font-size: 2.5rem;
+      color: #333;
+      margin-bottom: 1rem;
+    }
+
+    .registration-header-text p {
+      font-size: 1.2rem;
+      color: #666;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .registration-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .benefits-section {
+      background: white;
+      padding: 2.5rem;
+      border-radius: 16px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+      height: fit-content;
+      position: sticky;
+      top: 100px;
+    }
+
+    .benefits-section h3 {
+      font-size: 1.8rem;
+      color: #333;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .benefit-item {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 2rem;
+      padding: 1.5rem;
+      background: #f8fafc;
+      border-radius: 12px;
+      transition: transform 0.2s ease;
+    }
+
+    .benefit-item:hover {
+      transform: translateY(-2px);
+    }
+
+    .benefit-icon {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 1rem;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+
+    .benefit-item h4 {
+      font-size: 1.1rem;
+      color: #333;
+      margin-bottom: 0.5rem;
+    }
+
+    .benefit-item p {
+      color: #666;
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+
+    .registration-form {
+      background: white;
+      padding: 2.5rem;
+      border-radius: 16px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+    }
+
+    .form-title {
+      font-size: 1.8rem;
+      color: #333;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-group.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: #495057;
+      font-size: 0.9rem;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid #e9ecef;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      font-family: inherit;
+      box-sizing: border-box;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .form-group input::placeholder {
+      color: #6c757d;
+    }
+
+    .password-strength {
+      margin-top: 5px;
+      font-size: 0.85rem;
+    }
+
+    .strength-weak { color: #dc3545; }
+    .strength-medium { color: #ffc107; }
+    .strength-strong { color: #28a745; }
+
+    .interests-section {
+      margin-bottom: 1.5rem;
+    }
+
+    .interests-section label {
+      display: block;
+      margin-bottom: 1rem;
+      font-weight: 600;
+      color: #495057;
+      font-size: 0.9rem;
+    }
+
+    .interests-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 0.5rem;
+    }
+
+    .interest-tag {
+      padding: 8px 12px;
+      border: 2px solid #e9ecef;
+      border-radius: 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+
+    .interest-tag:hover {
+      border-color: #667eea;
+      background: #f8fafc;
+    }
+
+    .interest-tag.selected {
+      background: #667eea;
+      color: white;
+      border-color: #667eea;
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 1.5rem;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+      margin-right: 10px;
+      margin-top: 3px;
+      transform: scale(1.2);
+      width: auto;
+    }
+
+    .checkbox-group label {
+      font-size: 0.9rem;
+      line-height: 1.4;
+      margin-bottom: 0;
+    }
+
+    .checkbox-group a {
+      color: #667eea;
+      text-decoration: none;
+    }
+
+    .checkbox-group a:hover {
+      text-decoration: underline;
+    }
+
+    .submit-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      padding: 15px 30px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-bottom: 1rem;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .submit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .login-link {
+      text-align: center;
+      font-size: 0.9rem;
+      color: #666;
+    }
+
+    .login-link a {
+      color: #667eea;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .login-link a:hover {
+      text-decoration: underline;
+    }
+
+    .status-message {
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      display: none;
+    }
+
+    .status-message.success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .status-message.error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .status-message.info {
+      background: #d1ecf1;
+      color: #0c5460;
+      border: 1px solid #bee5eb;
+    }
+
+    .loading {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #ffffff;
+      border-radius: 50%;
+      border-top-color: transparent;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .registration-container {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+
+      .benefits-section {
+        position: static;
+        order: 2;
+      }
+
+      .registration-form {
+        order: 1;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .registration-header-text h2 {
+        font-size: 2rem;
+      }
+
+      .interests-grid {
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      }
+    }
     
     .hero-stats {
       display: grid;
@@ -550,7 +885,7 @@
               <a href="#" class="nav-link dropdown-toggle">For Affiliates <i class="fas fa-chevron-down"></i></a>
               <ul class="dropdown-menu">
                 <li><a href="for-affiliates.html" class="active">🚀 Join Network</a></li>
-                <li><a href="affiliate-register.html">📝 Register</a></li>
+                <li><a href="#registration-section" onclick="scrollToRegistration()">📝 Register</a></li>
                 <li><a href="#" onclick="accessDashboard()">📊 Dashboard</a></li>
                 <li><a href="success-stories.html">🏆 Success Stories</a></li>
               </ul>
@@ -579,7 +914,7 @@
       <a href="index.html">Home</a>
       <a href="marketplace.html">🛍️ Marketplace</a>
       <a href="for-affiliates.html" class="active">🚀 Join Network</a>
-      <a href="affiliate-register.html">📝 Register</a>
+      <a href="#registration-section" onclick="scrollToRegistration()">📝 Register</a>
       <a href="#" onclick="accessDashboard()">📊 Dashboard</a>
       <a href="reviews.html">Reviews</a>
       <a href="about.html">About</a>
@@ -836,34 +1171,177 @@
     </div>
   </section>
 
-  <!-- CTA Section -->
-  <section class="cta-section">
+  <!-- Registration Section -->
+  <section class="registration-section" id="registration-section">
     <div class="container">
-      <div class="cta-content">
-        <h2>Ready to Start Earning?</h2>
-        <p>Join thousands of successful affiliates who are already building their global business with our platform.</p>
-        
-        <div class="cta-buttons">
-          <a href="affiliate-register.html" class="btn btn-primary">Join Now - Free Registration</a>
-          <a href="success-stories.html" class="btn btn-secondary">View More Success Stories</a>
+      <div class="registration-content">
+        <div class="registration-header-text">
+          <h2>🚀 Join Our Global Affiliate Network</h2>
+          <p>Create your account and start earning commissions today. Join thousands of successful affiliates worldwide.</p>
         </div>
         
-        <div class="cta-features">
-          <div class="cta-feature">
-            <i class="fas fa-check"></i>
-            <span>100% Free to Join</span>
+        <div class="registration-container">
+          <!-- Left Side - Benefits -->
+          <div class="benefits-section">
+            <h3>Why Join Us?</h3>
+            <div class="benefit-list">
+              <div class="benefit-item">
+                <i class="fas fa-dollar-sign benefit-icon"></i>
+                <div>
+                  <h4>High Commissions</h4>
+                  <p>Earn up to 15% commission on every sale</p>
+                </div>
+              </div>
+              <div class="benefit-item">
+                <i class="fas fa-globe benefit-icon"></i>
+                <div>
+                  <h4>Global Reach</h4>
+                  <p>Access millions of customers worldwide</p>
+                </div>
+              </div>
+              <div class="benefit-item">
+                <i class="fas fa-chart-line benefit-icon"></i>
+                <div>
+                  <h4>Real-time Analytics</h4>
+                  <p>Track your performance with detailed insights</p>
+                </div>
+              </div>
+              <div class="benefit-item">
+                <i class="fas fa-headset benefit-icon"></i>
+                <div>
+                  <h4>24/7 Support</h4>
+                  <p>Dedicated support team to help you succeed</p>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="cta-feature">
-            <i class="fas fa-check"></i>
-            <span>No Monthly Fees</span>
-          </div>
-          <div class="cta-feature">
-            <i class="fas fa-check"></i>
-            <span>Global Reach</span>
-          </div>
-          <div class="cta-feature">
-            <i class="fas fa-check"></i>
-            <span>24/7 Support</span>
+
+          <!-- Right Side - Registration Form -->
+          <div class="registration-form">
+            <h3 class="form-title">Create Your Affiliate Account</h3>
+            
+            <!-- Status Message -->
+            <div id="status-message" class="status-message"></div>
+
+            <form id="registration-form">
+                <!-- Personal Information -->
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="firstName">First Name *</label>
+                        <input type="text" id="firstName" name="firstName" required 
+                               placeholder="Enter your first name">
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Last Name *</label>
+                        <input type="text" id="lastName" name="lastName" required 
+                               placeholder="Enter your last name">
+                    </div>
+                </div>
+
+                <!-- Contact Information -->
+                <div class="form-group full-width">
+                    <label for="email">Email Address *</label>
+                    <input type="email" id="email" name="email" required 
+                           placeholder="Enter your email address">
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" name="phone" 
+                           placeholder="Enter your phone number">
+                </div>
+
+                <!-- Password -->
+                <div class="form-group full-width">
+                    <label for="password">Password *</label>
+                    <input type="password" id="password" name="password" required 
+                           placeholder="Create a strong password">
+                    <div id="password-strength" class="password-strength"></div>
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="confirmPassword">Confirm Password *</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" required 
+                           placeholder="Confirm your password">
+                </div>
+
+                <!-- Location Information -->
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="country">Country</label>
+                        <select id="country" name="country">
+                            <option value="">Select Country</option>
+                            <option value="Pakistan">Pakistan</option>
+                            <option value="USA">United States</option>
+                            <option value="UK">United Kingdom</option>
+                            <option value="Canada">Canada</option>
+                            <option value="Australia">Australia</option>
+                            <option value="India">India</option>
+                            <option value="UAE">United Arab Emirates</option>
+                            <option value="Saudi Arabia">Saudi Arabia</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="city">City</label>
+                        <input type="text" id="city" name="city" 
+                               placeholder="Enter your city">
+                    </div>
+                </div>
+
+                <!-- Affiliate Experience -->
+                <div class="form-group full-width">
+                    <label for="experience">Affiliate Marketing Experience</label>
+                    <select id="experience" name="experience">
+                        <option value="">Select your experience level</option>
+                        <option value="beginner">Beginner (0-1 years)</option>
+                        <option value="intermediate">Intermediate (1-3 years)</option>
+                        <option value="advanced">Advanced (3+ years)</option>
+                        <option value="expert">Expert (5+ years)</option>
+                    </select>
+                </div>
+
+                <!-- Marketing Channels -->
+                <div class="interests-section">
+                    <label>Your Marketing Channels (Select all that apply)</label>
+                    <div class="interests-grid">
+                        <div class="interest-tag" data-interest="social-media">Social Media</div>
+                        <div class="interest-tag" data-interest="website-blog">Website/Blog</div>
+                        <div class="interest-tag" data-interest="youtube">YouTube</div>
+                        <div class="interest-tag" data-interest="email-marketing">Email Marketing</div>
+                        <div class="interest-tag" data-interest="paid-ads">Paid Advertising</div>
+                        <div class="interest-tag" data-interest="influencer">Influencer Marketing</div>
+                        <div class="interest-tag" data-interest="seo">SEO/Organic</div>
+                        <div class="interest-tag" data-interest="mobile-apps">Mobile Apps</div>
+                    </div>
+                </div>
+
+                <!-- Terms and Conditions -->
+                <div class="checkbox-group">
+                    <input type="checkbox" id="terms" name="terms" required>
+                    <label for="terms">
+                        I agree to the <a href="terms.html" target="_blank">Terms of Service</a> 
+                        and <a href="privacy-policy.html" target="_blank">Privacy Policy</a> *
+                    </label>
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="newsletter" name="newsletter" checked>
+                    <label for="newsletter">
+                        I want to receive promotional emails and newsletters about deals and opportunities
+                    </label>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="submit-btn" id="submit-btn">
+                    🚀 Create Affiliate Account
+                </button>
+
+                <!-- Login Link -->
+                <div class="login-link">
+                    Already have an account? <a href="sign-in.html">Sign In</a>
+                </div>
+            </form>
           </div>
         </div>
       </div>
@@ -882,7 +1360,7 @@
           <h4>For Affiliates</h4>
           <ul>
             <li><a href="for-affiliates.html">Join Network</a></li>
-            <li><a href="affiliate-register.html">Register</a></li>
+            <li><a href="#registration-section" onclick="scrollToRegistration()">Register</a></li>
             <li><a href="#" onclick="accessDashboard()">Dashboard</a></li>
             <li><a href="success-stories.html">Success Stories</a></li>
           </ul>
@@ -999,7 +1477,360 @@
         // In real implementation, send to analytics
       });
     });
+
+    // Access Dashboard function
+    function accessDashboard() {
+      // Check if user is already registered
+      const currentUser = localStorage.getItem('smartdeals_currentUser');
+      const affiliateRegistered = localStorage.getItem('smartdeals_affiliateRegistered');
+      
+      if (currentUser && affiliateRegistered) {
+        // User is registered, go to dashboard
+        window.location.href = 'affiliate-dashboard.html';
+      } else {
+        // User is not registered, scroll to registration form
+        const registrationSection = document.querySelector('.registration-section');
+        if (registrationSection) {
+          registrationSection.scrollIntoView({ behavior: 'smooth' });
+          
+          // Show a message encouraging registration
+          setTimeout(() => {
+            showMessage('Please create your affiliate account below to access the dashboard', 'info');
+          }, 500);
+        }
+      }
+    }
+
+    // Scroll to registration function
+    function scrollToRegistration() {
+      const registrationSection = document.getElementById('registration-section');
+      if (registrationSection) {
+        registrationSection.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
   </script>
+
+  <!-- Firebase Scripts for Registration Form -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"></script>
+
+  <!-- Our Firebase Services -->
+  <script src="firebase-config.js"></script>
+  <script src="email-notification-service.js"></script>
+  <script src="firebase-auth-service.js"></script>
+
+  <script>
+    let selectedInterests = [];
+
+    // Initialize registration form
+    document.addEventListener('DOMContentLoaded', async () => {
+        console.log('Affiliate Registration Form initialized');
+        
+        // Wait for Firebase services
+        await waitForFirebaseServices();
+        
+        // Setup event listeners
+        setupRegistrationEventListeners();
+    });
+
+    // Wait for Firebase services to be ready
+    async function waitForFirebaseServices() {
+        let attempts = 0;
+        const maxAttempts = 50;
+        
+        while (attempts < maxAttempts) {
+            if (window.firebaseService && window.firebaseService.isReady() && 
+                window.firebaseAuthService) {
+                console.log('Firebase services ready for affiliate registration');
+                return;
+            }
+            await new Promise(resolve => setTimeout(resolve, 100));
+            attempts++;
+        }
+        
+        showMessage('Firebase services failed to initialize. Please refresh the page.', 'error');
+    }
+
+    // Setup event listeners for registration form
+    function setupRegistrationEventListeners() {
+        // Form submission
+        const registrationForm = document.getElementById('registration-form');
+        if (registrationForm) {
+            registrationForm.addEventListener('submit', handleAffiliateRegistration);
+        }
+
+        // Password strength checker
+        const passwordField = document.getElementById('password');
+        if (passwordField) {
+            passwordField.addEventListener('input', checkPasswordStrength);
+        }
+
+        // Confirm password validation
+        const confirmPasswordField = document.getElementById('confirmPassword');
+        if (confirmPasswordField) {
+            confirmPasswordField.addEventListener('input', validatePasswordMatch);
+        }
+
+        // Interest tags
+        document.querySelectorAll('.interest-tag').forEach(tag => {
+            tag.addEventListener('click', toggleInterest);
+        });
+
+        // Real-time email validation
+        const emailField = document.getElementById('email');
+        if (emailField) {
+            emailField.addEventListener('blur', validateEmail);
+        }
+    }
+
+    // Handle affiliate registration
+    async function handleAffiliateRegistration(e) {
+        e.preventDefault();
+        
+        const submitBtn = document.getElementById('submit-btn');
+        const originalText = submitBtn.innerHTML;
+        
+        try {
+            // Show loading
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="loading"></span> Creating Affiliate Account...';
+            
+            // Validate form
+            if (!validateRegistrationForm()) {
+                throw new Error('Please fix the form errors before submitting');
+            }
+            
+            // Check if Firebase Auth Service is ready
+            if (!window.firebaseAuthService || !window.firebaseAuthService.isReady()) {
+                throw new Error('Authentication service is not ready. Please refresh the page and try again.');
+            }
+            
+            // Get form data
+            const formData = new FormData(e.target);
+            const userData = {
+                firstName: formData.get('firstName'),
+                lastName: formData.get('lastName'),
+                email: formData.get('email'),
+                password: formData.get('password'),
+                phone: formData.get('phone') || '',
+                country: formData.get('country') || '',
+                city: formData.get('city') || '',
+                experience: formData.get('experience') || '',
+                interests: selectedInterests,
+                newsletter: formData.get('newsletter') === 'on',
+                accountType: 'affiliate' // Mark as affiliate account
+            };
+
+            console.log('Starting affiliate registration process...');
+            
+            // Register user with timeout
+            const registrationPromise = window.firebaseAuthService.registerUser(userData);
+            const timeoutPromise = new Promise((_, reject) => 
+                setTimeout(() => reject(new Error('Registration timeout - please try again')), 45000)
+            );
+            
+            const result = await Promise.race([registrationPromise, timeoutPromise]);
+            
+            if (result.success) {
+                showMessage('🎉 ' + result.message + ' Welcome to our affiliate network!', 'success');
+                
+                // Redirect to dashboard after successful registration
+                setTimeout(() => {
+                    window.location.href = 'affiliate-dashboard.html';
+                }, 2000);
+            } else {
+                showMessage(result.message, 'error');
+            }
+
+        } catch (error) {
+            console.error('Affiliate registration error:', error);
+            
+            let errorMessage = error.message;
+            if (error.message.includes('timeout')) {
+                errorMessage = 'Registration is taking longer than expected. Please try again.';
+            } else if (error.message.includes('network')) {
+                errorMessage = 'Network error. Please check your internet connection and try again.';
+            }
+            
+            showMessage(errorMessage, 'error');
+        } finally {
+            // Reset button
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+        }
+    }
+
+    // Validate registration form
+    function validateRegistrationForm() {
+        let isValid = true;
+        
+        // Check required fields
+        const requiredFields = ['firstName', 'lastName', 'email', 'password', 'confirmPassword'];
+        requiredFields.forEach(fieldName => {
+            const field = document.getElementById(fieldName);
+            if (field && !field.value.trim()) {
+                showFieldError(field, 'This field is required');
+                isValid = false;
+            } else if (field) {
+                clearFieldError(field);
+            }
+        });
+
+        // Check email format
+        const email = document.getElementById('email').value;
+        if (email && !isValidEmail(email)) {
+            showFieldError(document.getElementById('email'), 'Please enter a valid email address');
+            isValid = false;
+        }
+
+        // Check password strength
+        const password = document.getElementById('password').value;
+        if (password.length < 6) {
+            showFieldError(document.getElementById('password'), 'Password must be at least 6 characters');
+            isValid = false;
+        }
+
+        // Check password match
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        if (password !== confirmPassword) {
+            showFieldError(document.getElementById('confirmPassword'), 'Passwords do not match');
+            isValid = false;
+        }
+
+        // Check terms agreement
+        const terms = document.getElementById('terms').checked;
+        if (!terms) {
+            showMessage('Please agree to the Terms of Service and Privacy Policy', 'error');
+            isValid = false;
+        }
+
+        return isValid;
+    }
+
+    // Toggle interest selection
+    function toggleInterest(e) {
+        const tag = e.target;
+        const interest = tag.dataset.interest;
+        
+        if (tag.classList.contains('selected')) {
+            tag.classList.remove('selected');
+            selectedInterests = selectedInterests.filter(i => i !== interest);
+        } else {
+            tag.classList.add('selected');
+            selectedInterests.push(interest);
+        }
+    }
+
+    // Check password strength
+    function checkPasswordStrength() {
+        const password = document.getElementById('password').value;
+        const strengthDiv = document.getElementById('password-strength');
+        
+        if (!strengthDiv) return;
+        
+        let strength = 0;
+        let feedback = '';
+        
+        if (password.length >= 6) strength++;
+        if (password.match(/[a-z]/)) strength++;
+        if (password.match(/[A-Z]/)) strength++;
+        if (password.match(/[0-9]/)) strength++;
+        if (password.match(/[^a-zA-Z0-9]/)) strength++;
+        
+        if (password.length === 0) {
+            strengthDiv.innerHTML = '';
+            return;
+        }
+        
+        if (strength <= 2) {
+            strengthDiv.innerHTML = '<span class="strength-weak">Weak password</span>';
+        } else if (strength <= 4) {
+            strengthDiv.innerHTML = '<span class="strength-medium">Medium password</span>';
+        } else {
+            strengthDiv.innerHTML = '<span class="strength-strong">Strong password</span>';
+        }
+    }
+
+    // Validate password match
+    function validatePasswordMatch() {
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        
+        if (confirmPassword && password !== confirmPassword) {
+            showFieldError(document.getElementById('confirmPassword'), 'Passwords do not match');
+        } else {
+            clearFieldError(document.getElementById('confirmPassword'));
+        }
+    }
+
+    // Validate email
+    function validateEmail() {
+        const email = document.getElementById('email').value;
+        if (email && !isValidEmail(email)) {
+            showFieldError(document.getElementById('email'), 'Please enter a valid email address');
+        } else {
+            clearFieldError(document.getElementById('email'));
+        }
+    }
+
+    // Check if email is valid
+    function isValidEmail(email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    }
+
+    // Show field error
+    function showFieldError(field, message) {
+        field.style.borderColor = '#dc3545';
+        
+        // Remove existing error message
+        const existingError = field.parentNode.querySelector('.field-error');
+        if (existingError) {
+            existingError.remove();
+        }
+        
+        // Add new error message
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'field-error';
+        errorDiv.style.color = '#dc3545';
+        errorDiv.style.fontSize = '0.8rem';
+        errorDiv.style.marginTop = '5px';
+        errorDiv.textContent = message;
+        field.parentNode.appendChild(errorDiv);
+    }
+
+    // Clear field error
+    function clearFieldError(field) {
+        field.style.borderColor = '#e9ecef';
+        const errorDiv = field.parentNode.querySelector('.field-error');
+        if (errorDiv) {
+            errorDiv.remove();
+        }
+    }
+
+    // Show status message
+    function showMessage(message, type) {
+        const statusDiv = document.getElementById('status-message');
+        if (!statusDiv) return;
+        
+        statusDiv.textContent = message;
+        statusDiv.className = `status-message ${type}`;
+        statusDiv.style.display = 'block';
+        
+        // Auto-hide success messages
+        if (type === 'success') {
+            setTimeout(() => {
+                statusDiv.style.display = 'none';
+            }, 5000);
+        }
+        
+        // Scroll to message
+        statusDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  </script>
+
   <script src="smart-deals-integration.js"></script>
 </body>
 </html>
