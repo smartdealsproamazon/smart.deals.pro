@@ -138,6 +138,92 @@
       margin: 0 auto;
     }
 
+    .registration-container-new {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+      overflow: hidden;
+      max-width: 900px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 600px;
+    }
+
+    .registration-header {
+      background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+      color: white;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .registration-header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 15px;
+      font-weight: 700;
+    }
+
+    .registration-header p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      line-height: 1.6;
+    }
+
+    .registration-header .features {
+      margin-top: 30px;
+      text-align: left;
+    }
+
+    .registration-header .feature-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+      font-size: 0.95rem;
+    }
+
+    .registration-header .feature-item::before {
+      content: "✓";
+      margin-right: 10px;
+      font-weight: bold;
+      color: #fff;
+    }
+
+    .social-login {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid #e9ecef;
+    }
+
+    .social-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e9ecef;
+      border-radius: 8px;
+      background: white;
+      color: #495057;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      margin-bottom: 10px;
+    }
+
+    .social-btn:hover {
+      border-color: #ff6b6b;
+      background: #fff5f5;
+    }
+
+    .social-btn img {
+      width: 20px;
+      height: 20px;
+      margin-right: 10px;
+    }
+
     .benefits-section {
       background: white;
       padding: 2.5rem;
@@ -419,6 +505,20 @@
         gap: 2rem;
       }
 
+      .registration-container-new {
+        grid-template-columns: 1fr;
+        margin: 10px;
+        border-radius: 15px;
+      }
+
+      .registration-header {
+        padding: 30px 25px;
+      }
+
+      .registration-header h1 {
+        font-size: 2rem;
+      }
+
       .benefits-section {
         position: static;
         order: 2;
@@ -426,14 +526,20 @@
 
       .registration-form {
         order: 1;
+        padding: 30px 25px;
       }
 
       .form-grid {
         grid-template-columns: 1fr;
+        gap: 15px;
       }
 
       .registration-header-text h2 {
         font-size: 2rem;
+      }
+
+      .form-title {
+        font-size: 1.5rem;
       }
 
       .interests-grid {
@@ -1180,168 +1286,163 @@
           <p>Create your account and start earning commissions today. Join thousands of successful affiliates worldwide.</p>
         </div>
         
-        <div class="registration-container">
-          <!-- Left Side - Benefits -->
-          <div class="benefits-section">
-            <h3>Why Join Us?</h3>
-            <div class="benefit-list">
-              <div class="benefit-item">
-                <i class="fas fa-dollar-sign benefit-icon"></i>
-                <div>
-                  <h4>High Commissions</h4>
-                  <p>Earn up to 15% commission on every sale</p>
-                </div>
+        <div class="registration-container-new">
+          <!-- Left Side - Header -->
+          <div class="registration-header">
+              <h1>🛍️ SmartDeals Pro</h1>
+              <p>Join thousands of smart shoppers and discover amazing deals every day!</p>
+              
+              <div class="features">
+                  <div class="feature-item">Exclusive deals and discounts</div>
+                  <div class="feature-item">Personalized product recommendations</div>
+                  <div class="feature-item">Early access to flash sales</div>
+                  <div class="feature-item">Submit your own product listings</div>
+                  <div class="feature-item">Join our affiliate program</div>
               </div>
-              <div class="benefit-item">
-                <i class="fas fa-globe benefit-icon"></i>
-                <div>
-                  <h4>Global Reach</h4>
-                  <p>Access millions of customers worldwide</p>
-                </div>
-              </div>
-              <div class="benefit-item">
-                <i class="fas fa-chart-line benefit-icon"></i>
-                <div>
-                  <h4>Real-time Analytics</h4>
-                  <p>Track your performance with detailed insights</p>
-                </div>
-              </div>
-              <div class="benefit-item">
-                <i class="fas fa-headset benefit-icon"></i>
-                <div>
-                  <h4>24/7 Support</h4>
-                  <p>Dedicated support team to help you succeed</p>
-                </div>
-              </div>
-            </div>
           </div>
 
           <!-- Right Side - Registration Form -->
           <div class="registration-form">
-            <h3 class="form-title">Create Your Affiliate Account</h3>
-            
-            <!-- Status Message -->
-            <div id="status-message" class="status-message"></div>
+              <h2 class="form-title">Create Your Account</h2>
+              
+              <!-- Status Message -->
+              <div id="status-message" class="status-message"></div>
 
-            <form id="registration-form">
-                <!-- Personal Information -->
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="firstName">First Name *</label>
-                        <input type="text" id="firstName" name="firstName" required 
-                               placeholder="Enter your first name">
-                    </div>
-                    <div class="form-group">
-                        <label for="lastName">Last Name *</label>
-                        <input type="text" id="lastName" name="lastName" required 
-                               placeholder="Enter your last name">
-                    </div>
-                </div>
+              <form id="registration-form">
+                  <!-- Personal Information -->
+                  <div class="form-grid">
+                      <div class="form-group">
+                          <label for="firstName">First Name *</label>
+                          <input type="text" id="firstName" name="firstName" required 
+                                 placeholder="Enter your first name">
+                      </div>
+                      <div class="form-group">
+                          <label for="lastName">Last Name *</label>
+                          <input type="text" id="lastName" name="lastName" required 
+                                 placeholder="Enter your last name">
+                      </div>
+                  </div>
 
-                <!-- Contact Information -->
-                <div class="form-group full-width">
-                    <label for="email">Email Address *</label>
-                    <input type="email" id="email" name="email" required 
-                           placeholder="Enter your email address">
-                </div>
+                  <!-- Contact Information -->
+                  <div class="form-group full-width">
+                      <label for="email">Email Address *</label>
+                      <input type="email" id="email" name="email" required 
+                             placeholder="Enter your email address">
+                  </div>
 
-                <div class="form-group full-width">
-                    <label for="phone">Phone Number</label>
-                    <input type="tel" id="phone" name="phone" 
-                           placeholder="Enter your phone number">
-                </div>
+                  <div class="form-group full-width">
+                      <label for="phone">Phone Number</label>
+                      <input type="tel" id="phone" name="phone" 
+                             placeholder="Enter your phone number">
+                  </div>
 
-                <!-- Password -->
-                <div class="form-group full-width">
-                    <label for="password">Password *</label>
-                    <input type="password" id="password" name="password" required 
-                           placeholder="Create a strong password">
-                    <div id="password-strength" class="password-strength"></div>
-                </div>
+                  <!-- Password -->
+                  <div class="form-group full-width">
+                      <label for="password">Password *</label>
+                      <input type="password" id="password" name="password" required 
+                             placeholder="Create a strong password">
+                      <div id="password-strength" class="password-strength"></div>
+                  </div>
 
-                <div class="form-group full-width">
-                    <label for="confirmPassword">Confirm Password *</label>
-                    <input type="password" id="confirmPassword" name="confirmPassword" required 
-                           placeholder="Confirm your password">
-                </div>
+                  <div class="form-group full-width">
+                      <label for="confirmPassword">Confirm Password *</label>
+                      <input type="password" id="confirmPassword" name="confirmPassword" required 
+                             placeholder="Confirm your password">
+                  </div>
 
-                <!-- Location Information -->
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="country">Country</label>
-                        <select id="country" name="country">
-                            <option value="">Select Country</option>
-                            <option value="Pakistan">Pakistan</option>
-                            <option value="USA">United States</option>
-                            <option value="UK">United Kingdom</option>
-                            <option value="Canada">Canada</option>
-                            <option value="Australia">Australia</option>
-                            <option value="India">India</option>
-                            <option value="UAE">United Arab Emirates</option>
-                            <option value="Saudi Arabia">Saudi Arabia</option>
-                            <option value="Other">Other</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="city">City</label>
-                        <input type="text" id="city" name="city" 
-                               placeholder="Enter your city">
-                    </div>
-                </div>
+                  <!-- Location Information -->
+                  <div class="form-grid">
+                      <div class="form-group">
+                          <label for="country">Country</label>
+                          <select id="country" name="country">
+                              <option value="">Select Country</option>
+                              <option value="Pakistan">Pakistan</option>
+                              <option value="USA">United States</option>
+                              <option value="UK">United Kingdom</option>
+                              <option value="Canada">Canada</option>
+                              <option value="Australia">Australia</option>
+                              <option value="India">India</option>
+                              <option value="UAE">United Arab Emirates</option>
+                              <option value="Saudi Arabia">Saudi Arabia</option>
+                              <option value="Other">Other</option>
+                          </select>
+                      </div>
+                      <div class="form-group">
+                          <label for="city">City</label>
+                          <input type="text" id="city" name="city" 
+                                 placeholder="Enter your city">
+                      </div>
+                  </div>
 
-                <!-- Affiliate Experience -->
-                <div class="form-group full-width">
-                    <label for="experience">Affiliate Marketing Experience</label>
-                    <select id="experience" name="experience">
-                        <option value="">Select your experience level</option>
-                        <option value="beginner">Beginner (0-1 years)</option>
-                        <option value="intermediate">Intermediate (1-3 years)</option>
-                        <option value="advanced">Advanced (3+ years)</option>
-                        <option value="expert">Expert (5+ years)</option>
-                    </select>
-                </div>
+                  <!-- Personal Details -->
+                  <div class="form-grid">
+                      <div class="form-group">
+                          <label for="dateOfBirth">Date of Birth</label>
+                          <input type="date" id="dateOfBirth" name="dateOfBirth">
+                      </div>
+                      <div class="form-group">
+                          <label for="gender">Gender</label>
+                          <select id="gender" name="gender">
+                              <option value="">Select Gender</option>
+                              <option value="Male">Male</option>
+                              <option value="Female">Female</option>
+                              <option value="Other">Other</option>
+                              <option value="Prefer not to say">Prefer not to say</option>
+                          </select>
+                      </div>
+                  </div>
 
-                <!-- Marketing Channels -->
-                <div class="interests-section">
-                    <label>Your Marketing Channels (Select all that apply)</label>
-                    <div class="interests-grid">
-                        <div class="interest-tag" data-interest="social-media">Social Media</div>
-                        <div class="interest-tag" data-interest="website-blog">Website/Blog</div>
-                        <div class="interest-tag" data-interest="youtube">YouTube</div>
-                        <div class="interest-tag" data-interest="email-marketing">Email Marketing</div>
-                        <div class="interest-tag" data-interest="paid-ads">Paid Advertising</div>
-                        <div class="interest-tag" data-interest="influencer">Influencer Marketing</div>
-                        <div class="interest-tag" data-interest="seo">SEO/Organic</div>
-                        <div class="interest-tag" data-interest="mobile-apps">Mobile Apps</div>
-                    </div>
-                </div>
+                  <!-- Shopping Interests -->
+                  <div class="interests-section">
+                      <label>Shopping Interests (Select all that apply)</label>
+                      <div class="interests-grid">
+                          <div class="interest-tag" data-interest="electronics">Electronics</div>
+                          <div class="interest-tag" data-interest="fashion">Fashion</div>
+                          <div class="interest-tag" data-interest="beauty">Beauty</div>
+                          <div class="interest-tag" data-interest="home-garden">Home & Garden</div>
+                          <div class="interest-tag" data-interest="sports">Sports</div>
+                          <div class="interest-tag" data-interest="books">Books</div>
+                          <div class="interest-tag" data-interest="toys">Toys</div>
+                          <div class="interest-tag" data-interest="automotive">Automotive</div>
+                          <div class="interest-tag" data-interest="health">Health</div>
+                          <div class="interest-tag" data-interest="jewelry">Jewelry</div>
+                      </div>
+                  </div>
 
-                <!-- Terms and Conditions -->
-                <div class="checkbox-group">
-                    <input type="checkbox" id="terms" name="terms" required>
-                    <label for="terms">
-                        I agree to the <a href="terms.html" target="_blank">Terms of Service</a> 
-                        and <a href="privacy-policy.html" target="_blank">Privacy Policy</a> *
-                    </label>
-                </div>
+                  <!-- Terms and Conditions -->
+                  <div class="checkbox-group">
+                      <input type="checkbox" id="terms" name="terms" required>
+                      <label for="terms">
+                          I agree to the <a href="terms.html" target="_blank">Terms of Service</a> 
+                          and <a href="privacy-policy.html" target="_blank">Privacy Policy</a> *
+                      </label>
+                  </div>
 
-                <div class="checkbox-group">
-                    <input type="checkbox" id="newsletter" name="newsletter" checked>
-                    <label for="newsletter">
-                        I want to receive promotional emails and newsletters about deals and opportunities
-                    </label>
-                </div>
+                  <div class="checkbox-group">
+                      <input type="checkbox" id="newsletter" name="newsletter" checked>
+                      <label for="newsletter">
+                          I want to receive promotional emails and newsletters about deals and offers
+                      </label>
+                  </div>
 
-                <!-- Submit Button -->
-                <button type="submit" class="submit-btn" id="submit-btn">
-                    🚀 Create Affiliate Account
-                </button>
+                  <!-- Submit Button -->
+                  <button type="submit" class="submit-btn" id="submit-btn">
+                      Create Account
+                  </button>
 
-                <!-- Login Link -->
-                <div class="login-link">
-                    Already have an account? <a href="sign-in.html">Sign In</a>
-                </div>
-            </form>
+                  <!-- Login Link -->
+                  <div class="login-link">
+                      Already have an account? <a href="sign-in.html">Sign In</a>
+                  </div>
+
+                  <!-- Social Login -->
+                  <div class="social-login">
+                      <a href="#" class="social-btn" onclick="signInWithGoogle()">
+                          <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google">
+                          Continue with Google
+                      </a>
+                  </div>
+              </form>
           </div>
         </div>
       </div>
@@ -1595,10 +1696,10 @@
         try {
             // Show loading
             submitBtn.disabled = true;
-            submitBtn.innerHTML = '<span class="loading"></span> Creating Affiliate Account...';
+            submitBtn.innerHTML = '<span class="loading"></span> Creating Account...';
             
             // Validate form
-            if (!validateRegistrationForm()) {
+            if (!validateForm()) {
                 throw new Error('Please fix the form errors before submitting');
             }
             
@@ -1617,13 +1718,14 @@
                 phone: formData.get('phone') || '',
                 country: formData.get('country') || '',
                 city: formData.get('city') || '',
-                experience: formData.get('experience') || '',
+                dateOfBirth: formData.get('dateOfBirth') || '',
+                gender: formData.get('gender') || '',
                 interests: selectedInterests,
                 newsletter: formData.get('newsletter') === 'on',
                 accountType: 'affiliate' // Mark as affiliate account
             };
 
-            console.log('Starting affiliate registration process...');
+            console.log('Starting user registration process...');
             
             // Register user with timeout
             const registrationPromise = window.firebaseAuthService.registerUser(userData);
@@ -1634,7 +1736,7 @@
             const result = await Promise.race([registrationPromise, timeoutPromise]);
             
             if (result.success) {
-                showMessage('🎉 ' + result.message + ' Welcome to our affiliate network!', 'success');
+                showMessage('🎉 Account created successfully! Welcome to SmartDeals Pro!', 'success');
                 
                 // Redirect to dashboard after successful registration
                 setTimeout(() => {
@@ -1645,7 +1747,7 @@
             }
 
         } catch (error) {
-            console.error('Affiliate registration error:', error);
+            console.error('Registration error:', error);
             
             let errorMessage = error.message;
             if (error.message.includes('timeout')) {
@@ -1663,7 +1765,7 @@
     }
 
     // Validate registration form
-    function validateRegistrationForm() {
+    function validateForm() {
         let isValid = true;
         
         // Check required fields
@@ -1828,6 +1930,28 @@
         
         // Scroll to message
         statusDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    // Google Sign In function
+    async function signInWithGoogle() {
+        try {
+            if (window.firebaseAuthService && window.firebaseAuthService.signInWithGoogle) {
+                const result = await window.firebaseAuthService.signInWithGoogle();
+                if (result.success) {
+                    showMessage('Successfully signed in with Google!', 'success');
+                    setTimeout(() => {
+                        window.location.href = 'affiliate-dashboard.html';
+                    }, 1500);
+                } else {
+                    showMessage(result.message || 'Google sign in failed', 'error');
+                }
+            } else {
+                showMessage('Google sign in is not available at the moment', 'error');
+            }
+        } catch (error) {
+            console.error('Google sign in error:', error);
+            showMessage('Failed to sign in with Google', 'error');
+        }
     }
   </script>
 
