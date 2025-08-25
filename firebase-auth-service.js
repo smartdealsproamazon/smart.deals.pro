@@ -143,25 +143,49 @@ class FirebaseAuthService {
         });
       }
 
-      // Save additional user data to Firestore
-      console.log('Saving user data to Firestore...');
-      const userDocData = {
+      // Save user registration data to dedicated userRegistrations collection
+      console.log('Saving user registration data to Firestore...');
+      const userRegistrationData = {
+        // User Identity
         uid: user.uid,
         email: user.email,
-        firstName: profileData.firstName || '',
-        lastName: profileData.lastName || '',
-        phone: profileData.phone || '',
-        country: profileData.country || '',
-        city: profileData.city || '',
-        address: profileData.address || '',
-        dateOfBirth: profileData.dateOfBirth || '',
-        gender: profileData.gender || '',
-        interests: profileData.interests || [],
-        accountType: 'user', // user, affiliate, admin
-        isActive: true,
-        isVerified: false,
-        joinDate: window.firebaseService.getTimestamp(),
-        lastLogin: window.firebaseService.getTimestamp(),
+        
+        // Personal Information (from registration form)
+        personalInfo: {
+          firstName: profileData.firstName || '',
+          lastName: profileData.lastName || '',
+          fullName: `${profileData.firstName || ''} ${profileData.lastName || ''}`.trim(),
+          phone: profileData.phone || '',
+          dateOfBirth: profileData.dateOfBirth || '',
+          gender: profileData.gender || ''
+        },
+        
+        // Location Information
+        locationInfo: {
+          country: profileData.country || '',
+          city: profileData.city || '',
+          address: profileData.address || ''
+        },
+        
+        // Account Settings
+        accountInfo: {
+          accountType: 'user', // user, affiliate, admin
+          isActive: true,
+          isVerified: false,
+          registrationDate: window.firebaseService.getTimestamp(),
+          lastLogin: window.firebaseService.getTimestamp(),
+          registrationSource: 'website'
+        },
+        
+        // User Preferences (from registration form)
+        preferences: {
+          newsletter: profileData.newsletter !== false,
+          notifications: true,
+          marketingEmails: profileData.newsletter !== false,
+          interests: profileData.interests || []
+        },
+        
+        // Profile Setup (can be updated later)
         profile: {
           avatar: '',
           bio: '',
@@ -172,28 +196,49 @@ class FirebaseAuthService {
             twitter: ''
           }
         },
-        preferences: {
-          newsletter: profileData.newsletter !== false,
-          notifications: true,
-          marketingEmails: false
-        },
+        
+        // User Statistics
         stats: {
           productsSubmitted: 0,
           ordersPlaced: 0,
           totalSpent: 0,
-          referrals: 0
+          referrals: 0,
+          loginCount: 1
         }
       };
 
-      // Save to Firestore with timeout
+      // Save to userRegistrations collection with timeout
       await Promise.race([
-        window.firebaseService.setDocument('users', user.uid, userDocData),
+        window.firebaseService.setDocument('userRegistrations', user.uid, userRegistrationData),
         new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Data save timeout - account created but data not saved')), 15000)
+          setTimeout(() => reject(new Error('Registration data save timeout')), 15000)
         )
       ]);
 
-      console.log('User data saved to Firestore');
+      console.log('User registration data saved to userRegistrations collection');
+
+      // Also save simplified user data to users collection for backward compatibility
+      const basicUserData = {
+        uid: user.uid,
+        email: user.email,
+        firstName: profileData.firstName || '',
+        lastName: profileData.lastName || '',
+        phone: profileData.phone || '',
+        country: profileData.country || '',
+        city: profileData.city || '',
+        accountType: 'user',
+        isActive: true,
+        joinDate: window.firebaseService.getTimestamp()
+      };
+
+      await Promise.race([
+        window.firebaseService.setDocument('users', user.uid, basicUserData),
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Basic user data save timeout')), 15000)
+        )
+      ]);
+
+      console.log('Basic user data saved to users collection');
 
       // Create affiliate data structure for dashboard compatibility
       console.log('Creating affiliate data structure...');
