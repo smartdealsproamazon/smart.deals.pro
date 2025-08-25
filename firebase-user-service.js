@@ -124,7 +124,7 @@ class FirebaseUserService {
 
       console.log('Saving affiliate registration to Firebase...');
       
-      // Save to Firebase with timeout
+      // Save to affiliateRegistrations collection with timeout
       const docRef = await Promise.race([
         window.firebaseService.addDocument('affiliateRegistrations', registrationData),
         new Promise((_, reject) => 
@@ -133,6 +133,108 @@ class FirebaseUserService {
       ]);
 
       console.log('Affiliate registration saved successfully with ID:', docRef.id);
+
+      // Also save to userRegistrations collection for unified data structure
+      const userRegistrationData = {
+        // User Identity
+        uid: docRef.id, // Using document ID as UID for affiliate users
+        email: affiliateData.email,
+        
+        // Personal Information (from affiliate registration form)
+        personalInfo: {
+          firstName: affiliateData.firstName || '',
+          lastName: affiliateData.lastName || '',
+          fullName: `${affiliateData.firstName || ''} ${affiliateData.lastName || ''}`.trim(),
+          phone: affiliateData.phone || '',
+          dateOfBirth: '', // Not collected in affiliate form
+          gender: '' // Not collected in affiliate form
+        },
+        
+        // Location Information
+        locationInfo: {
+          country: affiliateData.country || '',
+          city: '', // Not collected in affiliate form
+          address: '' // Not collected in affiliate form
+        },
+        
+        // Account Settings
+        accountInfo: {
+          accountType: 'affiliate',
+          isActive: true,
+          isVerified: false,
+          registrationDate: window.firebaseService.getTimestamp(),
+          lastLogin: window.firebaseService.getTimestamp(),
+          registrationSource: 'affiliate-form',
+          affiliateId: registrationData.affiliateId,
+          status: 'pending_approval'
+        },
+        
+        // Affiliate-specific data
+        affiliateInfo: {
+          experience: {
+            level: affiliateData.experience || '',
+            platforms: affiliateData.platforms || [],
+            revenue: affiliateData.revenue || ''
+          },
+          onlinePresence: {
+            website: affiliateData.website || '',
+            facebook: affiliateData.facebook || '',
+            instagram: affiliateData.instagram || '',
+            youtube: affiliateData.youtube || '',
+            tiktok: affiliateData.tiktok || '',
+            strategy: affiliateData.strategy || ''
+          },
+          agreements: {
+            terms: affiliateData.terms || false,
+            marketing: affiliateData.marketing || false,
+            quality: affiliateData.quality || false
+          }
+        },
+        
+        // User Preferences
+        preferences: {
+          newsletter: affiliateData.marketing || false,
+          notifications: true,
+          marketingEmails: affiliateData.marketing || false,
+          interests: [] // Can be updated later
+        },
+        
+        // Profile Setup
+        profile: {
+          avatar: '',
+          bio: '',
+          website: affiliateData.website || '',
+          socialLinks: {
+            facebook: affiliateData.facebook || '',
+            instagram: affiliateData.instagram || '',
+            twitter: ''
+          }
+        },
+        
+        // User Statistics
+        stats: {
+          productsSubmitted: 0,
+          ordersPlaced: 0,
+          totalSpent: 0,
+          referrals: 0,
+          loginCount: 1,
+          commissionEarned: 0
+        }
+      };
+
+      // Save to userRegistrations collection
+      try {
+        await Promise.race([
+          window.firebaseService.setDocument('userRegistrations', docRef.id, userRegistrationData),
+          new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('User registration data save timeout')), 15000)
+          )
+        ]);
+        console.log('Affiliate data also saved to userRegistrations collection');
+      } catch (userRegError) {
+        console.warn('Failed to save to userRegistrations collection:', userRegError.message);
+        // Don't fail the main registration if this fails
+      }
 
       return {
         success: true,
