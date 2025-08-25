@@ -536,10 +536,25 @@
             let attempts = 0;
             const maxAttempts = 50;
             
+            // Email Notification Service should be already initialized by the script
+            if (!window.emailNotificationService) {
+                console.warn('Email Notification Service not found, will use fallback method');
+            } else {
+                console.log('Email Notification Service found');
+            }
+            
             while (attempts < maxAttempts) {
                 if (window.firebaseService && window.firebaseService.isReady() && 
                     window.firebaseAuthService) {
                     console.log('Firebase services ready for registration');
+                    
+                    // Check if email service is ready
+                    if (window.emailNotificationService && window.emailNotificationService.isInitialized) {
+                        console.log('Email notification service is ready');
+                    } else {
+                        console.warn('Email notification service not ready, will use fallback method');
+                    }
+                    
                     return;
                 }
                 await new Promise(resolve => setTimeout(resolve, 100));

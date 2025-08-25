@@ -239,30 +239,62 @@ Automated notification sent at ${new Date().toLocaleString()}
   // Try to send via EmailJS if configured
   async tryEmailJS(emailData) {
     try {
-      // Check if EmailJS is available
-      if (typeof emailjs !== 'undefined') {
-        // These would need to be configured with actual EmailJS credentials
-        const serviceID = 'your_service_id';
-        const templateID = 'your_template_id';
-        const publicKey = 'your_public_key';
-        
-        const templateParams = {
-          to_email: emailData.to,
-          subject: emailData.subject,
-          message: emailData.text,
-          user_name: emailData.userName,
-          user_email: emailData.userEmail,
-          user_id: emailData.userId
-        };
-        
-        console.log('EmailJS not configured - would send email with params:', templateParams);
-        // await emailjs.send(serviceID, templateID, templateParams, publicKey);
-        // console.log('Email sent successfully via EmailJS');
-      } else {
-        console.log('EmailJS not available - email queued for server processing');
+      // For now, we'll create a comprehensive notification system
+      console.log('📧 EMAIL NOTIFICATION READY TO SEND:');
+      console.log('=====================================');
+      console.log(`To: ${emailData.to}`);
+      console.log(`Subject: ${emailData.subject}`);
+      console.log(`From: ${emailData.from}`);
+      console.log(`User: ${emailData.userName} (${emailData.userEmail})`);
+      console.log(`Time: ${new Date().toLocaleString()}`);
+      console.log('=====================================');
+      
+      // Store in localStorage for admin review
+      const notifications = JSON.parse(localStorage.getItem('admin_email_notifications') || '[]');
+      const notification = {
+        id: Date.now(),
+        to: emailData.to,
+        subject: emailData.subject,
+        from: emailData.from,
+        userName: emailData.userName,
+        userEmail: emailData.userEmail,
+        userId: emailData.userId,
+        timestamp: new Date().toISOString(),
+        status: 'queued',
+        htmlContent: emailData.html,
+        textContent: emailData.text
+      };
+      
+      notifications.unshift(notification); // Add to beginning
+      
+      // Keep only last 50 notifications
+      if (notifications.length > 50) {
+        notifications.splice(50);
       }
+      
+      localStorage.setItem('admin_email_notifications', JSON.stringify(notifications));
+      
+      // Show browser notification if possible
+      if ('Notification' in window && Notification.permission === 'granted') {
+        new Notification('New User Registration', {
+          body: `${emailData.userName} registered with email: ${emailData.userEmail}`,
+          icon: 'logo.png'
+        });
+      } else if ('Notification' in window && Notification.permission !== 'denied') {
+        Notification.requestPermission().then(permission => {
+          if (permission === 'granted') {
+            new Notification('New User Registration', {
+              body: `${emailData.userName} registered with email: ${emailData.userEmail}`,
+              icon: 'logo.png'
+            });
+          }
+        });
+      }
+      
+      console.log('✅ Email notification processed and stored for admin review');
+      
     } catch (error) {
-      console.error('EmailJS send failed:', error);
+      console.error('Email notification processing failed:', error);
     }
   }
 
