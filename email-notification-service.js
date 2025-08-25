@@ -22,19 +22,19 @@ class EmailNotificationService {
   // Send registration notification email
   async sendRegistrationNotification(userData) {
     try {
-      console.log('Processing registration notification for:', userData.personalInfo.email);
+      console.log('Processing registration notification for:', userData.email);
       
       const emailData = {
         to: this.adminEmail,
         from: 'noreply@smartdeals.pro',
-        subject: `New User Registration - ${userData.personalInfo.firstName} ${userData.personalInfo.lastName}`,
+        subject: `New User Registration - ${userData.firstName} ${userData.lastName}`,
         html: this.generateRegistrationEmailHTML(userData),
         text: this.generateRegistrationEmailText(userData),
         timestamp: new Date().toISOString(),
         type: 'registration_notification',
-        userEmail: userData.personalInfo.email,
-        userName: `${userData.personalInfo.firstName} ${userData.personalInfo.lastName}`,
-        affiliateId: userData.affiliateId
+        userEmail: userData.email,
+        userName: `${userData.firstName} ${userData.lastName}`,
+        userId: userData.uid || 'Generated on registration'
       };
 
       // Save to Firebase for email processing
@@ -62,6 +62,10 @@ class EmailNotificationService {
 
   // Generate HTML email content
   generateRegistrationEmailHTML(userData) {
+    const interests = userData.interests && userData.interests.length > 0 
+      ? userData.interests.join(', ') 
+      : 'None selected';
+    
     return `
 <!DOCTYPE html>
 <html>
@@ -96,42 +100,55 @@ class EmailNotificationService {
       <div class="info-section">
         <h3>👤 Personal Information</h3>
         <div class="info-item">
-          <span class="info-label">Name:</span> ${userData.personalInfo.firstName} ${userData.personalInfo.lastName}
+          <span class="info-label">Name:</span> ${userData.firstName} ${userData.lastName}
         </div>
         <div class="info-item">
-          <span class="info-label">Email:</span> ${userData.personalInfo.email}
+          <span class="info-label">Email:</span> ${userData.email}
         </div>
         <div class="info-item">
-          <span class="info-label">Phone:</span> ${userData.personalInfo.phone || 'Not provided'}
+          <span class="info-label">Phone:</span> ${userData.phone || 'Not provided'}
         </div>
         <div class="info-item">
-          <span class="info-label">Country:</span> ${userData.personalInfo.country || 'Not provided'}
+          <span class="info-label">Country:</span> ${userData.country || 'Not provided'}
+        </div>
+        <div class="info-item">
+          <span class="info-label">City:</span> ${userData.city || 'Not provided'}
+        </div>
+        <div class="info-item">
+          <span class="info-label">Date of Birth:</span> ${userData.dateOfBirth || 'Not provided'}
+        </div>
+        <div class="info-item">
+          <span class="info-label">Gender:</span> ${userData.gender || 'Not provided'}
         </div>
       </div>
       
       <div class="info-section">
         <h3>🆔 Registration Details</h3>
         <div class="info-item">
-          <span class="info-label">Affiliate ID:</span> ${userData.affiliateId}
+          <span class="info-label">User ID:</span> ${userData.uid || 'Generated on registration'}
         </div>
         <div class="info-item">
           <span class="info-label">Registration Date:</span> ${new Date().toLocaleString()}
         </div>
         <div class="info-item">
-          <span class="info-label">Status:</span> ${userData.status}
+          <span class="info-label">Account Type:</span> ${userData.accountType || 'Regular User'}
         </div>
+      </div>
+      
+      <div class="info-section">
+        <h3>🛍️ Shopping Interests</h3>
         <div class="info-item">
-          <span class="info-label">User ID:</span> ${userData.uid}
+          <span class="info-label">Selected Interests:</span> ${interests}
         </div>
       </div>
       
       <div class="info-section">
         <h3>⚙️ Additional Information</h3>
         <div class="info-item">
-          <span class="info-label">Newsletter Subscription:</span> ${userData.agreements.marketing ? 'Yes' : 'No'}
+          <span class="info-label">Newsletter Subscription:</span> ${userData.newsletter ? 'Yes' : 'No'}
         </div>
         <div class="info-item">
-          <span class="info-label">Terms Accepted:</span> ${userData.agreements.terms ? 'Yes' : 'No'}
+          <span class="info-label">Terms Accepted:</span> Yes
         </div>
       </div>
       
@@ -152,6 +169,10 @@ class EmailNotificationService {
 
   // Generate plain text email content
   generateRegistrationEmailText(userData) {
+    const interests = userData.interests && userData.interests.length > 0 
+      ? userData.interests.join(', ') 
+      : 'None selected';
+    
     return `
 NEW USER REGISTRATION - SMARTDEALS PRO
 =====================================
@@ -159,20 +180,25 @@ NEW USER REGISTRATION - SMARTDEALS PRO
 A new user has registered on SmartDeals Pro!
 
 PERSONAL INFORMATION:
-- Name: ${userData.personalInfo.firstName} ${userData.personalInfo.lastName}
-- Email: ${userData.personalInfo.email}
-- Phone: ${userData.personalInfo.phone || 'Not provided'}
-- Country: ${userData.personalInfo.country || 'Not provided'}
+- Name: ${userData.firstName} ${userData.lastName}
+- Email: ${userData.email}
+- Phone: ${userData.phone || 'Not provided'}
+- Country: ${userData.country || 'Not provided'}
+- City: ${userData.city || 'Not provided'}
+- Date of Birth: ${userData.dateOfBirth || 'Not provided'}
+- Gender: ${userData.gender || 'Not provided'}
 
 REGISTRATION DETAILS:
-- Affiliate ID: ${userData.affiliateId}
+- User ID: ${userData.uid || 'Generated on registration'}
 - Registration Date: ${new Date().toLocaleString()}
-- Status: ${userData.status}
-- User ID: ${userData.uid}
+- Account Type: ${userData.accountType || 'Regular User'}
+
+SHOPPING INTERESTS:
+- Selected Interests: ${interests}
 
 ADDITIONAL INFORMATION:
-- Newsletter Subscription: ${userData.agreements.marketing ? 'Yes' : 'No'}
-- Terms Accepted: ${userData.agreements.terms ? 'Yes' : 'No'}
+- Newsletter Subscription: ${userData.newsletter ? 'Yes' : 'No'}
+- Terms Accepted: Yes
 
 This user has been automatically registered and can access the dashboard immediately.
 
@@ -203,7 +229,7 @@ Automated notification sent at ${new Date().toLocaleString()}
     console.log('Subject:', emailData.subject);
     console.log('User:', emailData.userName);
     console.log('Email:', emailData.userEmail);
-    console.log('Affiliate ID:', emailData.affiliateId);
+    console.log('User ID:', emailData.userId);
     console.log('Timestamp:', emailData.timestamp);
     console.log('\nContent:');
     console.log(emailData.text);
@@ -226,7 +252,7 @@ Automated notification sent at ${new Date().toLocaleString()}
           message: emailData.text,
           user_name: emailData.userName,
           user_email: emailData.userEmail,
-          affiliate_id: emailData.affiliateId
+          user_id: emailData.userId
         };
         
         console.log('EmailJS not configured - would send email with params:', templateParams);

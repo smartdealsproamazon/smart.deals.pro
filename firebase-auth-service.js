@@ -275,7 +275,22 @@ class FirebaseAuthService {
 
       // Send email notification about new registration
       if (window.emailNotificationService && window.emailNotificationService.isReady()) {
-        await window.emailNotificationService.sendRegistrationNotification(affiliateData);
+        // Convert affiliateData to the expected format for email service
+        const emailData = {
+          firstName: profileData.firstName || '',
+          lastName: profileData.lastName || '',
+          email: user.email,
+          phone: profileData.phone || '',
+          country: profileData.country || '',
+          city: profileData.city || '',
+          dateOfBirth: profileData.dateOfBirth || '',
+          gender: profileData.gender || '',
+          interests: profileData.interests || [],
+          newsletter: profileData.newsletter !== false,
+          accountType: 'affiliate',
+          uid: user.uid
+        };
+        await window.emailNotificationService.sendRegistrationNotification(emailData);
       } else {
         // Fallback to the old method
         await this.sendRegistrationNotification(affiliateData);
