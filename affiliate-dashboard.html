@@ -696,13 +696,86 @@
                         <h2 class="section-title">Product Submission Form</h2>
                     </div>
                     <div class="section-content">
-                        <iframe 
-                            src="user-product-submission.html" 
-                            width="100%" 
-                            height="800" 
-                            frameborder="0"
-                            style="border-radius: 8px;">
-                        </iframe>
+                        <form id="userProductForm">
+                            <div class="form-group" style="margin-bottom: 1rem;">
+                                <label for="title" style="display:block; font-weight:600; margin-bottom:0.25rem;">Product Title</label>
+                                <input id="title" type="text" placeholder="Enter product title" required style="width:100%; padding:0.75rem; border-radius:8px; border:1px solid #e5e7eb;">
+                            </div>
+
+                            <div class="form-group" style="margin-bottom: 1rem;">
+                                <label for="imageUrl" style="display:block; font-weight:600; margin-bottom:0.25rem;">Image URL (optional)</label>
+                                <input id="imageUrl" type="url" placeholder="https://example.com/image.jpg" style="width:100%; padding:0.75rem; border-radius:8px; border:1px solid #e5e7eb;">
+                                <small style="color:#6b7280;">Or upload an image file below.</small>
+                            </div>
+
+                            <div class="form-group" style="margin-bottom: 1rem;">
+                                <label for="imageFile" style="display:block; font-weight:600; margin-bottom:0.25rem;">Upload Image (optional)</label>
+                                <input id="imageFile" type="file" accept="image/*" style="width:100%; padding:0.5rem; border-radius:8px; border:1px solid #e5e7eb; background:#fff;">
+                            </div>
+
+                            <div class="form-group" style="margin-bottom: 1rem;">
+                                <label for="price" style="display:block; font-weight:600; margin-bottom:0.25rem;">Price</label>
+                                <input id="price" type="text" inputmode="decimal" placeholder="$19.99" required style="width:100%; padding:0.75rem; border-radius:8px; border:1px solid #e5e7eb;">
+                            </div>
+
+                            <div class="form-group" style="margin-bottom: 1rem;">
+                                <label for="description" style="display:block; font-weight:600; margin-bottom:0.25rem;">Description</label>
+                                <textarea id="description" rows="4" placeholder="Enter product description" required style="width:100%; padding:0.75rem; border-radius:8px; border:1px solid #e5e7eb;"></textarea>
+                            </div>
+
+                            <div class="form-group" style="margin-bottom: 1.5rem;">
+                                <label for="link" style="display:block; font-weight:600; margin-bottom:0.25rem;">Product Link</label>
+                                <input id="link" type="url" placeholder="https://your-affiliate-link" required style="width:100%; padding:0.75rem; border-radius:8px; border:1px solid #e5e7eb;">
+                            </div>
+
+                            <div class="form-group" style="margin-bottom: 1.5rem;">
+                                <label for="category" style="display:block; font-weight:600; margin-bottom:0.25rem;">Category</label>
+                                <select id="category" required style="width:100%; padding:0.75rem; border-radius:8px; border:1px solid #e5e7eb; background:#fff;">
+                                    <option value="">Select Category</option>
+                                    <option value="boys">Boys Fashion</option>
+                                    <option value="girls">Girls Fashion</option>
+                                    <option value="electrical">Electronics</option>
+                                    <option value="gaming">Gaming</option>
+                                    <option value="home-garden">Home & Garden</option>
+                                    <option value="smartwatch">Smartwatches</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group" style="margin-bottom: 1.5rem;">
+                                <label for="platform" style="display:block; font-weight:600; margin-bottom:0.25rem;">Platform</label>
+                                <select id="platform" required style="width:100%; padding:0.75rem; border-radius:8px; border:1px solid #e5e7eb; background:#fff;">
+                                    <option value="">Select Platform</option>
+                                    <option value="amazon">Amazon</option>
+                                    <option value="clickbank">ClickBank</option>
+                                    <option value="shareasale">ShareASale</option>
+                                    <option value="cj">Commission Junction</option>
+                                    <option value="rakuten">Rakuten</option>
+                                    <option value="impact">Impact</option>
+                                    <option value="shopify">Shopify Partners</option>
+                                    <option value="etsy">Etsy</option>
+                                    <option value="ebay">eBay Partner</option>
+                                    <option value="other">Other Platform</option>
+                                </select>
+                            </div>
+
+                            <div class="form-actions" style="display:flex; gap:0.75rem; margin-bottom: 1rem;">
+                                <button type="submit" class="btn btn-primary" id="submitBtn">
+                                    <i class="fas fa-save"></i>&nbsp;Submit Product
+                                </button>
+                                <button type="button" class="btn btn-secondary" onclick="resetForm()">
+                                    <i class="fas fa-times"></i>&nbsp;Reset Form
+                                </button>
+                            </div>
+
+                            <div id="formError" style="display:none; margin-top: 1rem; color:#ef4444; font-weight:600; padding: 1rem; background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px;"></div>
+                            <div id="formSuccess" style="display:none; margin-top: 1rem; color:#16a34a; font-weight:700; padding: 1rem; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px;"></div>
+                            
+                            <!-- Progress Bar -->
+                            <div id="progressBar" style="display: none; width: 100%; height: 4px; background: #e5e7eb; border-radius: 2px; overflow: hidden; margin-top: 1rem;">
+                                <div id="progressFill" style="height: 100%; background: #2563eb; width: 0%; transition: width 0.3s ease;"></div>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -1023,6 +1096,224 @@
         });
 
         console.log('✅ New Affiliate Dashboard loaded successfully');
+
+        // Reset form function
+        function resetForm() {
+            document.getElementById('userProductForm').reset();
+            document.getElementById('formError').style.display = 'none';
+            document.getElementById('formSuccess').style.display = 'none';
+            document.getElementById('progressBar').style.display = 'none';
+        }
+    </script>
+
+    <!-- Firebase SDK Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+    
+    <script src="products.js"></script>
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBJqBEWDdBlfv5xAjgcvqput1KC1NzKvlU",
+            authDomain: "smart-deals-pro.firebaseapp.com",
+            projectId: "smart-deals-pro",
+            storageBucket: "smart-deals-pro.firebasestorage.app",
+            messagingSenderId: "680016915696",
+            appId: "1:680016915696:web:4b3721313ea0e2e3342635",
+            measurementId: "G-HV5N0LQJTG"
+        };
+
+        let db;
+        let isSubmitting = false;
+
+        // Initialize Firebase with proper error handling
+        function initializeFirebase() {
+            return new Promise((resolve, reject) => {
+                try {
+                    if (!firebase.apps.length) {
+                        firebase.initializeApp(firebaseConfig);
+                    }
+                    db = firebase.firestore();
+                    console.log("Firebase initialized successfully");
+                    resolve();
+                } catch (error) {
+                    console.error("Firebase initialization failed:", error);
+                    reject(error);
+                }
+            });
+        }
+
+        // Timeout wrapper for promises
+        function withTimeout(promise, ms) {
+            return new Promise((resolve, reject) => {
+                const timeoutId = setTimeout(() => {
+                    reject(new Error(`Operation timed out after ${ms}ms`));
+                }, ms);
+                
+                promise.then(
+                    (result) => {
+                        clearTimeout(timeoutId);
+                        resolve(result);
+                    },
+                    (error) => {
+                        clearTimeout(timeoutId);
+                        reject(error);
+                    }
+                );
+            });
+        }
+
+        // Update progress bar
+        function updateProgress(percentage) {
+            const progressBar = document.getElementById('progressBar');
+            const progressFill = document.getElementById('progressFill');
+            
+            if (progressBar && progressFill) {
+                progressBar.style.display = 'block';
+                progressFill.style.width = percentage + '%';
+            }
+        }
+
+        function resetFormState() {
+            isSubmitting = false;
+            const submitBtn = document.getElementById('submitBtn');
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-save"></i>&nbsp;Submit Product';
+            }
+            
+            const progressBar = document.getElementById('progressBar');
+            if (progressBar) {
+                progressBar.style.display = 'none';
+            }
+        }
+
+        // Initialize Firebase when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeFirebase().catch(error => {
+                console.error('Failed to initialize Firebase:', error);
+            });
+
+            // Handle form submission
+            const form = document.getElementById('userProductForm');
+            if (form) {
+                form.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    
+                    if (isSubmitting) {
+                        return;
+                    }
+                    
+                    isSubmitting = true;
+                    const submitBtn = document.getElementById('submitBtn');
+                    const errorBox = document.getElementById('formError');
+                    const successBox = document.getElementById('formSuccess');
+                    
+                    // Reset previous messages
+                    errorBox.style.display = 'none';
+                    successBox.style.display = 'none';
+                    
+                    // Update button state
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>&nbsp;Submitting...';
+                    
+                    updateProgress(10);
+
+                    try {
+                        // Get form data
+                        const title = document.getElementById('title').value.trim();
+                        const imageUrl = document.getElementById('imageUrl').value.trim();
+                        const imageFile = document.getElementById('imageFile').files[0];
+                        const price = document.getElementById('price').value.trim();
+                        const description = document.getElementById('description').value.trim();
+                        const link = document.getElementById('link').value.trim();
+                        const category = document.getElementById('category').value;
+                        const platform = document.getElementById('platform').value;
+
+                        // Basic validation
+                        if (!title || !price || !description || !link || !category || !platform) {
+                            throw new Error('Please fill in all required fields.');
+                        }
+
+                        updateProgress(30);
+
+                        // Get current user info
+                        const currentUser = JSON.parse(localStorage.getItem('smartdeals_currentUser') || '{}');
+                        const currentUserEmail = currentUser.email || 'anonymous@example.com';
+
+                        // Handle image upload or URL
+                        let finalImageUrl = imageUrl;
+                        if (imageFile && !imageUrl) {
+                            // For now, we'll use a placeholder. In production, you'd upload to Firebase Storage
+                            finalImageUrl = 'https://via.placeholder.com/300x200?text=Product+Image';
+                            console.log('Image file selected:', imageFile.name, 'Using placeholder URL');
+                        }
+
+                        updateProgress(60);
+
+                        // Create product object
+                        const product = {
+                            title: title,
+                            price: price,
+                            description: description,
+                            image: finalImageUrl || 'https://via.placeholder.com/300x200?text=No+Image',
+                            link: link,
+                            category: category,
+                            platform: platform,
+                            rating: 5,
+                            reviews: 0,
+                            discount: 0,
+                            featured: false,
+                            createdAt: firebase && firebase.firestore ? firebase.firestore.FieldValue.serverTimestamp() : new Date().toISOString(),
+                            ownerEmail: currentUserEmail,
+                            submittedBy: currentUserEmail,
+                            userId: currentUser.email || 'anonymous',
+                            userDisplayName: currentUser.name || 'Anonymous User'
+                        };
+
+                        updateProgress(80);
+
+                        try {
+                            // Try Firebase submission with timeout
+                            if (db) {
+                                const docRef = await withTimeout(
+                                    db.collection('products').add(product),
+                                    15000
+                                );
+                                console.log('Product written to Firebase with ID:', docRef.id);
+
+                                updateProgress(100);
+                                successBox.textContent = 'Product added successfully! You can view it in the marketplace.';
+                                successBox.style.display = 'block';
+                                
+                                // Reset form after successful submission
+                                setTimeout(() => {
+                                    resetForm();
+                                    resetFormState();
+                                    // Show products section to see the added product
+                                    showSection('products');
+                                }, 2000);
+                            } else {
+                                throw new Error('Firebase not initialized. Please refresh the page and try again.');
+                            }
+                        } catch (firebaseError) {
+                            console.error('Firebase submission failed:', firebaseError);
+                            updateProgress(100);
+                            errorBox.textContent = 'Failed to save product to Firebase. Please check your internet connection and try again.';
+                            errorBox.style.display = 'block';
+                            resetFormState();
+                            throw new Error('Failed to save product to Firebase. Please try again.');
+                        }
+
+                    } catch (error) {
+                        console.error('Submission error:', error);
+                        errorBox.textContent = error.message || 'Failed to save product. Please try again.';
+                        errorBox.style.display = 'block';
+                        resetFormState();
+                    }
+                });
+            }
+        });
     </script>
 </body>
 </html>
