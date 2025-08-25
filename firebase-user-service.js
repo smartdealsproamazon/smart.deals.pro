@@ -32,7 +32,7 @@ class FirebaseUserService {
   async waitForFirebase() {
     return new Promise((resolve, reject) => {
       let attempts = 0;
-      const maxAttempts = 50;
+      const maxAttempts = 20; // Reduced from 50
       
       const checkFirebase = () => {
         attempts++;
@@ -41,9 +41,10 @@ class FirebaseUserService {
           console.log('Firebase SDK loaded successfully');
           resolve();
         } else if (attempts >= maxAttempts) {
-          reject(new Error('Firebase SDK not available after maximum attempts'));
+          console.warn('Firebase SDK not available after maximum attempts, service will work in limited mode');
+          resolve(); // Resolve instead of reject to allow fallback
         } else {
-          setTimeout(checkFirebase, 100);
+          setTimeout(checkFirebase, 200); // Increased interval
         }
       };
       
@@ -54,7 +55,7 @@ class FirebaseUserService {
   async waitForFirebaseService() {
     return new Promise((resolve, reject) => {
       let attempts = 0;
-      const maxAttempts = 50;
+      const maxAttempts = 20; // Reduced from 50
       
       const checkService = () => {
         attempts++;
@@ -63,9 +64,10 @@ class FirebaseUserService {
           console.log('Firebase Service ready');
           resolve();
         } else if (attempts >= maxAttempts) {
-          reject(new Error('Firebase Service not ready after maximum attempts'));
+          console.warn('Firebase Service not ready after maximum attempts, continuing with limited functionality');
+          resolve(); // Resolve instead of reject to allow fallback
         } else {
-          setTimeout(checkService, 100);
+          setTimeout(checkService, 200); // Increased interval
         }
       };
       

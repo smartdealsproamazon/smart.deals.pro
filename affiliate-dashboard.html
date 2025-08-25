@@ -34,7 +34,7 @@
       
       if (!currentUser || !affiliateRegistered) {
         alert('Access Denied: Please register as an affiliate first to access the dashboard.');
-        window.location.href = 'affiliate-register.html';
+        window.location.href = 'user-registration.html';
       }
     })();
   </script>
@@ -1062,9 +1062,9 @@
 
     // Helper function to wait for Firebase services to be ready
     async function waitForFirebaseServices() {
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
         let attempts = 0;
-        const maxAttempts = 100; // Increased attempts
+        const maxAttempts = 20; // Reduced from 100 for faster fallback
         
         const checkServices = () => {
           attempts++;
@@ -1072,10 +1072,11 @@
           // Check if Firebase config is loaded
           if (typeof firebase === 'undefined') {
             if (attempts >= maxAttempts) {
-              reject(new Error('Firebase SDK not loaded'));
+              console.warn('Firebase SDK not loaded, continuing with offline mode');
+              resolve(false); // Return false instead of rejecting
               return;
             }
-            setTimeout(checkServices, 100);
+            setTimeout(checkServices, 200); // Increased interval
             return;
           }
           
@@ -1083,15 +1084,15 @@
           if (!window.firebaseService || !window.firebaseService.isReady()) {
             if (attempts >= maxAttempts) {
               console.warn('Firebase service not ready, continuing with limited functionality');
-              resolve(); // Continue anyway
+              resolve(false); // Return false instead of rejecting
               return;
             }
-            setTimeout(checkServices, 100);
+            setTimeout(checkServices, 200); // Increased interval
             return;
           }
           
           console.log('Firebase services ready');
-          resolve();
+          resolve(true);
         };
         
         checkServices();
@@ -1122,6 +1123,37 @@
           </div>
         `;
       }
+
+      // Show offline notification banner
+      showOfflineNotification();
+    }
+
+    // Show offline notification banner
+    function showOfflineNotification() {
+      const existingBanner = document.getElementById('offline-banner');
+      if (existingBanner) return; // Don't show multiple banners
+
+      const banner = document.createElement('div');
+      banner.id = 'offline-banner';
+      banner.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: #f59e0b;
+        color: white;
+        padding: 10px 20px;
+        text-align: center;
+        z-index: 1000;
+        font-weight: 600;
+      `;
+      banner.innerHTML = `
+        <i class="fas fa-wifi" style="opacity: 0.7;"></i> 
+        Working in offline mode - Some features may be limited
+        <button onclick="this.parentElement.remove()" style="float: right; background: none; border: none; color: white; cursor: pointer;">×</button>
+      `;
+      
+      document.body.prepend(banner);
     }
 
     function loadFallbackData() {
@@ -1182,10 +1214,18 @@
       
       // Wait for Firebase service to be ready before loading data
       try {
-        // Wait for Firebase services to be ready
-        await waitForFirebaseServices();
-        // Load affiliate data
-        await loadAffiliateData();
+        // Wait for Firebase services to be ready (now returns boolean)
+        const firebaseReady = await waitForFirebaseServices();
+        
+        if (firebaseReady) {
+          // Load affiliate data with Firebase
+          await loadAffiliateData();
+        } else {
+          // Firebase not available, load with fallback data
+          console.log('Firebase not available, loading with fallback data');
+          loadFallbackDashboardData();
+          showOfflineNotification();
+        }
       } catch (error) {
         console.error('Error initializing Firebase service:', error);
         // Show fallback message with proper error handling
@@ -1196,6 +1236,53 @@
       showSection('overview');
       
       console.log('Dashboard initialized successfully');
+    }
+
+    // Load dashboard with fallback data when Firebase is unavailable
+    function loadFallbackDashboardData() {
+      console.log('Loading dashboard with fallback data...');
+      
+      // Load basic demo data for user experience
+      const fallbackProducts = { total: 0, active: 0, pending: 0 };
+      const fallbackAnalytics = { views: 0, profileVisits: 0, clicks: 0 };
+      
+      // Try to load any cached data
+      const cachedProducts = localStorage.getItem('smartdeals_cached_products');
+      const cachedAnalytics = localStorage.getItem('smartdeals_cached_analytics');
+      
+      if (cachedProducts) {
+        try {
+          Object.assign(fallbackProducts, JSON.parse(cachedProducts));
+        } catch (e) {
+          console.warn('Failed to parse cached products');
+        }
+      }
+      
+      if (cachedAnalytics) {
+        try {
+          Object.assign(fallbackAnalytics, JSON.parse(cachedAnalytics));
+        } catch (e) {
+          console.warn('Failed to parse cached analytics');
+        }
+      }
+      
+      // Update dashboard with fallback data
+      updateDashboardStats(fallbackProducts, fallbackAnalytics);
+      
+      // Show helpful message in recent activity
+      const recentActivityContainer = document.getElementById('recentActivity');
+      if (recentActivityContainer) {
+        recentActivityContainer.innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-info-circle" style="color: #3b82f6;"></i>
+            <h3>Dashboard Loaded</h3>
+            <p>Your dashboard is ready! Add your first product to start tracking analytics.</p>
+            <a href="user-product-access.html" class="action-btn" style="margin-top: 1rem;">
+              <i class="fas fa-plus"></i> Add Your First Product
+            </a>
+          </div>
+        `;
+      }
     }
 
     function showLoadingStates() {
