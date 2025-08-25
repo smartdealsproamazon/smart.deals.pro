@@ -1736,6 +1736,17 @@
             const result = await Promise.race([registrationPromise, timeoutPromise]);
             
             if (result.success) {
+                // Send email notification to admin
+                try {
+                    if (window.emailNotificationService && window.emailNotificationService.isReady()) {
+                        await window.emailNotificationService.sendRegistrationNotification(userData);
+                        console.log('Admin notification email sent successfully');
+                    }
+                } catch (emailError) {
+                    console.error('Failed to send admin notification email:', emailError);
+                    // Don't fail the registration if email fails
+                }
+                
                 showMessage('🎉 Account created successfully! Welcome to SmartDeals Pro!', 'success');
                 
                 // Redirect to dashboard after successful registration
