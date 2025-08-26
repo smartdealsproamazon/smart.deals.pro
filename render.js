@@ -215,7 +215,8 @@ function createProductCard(product) {
 
   div.innerHTML = `
     <div class="product-image-container">
-      <img src="${product.image}" alt="${product.name}" class="product-image" loading="lazy">
+      <img src="${product.image}" alt="${product.name}" class="product-image" loading="lazy" 
+           onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1560472355-536de3962603?w=400&h=300&fit=crop';">
     </div>
     <div class="product-content">
       <h3 class="product-title">${product.name}</h3>

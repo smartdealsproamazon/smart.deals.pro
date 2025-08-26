@@ -856,17 +856,27 @@ function getProductsByCategory(category) {
 }
 
 function getFeaturedProducts() {
-  // Return only pre-existing featured products, exclude user-submitted products
-  // User-submitted products should only appear on marketplace page
+  // Return the newest products including user-submitted ones
   const allProducts = window.products || [];
-  const preExistingProducts = allProducts.filter(product => {
-    // Exclude products that were submitted by users (have submittedBy field)
-    // or have local_ prefix in ID (locally stored user submissions)
-    return !product.submittedBy && !product.id?.toString().startsWith('local_');
+  
+  // Filter out only demo/test products, but keep user-submitted products
+  const validProducts = allProducts.filter(product => {
+    // Exclude demo/test products but include user-submitted ones
+    return !product.id?.toString().startsWith('demo_') && 
+           !product.title?.includes('Demo') && 
+           !product.title?.includes('Test') &&
+           !product.name?.includes('Demo') && 
+           !product.name?.includes('Test');
   });
   
-  // Return the 6 most recently added pre-existing products
-  return preExistingProducts.slice(0, 6);
+  // Sort by creation date (newest first) and return the top 6
+  const sortedProducts = validProducts.sort((a, b) => {
+    const dateA = a.createdAt ? new Date(a.createdAt) : new Date(0);
+    const dateB = b.createdAt ? new Date(b.createdAt) : new Date(0);
+    return dateB - dateA;
+  });
+  
+  return sortedProducts.slice(0, 6);
 }
 
 function getProductsOnSale() {

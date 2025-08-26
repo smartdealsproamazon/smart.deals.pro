@@ -379,11 +379,52 @@ window.startAutoDemo = function() {
   */
 };
 
+// Function to load sample products directly for immediate display
+window.loadSampleProductsToDisplay = function() {
+  console.log('Loading sample products for display...');
+  
+  if (typeof window.productStateManager !== 'undefined') {
+    // Add each real product to the product state manager
+    realProducts.forEach(product => {
+      const productWithId = {
+        ...product,
+        id: window.productStateManager.generateProductId(product),
+        createdAt: new Date().toISOString()
+      };
+      window.productStateManager.addProduct(productWithId);
+    });
+    
+    // Update the global products array
+    window.products = window.productStateManager.getAllProducts();
+    
+    // Dispatch event to notify other components
+    document.dispatchEvent(new CustomEvent('products-ready'));
+    
+    console.log(`Added ${realProducts.length} sample products to display`);
+    return true;
+  } else {
+    console.warn('ProductStateManager not available yet, retrying...');
+    return false;
+  }
+};
+
+// Auto-load sample products when the script loads
+document.addEventListener('DOMContentLoaded', function() {
+  // Try to load sample products immediately
+  if (!window.loadSampleProductsToDisplay()) {
+    // If not successful, retry after a short delay
+    setTimeout(() => {
+      window.loadSampleProductsToDisplay();
+    }, 500);
+  }
+});
+
 // Export functions for global access
 window.firebaseProductAdmin = {
   addSampleProduct: window.addSampleProduct,
   addMultipleProducts: window.addMultipleProducts,
   getAllProducts: window.getAllProducts,
   deleteAllProducts: window.deleteAllProducts,
-  startAutoDemo: window.startAutoDemo
+  startAutoDemo: window.startAutoDemo,
+  loadSampleProductsToDisplay: window.loadSampleProductsToDisplay
 };
