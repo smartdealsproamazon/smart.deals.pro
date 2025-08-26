@@ -246,9 +246,103 @@
         <a href="usa-discount.html">USA Flash Sale</a>
         <a href="about.html">About</a>
       <a href="contact.html">Contact</a>
-                <a href="product-submission-verification.html">Submit Product</a>
+                <a href="#" onclick="toggleProductSidebar()">Submit Product</a>
     </div>
   </div>
+
+  <!-- Homepage Product Submission Sidebar -->
+  <div class="product-sidebar" id="productSidebar">
+    <div class="sidebar-content">
+      <div class="sidebar-header">
+        <h3>Add Product to Homepage</h3>
+        <button class="sidebar-close" onclick="toggleProductSidebar()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      
+      <form id="homepageProductForm" class="sidebar-form">
+        <div class="form-group">
+          <label for="hp-title">Product Title</label>
+          <input type="text" id="hp-title" required placeholder="Enter product title">
+        </div>
+        
+        <div class="form-group">
+          <label for="hp-imageUrl">Image URL</label>
+          <input type="url" id="hp-imageUrl" placeholder="https://example.com/image.jpg">
+        </div>
+        
+        <div class="form-group">
+          <label for="hp-imageFile">Upload Image</label>
+          <input type="file" id="hp-imageFile" accept="image/*">
+        </div>
+        
+        <div class="form-group">
+          <label for="hp-price">Price</label>
+          <input type="text" id="hp-price" required placeholder="$19.99">
+        </div>
+        
+        <div class="form-group">
+          <label for="hp-description">Description</label>
+          <textarea id="hp-description" required placeholder="Enter product description" rows="3"></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label for="hp-link">Product Link</label>
+          <input type="url" id="hp-link" required placeholder="https://your-affiliate-link">
+        </div>
+        
+        <div class="form-group">
+          <label for="hp-category">Category</label>
+          <select id="hp-category" required>
+            <option value="">Select Category</option>
+            <option value="boys">Boys Fashion</option>
+            <option value="girls">Girls Fashion</option>
+            <option value="electrical">Electronics</option>
+            <option value="gaming">Gaming</option>
+            <option value="home-garden">Home & Garden</option>
+            <option value="smartwatch">Smartwatches</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="hp-platform">Platform</label>
+          <select id="hp-platform" required>
+            <option value="">Select Platform</option>
+            <option value="amazon">Amazon</option>
+            <option value="clickbank">ClickBank</option>
+            <option value="shareasale">ShareASale</option>
+            <option value="cj">Commission Junction</option>
+            <option value="rakuten">Rakuten</option>
+            <option value="impact">Impact</option>
+            <option value="shopify">Shopify Partners</option>
+            <option value="etsy">Etsy</option>
+            <option value="ebay">eBay Partner</option>
+            <option value="other">Other Platform</option>
+          </select>
+        </div>
+        
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary" id="hp-submitBtn">
+            <i class="fas fa-save"></i> Add to Homepage
+          </button>
+          <button type="button" class="btn btn-secondary" onclick="resetHomepageForm()">
+            <i class="fas fa-times"></i> Reset
+          </button>
+        </div>
+        
+        <div id="hp-formError" class="form-message error" style="display:none;"></div>
+        <div id="hp-formSuccess" class="form-message success" style="display:none;"></div>
+        
+        <div id="hp-progressBar" class="progress-bar" style="display: none;">
+          <div id="hp-progressFill" class="progress-fill"></div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Sidebar Overlay -->
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleProductSidebar()"></div>
 
   <!-- Hero Section -->
   <section class="hero-section">
@@ -548,6 +642,56 @@
       }
     });
 
+    // Product sidebar functionality
+    function toggleProductSidebar() {
+      const sidebar = document.getElementById('productSidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+      
+      sidebar.classList.toggle('active');
+      overlay.classList.toggle('active');
+      
+      // Close mobile menu if open
+      const mobileMenu = document.getElementById('mobileMenu');
+      if (mobileMenu.classList.contains('active')) {
+        mobileMenu.classList.remove('active');
+      }
+    }
+
+    function resetHomepageForm() {
+      document.getElementById('homepageProductForm').reset();
+      const errorEl = document.getElementById('hp-formError');
+      const successEl = document.getElementById('hp-formSuccess');
+      errorEl.style.display = 'none';
+      successEl.style.display = 'none';
+    }
+
+    function showHomepageMessage(message, isError = false) {
+      const errorEl = document.getElementById('hp-formError');
+      const successEl = document.getElementById('hp-formSuccess');
+      
+      if (isError) {
+        errorEl.textContent = message;
+        errorEl.style.display = 'block';
+        successEl.style.display = 'none';
+      } else {
+        successEl.textContent = message;
+        successEl.style.display = 'block';
+        errorEl.style.display = 'none';
+      }
+    }
+
+    function updateHomepageProgress(percent) {
+      const progressBar = document.getElementById('hp-progressBar');
+      const progressFill = document.getElementById('hp-progressFill');
+      
+      if (percent > 0) {
+        progressBar.style.display = 'block';
+        progressFill.style.width = percent + '%';
+      } else {
+        progressBar.style.display = 'none';
+      }
+    }
+
 
 
     // Newsletter subscription
@@ -568,9 +712,86 @@
       });
     });
 
-    // Render featured products on page load
+    // Homepage product form submission
     document.addEventListener('DOMContentLoaded', function() {
       console.log('Homepage DOM loaded, initializing products...');
+      
+      // Initialize homepage form submission
+      const homepageForm = document.getElementById('homepageProductForm');
+      if (homepageForm) {
+        homepageForm.addEventListener('submit', async function(e) {
+          e.preventDefault();
+          
+          const submitBtn = document.getElementById('hp-submitBtn');
+          const originalText = submitBtn.innerHTML;
+          
+          try {
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+            submitBtn.disabled = true;
+            updateHomepageProgress(20);
+            
+            // Get form data
+            const formData = {
+              title: document.getElementById('hp-title').value.trim(),
+              imageUrl: document.getElementById('hp-imageUrl').value.trim(),
+              price: document.getElementById('hp-price').value.trim(),
+              description: document.getElementById('hp-description').value.trim(),
+              link: document.getElementById('hp-link').value.trim(),
+              category: document.getElementById('hp-category').value,
+              platform: document.getElementById('hp-platform').value,
+              type: 'homepage', // Mark as homepage product
+              featured: true, // Homepage products are featured
+              submittedAt: new Date().toISOString(),
+              submittedBy: localStorage.getItem('smartdeals_currentUser') || 'anonymous'
+            };
+            
+            updateHomepageProgress(40);
+            
+            // Handle image upload if file is selected
+            const imageFile = document.getElementById('hp-imageFile').files[0];
+            if (imageFile) {
+              updateHomepageProgress(60);
+              try {
+                if (window.firebaseService && window.firebaseService.isReady()) {
+                  const imagePath = `homepage-products/${Date.now()}_${imageFile.name}`;
+                  formData.imageUrl = await window.firebaseService.uploadFile(imageFile, imagePath);
+                }
+              } catch (uploadError) {
+                console.warn('Image upload failed, continuing without image:', uploadError);
+              }
+            }
+            
+            updateHomepageProgress(80);
+            
+            // Save to Firebase
+            if (window.firebaseService && window.firebaseService.isReady()) {
+              await window.firebaseService.addDocument('homepage-products', formData);
+              updateHomepageProgress(100);
+              
+              showHomepageMessage('Product added to homepage successfully! It will appear in featured products.');
+              resetHomepageForm();
+              
+              // Refresh featured products and close sidebar
+              setTimeout(() => {
+                if (typeof renderFeaturedProducts === 'function') {
+                  renderFeaturedProducts();
+                }
+                toggleProductSidebar();
+              }, 2000);
+            } else {
+              throw new Error('Firebase not available. Please refresh the page and try again.');
+            }
+            
+          } catch (error) {
+            console.error('Homepage product submission error:', error);
+            showHomepageMessage('Failed to add product: ' + error.message, true);
+          } finally {
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+            updateHomepageProgress(0);
+          }
+        });
+      }
       
       // Function to attempt rendering featured products
       function attemptFeaturedProductsRender() {

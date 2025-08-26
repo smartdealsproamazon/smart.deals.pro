@@ -201,6 +201,8 @@ const productStateManager = new ProductStateManager();
 
 // Firebase connection variables
 let firestoreListener = null;
+let homepageProductsListener = null;
+let marketplaceProductsListener = null;
 let connectionTimeout = null;
 
 // Connect to Firebase with improved error handling and retry logic
@@ -256,94 +258,122 @@ function connectToFirebase() {
       console.warn('Firebase persistence failed:', err);
     }
 
-    // Set up real-time listener with optimized query
-    firestoreListener = db.collection('products')
+    // Set up real-time listeners for both homepage and marketplace products
+    let homepageProducts = [];
+    let marketplaceProducts = [];
+    let listenersComplete = 0;
+    
+    function updateCombinedProducts() {
+      listenersComplete++;
+      if (listenersComplete >= 2) { // Both listeners have fired
+        clearTimeout(connectionTimeout);
+        productStateManager.setFirebaseConnected(true);
+        productStateManager.resetConnectionAttempts();
+        
+        console.log('Firebase connected! Homepage products:', homepageProducts.length, 'Marketplace products:', marketplaceProducts.length);
+        
+        // For homepage display, use homepage products
+        productStateManager.updateProducts(homepageProducts);
+        
+        // Update global products array for backward compatibility (homepage products)
+        const previousCount = window.products?.length || 0;
+        window.products = productStateManager.getAllProducts();
+        
+        // Store both collections separately
+        window.homepageProducts = homepageProducts;
+        window.marketplaceProducts = marketplaceProducts;
+        window.allProductsIncludingUserSubmitted = [...homepageProducts, ...marketplaceProducts];
+        
+        console.log(`Products updated - Homepage: ${homepageProducts.length}, Marketplace: ${marketplaceProducts.length}, Total: ${window.allProductsIncludingUserSubmitted.length}`);
+        
+        // Save to localStorage for caching
+        localStorage.setItem('products', JSON.stringify(window.products)); // Homepage products for backward compatibility
+        localStorage.setItem('homepageProducts', JSON.stringify(homepageProducts));
+        localStorage.setItem('marketplaceProducts', JSON.stringify(marketplaceProducts));
+        localStorage.setItem('allProducts', JSON.stringify(window.allProductsIncludingUserSubmitted));
+        localStorage.setItem('products_updated', Date.now().toString());
+
+        // Notify any listeners
+        document.dispatchEvent(new Event('products-updated'));
+        document.dispatchEvent(new Event('products-ready'));
+        document.dispatchEvent(new Event('firebase-connected'));
+
+        // Auto-render if function is available
+        if (typeof window.autoRenderProducts === 'function') {
+          window.autoRenderProducts();
+        }
+      }
+    }
+    
+    // Listen to homepage-products collection
+    homepageProductsListener = db.collection('homepage-products')
       .orderBy('createdAt', 'desc')
-      .limit(100) // Increased limit for better product coverage
+      .limit(50)
       .onSnapshot(
         (snapshot) => {
-          clearTimeout(connectionTimeout);
-          productStateManager.setFirebaseConnected(true);
-          productStateManager.resetConnectionAttempts();
-          
-          console.log('Firebase connected! Received', snapshot.size, 'products');
-          
-          // Get Firebase products
-          const firebaseProducts = snapshot.docs.map(doc => ({
+          console.log('Homepage products updated:', snapshot.size);
+          homepageProducts = snapshot.docs.map(doc => ({
             id: doc.id,
+            type: 'homepage',
             ...doc.data()
           }));
-
-          // Filter out user-submitted products for homepage display
-          // User-submitted products should only appear on marketplace page
-          const filteredFirebaseProducts = firebaseProducts.filter(product => {
-            // Exclude products that were submitted by users (have submittedBy field)
-            // or have local_ prefix in ID (locally stored user submissions)
-            return !product.submittedBy && !product.id?.toString().startsWith('local_');
-          });
+          updateCombinedProducts();
+        },
+        (error) => {
+          console.error('Homepage products listener error:', error);
+          homepageProducts = JSON.parse(localStorage.getItem('homepageProducts') || '[]');
+          updateCombinedProducts();
+        }
+      );
+    
+    // Listen to marketplace-products collection
+    marketplaceProductsListener = db.collection('marketplace-products')
+      .orderBy('createdAt', 'desc')
+      .limit(100)
+      .onSnapshot(
+        (snapshot) => {
+          console.log('Marketplace products updated:', snapshot.size);
+          marketplaceProducts = snapshot.docs.map(doc => ({
+            id: doc.id,
+            type: 'marketplace',
+            ...doc.data()
+          }));
+          updateCombinedProducts();
+        },
+        (error) => {
+          console.error('Marketplace products listener error:', error);
+          marketplaceProducts = JSON.parse(localStorage.getItem('marketplaceProducts') || '[]');
+          updateCombinedProducts();
+        }
+      );
+    
+    // Keep old products collection for backward compatibility
+    firestoreListener = db.collection('products')
+      .orderBy('createdAt', 'desc')
+      .limit(50)
+      .onSnapshot(
+        (snapshot) => {
+          console.log('Legacy products collection:', snapshot.size);
+          // Add legacy products to marketplace if they don't have a type
+          const legacyProducts = snapshot.docs.map(doc => ({
+            id: doc.id,
+            type: 'marketplace',
+            ...doc.data()
+          }));
           
-          let allProducts = filteredFirebaseProducts;
-          const localProducts = JSON.parse(localStorage.getItem('products') || '[]');
+          // Merge with marketplace products but avoid duplicates
+          const existingIds = new Set(marketplaceProducts.map(p => p.id));
+          const newLegacyProducts = legacyProducts.filter(p => !existingIds.has(p.id));
           
-          // Filter local products as well
-          const filteredLocalProducts = localProducts.filter(product => {
-            return !product.submittedBy && !product.id?.toString().startsWith('local_');
-          });
-          
-          // If we have Firebase products, use them (don't fall back to demo)
-          if (filteredFirebaseProducts.length > 0) {
-            allProducts = filteredFirebaseProducts;
-            console.log(`Using ${filteredFirebaseProducts.length} real Firebase products`);
-          } else if (filteredLocalProducts.length > 0) {
-            // Only use cached products if they're not demo products
-            const nonDemoProducts = filteredLocalProducts.filter(product => 
-              !product.name?.includes('Demo') && 
-              !product.name?.includes('Example') &&
-              !product.title?.includes('Demo') &&
-              !product.title?.includes('Example') &&
-              !product.id?.includes('prod_sample_') &&
-              !product.id?.includes('demo_') &&
-              product.link !== '#'
-            );
-            if (nonDemoProducts.length > 0) {
-              allProducts = nonDemoProducts;
-              console.log(`Using ${nonDemoProducts.length} cached non-demo products`);
-            } else {
-              console.log('No real products found, will show empty state');
-              allProducts = [];
-            }
-          } else {
-            console.log('No products found in Firebase or cache');
-            allProducts = [];
+          if (newLegacyProducts.length > 0) {
+            marketplaceProducts = [...marketplaceProducts, ...newLegacyProducts];
+            updateCombinedProducts();
           }
-          
-          productStateManager.updateProducts(allProducts);
-          
-          // Update global products array for backward compatibility
-          const previousCount = window.products?.length || 0;
-          window.products = productStateManager.getAllProducts();
-          
-          // Also maintain a separate array with ALL products (including user-submitted) for marketplace
-          window.allProductsIncludingUserSubmitted = firebaseProducts; // Full unfiltered list
-          
-          console.log(`Products updated: ${previousCount} → ${window.products.length}`);
-          console.log(`All products (including user-submitted): ${window.allProductsIncludingUserSubmitted.length}`);
-          
-          // Save filtered products to localStorage for caching (homepage)
-          localStorage.setItem('products', JSON.stringify(window.products));
-          // Save all products for marketplace
-          localStorage.setItem('allProducts', JSON.stringify(window.allProductsIncludingUserSubmitted));
-          localStorage.setItem('products_updated', Date.now().toString());
-
-          // Notify any listeners
-          document.dispatchEvent(new Event('products-updated'));
-          document.dispatchEvent(new Event('products-ready'));
-          document.dispatchEvent(new Event('firebase-connected'));
-
-          // Auto-render if function is available
-          if (typeof window.autoRenderProducts === 'function') {
-            window.autoRenderProducts();
-          }
+        },
+        (error) => {
+          console.warn('Legacy products collection error:', error);
+        }
+      );
 
           // If there's a specific render function on the page, call it
           if (typeof renderProducts === 'function') {
@@ -817,11 +847,17 @@ function shouldRefreshCache() {
 // Always load Firebase for real-time updates, but show cached data immediately
 loadFirebase(initProducts);
 
-// Cleanup function to remove listener when page unloads
+// Cleanup function to remove listeners when page unloads
 window.addEventListener('beforeunload', () => {
+  console.log('Cleaning up Firebase listeners...');
   if (firestoreListener) {
-    console.log('Cleaning up Firebase listener...');
     firestoreListener();
+  }
+  if (homepageProductsListener) {
+    homepageProductsListener();
+  }
+  if (marketplaceProductsListener) {
+    marketplaceProductsListener();
   }
 });
 
@@ -842,17 +878,20 @@ function getProductsByCategory(category) {
 }
 
 function getFeaturedProducts() {
-  // Return only pre-existing featured products, exclude user-submitted products
-  // User-submitted products should only appear on marketplace page
-  const allProducts = window.products || [];
-  const preExistingProducts = allProducts.filter(product => {
-    // Exclude products that were submitted by users (have submittedBy field)
-    // or have local_ prefix in ID (locally stored user submissions)
-    return !product.submittedBy && !product.id?.toString().startsWith('local_');
-  });
+  // Return homepage products which are specifically added for featured display
+  const homepageProducts = window.homepageProducts || [];
   
-  // Return the 6 most recently added pre-existing products
-  return preExistingProducts.slice(0, 6);
+  // If no homepage products, fall back to legacy behavior
+  if (homepageProducts.length === 0) {
+    const allProducts = window.products || [];
+    const preExistingProducts = allProducts.filter(product => {
+      return !product.submittedBy && !product.id?.toString().startsWith('local_');
+    });
+    return preExistingProducts.slice(0, 6);
+  }
+  
+  // Return the 6 most recently added homepage products
+  return homepageProducts.slice(0, 6);
 }
 
 function getProductsOnSale() {

@@ -695,8 +695,8 @@
             <!-- Add Product Section -->
             <div id="add-product" class="section-content-area">
                 <div class="page-header">
-                    <h1>Add New Product</h1>
-                    <p>Submit a new product for affiliate promotion.</p>
+                    <h1>Add Product to Marketplace</h1>
+                    <p>Submit a new product for marketplace and affiliate promotion.</p>
                 </div>
 
                 <div class="dashboard-section">
@@ -1259,7 +1259,7 @@
 
                         updateProgress(60);
 
-                        // Create product object
+                        // Create product object for marketplace
                         const product = {
                             title: title,
                             price: price,
@@ -1272,6 +1272,7 @@
                             reviews: 0,
                             discount: 0,
                             featured: false,
+                            type: 'marketplace', // Mark as marketplace product
                             createdAt: firebase && firebase.firestore ? firebase.firestore.FieldValue.serverTimestamp() : new Date().toISOString(),
                             ownerEmail: currentUserEmail,
                             submittedBy: currentUserEmail,
@@ -1285,13 +1286,13 @@
                             // Try Firebase submission with timeout
                             if (db) {
                                 const docRef = await withTimeout(
-                                    db.collection('products').add(product),
+                                    db.collection('marketplace-products').add(product),
                                     15000
                                 );
-                                console.log('Product written to Firebase with ID:', docRef.id);
+                                console.log('Marketplace product written to Firebase with ID:', docRef.id);
 
                                 updateProgress(100);
-                                successBox.textContent = 'Product added successfully! You can view it in the marketplace.';
+                                successBox.textContent = 'Product added successfully! It will appear in the marketplace for affiliate promotion.';
                                 successBox.style.display = 'block';
                                 
                                 // Reset form after successful submission

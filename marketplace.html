@@ -818,31 +818,37 @@
     }
 
     async function loadProductsFromSources() {
-      console.log('Loading products from multiple sources...');
+      console.log('Loading marketplace products from multiple sources...');
       let allProducts = [];
       
       try {
-        // Method 1: Try to get products from window.products (main products system)
-        if (window.products && window.products.length > 0) {
-          console.log('Found products from main system:', window.products.length);
-          allProducts = [...window.products];
+        // Method 1: Try to get marketplace products from window object
+        if (window.marketplaceProducts && window.marketplaceProducts.length > 0) {
+          console.log('Found marketplace products from main system:', window.marketplaceProducts.length);
+          allProducts = [...window.marketplaceProducts];
         }
         
         // Method 2: Try to get from localStorage cache
-        const cachedProducts = JSON.parse(localStorage.getItem('products') || '[]');
-        if (cachedProducts.length > 0) {
-          console.log('Found cached products:', cachedProducts.length);
+        const cachedMarketplaceProducts = JSON.parse(localStorage.getItem('marketplaceProducts') || '[]');
+        if (cachedMarketplaceProducts.length > 0) {
+          console.log('Found cached marketplace products:', cachedMarketplaceProducts.length);
           const existingIds = allProducts.map(p => p.id);
-          const newProducts = cachedProducts.filter(p => !existingIds.includes(p.id));
+          const newProducts = cachedMarketplaceProducts.filter(p => !existingIds.includes(p.id));
           allProducts = [...allProducts, ...newProducts];
         }
         
-        // Method 3: Try to load from Firebase directly with timeout
+        // Method 3: Try to load from Firebase marketplace-products collection directly
         if (db && allProducts.length === 0) {
-          console.log('Attempting direct Firebase load...');
+          console.log('Attempting direct Firebase marketplace-products load...');
           
-          // Use Promise.race for timeout
-          const firebasePromise = db.collection('products')
+          // Load marketplace-products
+          const marketplacePromise = db.collection('marketplace-products')
+            .orderBy('createdAt', 'desc')
+            .limit(100)
+            .get();
+            
+          // Load legacy products collection as fallback
+          const legacyPromise = db.collection('products')
             .orderBy('createdAt', 'desc')
             .limit(50)
             .get();
@@ -852,18 +858,41 @@
           );
           
           try {
-            const snapshot = await Promise.race([firebasePromise, timeoutPromise]);
-            const firebaseProducts = snapshot.docs.map(doc => ({
+            // Try marketplace-products first
+            const marketplaceSnapshot = await Promise.race([marketplacePromise, timeoutPromise]);
+            const marketplaceProducts = marketplaceSnapshot.docs.map(doc => ({
               id: doc.id,
+              type: 'marketplace',
               ...doc.data()
             }));
             
-            if (firebaseProducts.length > 0) {
-              console.log('Loaded products from Firebase:', firebaseProducts.length);
-              allProducts = [...allProducts, ...firebaseProducts];
+            if (marketplaceProducts.length > 0) {
+              console.log('Loaded marketplace products from Firebase:', marketplaceProducts.length);
+              allProducts = [...allProducts, ...marketplaceProducts];
             }
+            
+            // Also try legacy products collection
+            try {
+              const legacySnapshot = await Promise.race([legacyPromise, timeoutPromise]);
+              const legacyProducts = legacySnapshot.docs.map(doc => ({
+                id: doc.id,
+                type: 'marketplace',
+                ...doc.data()
+              }));
+              
+              if (legacyProducts.length > 0) {
+                console.log('Loaded legacy products for marketplace:', legacyProducts.length);
+                // Merge but avoid duplicates
+                const existingIds = new Set(allProducts.map(p => p.id));
+                const newLegacyProducts = legacyProducts.filter(p => !existingIds.has(p.id));
+                allProducts = [...allProducts, ...newLegacyProducts];
+              }
+            } catch (legacyError) {
+              console.warn('Legacy products load failed:', legacyError.message);
+            }
+            
           } catch (firebaseError) {
-            console.warn('Firebase direct load failed:', firebaseError.message);
+            console.warn('Firebase marketplace products load failed:', firebaseError.message);
           }
         }
         
@@ -980,6 +1009,13 @@
     `;
     document.head.appendChild(style);
   </script>
+
+  <!-- Firebase Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
+  <script src="firebase-config.js"></script>
 
   <!-- External Scripts -->
   <script src="demo-cleanup.js"></script>
