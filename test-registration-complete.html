@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Test - SmartDeals Pro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .test-section {
+            padding: 40px;
+        }
+
+        .test-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .test-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        .test-card:hover {
+            border-color: #667eea;
+            transform: translateY(-5px);
+        }
+
+        .test-card h3 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+        }
+
+        .test-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        .form-input {
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .test-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .test-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .test-btn:disabled {
+            background: #gray;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .status-message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-weight: 500;
+            display: none;
+        }
+
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .service-status {
+            background: #fff3cd;
+            color: #856404;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border: 1px solid #ffeaa7;
+        }
+
+        .service-status h4 {
+            margin-bottom: 10px;
+        }
+
+        .service-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .indicator-ready {
+            background: #28a745;
+        }
+
+        .indicator-loading {
+            background: #ffc107;
+        }
+
+        .indicator-error {
+            background: #dc3545;
+        }
+
+        @media (max-width: 768px) {
+            .test-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .test-section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧪 Registration System Test</h1>
+            <p>Test both user and affiliate registration with Firebase integration</p>
+        </div>
+
+        <div class="test-section">
+            <!-- Service Status -->
+            <div class="service-status">
+                <h4>🔧 Service Status</h4>
+                <div id="serviceStatus">
+                    <div><span class="service-indicator indicator-loading"></span>Firebase Service: <span id="firebaseStatus">Loading...</span></div>
+                    <div><span class="service-indicator indicator-loading"></span>User Registration Service: <span id="userRegStatus">Loading...</span></div>
+                </div>
+            </div>
+
+            <div class="test-grid">
+                <!-- User Registration Test -->
+                <div class="test-card">
+                    <h3>👤 User Registration Test</h3>
+                    <form class="test-form" id="userTestForm">
+                        <div class="form-group">
+                            <label for="userFirstName">First Name</label>
+                            <input type="text" id="userFirstName" name="firstName" class="form-input" value="Test" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="userLastName">Last Name</label>
+                            <input type="text" id="userLastName" name="lastName" class="form-input" value="User" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="userEmail">Email</label>
+                            <input type="email" id="userEmail" name="email" class="form-input" value="testuser@example.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="userPassword">Password</label>
+                            <input type="password" id="userPassword" name="password" class="form-input" value="TestPass123!" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="userPhone">Phone</label>
+                            <input type="tel" id="userPhone" name="phone" class="form-input" value="+1234567890">
+                        </div>
+                        <div class="form-group">
+                            <label for="userCountry">Country</label>
+                            <input type="text" id="userCountry" name="country" class="form-input" value="United States">
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="userNewsletter" name="newsletter">
+                            <label for="userNewsletter">Subscribe to newsletter</label>
+                        </div>
+                        <button type="submit" class="test-btn" id="userTestBtn">🚀 Test User Registration</button>
+                        <div class="status-message" id="userStatus"></div>
+                    </form>
+                </div>
+
+                <!-- Affiliate Registration Test -->
+                <div class="test-card">
+                    <h3>🤝 Affiliate Registration Test</h3>
+                    <form class="test-form" id="affiliateTestForm">
+                        <div class="form-group">
+                            <label for="affFirstName">First Name</label>
+                            <input type="text" id="affFirstName" name="firstName" class="form-input" value="Test" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="affLastName">Last Name</label>
+                            <input type="text" id="affLastName" name="lastName" class="form-input" value="Affiliate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="affEmail">Email</label>
+                            <input type="email" id="affEmail" name="email" class="form-input" value="testaffiliate@example.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="affPhone">Phone</label>
+                            <input type="tel" id="affPhone" name="phone" class="form-input" value="+1234567890">
+                        </div>
+                        <div class="form-group">
+                            <label for="affCountry">Country</label>
+                            <input type="text" id="affCountry" name="country" class="form-input" value="United States">
+                        </div>
+                        <div class="form-group">
+                            <label for="affExperience">Experience Level</label>
+                            <select id="affExperience" name="experience" class="form-input">
+                                <option value="beginner">Beginner</option>
+                                <option value="intermediate">Intermediate</option>
+                                <option value="advanced">Advanced</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="affWebsite">Website</label>
+                            <input type="url" id="affWebsite" name="website" class="form-input" value="https://example.com">
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="affTerms" name="terms" checked required>
+                            <label for="affTerms">Agree to terms</label>
+                        </div>
+                        <button type="submit" class="test-btn" id="affiliateTestBtn">🚀 Test Affiliate Registration</button>
+                        <div class="status-message" id="affiliateStatus"></div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Test Results -->
+            <div class="test-card">
+                <h3>📊 Test Results</h3>
+                <div id="testResults">
+                    <p>Run the tests above to see results here...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase and Services -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="user-registration-service.js"></script>
+
+    <script>
+        // Test variables
+        let testResults = [];
+
+        // Service status monitoring
+        function updateServiceStatus() {
+            const firebaseStatusEl = document.getElementById('firebaseStatus');
+            const userRegStatusEl = document.getElementById('userRegStatus');
+            const firebaseIndicator = document.querySelector('#serviceStatus div:nth-child(1) .service-indicator');
+            const userRegIndicator = document.querySelector('#serviceStatus div:nth-child(2) .service-indicator');
+
+            // Check Firebase service
+            if (window.firebaseService && window.firebaseService.isReady()) {
+                firebaseStatusEl.textContent = 'Ready ✅';
+                firebaseIndicator.className = 'service-indicator indicator-ready';
+            } else if (typeof firebase !== 'undefined') {
+                firebaseStatusEl.textContent = 'Loading...';
+                firebaseIndicator.className = 'service-indicator indicator-loading';
+            } else {
+                firebaseStatusEl.textContent = 'Error ❌';
+                firebaseIndicator.className = 'service-indicator indicator-error';
+            }
+
+            // Check User Registration service
+            if (window.userRegistrationService && window.userRegistrationService.isReady()) {
+                userRegStatusEl.textContent = 'Ready ✅';
+                userRegIndicator.className = 'service-indicator indicator-ready';
+            } else if (window.userRegistrationService) {
+                userRegStatusEl.textContent = 'Loading...';
+                userRegIndicator.className = 'service-indicator indicator-loading';
+            } else {
+                userRegStatusEl.textContent = 'Error ❌';
+                userRegIndicator.className = 'service-indicator indicator-error';
+            }
+        }
+
+        // Update status every second
+        setInterval(updateServiceStatus, 1000);
+
+        // Show message helper
+        function showMessage(elementId, message, type) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.className = `status-message status-${type}`;
+            element.style.display = 'block';
+        }
+
+        // Add test result
+        function addTestResult(testName, success, message, data = null) {
+            const result = {
+                timestamp: new Date().toISOString(),
+                test: testName,
+                success: success,
+                message: message,
+                data: data
+            };
+            testResults.push(result);
+            updateTestResults();
+        }
+
+        // Update test results display
+        function updateTestResults() {
+            const resultsEl = document.getElementById('testResults');
+            if (testResults.length === 0) {
+                resultsEl.innerHTML = '<p>Run the tests above to see results here...</p>';
+                return;
+            }
+
+            let html = '<div style="font-family: monospace; font-size: 12px;">';
+            testResults.forEach((result, index) => {
+                const icon = result.success ? '✅' : '❌';
+                const time = new Date(result.timestamp).toLocaleTimeString();
+                html += `<div style="margin-bottom: 10px; padding: 10px; background: ${result.success ? '#d4edda' : '#f8d7da'}; border-radius: 5px;">`;
+                html += `<strong>${icon} ${result.test}</strong> - ${time}<br>`;
+                html += `${result.message}<br>`;
+                if (result.data) {
+                    html += `<details><summary>Data</summary><pre>${JSON.stringify(result.data, null, 2)}</pre></details>`;
+                }
+                html += '</div>';
+            });
+            html += '</div>';
+            resultsEl.innerHTML = html;
+        }
+
+        // Generate unique email for testing
+        function generateTestEmail(prefix) {
+            const timestamp = Date.now();
+            return `${prefix}_${timestamp}@test.com`;
+        }
+
+        // User Registration Test
+        document.getElementById('userTestForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const btn = document.getElementById('userTestBtn');
+            const originalText = btn.textContent;
+            
+            try {
+                btn.disabled = true;
+                btn.textContent = '🔄 Testing...';
+                
+                // Check if service is ready
+                if (!window.userRegistrationService || !window.userRegistrationService.isReady()) {
+                    throw new Error('User Registration Service not ready');
+                }
+
+                // Generate unique email to avoid conflicts
+                const uniqueEmail = generateTestEmail('testuser');
+                document.getElementById('userEmail').value = uniqueEmail;
+
+                // Get form data
+                const formData = new FormData(e.target);
+                const userData = {
+                    firstName: formData.get('firstName'),
+                    lastName: formData.get('lastName'),
+                    email: uniqueEmail,
+                    password: formData.get('password'),
+                    phone: formData.get('phone'),
+                    country: formData.get('country'),
+                    newsletter: formData.get('newsletter') === 'on',
+                    interests: ['testing', 'technology']
+                };
+
+                console.log('Testing user registration with data:', userData);
+
+                // Test registration
+                const result = await window.userRegistrationService.registerUser(userData);
+                
+                if (result.success) {
+                    showMessage('userStatus', result.message, 'success');
+                    addTestResult('User Registration', true, result.message, {
+                        uid: result.uid,
+                        documentId: result.documentId
+                    });
+                } else {
+                    throw new Error(result.message);
+                }
+
+            } catch (error) {
+                console.error('User registration test error:', error);
+                showMessage('userStatus', `Test failed: ${error.message}`, 'error');
+                addTestResult('User Registration', false, error.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = originalText;
+            }
+        });
+
+        // Affiliate Registration Test
+        document.getElementById('affiliateTestForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const btn = document.getElementById('affiliateTestBtn');
+            const originalText = btn.textContent;
+            
+            try {
+                btn.disabled = true;
+                btn.textContent = '🔄 Testing...';
+                
+                // Check if service is ready
+                if (!window.userRegistrationService || !window.userRegistrationService.isReady()) {
+                    throw new Error('User Registration Service not ready');
+                }
+
+                // Generate unique email to avoid conflicts
+                const uniqueEmail = generateTestEmail('testaffiliate');
+                document.getElementById('affEmail').value = uniqueEmail;
+
+                // Get form data
+                const formData = new FormData(e.target);
+                const affiliateData = {
+                    firstName: formData.get('firstName'),
+                    lastName: formData.get('lastName'),
+                    email: uniqueEmail,
+                    phone: formData.get('phone'),
+                    country: formData.get('country'),
+                    experience: formData.get('experience'),
+                    platforms: ['facebook', 'instagram'],
+                    revenue: 'beginner',
+                    website: formData.get('website'),
+                    strategy: 'Social media marketing',
+                    terms: formData.get('terms') === 'on',
+                    marketing: true,
+                    quality: true
+                };
+
+                console.log('Testing affiliate registration with data:', affiliateData);
+
+                // Test registration
+                const result = await window.userRegistrationService.registerAffiliate(affiliateData);
+                
+                if (result.success) {
+                    showMessage('affiliateStatus', result.message, 'success');
+                    addTestResult('Affiliate Registration', true, result.message, {
+                        affiliateId: result.affiliateId,
+                        documentId: result.documentId
+                    });
+                } else {
+                    throw new Error(result.message);
+                }
+
+            } catch (error) {
+                console.error('Affiliate registration test error:', error);
+                showMessage('affiliateStatus', `Test failed: ${error.message}`, 'error');
+                addTestResult('Affiliate Registration', false, error.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = originalText;
+            }
+        });
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Registration test page loaded');
+            updateServiceStatus();
+            
+            // Show initial message
+            addTestResult('System', true, 'Test page loaded successfully');
+        });
+    </script>
+</body>
+</html>

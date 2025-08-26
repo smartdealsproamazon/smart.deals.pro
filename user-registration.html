@@ -601,9 +601,10 @@
                     throw new Error('Please fix the form errors before submitting');
                 }
                 
-                // Check if Firebase Auth Service is ready
-                if (!window.firebaseAuthService || !window.firebaseAuthService.isReady()) {
-                    throw new Error('Authentication service is not ready. Please refresh the page and try again.');
+                // Wait for user registration service to be ready
+                if (!window.userRegistrationService || !window.userRegistrationService.isReady()) {
+                    showMessage('Registration service is not ready. Please wait a moment and try again.', 'error');
+                    throw new Error('Registration service not ready');
                 }
                 
                 // Get form data
@@ -624,8 +625,20 @@
 
                 console.log('Starting registration process...');
                 
+                // Check if user already exists
+                const userExists = await window.userRegistrationService.checkUserExists(userData.email);
+                if (userExists) {
+                    throw new Error('An account with this email already exists. Please sign in instead.');
+                }
+                
+                // Validate password strength
+                const passwordValidation = window.userRegistrationService.validatePassword(userData.password);
+                if (!passwordValidation.valid) {
+                    throw new Error(passwordValidation.message);
+                }
+                
                 // Register user with timeout
-                const registrationPromise = window.firebaseAuthService.registerUser(userData);
+                const registrationPromise = window.userRegistrationService.registerUser(userData);
                 const timeoutPromise = new Promise((_, reject) => 
                     setTimeout(() => reject(new Error('Registration timeout - please try again')), 45000)
                 );
@@ -637,7 +650,7 @@
                     
                     // Redirect to dashboard after successful registration
                     setTimeout(() => {
-                        window.location.href = 'affiliate-dashboard.html';
+                        window.location.href = 'index.html';
                     }, 2000);
                 } else {
                     showMessage(result.message, 'error');
@@ -888,5 +901,12 @@
             checkServiceReadiness();
         });
     </script>
+    
+    <!-- Firebase and Services -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="user-registration-service.js"></script>
 </body>
 </html>
