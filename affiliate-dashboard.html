@@ -26,7 +26,7 @@
             
             if (!currentUser || !affiliateRegistered) {
                 alert('Please register first to access the dashboard.');
-                window.location.replace('user-registration.html');
+                window.location.replace('affiliate-register.html');
             }
         })();
     </script>
@@ -865,7 +865,7 @@
             
             if (!currentUser || !affiliateRegistered) {
                 alert('Session expired. Please register again.');
-                window.location.href = 'user-registration.html';
+                window.location.href = 'affiliate-register.html';
                 return false;
             }
             
@@ -884,7 +884,7 @@
                 localStorage.removeItem('smartdeals_currentUser');
                 localStorage.removeItem('smartdeals_affiliateRegistered');
                 alert('Invalid session data. Please register again.');
-                window.location.href = 'user-registration.html';
+                window.location.href = 'affiliate-register.html';
                 return false;
             }
         }
