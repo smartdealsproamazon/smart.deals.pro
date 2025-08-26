@@ -116,7 +116,7 @@ class FirebaseUserService {
           marketing: affiliateData.marketing || false,
           quality: affiliateData.quality || false
         },
-        status: 'pending_approval',
+        status: 'active',
         registrationDate: window.firebaseService.getTimestamp(),
         lastUpdate: window.firebaseService.getTimestamp(),
         affiliateId: this.generateAffiliateId()
@@ -139,7 +139,7 @@ class FirebaseUserService {
         affiliateId: registrationData.affiliateId,
         documentId: docRef.id,
         data: registrationData,
-        message: 'Registration successful! Your application is being reviewed.'
+        message: 'Registration successful! Your affiliate account has been created and you will receive a confirmation email shortly.'
       };
 
     } catch (error) {

@@ -318,6 +318,166 @@ Automated notification sent at ${new Date().toLocaleString()}
     }
   }
 
+  // Send welcome notification email for new affiliates
+  async sendWelcomeNotification(personalInfo) {
+    try {
+      console.log('Processing welcome notification for:', personalInfo.email);
+      
+      const emailData = {
+        to: personalInfo.email,
+        from: 'noreply@smartdeals.pro',
+        subject: `Welcome to SmartDeals Pro Affiliate Network! - ${personalInfo.firstName}`,
+        html: this.generateWelcomeEmailHTML(personalInfo),
+        text: this.generateWelcomeEmailText(personalInfo),
+        timestamp: new Date().toISOString(),
+        type: 'welcome_notification',
+        userEmail: personalInfo.email,
+        userName: personalInfo.fullName || `${personalInfo.firstName} ${personalInfo.lastName}`
+      };
+
+      // Save to Firebase for email processing
+      if (window.firebaseService) {
+        await window.firebaseService.addDocument('emailNotifications', emailData);
+        console.log('Welcome notification saved to Firebase queue');
+      }
+
+      // Save to localStorage as backup
+      this.saveEmailToLocalStorage(emailData);
+
+      // Log the notification for immediate visibility
+      this.logNotificationToConsole(emailData);
+
+      // Try to send via EmailJS if configured
+      await this.tryEmailJS(emailData);
+
+      return { success: true, message: 'Welcome notification sent successfully' };
+
+    } catch (error) {
+      console.error('Failed to send welcome notification:', error);
+      return { success: false, error: error.message };
+    }
+  }
+
+  // Generate welcome email HTML content
+  generateWelcomeEmailHTML(personalInfo) {
+    return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Welcome to SmartDeals Pro - ${personalInfo.firstName}</title>
+  <style>
+    body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; }
+    .container { max-width: 600px; margin: 0 auto; background-color: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .header { background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 30px; text-align: center; }
+    .content { padding: 30px; }
+    .welcome-section { margin-bottom: 25px; }
+    .welcome-section h2 { color: #333; margin-bottom: 15px; }
+    .info-item { margin: 8px 0; padding: 8px; background: #f8f9fa; border-radius: 4px; }
+    .cta-button { display: inline-block; background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; margin: 20px 0; }
+    .footer { background: #f8f9fa; padding: 20px; text-align: center; color: #666; }
+    .highlight { background: linear-gradient(135deg, #28a745, #20c997); color: white; padding: 15px; border-radius: 6px; margin: 15px 0; text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🛍️ SmartDeals Pro</h1>
+      <h2>Welcome to Our Affiliate Network!</h2>
+    </div>
+    
+    <div class="content">
+      <div class="highlight">
+        <strong>🎉 Congratulations ${personalInfo.firstName}! Your affiliate account is now ACTIVE!</strong>
+      </div>
+      
+      <div class="welcome-section">
+        <h2>Welcome to the SmartDeals Pro Family!</h2>
+        <p>We're excited to have you join our global affiliate network. Your account has been immediately activated and you can start earning commissions right away!</p>
+      </div>
+      
+      <div class="welcome-section">
+        <h2>🚀 What's Next?</h2>
+        <ul>
+          <li><strong>Access Your Dashboard:</strong> Log in to track your earnings and performance</li>
+          <li><strong>Submit Products:</strong> Start adding your affiliate links to our marketplace</li>
+          <li><strong>Earn Commissions:</strong> Get paid for every sale generated through our platform</li>
+          <li><strong>Global Exposure:</strong> Your products will be visible to millions of shoppers worldwide</li>
+        </ul>
+      </div>
+      
+      <div class="welcome-section">
+        <h2>💰 Earning Opportunities</h2>
+        <div class="info-item">
+          <strong>Commission Rates:</strong> Up to 50% on digital products, competitive rates on physical products
+        </div>
+        <div class="info-item">
+          <strong>Payment Schedule:</strong> Weekly payments with minimum payout of just $50
+        </div>
+        <div class="info-item">
+          <strong>Global Reach:</strong> Access to customers in 150+ countries
+        </div>
+      </div>
+      
+      <div style="text-align: center;">
+        <a href="https://smartdealsproamazon.github.io/smart.deals.pro/affiliate-dashboard.html" class="cta-button">
+          Access Your Dashboard Now
+        </a>
+      </div>
+      
+      <div class="welcome-section">
+        <h2>📞 Need Help?</h2>
+        <p>Our support team is here to help you succeed:</p>
+        <ul>
+          <li>Email: support@smartdeals.pro</li>
+          <li>Live Chat: Available 24/7 in your dashboard</li>
+          <li>Training Resources: Complete affiliate guide included</li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="footer">
+      <p><strong>SmartDeals Pro Affiliate Network</strong></p>
+      <p>Thank you for joining us! We're committed to your success.</p>
+      <p>Start earning today - your affiliate journey begins now!</p>
+    </div>
+  </div>
+</body>
+</html>`;
+  }
+
+  // Generate welcome email text content
+  generateWelcomeEmailText(personalInfo) {
+    return `
+Welcome to SmartDeals Pro Affiliate Network!
+
+Hi ${personalInfo.firstName},
+
+Congratulations! Your affiliate account is now ACTIVE and ready to earn commissions.
+
+WHAT'S NEXT:
+- Access your dashboard to track earnings
+- Submit your affiliate products to our marketplace  
+- Start earning from our global customer base
+- Get paid weekly with just $50 minimum payout
+
+EARNING OPPORTUNITIES:
+- Up to 50% commission on digital products
+- Competitive rates on physical products
+- Global reach to 150+ countries
+- 24/7 support and training resources
+
+Get started now: https://smartdealsproamazon.github.io/smart.deals.pro/affiliate-dashboard.html
+
+Need help? Contact support@smartdeals.pro
+
+Welcome to the SmartDeals Pro family!
+
+Best regards,
+SmartDeals Pro Team
+`;
+  }
+
   // Check if service is ready
   isReady() {
     return this.isInitialized;
