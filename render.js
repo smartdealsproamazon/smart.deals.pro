@@ -216,7 +216,7 @@ function createProductCard(product) {
   div.innerHTML = `
     <div class="product-image-container">
       <img src="${product.image}" alt="${product.name}" class="product-image" loading="lazy" 
-           onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1560472355-536de3962603?w=400&h=300&fit=crop';">
+           onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\\'padding:2rem;text-align:center;color:#9ca3af;\\'>Image not available</div>';">
     </div>
     <div class="product-content">
       <h3 class="product-title">${product.name}</h3>
@@ -268,9 +268,22 @@ function renderFeaturedProducts() {
   
   if (!window.products || window.products.length === 0) {
     container.innerHTML = `
-      <div class="no-products">
+      <div class="no-products" style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
         <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: #9ca3af; margin-bottom: 1rem;"></i>
-        <h3>Loading featured products...</h3>
+        <h3 style="color: #374151; margin-bottom: 0.5rem;">Loading products from database...</h3>
+        <p style="color: #6b7280;">Connecting to Firebase to fetch your products...</p>
+      </div>
+    `;
+    return;
+  }
+  
+  if (featuredProducts.length === 0) {
+    container.innerHTML = `
+      <div class="no-products" style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
+        <i class="fas fa-box-open" style="font-size: 2rem; color: #9ca3af; margin-bottom: 1rem;"></i>
+        <h3 style="color: #374151; margin-bottom: 0.5rem;">No Products Available</h3>
+        <p style="color: #6b7280; margin-bottom: 1rem;">No products found in the database. Add some products to get started!</p>
+        <a href="product-submission.html" class="btn btn-primary">Add Your First Product</a>
       </div>
     `;
     return;

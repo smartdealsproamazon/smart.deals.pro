@@ -856,26 +856,38 @@ function getProductsByCategory(category) {
 }
 
 function getFeaturedProducts() {
-  // Return the newest products including user-submitted ones
+  // Return the newest REAL products from Firebase database only
   const allProducts = window.products || [];
   
-  // Filter out only demo/test products, but keep user-submitted products
-  const validProducts = allProducts.filter(product => {
-    // Exclude demo/test products but include user-submitted ones
-    return !product.id?.toString().startsWith('demo_') && 
+  // Filter to only show genuine products (exclude all demo/sample/test products)
+  const realProducts = allProducts.filter(product => {
+    // Only include products that are genuine (not demo, sample, or test)
+    return product && 
+           product.name && 
+           product.image && 
+           !product.id?.toString().startsWith('demo_') && 
+           !product.id?.toString().startsWith('sample_') && 
+           !product.id?.toString().startsWith('prod_sample_') && 
            !product.title?.includes('Demo') && 
            !product.title?.includes('Test') &&
+           !product.title?.includes('Sample') &&
            !product.name?.includes('Demo') && 
-           !product.name?.includes('Test');
+           !product.name?.includes('Test') &&
+           !product.name?.includes('Sample') &&
+           !product.name?.includes('Example') &&
+           product.link !== '#' && // Exclude products with placeholder links
+           !product.image?.includes('placeholder') && // Exclude placeholder images
+           !product.image?.includes('via.placeholder.com'); // Exclude placeholder.com images
   });
   
   // Sort by creation date (newest first) and return the top 6
-  const sortedProducts = validProducts.sort((a, b) => {
+  const sortedProducts = realProducts.sort((a, b) => {
     const dateA = a.createdAt ? new Date(a.createdAt) : new Date(0);
     const dateB = b.createdAt ? new Date(b.createdAt) : new Date(0);
     return dateB - dateA;
   });
   
+  console.log(`Showing ${sortedProducts.length} real products in featured section`);
   return sortedProducts.slice(0, 6);
 }
 
