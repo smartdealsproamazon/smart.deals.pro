@@ -645,9 +645,9 @@
             if (imageUrl) return imageUrl;
             if (imageFile) {
                 // For now, return placeholder - in production, upload to Firebase Storage
-                return 'https://via.placeholder.com/300x200';
+                return 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=300&h=200&fit=crop&crop=center&auto=format&q=80';
             }
-            return 'https://via.placeholder.com/300x200';
+            return 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=300&h=200&fit=crop&crop=center&auto=format&q=80';
         }
 
         // Generate tags for better searchability
@@ -724,7 +724,7 @@
             container.innerHTML = products.map(product => `
                 <div class="product-card">
                     <img src="${product.image}" alt="${product.title}" 
-                         onerror="this.src='https://via.placeholder.com/300x200'">
+                         onerror="this.src='https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=300&h=200&fit=crop&crop=center&auto=format&q=80'; this.onerror=null;">
                     <div class="product-title">${product.title}</div>
                     <div class="product-price">${product.price}</div>
                     <span class="product-category">${product.category}</span>

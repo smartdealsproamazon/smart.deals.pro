@@ -272,10 +272,10 @@
                 
                 return `
                     <div class="product-card ${cardClass}">
-                        <img src="${product.image || 'https://via.placeholder.com/280x200'}" 
+                        <img src="${product.image && !product.image.includes('placeholder') ? product.image : 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=280&h=200&fit=crop&crop=center&auto=format&q=80'}" 
                              alt="${product.title || product.name}" 
                              class="product-image" 
-                             onerror="this.src='https://via.placeholder.com/280x200?text=No+Image'">
+                             onerror="this.src='https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=280&h=200&fit=crop&crop=center&auto=format&q=80'; this.onerror=null;">
                         <div class="product-info">
                             <div class="product-title">${product.title || product.name || 'Untitled Product'}</div>
                             <div class="product-price">${product.price || 'Price not set'}</div>

@@ -1253,7 +1253,7 @@
                         let finalImageUrl = imageUrl;
                         if (imageFile && !imageUrl) {
                             // For now, we'll use a placeholder. In production, you'd upload to Firebase Storage
-                            finalImageUrl = 'https://via.placeholder.com/300x200?text=Product+Image';
+                            finalImageUrl = 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=300&h=200&fit=crop&crop=center&auto=format&q=80';
                             console.log('Image file selected:', imageFile.name, 'Using placeholder URL');
                         }
 
@@ -1264,7 +1264,7 @@
                             title: title,
                             price: price,
                             description: description,
-                            image: finalImageUrl || 'https://via.placeholder.com/300x200?text=No+Image',
+                            image: finalImageUrl || 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=300&h=200&fit=crop&crop=center&auto=format&q=80',
                             link: link,
                             category: category,
                             platform: platform,

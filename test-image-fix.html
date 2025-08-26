@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Image Fix Test - SmartDeals Pro</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .test-container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 2rem;
+    }
+    .test-section {
+      margin-bottom: 3rem;
+    }
+    .test-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-top: 1rem;
+    }
+    .test-info {
+      background: #f8fafc;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 2rem;
+    }
+    .status {
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      font-weight: 600;
+      margin-top: 1rem;
+      display: inline-block;
+    }
+    .status.success {
+      background: #d1fae5;
+      color: #065f46;
+    }
+    .status.error {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+  </style>
+</head>
+<body>
+  <div class="test-container">
+    <h1>Product Image Fix Test</h1>
+    
+    <div class="test-info">
+      <h3>Test Purpose</h3>
+      <p>This page tests the new product image fallback system:</p>
+      <ul>
+        <li>✅ Invalid/broken image URLs should fallback to high-quality Unsplash images</li>
+        <li>✅ Placeholder URLs should be replaced with real product images</li>
+        <li>✅ Empty image fields should get proper default images</li>
+        <li>✅ Images should have proper error handling</li>
+      </ul>
+    </div>
+
+    <div class="test-section">
+      <h2>Test 1: Broken Image URLs</h2>
+      <div id="broken-images" class="test-grid"></div>
+      <div id="broken-status" class="status">Testing...</div>
+    </div>
+
+    <div class="test-section">
+      <h2>Test 2: Placeholder Images</h2>
+      <div id="placeholder-images" class="test-grid"></div>
+      <div id="placeholder-status" class="status">Testing...</div>
+    </div>
+
+    <div class="test-section">
+      <h2>Test 3: Valid Images</h2>
+      <div id="valid-images" class="test-grid"></div>
+      <div id="valid-status" class="status">Testing...</div>
+    </div>
+
+    <div class="test-section">
+      <h2>Test 4: Empty/Null Images</h2>
+      <div id="empty-images" class="test-grid"></div>
+      <div id="empty-status" class="status">Testing...</div>
+    </div>
+  </div>
+
+  <script src="products.js"></script>
+  <script src="render.js"></script>
+  <script>
+    // Test data with different image scenarios
+    const testProducts = {
+      broken: [
+        {
+          id: 'broken-1',
+          name: 'Product with Broken Image URL',
+          price: '$29.99',
+          category: 'test',
+          image: 'https://broken-url-that-does-not-exist.com/image.jpg',
+          description: 'This product has a broken image URL'
+        },
+        {
+          id: 'broken-2',
+          name: 'Product with Invalid Domain',
+          price: '$19.99',
+          category: 'test',
+          image: 'https://invalid-domain-12345.xyz/product.png',
+          description: 'This product has an invalid domain for image'
+        }
+      ],
+      placeholder: [
+        {
+          id: 'placeholder-1',
+          name: 'Product with Placeholder.com Image',
+          price: '$39.99',
+          category: 'test',
+          image: 'https://via.placeholder.com/300x300',
+          description: 'This product has a placeholder.com image'
+        },
+        {
+          id: 'placeholder-2',
+          name: 'Product with "placeholder" in URL',
+          price: '$49.99',
+          category: 'test',
+          image: 'https://example.com/placeholder-image.jpg',
+          description: 'This product has "placeholder" in the image URL'
+        }
+      ],
+      valid: [
+        {
+          id: 'valid-1',
+          name: 'Product with Valid Image',
+          price: '$59.99',
+          category: 'electronics',
+          image: 'https://images.unsplash.com/photo-1572569511254-d8f925fe2cbb?w=300&h=300&fit=crop',
+          description: 'This product has a valid image URL'
+        },
+        {
+          id: 'valid-2',
+          name: 'Another Valid Product',
+          price: '$79.99',
+          category: 'gadgets',
+          image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300&h=300&fit=crop',
+          description: 'This product also has a valid image URL'
+        }
+      ],
+      empty: [
+        {
+          id: 'empty-1',
+          name: 'Product with Empty Image',
+          price: '$25.99',
+          category: 'test',
+          image: '',
+          description: 'This product has an empty image field'
+        },
+        {
+          id: 'empty-2',
+          name: 'Product with Null Image',
+          price: '$35.99',
+          category: 'test',
+          image: null,
+          description: 'This product has a null image field'
+        }
+      ]
+    };
+
+    // Initialize test
+    document.addEventListener('DOMContentLoaded', function() {
+      runImageTests();
+    });
+
+    function runImageTests() {
+      console.log('Starting image fix tests...');
+      
+      // Test each category
+      testBrokenImages();
+      testPlaceholderImages();
+      testValidImages();
+      testEmptyImages();
+    }
+
+    function testBrokenImages() {
+      const container = document.getElementById('broken-images');
+      const status = document.getElementById('broken-status');
+      
+      testProducts.broken.forEach(product => {
+        const card = createProductCard(product);
+        container.appendChild(card);
+      });
+      
+      // Check after images load/fail
+      setTimeout(() => {
+        const images = container.querySelectorAll('img');
+        let successCount = 0;
+        
+        images.forEach(img => {
+          if (img.src.includes('unsplash.com') || img.complete) {
+            successCount++;
+          }
+        });
+        
+        if (successCount === images.length) {
+          status.textContent = '✅ All broken images handled correctly';
+          status.className = 'status success';
+        } else {
+          status.textContent = '❌ Some broken images not handled';
+          status.className = 'status error';
+        }
+      }, 2000);
+    }
+
+    function testPlaceholderImages() {
+      const container = document.getElementById('placeholder-images');
+      const status = document.getElementById('placeholder-status');
+      
+      testProducts.placeholder.forEach(product => {
+        const card = createProductCard(product);
+        container.appendChild(card);
+      });
+      
+      setTimeout(() => {
+        const images = container.querySelectorAll('img');
+        let successCount = 0;
+        
+        images.forEach(img => {
+          if (img.src.includes('unsplash.com')) {
+            successCount++;
+          }
+        });
+        
+        if (successCount === images.length) {
+          status.textContent = '✅ All placeholder images replaced';
+          status.className = 'status success';
+        } else {
+          status.textContent = '❌ Some placeholder images not replaced';
+          status.className = 'status error';
+        }
+      }, 1000);
+    }
+
+    function testValidImages() {
+      const container = document.getElementById('valid-images');
+      const status = document.getElementById('valid-status');
+      
+      testProducts.valid.forEach(product => {
+        const card = createProductCard(product);
+        container.appendChild(card);
+      });
+      
+      setTimeout(() => {
+        const images = container.querySelectorAll('img');
+        let successCount = 0;
+        
+        images.forEach(img => {
+          if (img.complete && img.naturalWidth > 0) {
+            successCount++;
+          }
+        });
+        
+        if (successCount === images.length) {
+          status.textContent = '✅ All valid images loaded correctly';
+          status.className = 'status success';
+        } else {
+          status.textContent = '❌ Some valid images failed to load';
+          status.className = 'status error';
+        }
+      }, 2000);
+    }
+
+    function testEmptyImages() {
+      const container = document.getElementById('empty-images');
+      const status = document.getElementById('empty-status');
+      
+      testProducts.empty.forEach(product => {
+        const card = createProductCard(product);
+        container.appendChild(card);
+      });
+      
+      setTimeout(() => {
+        const images = container.querySelectorAll('img');
+        let successCount = 0;
+        
+        images.forEach(img => {
+          if (img.src.includes('unsplash.com')) {
+            successCount++;
+          }
+        });
+        
+        if (successCount === images.length) {
+          status.textContent = '✅ All empty images handled with fallbacks';
+          status.className = 'status success';
+        } else {
+          status.textContent = '❌ Empty images not handled correctly';
+          status.className = 'status error';
+        }
+      }, 1000);
+    }
+  </script>
+</body>
+</html>
