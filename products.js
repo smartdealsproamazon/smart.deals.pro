@@ -689,20 +689,44 @@ function connectToFirebase() {
     console.warn('Firebase persistence failed:', err);
   }
 
-  // Set up real-time listener with optimized query
-  firestoreListener = db.collection('products')
-    .orderBy('createdAt', 'desc')
-    .limit(50) // Limit initial load for faster performance
-    .onSnapshot(
-      (snapshot) => {
-        clearTimeout(connectionTimeout);
-        console.log('Firebase connected! Received', snapshot.size, 'products');
-        
-        // Get Firebase products
-        const firebaseProducts = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        }));
+  // Set up real-time listeners for multiple collections
+  const collections = ['categoryProducts', 'featuredProducts', 'userProducts', 'products'];
+  let allFirebaseProducts = [];
+  let connectionsProcessed = 0;
+  
+  collections.forEach(collectionName => {
+    console.log(`Setting up listener for ${collectionName}...`);
+    
+    const unsubscribe = db.collection(collectionName)
+      .onSnapshot(
+        (snapshot) => {
+          console.log(`${collectionName}: Received ${snapshot.size} products`);
+          
+          // Get products from this collection
+          const collectionProducts = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data(),
+            source: collectionName,
+            // Ensure image field is properly handled
+            image: doc.data().image && !doc.data().image.includes('placeholder') 
+              ? doc.data().image 
+              : 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=300&h=300&fit=crop&crop=center&auto=format&q=80'
+          }));
+          
+          // Update products from this collection
+          allFirebaseProducts = allFirebaseProducts.filter(p => p.source !== collectionName);
+          allFirebaseProducts = [...allFirebaseProducts, ...collectionProducts];
+          
+          connectionsProcessed++;
+          
+          // Process on first successful connection
+          if (connectionsProcessed === 1) {
+            clearTimeout(connectionTimeout);
+            console.log('Firebase connected! Total products from all collections:', allFirebaseProducts.length);
+          }
+          
+          // Get Firebase products (combining all collections)
+          const firebaseProducts = allFirebaseProducts;
 
         // Include all products for display - both admin and user-submitted
         // Note: Previously user-submitted products were filtered out, but now we show all products
@@ -769,11 +793,20 @@ function connectToFirebase() {
         if (typeof renderProducts === 'function') {
           renderProducts();
         }
-      },
-      (error) => {
-        clearTimeout(connectionTimeout);
-        console.error('Firebase listener error:', error);
-        document.dispatchEvent(new Event('firebase-error'));
+        },
+        (error) => {
+          console.error(`Error listening to ${collectionName}:`, error);
+          // Continue with other collections even if one fails
+        }
+      );
+  });
+  
+  // Handle overall timeout
+  setTimeout(() => {
+    if (connectionsProcessed === 0) {
+      clearTimeout(connectionTimeout);
+      console.error('All Firebase collections failed to connect');
+      document.dispatchEvent(new Event('firebase-error'));
         
         // Fallback to cached data
         const fallbackProducts = JSON.parse(localStorage.getItem('products') || '[]');

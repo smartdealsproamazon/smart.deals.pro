@@ -842,24 +842,44 @@
           console.log('Attempting direct Firebase load...');
           
           // Use Promise.race for timeout
-          const firebasePromise = db.collection('products')
-            .orderBy('createdAt', 'desc')
-            .limit(50)
-            .get();
+          // Try multiple collections
+          const collections = ['categoryProducts', 'featuredProducts', 'userProducts', 'products'];
+          const promises = collections.map(collectionName => 
+            db.collection(collectionName).get().catch(error => {
+              console.warn(`Failed to load ${collectionName}:`, error);
+              return { docs: [] };
+            })
+          );
+          const firebasePromise = Promise.all(promises);
             
           const timeoutPromise = new Promise((_, reject) => 
             setTimeout(() => reject(new Error('Firebase timeout')), 8000)
           );
           
           try {
-            const snapshot = await Promise.race([firebasePromise, timeoutPromise]);
-            const firebaseProducts = snapshot.docs.map(doc => ({
-              id: doc.id,
-              ...doc.data()
-            }));
+            const snapshots = await Promise.race([firebasePromise, timeoutPromise]);
+            let firebaseProducts = [];
+            
+            // Process each collection's snapshot
+            snapshots.forEach((snapshot, index) => {
+              const collectionName = collections[index];
+              if (snapshot.docs && snapshot.docs.length > 0) {
+                const products = snapshot.docs.map(doc => ({
+                  id: doc.id,
+                  ...doc.data(),
+                  source: collectionName,
+                  // Ensure image field is properly handled
+                  image: doc.data().image && !doc.data().image.includes('placeholder') 
+                    ? doc.data().image 
+                    : 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=300&h=300&fit=crop&crop=center&auto=format&q=80'
+                }));
+                firebaseProducts = [...firebaseProducts, ...products];
+                console.log(`Loaded ${products.length} products from ${collectionName}`);
+              }
+            });
             
             if (firebaseProducts.length > 0) {
-              console.log('Loaded products from Firebase:', firebaseProducts.length);
+              console.log('Total products loaded from Firebase:', firebaseProducts.length);
               allProducts = [...allProducts, ...firebaseProducts];
             }
           } catch (firebaseError) {

@@ -511,46 +511,78 @@
     function setupBoysProductListener() {
       console.log('Setting up real-time listener for boys fashion products...');
       
-      // First try simple query without orderBy to avoid index issues
-      db.collection('products')
-        .where('category', '==', 'boys')
-        .onSnapshot(
-          (snapshot) => {
-            console.log(`Real-time update: ${snapshot.size} boys products found`);
-            
-            let boysProducts = snapshot.docs.map(doc => ({
-              id: doc.id,
-              ...doc.data()
-            }));
-
-            // Sort manually by createdAt if available
-            boysProducts.sort((a, b) => {
-              const dateA = a.createdAt ? new Date(a.createdAt) : new Date();
-              const dateB = b.createdAt ? new Date(b.createdAt) : new Date();
-              return dateB - dateA; // Newest first
-            });
-
-            // Store globally for search
-            window.boysProducts = boysProducts;
-            
-            // Display immediately
-            displayBoysProducts(boysProducts);
-            
-            // Show update indicator if products were added
-            if (boysProducts.length > 0 && window.previousBoysCount !== undefined && boysProducts.length > window.previousBoysCount) {
-              showUpdateIndicator(`${boysProducts.length - window.previousBoysCount} new boys products added!`);
+      // Listen to multiple collections that might contain boys products
+      const collections = ['categoryProducts', 'featuredProducts', 'userProducts', 'products'];
+      let allBoysProducts = [];
+      let collectionsChecked = 0;
+      
+      collections.forEach(collectionName => {
+        console.log(`Checking ${collectionName} collection...`);
+        
+        db.collection(collectionName)
+          .onSnapshot(
+            (snapshot) => {
+              console.log(`${collectionName}: ${snapshot.size} products found`);
+              
+              const products = snapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data(),
+                source: collectionName
+              }));
+              
+              // Filter for boys/fashion products with better image handling
+              const boysProducts = products.filter(product => {
+                const matchesCategory = product.category === 'boys' || 
+                                      product.category === 'boys-fashion' ||
+                                      product.category === 'fashion';
+                                      
+                const matchesTitle = (product.title && product.title.toLowerCase().includes('boys')) ||
+                                   (product.name && product.name.toLowerCase().includes('boys'));
+                                   
+                const matchesTags = product.tags && product.tags.some(tag => 
+                                  tag.toLowerCase().includes('boys') || 
+                                  tag.toLowerCase().includes('fashion')
+                                );
+                
+                return matchesCategory || matchesTitle || matchesTags;
+              }).map(product => {
+                // Ensure image field is properly handled
+                if (!product.image || product.image.includes('placeholder')) {
+                  product.image = 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=300&h=200&fit=crop&auto=format&q=80';
+                }
+                return product;
+              });
+              
+              // Update the boys products from this collection
+              allBoysProducts = allBoysProducts.filter(p => p.source !== collectionName);
+              allBoysProducts = [...allBoysProducts, ...boysProducts];
+              
+              // Sort by createdAt
+              allBoysProducts.sort((a, b) => {
+                const dateA = a.createdAt ? new Date(a.createdAt.seconds ? a.createdAt.seconds * 1000 : a.createdAt) : new Date();
+                const dateB = b.createdAt ? new Date(b.createdAt.seconds ? b.createdAt.seconds * 1000 : b.createdAt) : new Date();
+                return dateB - dateA;
+              });
+              
+              console.log(`Total boys products found: ${allBoysProducts.length}`);
+              
+              // Store globally for search
+              window.boysProducts = allBoysProducts;
+              
+              // Display immediately
+              displayBoysProducts(allBoysProducts);
+              
+              collectionsChecked++;
+              if (collectionsChecked === 1 && allBoysProducts.length > 0) {
+                showUpdateIndicator(`Found ${allBoysProducts.length} boys products!`);
+              }
+            },
+            (error) => {
+              console.error(`Error listening to ${collectionName}:`, error);
+              // Continue with other collections even if one fails
             }
-            window.previousBoysCount = boysProducts.length;
-          },
-          (error) => {
-            console.error('Error fetching boys products:', error);
-            console.error('Error details:', error.message);
-            
-            // Try fallback query without category filter
-            console.log('Trying fallback query...');
-            setupFallbackBoysListener();
-          }
-        );
+          );
+      });
     }
 
     // Fallback listener in case category filter fails

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Real-time Product Images Test</title>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: #f9fafb;
+        }
+        .test-header {
+            background: #3b82f6;
+            color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        .collection-section {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .status {
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            margin: 1rem 0;
+        }
+        .success { background: #dcfce7; color: #166534; }
+        .loading { background: #dbeafe; color: #1d4ed8; }
+        .error { background: #fef2f2; color: #dc2626; }
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        .product-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            overflow: hidden;
+            background: white;
+        }
+        .product-image {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+        .product-info {
+            padding: 1rem;
+        }
+        .product-title {
+            font-weight: 600;
+            margin: 0 0 0.5rem 0;
+            font-size: 14px;
+        }
+        .product-meta {
+            font-size: 12px;
+            color: #6b7280;
+        }
+        .connection-test {
+            background: #f3f4f6;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            font-family: monospace;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-header">
+        <h1>🔥 Firebase Real-time Product Images Test</h1>
+        <p>Testing real-time data fetching from multiple Firebase collections</p>
+        <div id="overall-status" class="status loading">🔍 Initializing Firebase connection...</div>
+    </div>
+
+    <div class="collection-section">
+        <h2>📊 Connection Test Results</h2>
+        <div class="connection-test" id="connection-log">
+            Testing Firebase collections...<br>
+        </div>
+    </div>
+
+    <div class="collection-section">
+        <h2>🛍️ Featured Products Collection</h2>
+        <div id="featured-status" class="status loading">Loading...</div>
+        <div id="featured-products" class="product-grid"></div>
+    </div>
+
+    <div class="collection-section">
+        <h2>📂 Category Products Collection</h2>
+        <div id="category-status" class="status loading">Loading...</div>
+        <div id="category-products" class="product-grid"></div>
+    </div>
+
+    <div class="collection-section">
+        <h2>👥 User Products Collection</h2>
+        <div id="user-status" class="status loading">Loading...</div>
+        <div id="user-products" class="product-grid"></div>
+    </div>
+
+    <div class="collection-section">
+        <h2>📦 Legacy Products Collection</h2>
+        <div id="legacy-status" class="status loading">Loading...</div>
+        <div id="legacy-products" class="product-grid"></div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBJqBEWDdBlfv5xAjgcvqput1KC1NzKvlU",
+            authDomain: "smart-deals-pro.firebaseapp.com",
+            projectId: "smart-deals-pro",
+            storageBucket: "smart-deals-pro.firebasestorage.app",
+            messagingSenderId: "680016915696",
+            appId: "1:680016915696:web:1234567890abcdef"
+        };
+
+        let db = null;
+        let collectionsFound = 0;
+        let totalProducts = 0;
+
+        // Initialize Firebase
+        function initializeFirebase() {
+            try {
+                if (!firebase.apps.length) {
+                    firebase.initializeApp(firebaseConfig);
+                }
+                db = firebase.firestore();
+                console.log("Firebase initialized successfully");
+                log("✅ Firebase initialized successfully");
+                
+                // Test all collections
+                testCollections();
+            } catch (error) {
+                console.error("Firebase initialization failed:", error);
+                log("❌ Firebase initialization failed: " + error.message);
+                updateOverallStatus("error", "Firebase initialization failed");
+            }
+        }
+
+        function log(message) {
+            const logDiv = document.getElementById('connection-log');
+            logDiv.innerHTML += message + '<br>';
+        }
+
+        function updateOverallStatus(type, message) {
+            const statusDiv = document.getElementById('overall-status');
+            statusDiv.className = `status ${type}`;
+            statusDiv.textContent = message;
+        }
+
+        function testCollections() {
+            const collections = [
+                { name: 'featuredProducts', id: 'featured' },
+                { name: 'categoryProducts', id: 'category' },
+                { name: 'userProducts', id: 'user' },
+                { name: 'products', id: 'legacy' }
+            ];
+
+            collections.forEach(collection => {
+                testCollection(collection.name, collection.id);
+            });
+        }
+
+        function testCollection(collectionName, displayId) {
+            log(`🔍 Testing ${collectionName} collection...`);
+            
+            db.collection(collectionName)
+                .onSnapshot(
+                    (snapshot) => {
+                        const products = snapshot.docs.map(doc => ({
+                            id: doc.id,
+                            ...doc.data(),
+                            source: collectionName
+                        }));
+
+                        log(`✅ ${collectionName}: Found ${products.length} products`);
+                        
+                        // Update status
+                        const statusEl = document.getElementById(`${displayId}-status`);
+                        if (products.length > 0) {
+                            statusEl.className = 'status success';
+                            statusEl.textContent = `✅ Found ${products.length} products with real-time updates`;
+                            collectionsFound++;
+                        } else {
+                            statusEl.className = 'status error';
+                            statusEl.textContent = `⚠️ Collection exists but no products found`;
+                        }
+
+                        // Display products
+                        displayProducts(products, `${displayId}-products`);
+                        
+                        totalProducts += products.length;
+                        
+                        // Update overall status
+                        if (collectionsFound > 0) {
+                            updateOverallStatus("success", `🎉 Successfully connected! Found ${totalProducts} total products across ${collectionsFound} collections`);
+                        }
+                    },
+                    (error) => {
+                        console.error(`Error accessing ${collectionName}:`, error);
+                        log(`❌ ${collectionName}: ${error.message}`);
+                        
+                        const statusEl = document.getElementById(`${displayId}-status`);
+                        statusEl.className = 'status error';
+                        statusEl.textContent = `❌ Failed to access collection: ${error.message}`;
+                    }
+                );
+        }
+
+        function displayProducts(products, containerId) {
+            const container = document.getElementById(containerId);
+            
+            if (products.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #6b7280; padding: 2rem;">No products found in this collection</p>';
+                return;
+            }
+
+            container.innerHTML = products.slice(0, 6).map(product => {
+                // Ensure image fallback
+                const imageUrl = product.image && !product.image.includes('placeholder') 
+                    ? product.image 
+                    : 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=300&h=200&fit=crop&crop=center&auto=format&q=80';
+
+                return `
+                    <div class="product-card">
+                        <img src="${imageUrl}" 
+                             alt="${product.title || product.name || 'Product'}" 
+                             class="product-image"
+                             onerror="this.src='https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=300&h=200&fit=crop&crop=center&auto=format&q=80'; this.onerror=null;">
+                        <div class="product-info">
+                            <div class="product-title">${product.title || product.name || 'Untitled Product'}</div>
+                            <div class="product-meta">
+                                ID: ${product.id}<br>
+                                Category: ${product.category || 'N/A'}<br>
+                                Price: ${product.price || 'N/A'}<br>
+                                Source: ${product.source}<br>
+                                Image: ${product.image ? '✅ Has image' : '❌ No image'}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Start the test
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Starting Firebase real-time image test...');
+            setTimeout(initializeFirebase, 500);
+        });
+    </script>
+</body>
+</html>
