@@ -504,7 +504,7 @@
     // Critical JavaScript for immediate functionality
     window.addEventListener('load', function() {
       // Load non-critical scripts after page load
-      const scripts = ['products.js', 'render.js'];
+      const scripts = ['products.js', 'firebase-product-admin.js', 'render.js'];
       scripts.forEach(function(src) {
         const script = document.createElement('script');
         script.src = src;
@@ -958,6 +958,7 @@
   <script src="firebase-auth-service.js"></script>
   <script src="demo-cleanup.js"></script>
   <script src="products.js"></script>
+  <script src="firebase-product-admin.js"></script>
   
   <!-- Enhanced product loading initialization -->
   <script>

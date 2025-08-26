@@ -856,17 +856,39 @@ function getProductsByCategory(category) {
 }
 
 function getFeaturedProducts() {
-  // Return only pre-existing featured products, exclude user-submitted products
-  // User-submitted products should only appear on marketplace page
+  // Return the newest REAL products from Firebase database only
   const allProducts = window.products || [];
-  const preExistingProducts = allProducts.filter(product => {
-    // Exclude products that were submitted by users (have submittedBy field)
-    // or have local_ prefix in ID (locally stored user submissions)
-    return !product.submittedBy && !product.id?.toString().startsWith('local_');
+  
+  // Filter to only show genuine products (exclude all demo/sample/test products)
+  const realProducts = allProducts.filter(product => {
+    // Only include products that are genuine (not demo, sample, or test)
+    return product && 
+           product.name && 
+           product.image && 
+           !product.id?.toString().startsWith('demo_') && 
+           !product.id?.toString().startsWith('sample_') && 
+           !product.id?.toString().startsWith('prod_sample_') && 
+           !product.title?.includes('Demo') && 
+           !product.title?.includes('Test') &&
+           !product.title?.includes('Sample') &&
+           !product.name?.includes('Demo') && 
+           !product.name?.includes('Test') &&
+           !product.name?.includes('Sample') &&
+           !product.name?.includes('Example') &&
+           product.link !== '#' && // Exclude products with placeholder links
+           !product.image?.includes('placeholder') && // Exclude placeholder images
+           !product.image?.includes('via.placeholder.com'); // Exclude placeholder.com images
   });
   
-  // Return the 6 most recently added pre-existing products
-  return preExistingProducts.slice(0, 6);
+  // Sort by creation date (newest first) and return the top 6
+  const sortedProducts = realProducts.sort((a, b) => {
+    const dateA = a.createdAt ? new Date(a.createdAt) : new Date(0);
+    const dateB = b.createdAt ? new Date(b.createdAt) : new Date(0);
+    return dateB - dateA;
+  });
+  
+  console.log(`Showing ${sortedProducts.length} real products in featured section`);
+  return sortedProducts.slice(0, 6);
 }
 
 function getProductsOnSale() {

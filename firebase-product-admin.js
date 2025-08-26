@@ -379,6 +379,20 @@ window.startAutoDemo = function() {
   */
 };
 
+// Sample products loading DISABLED - only show real Firebase products
+// window.loadSampleProductsToDisplay = function() { ... }
+
+// Auto-load sample products DISABLED - only show real Firebase products
+// document.addEventListener('DOMContentLoaded', function() {
+//   // Try to load sample products immediately
+//   if (!window.loadSampleProductsToDisplay()) {
+//     // If not successful, retry after a short delay
+//     setTimeout(() => {
+//       window.loadSampleProductsToDisplay();
+//     }, 500);
+//   }
+// });
+
 // Export functions for global access
 window.firebaseProductAdmin = {
   addSampleProduct: window.addSampleProduct,
@@ -386,4 +400,5 @@ window.firebaseProductAdmin = {
   getAllProducts: window.getAllProducts,
   deleteAllProducts: window.deleteAllProducts,
   startAutoDemo: window.startAutoDemo
+  // loadSampleProductsToDisplay: DISABLED - only show real Firebase products
 };
