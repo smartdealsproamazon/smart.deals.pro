@@ -923,7 +923,7 @@
               <img src="${product.image || 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=300&h=200&fit=crop'}" 
                    alt="${product.title || product.name}" 
                    loading="lazy" 
-                   onerror="this.src='https://images.unsplash.com/photo-1483985988355-763728e1935b?w=300&h=200&fit=crop'">
+                   onerror="this.src='https://images.unsplash.com/photo-1483985988355-763728e1935b?w=300&h=200&fit=crop&auto=format&q=80'; this.onerror=null;">
               ${product.discount ? `<div class="discount-badge">${product.discount}% OFF</div>` : ''}
             </div>
             <div class="product-info">
