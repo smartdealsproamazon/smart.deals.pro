@@ -274,20 +274,27 @@ function connectToFirebase() {
             ...doc.data()
           }));
 
-          // Filter out user-submitted products for homepage display
-          // User-submitted products should only appear on marketplace page
+          // Include all products for display - both admin and user-submitted
+          // Note: Previously user-submitted products were filtered out, but now we show all products
           const filteredFirebaseProducts = firebaseProducts.filter(product => {
-            // Exclude products that were submitted by users (have submittedBy field)
-            // or have local_ prefix in ID (locally stored user submissions)
-            return !product.submittedBy && !product.id?.toString().startsWith('local_');
+            // Only exclude demo/test products, not user-submitted ones
+            return !product.id?.toString().startsWith('local_') && 
+                   !product.title?.includes('Demo') && 
+                   !product.title?.includes('Test') &&
+                   !product.name?.includes('Demo') && 
+                   !product.name?.includes('Test');
           });
           
           let allProducts = filteredFirebaseProducts;
           const localProducts = JSON.parse(localStorage.getItem('products') || '[]');
           
-          // Filter local products as well
+          // Filter local products as well - include user-submitted products
           const filteredLocalProducts = localProducts.filter(product => {
-            return !product.submittedBy && !product.id?.toString().startsWith('local_');
+            return !product.id?.toString().startsWith('local_') && 
+                   !product.title?.includes('Demo') && 
+                   !product.title?.includes('Test') &&
+                   !product.name?.includes('Demo') && 
+                   !product.name?.includes('Test');
           });
           
           // If we have Firebase products, use them (don't fall back to demo)
@@ -671,20 +678,27 @@ function connectToFirebase() {
           ...doc.data()
         }));
 
-        // Filter out user-submitted products for homepage display
-        // User-submitted products should only appear on marketplace page
+        // Include all products for display - both admin and user-submitted
+        // Note: Previously user-submitted products were filtered out, but now we show all products
         const filteredFirebaseProducts = firebaseProducts.filter(product => {
-          // Exclude products that were submitted by users (have submittedBy field)
-          // or have local_ prefix in ID (locally stored user submissions)
-          return !product.submittedBy && !product.id?.toString().startsWith('local_');
+          // Only exclude demo/test products, not user-submitted ones
+          return !product.id?.toString().startsWith('local_') && 
+                 !product.title?.includes('Demo') && 
+                 !product.title?.includes('Test') &&
+                 !product.name?.includes('Demo') && 
+                 !product.name?.includes('Test');
         });
         
         let allProducts = filteredFirebaseProducts;
         const localProducts = JSON.parse(localStorage.getItem('products') || '[]');
         
-        // Filter local products as well
+        // Filter local products as well - include user-submitted products
         const filteredLocalProducts = localProducts.filter(product => {
-          return !product.submittedBy && !product.id?.toString().startsWith('local_');
+          return !product.id?.toString().startsWith('local_') && 
+                 !product.title?.includes('Demo') && 
+                 !product.title?.includes('Test') &&
+                 !product.name?.includes('Demo') && 
+                 !product.name?.includes('Test');
         });
         
         // If we have cached products and Firebase is empty, keep cached (filtered)
