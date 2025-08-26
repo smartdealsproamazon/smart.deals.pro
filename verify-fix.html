@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Products Fix - SmartDeals Pro</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f7fa; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .status { padding: 15px; margin: 10px 0; border-radius: 8px; font-weight: bold; }
+        .success { background: #d1fae5; color: #065f46; border-left: 4px solid #10b981; }
+        .info { background: #dbeafe; color: #1e40af; border-left: 4px solid #3b82f6; }
+        .warning { background: #fef3c7; color: #92400e; border-left: 4px solid #f59e0b; }
+        .count { font-size: 2em; font-weight: bold; margin: 10px 0; }
+        .product-item { background: #f9fafb; padding: 15px; margin: 10px 0; border-radius: 6px; border-left: 3px solid #3b82f6; }
+        .user-product { border-left-color: #10b981; background: #ecfdf5; }
+        .admin-product { border-left-color: #f59e0b; background: #fffbeb; }
+        .loading { text-align: center; padding: 20px; color: #666; }
+        h1 { color: #333; text-align: center; margin-bottom: 30px; }
+        h2 { color: #555; border-bottom: 2px solid #e5e7eb; padding-bottom: 10px; }
+        .badge { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 0.8em; font-weight: bold; }
+        .user-badge { background: #10b981; color: white; }
+        .admin-badge { background: #f59e0b; color: white; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Products Fix Verification</h1>
+        
+        <div class="status info">
+            <strong>✅ Fix Applied:</strong> User-submitted products are now included in the display logic
+        </div>
+
+        <div id="loading" class="loading">
+            🔄 Loading products from Firebase to verify the fix...
+        </div>
+
+        <div id="results" style="display: none;">
+            <h2>📊 Current Status</h2>
+            
+            <div class="status success">
+                <strong>Total Products Found:</strong> 
+                <span id="total-count" class="count">0</span>
+            </div>
+
+            <div class="status info">
+                <strong>👤 User-Submitted Products:</strong> 
+                <span id="user-count" class="count">0</span>
+                <br><small>These are products submitted through your forms with submittedBy field</small>
+            </div>
+
+            <div class="status warning">
+                <strong>⭐ Admin Products:</strong> 
+                <span id="admin-count" class="count">0</span>
+                <br><small>These are products without submittedBy field (admin-added)</small>
+            </div>
+
+            <h2>📦 Product List</h2>
+            <div id="product-list"></div>
+
+            <h2>🎯 What This Means</h2>
+            <div class="status success">
+                <strong>✅ Success!</strong> If you see user-submitted products above, the fix is working correctly. Your products from both forms should now appear on your website.
+            </div>
+
+            <h2>🚀 Next Steps</h2>
+            <ul>
+                <li><strong>Check your main website:</strong> Visit index.html, marketplace.html to see all products</li>
+                <li><strong>Submit new products:</strong> Try both product submission forms - they should appear immediately</li>
+                <li><strong>Verify display:</strong> Both admin and user products should show together</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    
+    <script>
+        async function verifyFix() {
+            try {
+                // Initialize Firebase
+                const firebaseConfig = {
+                    apiKey: "AIzaSyBJqBEWDdBlfv5xAjgcvqput1KC1NzKvlU",
+                    authDomain: "smart-deals-pro.firebaseapp.com",
+                    projectId: "smart-deals-pro",
+                    storageBucket: "smart-deals-pro.firebasestorage.app",
+                    messagingSenderId: "680016915696",
+                    appId: "1:680016915696:web:4b3721313ea0e2e3342635",
+                    measurementId: "G-HV5N0LQJTG"
+                };
+
+                if (!firebase.apps.length) {
+                    firebase.initializeApp(firebaseConfig);
+                }
+                
+                const db = firebase.firestore();
+                
+                // Load products using the NEW filtering logic (same as fixed products.js)
+                const snapshot = await db.collection('products')
+                    .orderBy('createdAt', 'desc')
+                    .limit(20)
+                    .get();
+                
+                const allProducts = snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+
+                // Apply the NEW filtering logic (from the fix)
+                const filteredProducts = allProducts.filter(product => {
+                    return !product.id?.toString().startsWith('local_') && 
+                           !product.title?.includes('Demo') && 
+                           !product.title?.includes('Test') &&
+                           !product.name?.includes('Demo') && 
+                           !product.name?.includes('Test');
+                });
+
+                // Separate user vs admin products
+                const userProducts = filteredProducts.filter(product => product.submittedBy);
+                const adminProducts = filteredProducts.filter(product => !product.submittedBy);
+
+                // Update UI
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('results').style.display = 'block';
+                
+                document.getElementById('total-count').textContent = filteredProducts.length;
+                document.getElementById('user-count').textContent = userProducts.length;
+                document.getElementById('admin-count').textContent = adminProducts.length;
+
+                // Display products
+                const productList = document.getElementById('product-list');
+                if (filteredProducts.length === 0) {
+                    productList.innerHTML = '<div class="status warning">No products found in database. Try submitting a product first!</div>';
+                } else {
+                    const productHTML = filteredProducts.map(product => {
+                        const isUser = product.submittedBy;
+                        const type = isUser ? 'User-Submitted' : 'Admin Product';
+                        const badgeClass = isUser ? 'user-badge' : 'admin-badge';
+                        const itemClass = isUser ? 'user-product' : 'admin-product';
+                        
+                        return `
+                            <div class="product-item ${itemClass}">
+                                <strong>${product.title || product.name || 'Untitled'}</strong>
+                                <span class="badge ${badgeClass}">${type}</span>
+                                <br>
+                                <small>
+                                    Price: ${product.price || 'Not set'} | 
+                                    Category: ${product.category || 'None'} |
+                                    ${isUser ? 'Submitted by: ' + product.submittedBy : 'Added by Admin'}
+                                </small>
+                            </div>
+                        `;
+                    }).join('');
+                    
+                    productList.innerHTML = productHTML;
+                }
+
+            } catch (error) {
+                document.getElementById('loading').innerHTML = `
+                    <div class="status warning">
+                        <strong>⚠️ Error:</strong> ${error.message}
+                        <br><small>Make sure you're connected to the internet and Firebase is accessible.</small>
+                    </div>
+                `;
+            }
+        }
+
+        // Start verification when page loads
+        document.addEventListener('DOMContentLoaded', verifyFix);
+    </script>
+</body>
+</html>
