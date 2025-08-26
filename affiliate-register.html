@@ -913,6 +913,15 @@
             if (registrationResult.success) {
               console.log('Affiliate registration saved successfully via Firebase Affiliate Service');
               
+              // Send admin notification email
+              try {
+                await sendRegistrationEmail(registrationResult.data);
+                console.log('Admin notification email sent successfully');
+              } catch (emailError) {
+                console.warn('Failed to send admin notification email:', emailError);
+                // Don't fail the registration if email fails
+              }
+              
               // Show success message
               showMessage(registrationResult.message || 'Registration successful! Redirecting to your dashboard...', 'success');
               
@@ -941,6 +950,15 @@
             
             if (registrationResult.success) {
               console.log('Affiliate registration saved successfully via User Registration Service');
+              
+              // Send admin notification email
+              try {
+                await sendRegistrationEmail(registrationResult.data);
+                console.log('Admin notification email sent successfully');
+              } catch (emailError) {
+                console.warn('Failed to send admin notification email:', emailError);
+                // Don't fail the registration if email fails
+              }
               
               // Show success message
               showMessage(registrationResult.message || 'Registration successful! Redirecting to your dashboard...', 'success');
@@ -979,39 +997,47 @@
     // Send registration email to admin inbox
     async function sendRegistrationEmail(affiliateInfo) {
       try {
-        const payload = {
-          _subject: 'New Affiliate Registration',
-          affiliateId: affiliateInfo.affiliateId,
-          name: affiliateInfo.userData && affiliateInfo.userData.name ? affiliateInfo.userData.name : '',
-          email: affiliateInfo.personalInfo && affiliateInfo.personalInfo.email ? affiliateInfo.personalInfo.email : '',
-          phone: affiliateInfo.personalInfo && affiliateInfo.personalInfo.phone ? affiliateInfo.personalInfo.phone : '',
-          country: affiliateInfo.personalInfo && affiliateInfo.personalInfo.country ? affiliateInfo.personalInfo.country : '',
-          experience: affiliateInfo.experience && affiliateInfo.experience.level ? affiliateInfo.experience.level : '',
-          platforms: (affiliateInfo.experience && affiliateInfo.experience.platforms ? affiliateInfo.experience.platforms : []).join(', '),
-          revenue: affiliateInfo.experience && affiliateInfo.experience.revenue ? affiliateInfo.experience.revenue : '',
-          website: affiliateInfo.onlinePresence && affiliateInfo.onlinePresence.website ? affiliateInfo.onlinePresence.website : '',
-          facebook: affiliateInfo.onlinePresence && affiliateInfo.onlinePresence.facebook ? affiliateInfo.onlinePresence.facebook : '',
-          instagram: affiliateInfo.onlinePresence && affiliateInfo.onlinePresence.instagram ? affiliateInfo.onlinePresence.instagram : '',
-          youtube: affiliateInfo.onlinePresence && affiliateInfo.onlinePresence.youtube ? affiliateInfo.onlinePresence.youtube : '',
-          tiktok: affiliateInfo.onlinePresence && affiliateInfo.onlinePresence.tiktok ? affiliateInfo.onlinePresence.tiktok : '',
-          strategy: affiliateInfo.onlinePresence && affiliateInfo.onlinePresence.strategy ? affiliateInfo.onlinePresence.strategy : '',
-          registrationDate: affiliateInfo.registrationDate
-        };
+                  const payload = {
+            _subject: 'New Affiliate Registration - SmartDeals Pro',
+            _template: 'table',
+            _captcha: 'false',
+            affiliateId: affiliateInfo.affiliateId,
+            name: affiliateInfo.personalInfo ? affiliateInfo.personalInfo.fullName || `${affiliateInfo.personalInfo.firstName} ${affiliateInfo.personalInfo.lastName}` : '',
+            email: affiliateInfo.personalInfo ? affiliateInfo.personalInfo.email : '',
+            phone: affiliateInfo.personalInfo ? affiliateInfo.personalInfo.phone : '',
+            country: affiliateInfo.personalInfo ? affiliateInfo.personalInfo.country : '',
+            experience: affiliateInfo.experience ? affiliateInfo.experience.level : '',
+            platforms: affiliateInfo.experience && affiliateInfo.experience.platforms ? affiliateInfo.experience.platforms.join(', ') : '',
+            revenue: affiliateInfo.experience ? affiliateInfo.experience.monthlyRevenue : '',
+            website: affiliateInfo.onlinePresence ? affiliateInfo.onlinePresence.website : '',
+            facebook: affiliateInfo.onlinePresence && affiliateInfo.onlinePresence.socialMedia ? affiliateInfo.onlinePresence.socialMedia.facebook : '',
+            instagram: affiliateInfo.onlinePresence && affiliateInfo.onlinePresence.socialMedia ? affiliateInfo.onlinePresence.socialMedia.instagram : '',
+            youtube: affiliateInfo.onlinePresence && affiliateInfo.onlinePresence.socialMedia ? affiliateInfo.onlinePresence.socialMedia.youtube : '',
+            tiktok: affiliateInfo.onlinePresence && affiliateInfo.onlinePresence.socialMedia ? affiliateInfo.onlinePresence.socialMedia.tiktok : '',
+            strategy: affiliateInfo.onlinePresence ? affiliateInfo.onlinePresence.marketingStrategy : '',
+            registrationDate: affiliateInfo.timestamps ? affiliateInfo.timestamps.createdAt : new Date().toISOString(),
+            status: affiliateInfo.status ? affiliateInfo.status.application : 'pending'
+          };
 
-        fetch('https://formsubmit.co/ajax/smartdealsproamazon@gmail.com', {
+        const response = await fetch('https://formsubmit.co/ajax/smartdealsproamazon@gmail.com', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json'
           },
           body: JSON.stringify(payload)
-        }).then(function(res) { return res.json(); }).then(function(res) {
-          console.log('Registration email sent:', res);
-        }).catch(function(err) {
-          console.error('Failed to send registration email', err);
         });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        console.log('Registration email sent:', result);
+        return result;
       } catch (e) {
         console.error('sendRegistrationEmail error', e);
+        throw e;
       }
     }
 
