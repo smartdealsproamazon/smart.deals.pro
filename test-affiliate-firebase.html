@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Affiliate Registration Test</title>
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f8fafc;
+        }
+        .test-container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .test-section {
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .test-section h3 {
+            color: #1f2937;
+            margin-top: 0;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 6px;
+            margin: 10px 0;
+            font-weight: 500;
+        }
+        .status.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+        .status.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+        }
+        .status.pending {
+            background: #fef3c7;
+            color: #92400e;
+            border: 1px solid #fcd34d;
+        }
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            margin: 5px;
+        }
+        button:hover {
+            background: #2563eb;
+        }
+        button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+        pre {
+            background: #f3f4f6;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-size: 14px;
+        }
+        .test-form {
+            display: grid;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            font-weight: 500;
+            margin-bottom: 5px;
+            color: #374151;
+        }
+        input, select, textarea {
+            padding: 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🔥 Firebase Affiliate Registration Test</h1>
+        <p>This page tests the Firebase affiliate registration service integration.</p>
+        
+        <!-- Service Status -->
+        <div class="test-section">
+            <h3>📊 Service Status</h3>
+            <div id="serviceStatus" class="status pending">Checking services...</div>
+            <div id="serviceDetails"></div>
+        </div>
+
+        <!-- Collection Test -->
+        <div class="test-section">
+            <h3>📚 Collection Test</h3>
+            <button onclick="testCollectionAccess()">Test Collection Access</button>
+            <button onclick="getCollectionStats()">Get Collection Stats</button>
+            <div id="collectionStatus"></div>
+        </div>
+
+        <!-- Registration Test -->
+        <div class="test-section">
+            <h3>✅ Registration Test</h3>
+            <div class="test-form">
+                <div class="form-group">
+                    <label>First Name</label>
+                    <input type="text" id="testFirstName" value="Test" required>
+                </div>
+                <div class="form-group">
+                    <label>Last Name</label>
+                    <input type="text" id="testLastName" value="User" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="testEmail" value="test@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Phone</label>
+                    <input type="tel" id="testPhone" value="+1234567890" required>
+                </div>
+                <div class="form-group">
+                    <label>Country</label>
+                    <select id="testCountry" required>
+                        <option value="US">United States</option>
+                        <option value="PK">Pakistan</option>
+                        <option value="IN">India</option>
+                        <option value="UK">United Kingdom</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Experience Level</label>
+                    <select id="testExperience" required>
+                        <option value="beginner">Beginner</option>
+                        <option value="intermediate">Intermediate</option>
+                        <option value="advanced">Advanced</option>
+                        <option value="expert">Expert</option>
+                    </select>
+                </div>
+            </div>
+            <button onclick="testRegistration()" id="testRegBtn">🧪 Test Registration</button>
+            <div id="registrationStatus"></div>
+        </div>
+
+        <!-- Data Retrieval Test -->
+        <div class="test-section">
+            <h3>🔍 Data Retrieval Test</h3>
+            <button onclick="getAllAffiliates()">Get All Affiliates</button>
+            <button onclick="searchByEmail()">Search by Email</button>
+            <div id="retrievalStatus"></div>
+        </div>
+
+        <!-- Live Console -->
+        <div class="test-section">
+            <h3>📝 Live Console</h3>
+            <div id="console" style="background: #000; color: #0f0; padding: 15px; border-radius: 6px; font-family: monospace; height: 200px; overflow-y: auto;"></div>
+            <button onclick="clearConsole()">Clear Console</button>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="firebase-affiliate-service.js"></script>
+
+    <script>
+        // Console logger
+        const consoleDiv = document.getElementById('console');
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+
+        function logToPage(message, type = 'log') {
+            const timestamp = new Date().toLocaleTimeString();
+            const color = type === 'error' ? '#f87171' : type === 'warn' ? '#fbbf24' : '#0f0';
+            consoleDiv.innerHTML += `<div style="color: ${color}">[${timestamp}] ${message}</div>`;
+            consoleDiv.scrollTop = consoleDiv.scrollHeight;
+        }
+
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            logToPage(args.join(' '));
+        };
+
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            logToPage(args.join(' '), 'error');
+        };
+
+        console.warn = function(...args) {
+            originalWarn.apply(console, args);
+            logToPage(args.join(' '), 'warn');
+        };
+
+        function clearConsole() {
+            consoleDiv.innerHTML = '';
+        }
+
+        // Wait for services to load
+        async function checkServices() {
+            const statusDiv = document.getElementById('serviceStatus');
+            const detailsDiv = document.getElementById('serviceDetails');
+            
+            try {
+                console.log('Checking Firebase services...');
+                
+                // Wait for Firebase
+                let attempts = 0;
+                while (attempts < 50) {
+                    if (typeof firebase !== 'undefined' && firebase.firestore) {
+                        break;
+                    }
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                    attempts++;
+                }
+
+                if (typeof firebase === 'undefined') {
+                    throw new Error('Firebase SDK not loaded');
+                }
+
+                // Check Firebase connection
+                const db = firebase.firestore();
+                console.log('Firebase initialized successfully');
+
+                // Check affiliate service
+                if (window.firebaseAffiliateService) {
+                    await new Promise(resolve => {
+                        const checkReady = () => {
+                            if (window.firebaseAffiliateService.isReady()) {
+                                resolve();
+                            } else {
+                                setTimeout(checkReady, 100);
+                            }
+                        };
+                        checkReady();
+                        setTimeout(resolve, 5000); // Timeout after 5 seconds
+                    });
+
+                    if (window.firebaseAffiliateService.isReady()) {
+                        statusDiv.className = 'status success';
+                        statusDiv.textContent = '✅ All services ready!';
+                        
+                        detailsDiv.innerHTML = `
+                            <div><strong>Firebase:</strong> ✅ Connected</div>
+                            <div><strong>Firestore:</strong> ✅ Ready</div>
+                            <div><strong>Affiliate Service:</strong> ✅ Ready</div>
+                            <div><strong>Collection:</strong> affiliateRegistrations</div>
+                        `;
+                        
+                        console.log('Firebase Affiliate Service is ready');
+                    } else {
+                        throw new Error('Firebase Affiliate Service not ready');
+                    }
+                } else {
+                    throw new Error('Firebase Affiliate Service not found');
+                }
+
+            } catch (error) {
+                console.error('Service check failed:', error);
+                statusDiv.className = 'status error';
+                statusDiv.textContent = `❌ Error: ${error.message}`;
+                
+                detailsDiv.innerHTML = `
+                    <div><strong>Error Details:</strong> ${error.message}</div>
+                    <div><strong>Firebase:</strong> ${typeof firebase !== 'undefined' ? '✅' : '❌'}</div>
+                    <div><strong>Service:</strong> ${window.firebaseAffiliateService ? '✅' : '❌'}</div>
+                `;
+            }
+        }
+
+        // Test collection access
+        async function testCollectionAccess() {
+            const statusDiv = document.getElementById('collectionStatus');
+            
+            try {
+                console.log('Testing collection access...');
+                
+                if (!window.firebaseAffiliateService || !window.firebaseAffiliateService.isReady()) {
+                    throw new Error('Service not ready');
+                }
+
+                // Try to get collection stats
+                const stats = await window.firebaseAffiliateService.getAffiliateStats();
+                
+                statusDiv.innerHTML = `
+                    <div class="status success">✅ Collection access successful</div>
+                    <pre>Collection Stats:
+Total: ${stats.total}
+Pending: ${stats.pending}
+Approved: ${stats.approved}
+Rejected: ${stats.rejected}
+Active: ${stats.active}</pre>
+                `;
+                
+                console.log('Collection stats:', stats);
+
+            } catch (error) {
+                console.error('Collection test failed:', error);
+                statusDiv.innerHTML = `<div class="status error">❌ Collection test failed: ${error.message}</div>`;
+            }
+        }
+
+        // Get collection stats
+        async function getCollectionStats() {
+            await testCollectionAccess();
+        }
+
+        // Test registration
+        async function testRegistration() {
+            const statusDiv = document.getElementById('registrationStatus');
+            const btn = document.getElementById('testRegBtn');
+            
+            try {
+                btn.disabled = true;
+                btn.textContent = '🔄 Testing...';
+                
+                console.log('Testing affiliate registration...');
+                
+                if (!window.firebaseAffiliateService || !window.firebaseAffiliateService.isReady()) {
+                    throw new Error('Service not ready');
+                }
+
+                // Generate unique email to avoid duplicates
+                const uniqueEmail = `test${Date.now()}@example.com`;
+                
+                const testData = {
+                    firstName: document.getElementById('testFirstName').value,
+                    lastName: document.getElementById('testLastName').value,
+                    email: uniqueEmail,
+                    phone: document.getElementById('testPhone').value,
+                    country: document.getElementById('testCountry').value,
+                    experience: document.getElementById('testExperience').value,
+                    platforms: ['facebook', 'instagram'],
+                    revenue: 'under-1000',
+                    website: 'https://test-website.com',
+                    facebook: 'https://facebook.com/test',
+                    instagram: '@test_user',
+                    youtube: '',
+                    tiktok: '',
+                    strategy: 'Test marketing strategy',
+                    terms: true,
+                    marketing: true,
+                    quality: true
+                };
+
+                console.log('Submitting test registration with data:', testData);
+                
+                const result = await window.firebaseAffiliateService.registerAffiliate(testData);
+                
+                if (result.success) {
+                    statusDiv.innerHTML = `
+                        <div class="status success">✅ Registration test successful!</div>
+                        <pre>Result:
+Affiliate ID: ${result.affiliateId}
+Document ID: ${result.documentId}
+Message: ${result.message}</pre>
+                    `;
+                    
+                    console.log('Registration successful:', result);
+                } else {
+                    throw new Error(result.message || 'Registration failed');
+                }
+
+            } catch (error) {
+                console.error('Registration test failed:', error);
+                statusDiv.innerHTML = `<div class="status error">❌ Registration test failed: ${error.message}</div>`;
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '🧪 Test Registration';
+            }
+        }
+
+        // Get all affiliates
+        async function getAllAffiliates() {
+            const statusDiv = document.getElementById('retrievalStatus');
+            
+            try {
+                console.log('Getting all affiliates...');
+                
+                if (!window.firebaseAffiliateService || !window.firebaseAffiliateService.isReady()) {
+                    throw new Error('Service not ready');
+                }
+
+                const result = await window.firebaseAffiliateService.getAllAffiliates(10);
+                
+                statusDiv.innerHTML = `
+                    <div class="status success">✅ Retrieved ${result.affiliates.length} affiliates</div>
+                    <pre>Recent Affiliates:
+${result.affiliates.map(a => `- ${a.personalInfo.fullName} (${a.personalInfo.email}) - ${a.status.registrationStatus}`).join('\n')}</pre>
+                `;
+                
+                console.log('Retrieved affiliates:', result);
+
+            } catch (error) {
+                console.error('Retrieval failed:', error);
+                statusDiv.innerHTML = `<div class="status error">❌ Retrieval failed: ${error.message}</div>`;
+            }
+        }
+
+        // Search by email
+        async function searchByEmail() {
+            const email = prompt('Enter email to search for:');
+            if (!email) return;
+            
+            const statusDiv = document.getElementById('retrievalStatus');
+            
+            try {
+                console.log(`Searching for affiliate with email: ${email}`);
+                
+                if (!window.firebaseAffiliateService || !window.firebaseAffiliateService.isReady()) {
+                    throw new Error('Service not ready');
+                }
+
+                const affiliate = await window.firebaseAffiliateService.getAffiliateByEmail(email);
+                
+                if (affiliate) {
+                    statusDiv.innerHTML = `
+                        <div class="status success">✅ Found affiliate</div>
+                        <pre>Affiliate Details:
+Name: ${affiliate.personalInfo.fullName}
+Email: ${affiliate.personalInfo.email}
+Affiliate ID: ${affiliate.affiliateId}
+Status: ${affiliate.status.registrationStatus}
+Registered: ${new Date(affiliate.timestamps.createdAt).toLocaleDateString()}</pre>
+                    `;
+                    
+                    console.log('Found affiliate:', affiliate);
+                } else {
+                    statusDiv.innerHTML = `<div class="status pending">⚠️ No affiliate found with email: ${email}</div>`;
+                    console.log('No affiliate found');
+                }
+
+            } catch (error) {
+                console.error('Search failed:', error);
+                statusDiv.innerHTML = `<div class="status error">❌ Search failed: ${error.message}</div>`;
+            }
+        }
+
+        // Initialize when page loads
+        window.addEventListener('load', async function() {
+            console.log('Test page loaded, checking services...');
+            await checkServices();
+        });
+
+        // Add some helpful info to console
+        console.log('🔥 Firebase Affiliate Registration Test Page');
+        console.log('This page will test the Firebase integration for affiliate registration.');
+        console.log('Watch this console for detailed logs and test results.');
+    </script>
+</body>
+</html>

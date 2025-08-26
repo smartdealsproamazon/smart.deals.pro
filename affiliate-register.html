@@ -901,29 +901,46 @@
           quality: document.querySelector('[name="quality"]')?.checked || false
         };
         
-        // Check if affiliate already exists
+        // Register affiliate using the new dedicated Firebase service
+        let registrationResult = null;
+        
         try {
-          if (window.userRegistrationService && window.userRegistrationService.isReady()) {
+          // First try the new dedicated affiliate service
+          if (window.firebaseAffiliateService && window.firebaseAffiliateService.isReady()) {
+            console.log('Using Firebase Affiliate Service for registration...');
+            registrationResult = await window.firebaseAffiliateService.registerAffiliate(formData);
+            
+            if (registrationResult.success) {
+              console.log('Affiliate registration saved successfully via Firebase Affiliate Service');
+              
+              // Show success message
+              showMessage(registrationResult.message || 'Registration successful! Redirecting to your dashboard...', 'success');
+              
+              // Redirect after short delay
+              setTimeout(() => {
+                window.location.href = 'affiliate-dashboard.html';
+              }, 2000);
+              
+              return; // Success, exit function
+            } else {
+              throw new Error(registrationResult.message || 'Registration failed');
+            }
+          }
+          
+          // Fallback to existing service if new service is not available
+          else if (window.userRegistrationService && window.userRegistrationService.isReady()) {
+            console.log('Falling back to User Registration Service...');
+            
+            // Check if affiliate already exists
             const affiliateExists = await window.userRegistrationService.checkAffiliateExists(formData.email);
             if (affiliateExists) {
               throw new Error('An affiliate account with this email already exists. Please contact support if you need assistance.');
             }
-          }
-        } catch (error) {
-          showMessage(error.message, 'error');
-          return;
-        }
-        
-        // Register affiliate using new service
-        let registrationResult = null;
-        
-        try {
-          if (window.userRegistrationService && window.userRegistrationService.isReady()) {
-            console.log('Using User Registration Service for affiliate registration...');
+            
             registrationResult = await window.userRegistrationService.registerAffiliate(formData);
             
             if (registrationResult.success) {
-              console.log('Affiliate registration saved successfully');
+              console.log('Affiliate registration saved successfully via User Registration Service');
               
               // Show success message
               showMessage(registrationResult.message || 'Registration successful! Redirecting to your dashboard...', 'success');
@@ -1175,6 +1192,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
   <script src="firebase-config.js"></script>
+  <script src="firebase-affiliate-service.js"></script>
   <script src="user-registration-service.js"></script>
 </body>
 </html>

@@ -1,0 +1,214 @@
+// Firestore Security Rules for SmartDeals Pro
+// Affiliate Registration Collection Rules
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Affiliate Registrations Collection Rules
+    match /affiliateRegistrations/{affiliateId} {
+      
+      // Allow read access to:
+      // 1. Admin users (when we implement admin authentication)
+      // 2. The affiliate themselves (when we implement affiliate authentication)
+      allow read: if request.auth != null && 
+        (hasAdminRole() || isAffiliateOwner(affiliateId));
+      
+      // Allow create access for new registrations:
+      // 1. Anyone can create new affiliate registrations (public registration)
+      // 2. But validate the data structure and required fields
+      allow create: if validateAffiliateRegistration();
+      
+      // Allow update access to:
+      // 1. Admin users for status updates and management
+      // 2. Affiliate owner for limited fields (profile updates)
+      allow update: if request.auth != null && 
+        (hasAdminRole() || (isAffiliateOwner(affiliateId) && validateAffiliateUpdate()));
+      
+      // Allow delete access to:
+      // 1. Admin users only
+      allow delete: if request.auth != null && hasAdminRole();
+    }
+    
+    // Admin management collection (for affiliate status management)
+    match /adminActions/{actionId} {
+      allow read, write: if request.auth != null && hasAdminRole();
+    }
+    
+    // Affiliate performance metrics (separate collection for analytics)
+    match /affiliateMetrics/{affiliateId} {
+      allow read: if request.auth != null && 
+        (hasAdminRole() || isAffiliateOwner(affiliateId));
+      allow write: if request.auth != null && hasAdminRole();
+    }
+    
+    // Functions for validation and authorization
+    
+    // Check if user has admin role
+    function hasAdminRole() {
+      return request.auth != null && 
+        request.auth.token.admin == true;
+    }
+    
+    // Check if user is the affiliate owner
+    function isAffiliateOwner(affiliateId) {
+      return request.auth != null && 
+        request.auth.uid == resource.data.accountInfo.uid;
+    }
+    
+    // Validate affiliate registration data structure
+    function validateAffiliateRegistration() {
+      let data = request.resource.data;
+      
+      return data.keys().hasAll([
+        'affiliateId', 'personalInfo', 'experience', 'onlinePresence', 
+        'agreements', 'status', 'timestamps', 'metrics', 'metadata'
+      ]) &&
+      
+      // Validate personal info structure
+      data.personalInfo.keys().hasAll([
+        'firstName', 'lastName', 'email', 'phone', 'country', 'fullName'
+      ]) &&
+      
+      // Validate required personal info fields are not empty
+      data.personalInfo.firstName is string && data.personalInfo.firstName.size() > 0 &&
+      data.personalInfo.lastName is string && data.personalInfo.lastName.size() > 0 &&
+      data.personalInfo.email is string && data.personalInfo.email.size() > 0 &&
+      data.personalInfo.phone is string && data.personalInfo.phone.size() > 0 &&
+      data.personalInfo.country is string && data.personalInfo.country.size() > 0 &&
+      
+      // Validate email format (basic check)
+      data.personalInfo.email.matches('.*@.*\\..*') &&
+      
+      // Validate experience structure
+      data.experience.keys().hasAll(['level', 'platforms', 'monthlyRevenue', 'yearsActive']) &&
+      data.experience.level in ['beginner', 'intermediate', 'advanced', 'expert'] &&
+      data.experience.platforms is list &&
+      
+      // Validate online presence structure
+      data.onlinePresence.keys().hasAll(['website', 'socialMedia', 'marketingStrategy']) &&
+      data.onlinePresence.socialMedia.keys().hasAll(['facebook', 'instagram', 'youtube', 'tiktok']) &&
+      
+      // Validate agreements structure
+      data.agreements.keys().hasAll(['termsAccepted', 'marketingConsent', 'qualityStandards', 'agreementDate']) &&
+      data.agreements.termsAccepted == true && // Terms must be accepted
+      
+      // Validate status structure (for new registrations)
+      data.status.keys().hasAll(['registrationStatus', 'approvalDate', 'approvedBy', 'rejectionReason', 'accountActive']) &&
+      data.status.registrationStatus == 'pending' && // New registrations start as pending
+      data.status.accountActive == false && // New accounts start inactive
+      
+      // Validate timestamps structure
+      data.timestamps.keys().hasAll(['createdAt', 'updatedAt', 'registrationDate', 'lastLoginAt', 'lastActivityAt']) &&
+      data.timestamps.createdAt is timestamp &&
+      data.timestamps.updatedAt is timestamp &&
+      data.timestamps.registrationDate is timestamp &&
+      
+      // Validate metrics structure (must start at zero)
+      data.metrics.keys().hasAll(['totalSales', 'totalCommission', 'activeProducts', 'conversionRate', 'totalClicks', 'totalViews']) &&
+      data.metrics.totalSales == 0 &&
+      data.metrics.totalCommission == 0 &&
+      data.metrics.activeProducts == 0 &&
+      data.metrics.conversionRate == 0 &&
+      data.metrics.totalClicks == 0 &&
+      data.metrics.totalViews == 0 &&
+      
+      // Validate metadata structure
+      data.metadata.keys().hasAll(['registrationSource', 'userAgent', 'ipAddress', 'referralSource', 'utmParameters']) &&
+      data.metadata.registrationSource is string;
+    }
+    
+    // Validate affiliate profile updates (limited fields only)
+    function validateAffiliateUpdate() {
+      let data = request.resource.data;
+      let existing = resource.data;
+      
+      // Only allow updates to specific fields for non-admin users
+      return (
+        // Personal info updates (limited)
+        (data.personalInfo.phone == existing.personalInfo.phone || 
+         (data.personalInfo.phone is string && data.personalInfo.phone.size() > 0)) &&
+        
+        // Online presence updates
+        data.onlinePresence.website is string &&
+        data.onlinePresence.socialMedia.facebook is string &&
+        data.onlinePresence.socialMedia.instagram is string &&
+        data.onlinePresence.socialMedia.youtube is string &&
+        data.onlinePresence.socialMedia.tiktok is string &&
+        data.onlinePresence.marketingStrategy is string &&
+        
+        // Cannot change critical fields
+        data.affiliateId == existing.affiliateId &&
+        data.personalInfo.email == existing.personalInfo.email &&
+        data.personalInfo.firstName == existing.personalInfo.firstName &&
+        data.personalInfo.lastName == existing.personalInfo.lastName &&
+        data.status.registrationStatus == existing.status.registrationStatus &&
+        
+        // Update timestamp
+        data.timestamps.updatedAt is timestamp
+      );
+    }
+    
+    // Validate admin status updates
+    function validateAdminStatusUpdate() {
+      let data = request.resource.data;
+      let existing = resource.data;
+      
+      return (
+        // Can update status fields
+        data.status.registrationStatus in ['pending', 'approved', 'rejected', 'suspended'] &&
+        
+        // Cannot change other critical data
+        data.affiliateId == existing.affiliateId &&
+        data.personalInfo == existing.personalInfo &&
+        
+        // Update timestamp
+        data.timestamps.updatedAt is timestamp
+      );
+    }
+  }
+}
+
+/* 
+IMPLEMENTATION NOTES:
+
+1. Public Registration: 
+   - Anyone can create new affiliate registrations (no authentication required)
+   - This allows public registration forms to work
+
+2. Data Validation:
+   - Strict validation of data structure and required fields
+   - Email format validation
+   - Terms acceptance requirement
+   - Initial status and metrics validation
+
+3. Access Control:
+   - Read access for admin and affiliate owner only
+   - Update access with different permissions for admin vs affiliate
+   - Delete access for admin only
+
+4. Future Implementation:
+   - Admin role checking (requires implementing admin authentication)
+   - Affiliate authentication (for profile management)
+   - Enhanced security based on business requirements
+
+5. Collection Structure:
+   - affiliateRegistrations: Main collection for affiliate data
+   - adminActions: For logging admin actions
+   - affiliateMetrics: Separate collection for performance tracking
+
+DEPLOYMENT INSTRUCTIONS:
+
+1. Go to Firebase Console > Firestore Database > Rules
+2. Replace existing rules with the content above
+3. Click "Publish" to deploy the rules
+4. Test with your application to ensure proper access control
+
+TESTING RECOMMENDATIONS:
+
+1. Test public registration (should work without authentication)
+2. Test read access (should require authentication when implemented)
+3. Test admin functions (should require admin role when implemented)
+4. Test data validation (should reject invalid data structures)
+
+*/
