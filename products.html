@@ -203,9 +203,9 @@
 </head>
 <body>
   <header>
-    <h1>Submitted Products</h1>
+    <h1>All Products</h1>
     <p>
-      <a href="index.html">Submit another product</a>
+      Discover our complete collection including user-submitted products. <a href="product-submission.html">Submit your product</a>
     </p>
   </header>
 
@@ -227,8 +227,16 @@
       
       // Check if products are ready, if not wait for them
       function checkAndRender() {
-        if (window.products && window.products.length > 0) {
+        // Use getAllProductsIncludingUserSubmitted to show ALL products (including user-submitted ones)
+        const allProducts = window.getAllProductsIncludingUserSubmitted ? window.getAllProductsIncludingUserSubmitted() : (window.products || []);
+        
+        if (allProducts && allProducts.length > 0) {
+          // Override window.products temporarily to include all products for rendering
+          const originalProducts = window.products;
+          window.products = allProducts;
           renderProducts(null, 'product-container');
+          // Restore original products
+          window.products = originalProducts;
         } else {
           // Show loading state
           const container = document.getElementById('product-container');
@@ -249,7 +257,12 @@
       
       // Listen for products ready event
       document.addEventListener('products-ready', function() {
-        renderProducts(null, 'product-container');
+        checkAndRender(); // Use the same logic when products are ready
+      });
+      
+      // Also listen for Firebase connection events to get user-submitted products
+      document.addEventListener('firebase-connected', function() {
+        setTimeout(checkAndRender, 500); // Small delay to ensure data is loaded
       });
     });
   </script>
