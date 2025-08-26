@@ -213,10 +213,18 @@ function createProductCard(product) {
     }
   });
 
+  // Ensure we have a valid image URL with proper fallback
+  const imageUrl = product.image && 
+                   product.image !== '' && 
+                   !product.image.includes('placeholder') && 
+                   !product.image.includes('via.placeholder.com') 
+                   ? product.image 
+                   : 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=300&h=300&fit=crop&crop=center&auto=format&q=80';
+
   div.innerHTML = `
     <div class="product-image-container">
-      <img src="${product.image}" alt="${product.name}" class="product-image" loading="lazy" 
-           onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\\'padding:2rem;text-align:center;color:#9ca3af;\\'>Image not available</div>';">
+      <img src="${imageUrl}" alt="${product.name || 'Product'}" class="product-image" loading="lazy" 
+           onerror="this.src='https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=300&h=300&fit=crop&crop=center&auto=format&q=80'; this.onerror=null;">
     </div>
     <div class="product-content">
       <h3 class="product-title">${product.name}</h3>

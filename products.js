@@ -117,6 +117,32 @@ class ProductStateManager {
     });
   }
 
+  // Validate and clean image URL
+  validateImageUrl(imageUrl) {
+    if (!imageUrl || typeof imageUrl !== 'string' || imageUrl.trim() === '') {
+      return null;
+    }
+    
+    const cleanUrl = imageUrl.trim();
+    
+    // Reject placeholder URLs
+    if (cleanUrl.includes('placeholder') || 
+        cleanUrl.includes('via.placeholder.com') ||
+        cleanUrl === '#' ||
+        cleanUrl === '') {
+      return null;
+    }
+    
+    // Basic URL validation
+    try {
+      new URL(cleanUrl);
+      return cleanUrl;
+    } catch (e) {
+      console.warn('Invalid image URL:', cleanUrl);
+      return null;
+    }
+  }
+
   // Normalize product data structure
   normalizeProduct(productData, id) {
     return {
@@ -129,7 +155,7 @@ class ProductStateManager {
       category: productData.category || 'uncategorized',
       platform: productData.platform || 'Amazon',
       affiliate: productData.affiliate !== false,
-      image: productData.image || 'https://via.placeholder.com/300x300?text=Product+Image',
+      image: this.validateImageUrl(productData.image) || 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=300&h=300&fit=crop&crop=center&auto=format&q=80',
       link: productData.link || '#',
       description: productData.description || '',
       features: productData.features || [],
