@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Database Structure Check</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f7fa;
+        }
+        .section {
+            background: white;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #3b82f6;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .status.success { background: #d1fae5; color: #065f46; }
+        .status.error { background: #fee2e2; color: #991b1b; }
+        .status.warning { background: #fef3c7; color: #92400e; }
+        .status.info { background: #dbeafe; color: #1e40af; }
+        .collection-info {
+            background: #f9fafb;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        .product-sample {
+            background: #f3f4f6;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            padding: 10px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .fix-btn {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        .fix-btn:hover {
+            background: #059669;
+        }
+        .danger-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        .danger-btn:hover {
+            background: #dc2626;
+        }
+        .toggle-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Firebase Database Structure Analysis</h1>
+    <p>Comprehensive check of Firebase collections and data structure</p>
+
+    <div class="section">
+        <h2>📊 Collections Overview</h2>
+        <div id="collections-overview" class="status info">Checking collections...</div>
+        <div id="collections-details"></div>
+    </div>
+
+    <div class="section">
+        <h2>🏗️ Collection Structure Issues</h2>
+        <div id="structure-issues" class="status info">Analyzing structure...</div>
+        <div id="structure-details"></div>
+    </div>
+
+    <div class="section">
+        <h2>📦 Sample Products Data</h2>
+        <button class="toggle-btn" onclick="toggleSampleData()">Toggle Sample Data</button>
+        <div id="sample-data" class="hidden"></div>
+    </div>
+
+    <div class="section">
+        <h2>🔧 Automated Fixes</h2>
+        <div id="fixes-status" class="status info">Preparing fixes...</div>
+        <div id="fixes-actions"></div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"></script>
+
+    <!-- Firebase Services -->
+    <script src="firebase-config.js"></script>
+
+    <script>
+        class FirebaseDatabaseChecker {
+            constructor() {
+                this.db = null;
+                this.collectionsData = {};
+                this.issues = [];
+                this.fixes = [];
+                
+                this.init();
+            }
+
+            async init() {
+                await this.waitForFirebase();
+                await this.checkCollections();
+                await this.analyzeStructure();
+                this.prepareFixes();
+                this.displayResults();
+            }
+
+            async waitForFirebase() {
+                let attempts = 0;
+                while (attempts < 50) {
+                    if (window.firebaseService && window.firebaseService.isReady()) {
+                        this.db = window.firebaseService.db;
+                        console.log('✅ Firebase connected');
+                        return;
+                    }
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                    attempts++;
+                }
+                throw new Error('Firebase connection timeout');
+            }
+
+            async checkCollections() {
+                const expectedCollections = [
+                    'products',           // Main products collection used by products.js
+                    'featuredProducts',   // Used by firebase-products-service.js
+                    'categoryProducts',   // Used by firebase-products-service.js  
+                    'userProducts'        // Used by firebase-products-service.js
+                ];
+
+                for (const collectionName of expectedCollections) {
+                    try {
+                        console.log(`Checking collection: ${collectionName}`);
+                        
+                        const snapshot = await this.db.collection(collectionName)
+                            .limit(5)
+                            .get();
+                        
+                        this.collectionsData[collectionName] = {
+                            exists: true,
+                            count: snapshot.size,
+                            isEmpty: snapshot.empty,
+                            samples: snapshot.docs.map(doc => ({
+                                id: doc.id,
+                                data: doc.data()
+                            }))
+                        };
+
+                        console.log(`Collection ${collectionName}: ${snapshot.size} documents`);
+                        
+                    } catch (error) {
+                        console.error(`Error checking ${collectionName}:`, error);
+                        this.collectionsData[collectionName] = {
+                            exists: false,
+                            error: error.message
+                        };
+                    }
+                }
+            }
+
+            analyzeStructure() {
+                // Check for the main issue: products.js looks for 'products' collection
+                // but firebase-products-service.js looks for separate collections
+                
+                const mainProductsCollection = this.collectionsData['products'];
+                const featuredCollection = this.collectionsData['featuredProducts'];
+                const categoryCollection = this.collectionsData['categoryProducts'];
+                const userCollection = this.collectionsData['userProducts'];
+
+                // Issue 1: Missing main products collection
+                if (!mainProductsCollection?.exists || mainProductsCollection?.isEmpty) {
+                    this.issues.push({
+                        type: 'critical',
+                        title: 'Main Products Collection Missing',
+                        description: 'The main products.js file expects a "products" collection, but it\'s missing or empty.',
+                        impact: 'No products will load on the website',
+                        collections: ['products']
+                    });
+                }
+
+                // Issue 2: Missing specialized collections
+                const missingSpecializedCollections = [];
+                if (!featuredCollection?.exists || featuredCollection?.isEmpty) {
+                    missingSpecializedCollections.push('featuredProducts');
+                }
+                if (!categoryCollection?.exists || categoryCollection?.isEmpty) {
+                    missingSpecializedCollections.push('categoryProducts');
+                }
+                if (!userCollection?.exists || userCollection?.isEmpty) {
+                    missingSpecializedCollections.push('userProducts');
+                }
+
+                if (missingSpecializedCollections.length > 0) {
+                    this.issues.push({
+                        type: 'warning',
+                        title: 'Specialized Collections Missing',
+                        description: 'Firebase Products Service expects specialized collections for different product types.',
+                        impact: 'Product categorization and user submissions may not work correctly',
+                        collections: missingSpecializedCollections
+                    });
+                }
+
+                // Issue 3: Data structure inconsistency
+                let hasDataStructureIssues = false;
+                const requiredFields = ['name', 'title', 'price', 'image', 'link', 'category'];
+                
+                Object.entries(this.collectionsData).forEach(([collectionName, data]) => {
+                    if (data.exists && data.samples?.length > 0) {
+                        data.samples.forEach(sample => {
+                            const missingFields = requiredFields.filter(field => 
+                                !sample.data.hasOwnProperty(field) || 
+                                !sample.data[field]
+                            );
+                            
+                            if (missingFields.length > 0) {
+                                hasDataStructureIssues = true;
+                            }
+                        });
+                    }
+                });
+
+                if (hasDataStructureIssues) {
+                    this.issues.push({
+                        type: 'warning',
+                        title: 'Data Structure Issues',
+                        description: 'Some products are missing required fields like name, price, image, or link.',
+                        impact: 'Products may not display correctly',
+                        collections: Object.keys(this.collectionsData)
+                    });
+                }
+            }
+
+            prepareFixes() {
+                // Fix 1: Create sample products in main collection
+                if (this.issues.some(issue => issue.collections.includes('products'))) {
+                    this.fixes.push({
+                        id: 'create-main-products',
+                        title: 'Create Sample Products in Main Collection',
+                        description: 'Add sample products to the "products" collection so the website displays content.',
+                        action: this.createSampleMainProducts.bind(this),
+                        danger: false
+                    });
+                }
+
+                // Fix 2: Create specialized collections
+                const missingSpecialized = this.issues
+                    .filter(issue => issue.title === 'Specialized Collections Missing')
+                    .flatMap(issue => issue.collections);
+                
+                if (missingSpecialized.length > 0) {
+                    this.fixes.push({
+                        id: 'create-specialized-collections',
+                        title: 'Create Specialized Collections',
+                        description: 'Create featuredProducts, categoryProducts, and userProducts collections.',
+                        action: this.createSpecializedCollections.bind(this),
+                        danger: false
+                    });
+                }
+
+                // Fix 3: Migrate existing data (if main collection has data but specialized don't)
+                const mainHasData = this.collectionsData['products']?.exists && !this.collectionsData['products']?.isEmpty;
+                const specializedMissing = missingSpecialized.length > 0;
+                
+                if (mainHasData && specializedMissing) {
+                    this.fixes.push({
+                        id: 'migrate-to-specialized',
+                        title: 'Migrate Products to Specialized Collections',
+                        description: 'Copy products from main collection to specialized collections based on product type.',
+                        action: this.migrateToSpecializedCollections.bind(this),
+                        danger: false
+                    });
+                }
+
+                // Fix 4: Clean up demo/test data
+                this.fixes.push({
+                    id: 'cleanup-demo-data',
+                    title: 'Clean Up Demo/Test Data',
+                    description: 'Remove any demo or test products from the database.',
+                    action: this.cleanupDemoData.bind(this),
+                    danger: true
+                });
+            }
+
+            async createSampleMainProducts() {
+                const sampleProducts = [
+                    {
+                        name: "Wireless Bluetooth Headphones",
+                        title: "Wireless Bluetooth Headphones",
+                        price: "$79.99",
+                        originalPrice: "$99.99",
+                        image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300&h=300&fit=crop&auto=format&q=80",
+                        link: "https://amazon.com/dp/B08N5WRWNW",
+                        category: "electronics",
+                        description: "High-quality wireless headphones with noise cancellation and 30-hour battery life.",
+                        rating: 4.5,
+                        discount: 20,
+                        platform: "Amazon",
+                        type: "featured",
+                        status: "active"
+                    },
+                    {
+                        name: "Smart Fitness Watch",
+                        title: "Smart Fitness Watch",
+                        price: "$199.99",
+                        originalPrice: "$249.99",
+                        image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300&h=300&fit=crop&auto=format&q=80",
+                        link: "https://amazon.com/dp/B08DFCWVZ6",
+                        category: "electronics",
+                        description: "Advanced fitness tracking with heart rate monitor, GPS, and waterproof design.",
+                        rating: 4.7,
+                        discount: 20,
+                        platform: "Amazon",
+                        type: "featured",
+                        status: "active"
+                    },
+                    {
+                        name: "Portable Phone Charger",
+                        title: "Portable Phone Charger",
+                        price: "$29.99",
+                        originalPrice: "$39.99",
+                        image: "https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=300&h=300&fit=crop&auto=format&q=80",
+                        link: "https://amazon.com/dp/B07YBQ4H96",
+                        category: "electronics",
+                        description: "High-capacity power bank with fast charging and multiple device support.",
+                        rating: 4.3,
+                        discount: 25,
+                        platform: "Amazon",
+                        type: "category",
+                        status: "active"
+                    }
+                ];
+
+                try {
+                    for (const product of sampleProducts) {
+                        await this.db.collection('products').add({
+                            ...product,
+                            createdAt: new Date(),
+                            updatedAt: new Date()
+                        });
+                    }
+                    alert(`✅ Successfully created ${sampleProducts.length} sample products in main collection!`);
+                    location.reload();
+                } catch (error) {
+                    alert(`❌ Error creating sample products: ${error.message}`);
+                }
+            }
+
+            async createSpecializedCollections() {
+                const collectionsToCreate = ['featuredProducts', 'categoryProducts', 'userProducts'];
+                let created = 0;
+
+                try {
+                    for (const collectionName of collectionsToCreate) {
+                        if (!this.collectionsData[collectionName]?.exists) {
+                            // Create a placeholder document to initialize the collection
+                            await this.db.collection(collectionName).add({
+                                _placeholder: true,
+                                createdAt: new Date(),
+                                description: `Placeholder document for ${collectionName} collection`
+                            });
+                            created++;
+                        }
+                    }
+                    alert(`✅ Successfully created ${created} specialized collections!`);
+                    location.reload();
+                } catch (error) {
+                    alert(`❌ Error creating collections: ${error.message}`);
+                }
+            }
+
+            async migrateToSpecializedCollections() {
+                try {
+                    const mainProductsSnapshot = await this.db.collection('products').get();
+                    let migrated = 0;
+
+                    for (const doc of mainProductsSnapshot.docs) {
+                        const product = doc.data();
+                        const productType = product.type || 'category';
+                        
+                        let targetCollection = 'categoryProducts';
+                        if (productType === 'featured') {
+                            targetCollection = 'featuredProducts';
+                        } else if (productType === 'user_submitted') {
+                            targetCollection = 'userProducts';
+                        }
+
+                        await this.db.collection(targetCollection).add({
+                            ...product,
+                            migratedFrom: 'products',
+                            migratedAt: new Date()
+                        });
+                        migrated++;
+                    }
+
+                    alert(`✅ Successfully migrated ${migrated} products to specialized collections!`);
+                    location.reload();
+                } catch (error) {
+                    alert(`❌ Error migrating products: ${error.message}`);
+                }
+            }
+
+            async cleanupDemoData() {
+                if (!confirm('⚠️ This will permanently delete demo and test products. Are you sure?')) {
+                    return;
+                }
+
+                try {
+                    const collections = ['products', 'featuredProducts', 'categoryProducts', 'userProducts'];
+                    let deleted = 0;
+
+                    for (const collectionName of collections) {
+                        const snapshot = await this.db.collection(collectionName).get();
+                        
+                        for (const doc of snapshot.docs) {
+                            const data = doc.data();
+                            const isDemoData = 
+                                data.name?.includes('Demo') ||
+                                data.name?.includes('Test') ||
+                                data.title?.includes('Demo') ||
+                                data.title?.includes('Test') ||
+                                data._placeholder ||
+                                doc.id.includes('demo_') ||
+                                doc.id.includes('test_');
+
+                            if (isDemoData) {
+                                await doc.ref.delete();
+                                deleted++;
+                            }
+                        }
+                    }
+
+                    alert(`✅ Successfully deleted ${deleted} demo/test products!`);
+                    location.reload();
+                } catch (error) {
+                    alert(`❌ Error cleaning up demo data: ${error.message}`);
+                }
+            }
+
+            displayResults() {
+                // Collections overview
+                const collectionsOverview = document.getElementById('collections-overview');
+                const collectionsDetails = document.getElementById('collections-details');
+                
+                const totalCollections = Object.keys(this.collectionsData).length;
+                const existingCollections = Object.values(this.collectionsData).filter(c => c.exists).length;
+                
+                collectionsOverview.className = `status ${existingCollections === totalCollections ? 'success' : 'warning'}`;
+                collectionsOverview.textContent = `${existingCollections}/${totalCollections} collections found`;
+
+                let detailsHTML = '';
+                for (const [name, data] of Object.entries(this.collectionsData)) {
+                    const status = data.exists ? (data.isEmpty ? '⚠️ Empty' : `✅ ${data.count} documents`) : '❌ Missing';
+                    detailsHTML += `
+                        <div class="collection-info">
+                            <h4>${name}</h4>
+                            <p><strong>Status:</strong> ${status}</p>
+                            ${data.error ? `<p><strong>Error:</strong> ${data.error}</p>` : ''}
+                        </div>
+                    `;
+                }
+                collectionsDetails.innerHTML = detailsHTML;
+
+                // Structure issues
+                const structureIssues = document.getElementById('structure-issues');
+                const structureDetails = document.getElementById('structure-details');
+                
+                structureIssues.className = `status ${this.issues.length === 0 ? 'success' : 'warning'}`;
+                structureIssues.textContent = this.issues.length === 0 ? 'No structure issues found' : `${this.issues.length} issues found`;
+
+                let issuesHTML = '';
+                this.issues.forEach(issue => {
+                    issuesHTML += `
+                        <div class="collection-info">
+                            <h4>🚨 ${issue.title}</h4>
+                            <p><strong>Type:</strong> ${issue.type}</p>
+                            <p><strong>Description:</strong> ${issue.description}</p>
+                            <p><strong>Impact:</strong> ${issue.impact}</p>
+                            <p><strong>Affected Collections:</strong> ${issue.collections.join(', ')}</p>
+                        </div>
+                    `;
+                });
+                structureDetails.innerHTML = issuesHTML || '<p>No issues detected!</p>';
+
+                // Fixes
+                const fixesStatus = document.getElementById('fixes-status');
+                const fixesActions = document.getElementById('fixes-actions');
+                
+                fixesStatus.className = `status ${this.fixes.length === 0 ? 'success' : 'info'}`;
+                fixesStatus.textContent = this.fixes.length === 0 ? 'No fixes needed' : `${this.fixes.length} fixes available`;
+
+                let fixesHTML = '';
+                this.fixes.forEach(fix => {
+                    const btnClass = fix.danger ? 'danger-btn' : 'fix-btn';
+                    fixesHTML += `
+                        <div class="collection-info">
+                            <h4>${fix.title}</h4>
+                            <p>${fix.description}</p>
+                            <button class="${btnClass}" onclick="window.dbChecker.executeFix('${fix.id}')">
+                                ${fix.danger ? '⚠️ ' : '🔧 '}${fix.title}
+                            </button>
+                        </div>
+                    `;
+                });
+                fixesActions.innerHTML = fixesHTML || '<p>No fixes needed!</p>';
+
+                // Sample data
+                this.displaySampleData();
+            }
+
+            displaySampleData() {
+                const sampleData = document.getElementById('sample-data');
+                let sampleHTML = '';
+
+                for (const [collectionName, data] of Object.entries(this.collectionsData)) {
+                    if (data.exists && data.samples?.length > 0) {
+                        sampleHTML += `<h4>${collectionName}</h4>`;
+                        data.samples.forEach((sample, index) => {
+                            sampleHTML += `
+                                <div class="product-sample">
+                                    Document ID: ${sample.id}
+                                    ${JSON.stringify(sample.data, null, 2)}
+                                </div>
+                            `;
+                        });
+                    }
+                }
+
+                sampleData.innerHTML = sampleHTML || '<p>No sample data available</p>';
+            }
+
+            executeFix(fixId) {
+                const fix = this.fixes.find(f => f.id === fixId);
+                if (fix && fix.action) {
+                    fix.action();
+                }
+            }
+        }
+
+        function toggleSampleData() {
+            const sampleData = document.getElementById('sample-data');
+            sampleData.classList.toggle('hidden');
+        }
+
+        // Start the checker when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                window.dbChecker = new FirebaseDatabaseChecker();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Website Products Analysis Report</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        .content {
+            padding: 40px;
+        }
+        .section {
+            background: #f8f9fa;
+            margin: 30px 0;
+            padding: 30px;
+            border-radius: 12px;
+            border-left: 5px solid #667eea;
+        }
+        .section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .status {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-weight: 600;
+        }
+        .status.success { 
+            background: linear-gradient(135deg, #d1fae5, #a7f3d0); 
+            color: #065f46; 
+            border-left: 4px solid #10b981;
+        }
+        .status.error { 
+            background: linear-gradient(135deg, #fee2e2, #fecaca); 
+            color: #991b1b; 
+            border-left: 4px solid #ef4444;
+        }
+        .status.warning { 
+            background: linear-gradient(135deg, #fef3c7, #fde68a); 
+            color: #92400e; 
+            border-left: 4px solid #f59e0b;
+        }
+        .status.info { 
+            background: linear-gradient(135deg, #dbeafe, #bfdbfe); 
+            color: #1e40af; 
+            border-left: 4px solid #3b82f6;
+        }
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .test-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .test-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+        .test-card h3 {
+            margin: 0 0 15px 0;
+            color: #1f2937;
+            font-size: 1.3rem;
+        }
+        .test-result {
+            padding: 10px 15px;
+            border-radius: 6px;
+            margin: 10px 0;
+            font-size: 14px;
+        }
+        .result-success {
+            background: #d1fae5;
+            color: #065f46;
+            border-left: 3px solid #10b981;
+        }
+        .result-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border-left: 3px solid #ef4444;
+        }
+        .result-warning {
+            background: #fef3c7;
+            color: #92400e;
+            border-left: 3px solid #f59e0b;
+        }
+        .btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px 5px;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(102, 126, 234, 0.4);
+        }
+        .btn.success {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+        .btn.danger {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .summary-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        .summary-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #1f2937;
+            margin-bottom: 5px;
+        }
+        .summary-label {
+            color: #6b7280;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .recommendation {
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            border: 1px solid #0ea5e9;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        .recommendation h4 {
+            color: #0c4a6e;
+            margin: 0 0 10px 0;
+        }
+        .recommendation p {
+            color: #0369a1;
+            margin: 0;
+        }
+        .console-log {
+            background: #1f2937;
+            color: #f9fafb;
+            border-radius: 8px;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            margin: 20px 0;
+            white-space: pre-wrap;
+        }
+        .error-log {
+            color: #fca5a5;
+        }
+        .warning-log {
+            color: #fbbf24;
+        }
+        .info-log {
+            color: #60a5fa;
+        }
+        .progress-bar {
+            background: #e5e7eb;
+            border-radius: 10px;
+            height: 8px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background: linear-gradient(90deg, #10b981, #059669);
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 Complete Website Products Analysis</h1>
+            <p>Comprehensive diagnostic report for product loading and display across all website pages</p>
+            <div id="overall-progress" style="margin-top: 20px;">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill" style="width: 0%;"></div>
+                </div>
+                <div id="progress-text" style="margin-top: 10px; opacity: 0.9;">Initializing comprehensive analysis...</div>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="section">
+                <h2>📊 Executive Summary</h2>
+                <div id="executive-summary" class="status info">
+                    <span class="loading"></span> Running comprehensive analysis...
+                </div>
+                <div class="summary-grid" id="summary-grid">
+                    <div class="summary-card">
+                        <div class="summary-number" id="total-tests">0</div>
+                        <div class="summary-label">Total Tests</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-number" id="passed-tests">0</div>
+                        <div class="summary-label">Passed Tests</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-number" id="total-products">0</div>
+                        <div class="summary-label">Products Found</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-number" id="pages-working">0</div>
+                        <div class="summary-label">Pages Working</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>🧪 Detailed Test Results</h2>
+                <div class="test-grid" id="test-results-grid">
+                    <!-- Test cards will be populated here -->
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>🚨 Console Errors & Warnings</h2>
+                <div id="console-status" class="status info">Capturing console output...</div>
+                <div class="console-log" id="console-output">
+                    Monitoring console for errors and warnings...
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>💡 Recommendations & Fixes</h2>
+                <div id="recommendations-container">
+                    <!-- Recommendations will be populated here -->
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>🎮 Quick Actions</h2>
+                <button class="btn" onclick="report.runFullAnalysis()">🔄 Re-run Full Analysis</button>
+                <button class="btn success" onclick="report.fixCommonIssues()">🔧 Auto-Fix Common Issues</button>
+                <button class="btn" onclick="report.openWorkingPages()">✅ Open Working Pages</button>
+                <button class="btn" onclick="report.exportReport()">📄 Export Report</button>
+                <button class="btn danger" onclick="report.clearCache()">🗑️ Clear Cache & Reload</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"></script>
+
+    <!-- Firebase Services -->
+    <script src="firebase-config.js"></script>
+    <script src="firebase-products-service.js"></script>
+    <script src="products.js"></script>
+    <script src="render.js"></script>
+
+    <script>
+        class ComprehensiveWebsiteReport {
+            constructor() {
+                this.tests = [
+                    { name: 'Firebase Connection', id: 'firebase-connection', status: 'pending' },
+                    { name: 'Database Collections', id: 'database-collections', status: 'pending' },
+                    { name: 'Products Loading', id: 'products-loading', status: 'pending' },
+                    { name: 'Images Display', id: 'images-display', status: 'pending' },
+                    { name: 'Main Pages', id: 'main-pages', status: 'pending' },
+                    { name: 'Console Errors', id: 'console-errors', status: 'pending' }
+                ];
+                
+                this.results = {};
+                this.consoleOutput = [];
+                this.recommendations = [];
+                this.progress = 0;
+                
+                this.init();
+            }
+
+            async init() {
+                this.log('🚀 Starting comprehensive website analysis...');
+                this.setupConsoleCapture();
+                this.renderTestCards();
+                
+                // Start analysis after a brief delay
+                setTimeout(() => {
+                    this.runFullAnalysis();
+                }, 1000);
+            }
+
+            setupConsoleCapture() {
+                // Capture console.log, console.error, console.warn
+                const originalLog = console.log;
+                const originalError = console.error;
+                const originalWarn = console.warn;
+
+                console.log = (...args) => {
+                    this.addConsoleOutput('info', args.join(' '));
+                    originalLog.apply(console, args);
+                };
+
+                console.error = (...args) => {
+                    this.addConsoleOutput('error', args.join(' '));
+                    originalError.apply(console, args);
+                };
+
+                console.warn = (...args) => {
+                    this.addConsoleOutput('warning', args.join(' '));
+                    originalWarn.apply(console, args);
+                };
+
+                // Capture unhandled errors
+                window.addEventListener('error', (event) => {
+                    this.addConsoleOutput('error', `Unhandled Error: ${event.message} at ${event.filename}:${event.lineno}`);
+                });
+
+                // Capture unhandled promise rejections
+                window.addEventListener('unhandledrejection', (event) => {
+                    this.addConsoleOutput('error', `Unhandled Promise Rejection: ${event.reason}`);
+                });
+            }
+
+            addConsoleOutput(type, message) {
+                const timestamp = new Date().toLocaleTimeString();
+                const logEntry = {
+                    timestamp,
+                    type,
+                    message
+                };
+                
+                this.consoleOutput.push(logEntry);
+                this.updateConsoleDisplay();
+
+                // Update console errors test status
+                if (type === 'error') {
+                    this.updateTestStatus('console-errors', 'error', `${this.consoleOutput.filter(e => e.type === 'error').length} errors found`);
+                }
+            }
+
+            updateConsoleDisplay() {
+                const consoleElement = document.getElementById('console-output');
+                const lastEntries = this.consoleOutput.slice(-50); // Show last 50 entries
+                
+                let output = '';
+                lastEntries.forEach(entry => {
+                    const className = entry.type === 'error' ? 'error-log' : 
+                                    entry.type === 'warning' ? 'warning-log' : 'info-log';
+                    output += `<span class="${className}">[${entry.timestamp}] ${entry.type.toUpperCase()}: ${entry.message}</span>\n`;
+                });
+                
+                consoleElement.innerHTML = output;
+                consoleElement.scrollTop = consoleElement.scrollHeight;
+
+                // Update console status
+                const errorCount = this.consoleOutput.filter(e => e.type === 'error').length;
+                const warningCount = this.consoleOutput.filter(e => e.type === 'warning').length;
+                
+                const consoleStatus = document.getElementById('console-status');
+                if (errorCount > 0) {
+                    consoleStatus.className = 'status error';
+                    consoleStatus.textContent = `❌ ${errorCount} errors and ${warningCount} warnings found`;
+                } else if (warningCount > 0) {
+                    consoleStatus.className = 'status warning';
+                    consoleStatus.textContent = `⚠️ ${warningCount} warnings found`;
+                } else {
+                    consoleStatus.className = 'status success';
+                    consoleStatus.textContent = '✅ No console errors detected';
+                }
+            }
+
+            renderTestCards() {
+                const grid = document.getElementById('test-results-grid');
+                grid.innerHTML = '';
+
+                this.tests.forEach(test => {
+                    const card = document.createElement('div');
+                    card.className = 'test-card';
+                    card.id = `card-${test.id}`;
+                    
+                    card.innerHTML = `
+                        <h3>${test.name}</h3>
+                        <div class="test-result" id="result-${test.id}">
+                            <span class="loading"></span> Running test...
+                        </div>
+                        <div id="details-${test.id}" style="font-size: 12px; color: #6b7280; margin-top: 10px;">
+                            Initializing...
+                        </div>
+                    `;
+                    
+                    grid.appendChild(card);
+                });
+            }
+
+            updateTestStatus(testId, status, message, details = '') {
+                const test = this.tests.find(t => t.id === testId);
+                if (test) {
+                    test.status = status;
+                }
+
+                const resultElement = document.getElementById(`result-${testId}`);
+                const detailsElement = document.getElementById(`details-${testId}`);
+                
+                if (resultElement) {
+                    resultElement.className = `test-result result-${status}`;
+                    resultElement.innerHTML = status === 'success' ? `✅ ${message}` :
+                                            status === 'warning' ? `⚠️ ${message}` :
+                                            status === 'error' ? `❌ ${message}` : `🔄 ${message}`;
+                }
+                
+                if (detailsElement && details) {
+                    detailsElement.textContent = details;
+                }
+
+                this.updateProgress();
+                this.updateSummary();
+            }
+
+            updateProgress() {
+                const completedTests = this.tests.filter(t => t.status !== 'pending').length;
+                this.progress = Math.round((completedTests / this.tests.length) * 100);
+                
+                const progressFill = document.getElementById('progress-fill');
+                const progressText = document.getElementById('progress-text');
+                
+                progressFill.style.width = `${this.progress}%`;
+                progressText.textContent = `Analysis Progress: ${this.progress}% (${completedTests}/${this.tests.length} tests completed)`;
+            }
+
+            updateSummary() {
+                const passedTests = this.tests.filter(t => t.status === 'success').length;
+                const totalTests = this.tests.length;
+                
+                document.getElementById('total-tests').textContent = totalTests;
+                document.getElementById('passed-tests').textContent = passedTests;
+                
+                // Update executive summary
+                const summaryElement = document.getElementById('executive-summary');
+                const successRate = Math.round((passedTests / totalTests) * 100);
+                
+                if (this.progress === 100) {
+                    if (successRate >= 80) {
+                        summaryElement.className = 'status success';
+                        summaryElement.innerHTML = `✅ Website is functioning well! ${successRate}% of tests passed. Products are loading and displaying correctly.`;
+                    } else if (successRate >= 60) {
+                        summaryElement.className = 'status warning';
+                        summaryElement.innerHTML = `⚠️ Website has some issues. ${successRate}% of tests passed. Some products may not be loading correctly.`;
+                    } else {
+                        summaryElement.className = 'status error';
+                        summaryElement.innerHTML = `❌ Website has significant issues. Only ${successRate}% of tests passed. Products are not loading correctly.`;
+                    }
+                } else {
+                    summaryElement.innerHTML = `<span class="loading"></span> Running analysis... ${this.progress}% complete`;
+                }
+            }
+
+            async runFullAnalysis() {
+                this.log('🔍 Starting comprehensive analysis...');
+                
+                // Test 1: Firebase Connection
+                await this.testFirebaseConnection();
+                
+                // Test 2: Database Collections
+                await this.testDatabaseCollections();
+                
+                // Test 3: Products Loading
+                await this.testProductsLoading();
+                
+                // Test 4: Images Display
+                await this.testImagesDisplay();
+                
+                // Test 5: Main Pages
+                await this.testMainPages();
+                
+                // Test 6: Console Errors (already running)
+                this.finalizeConsoleErrorsTest();
+                
+                // Generate recommendations
+                this.generateRecommendations();
+                
+                this.log('✅ Comprehensive analysis completed!');
+            }
+
+            async testFirebaseConnection() {
+                this.log('📡 Testing Firebase connection...');
+                
+                try {
+                    let attempts = 0;
+                    while (attempts < 30) {
+                        if (window.firebaseService && window.firebaseService.isReady()) {
+                            this.updateTestStatus('firebase-connection', 'success', 'Firebase connected successfully', 
+                                `Connected to project: ${window.firebaseService.db.app.options.projectId}`);
+                            return;
+                        }
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                        attempts++;
+                    }
+                    
+                    throw new Error('Connection timeout');
+                    
+                } catch (error) {
+                    this.updateTestStatus('firebase-connection', 'error', 'Firebase connection failed', error.message);
+                    this.recommendations.push({
+                        type: 'critical',
+                        title: 'Fix Firebase Connection',
+                        description: 'Firebase is not connecting properly. Check your configuration and internet connection.',
+                        action: 'Verify firebase-config.js and network connectivity'
+                    });
+                }
+            }
+
+            async testDatabaseCollections() {
+                this.log('🗄️ Testing database collections...');
+                
+                if (!window.firebaseService || !window.firebaseService.isReady()) {
+                    this.updateTestStatus('database-collections', 'error', 'Cannot test - Firebase not connected');
+                    return;
+                }
+
+                try {
+                    const collections = ['products', 'featuredProducts', 'categoryProducts', 'userProducts'];
+                    const results = {};
+                    
+                    for (const collectionName of collections) {
+                        const snapshot = await window.firebaseService.db.collection(collectionName).limit(1).get();
+                        results[collectionName] = !snapshot.empty;
+                    }
+                    
+                    const existingCollections = Object.values(results).filter(exists => exists).length;
+                    
+                    if (existingCollections > 0) {
+                        this.updateTestStatus('database-collections', 'success', `${existingCollections}/${collections.length} collections found`,
+                            `Collections with data: ${Object.entries(results).filter(([k,v]) => v).map(([k,v]) => k).join(', ')}`);
+                    } else {
+                        this.updateTestStatus('database-collections', 'error', 'No collections found with data');
+                        this.recommendations.push({
+                            type: 'critical',
+                            title: 'Add Products to Database',
+                            description: 'No products found in any Firebase collections. Add sample products to get started.',
+                            action: 'Use the database structure check tool to add sample products'
+                        });
+                    }
+                    
+                } catch (error) {
+                    this.updateTestStatus('database-collections', 'error', 'Database access failed', error.message);
+                }
+            }
+
+            async testProductsLoading() {
+                this.log('📦 Testing products loading...');
+                
+                try {
+                    // Wait for products to load
+                    let attempts = 0;
+                    let totalProducts = 0;
+                    
+                    while (attempts < 20) {
+                        const staticProducts = window.products || [];
+                        const allProducts = window.getAllProductsIncludingUserSubmitted ? 
+                            window.getAllProductsIncludingUserSubmitted() : [];
+                        
+                        totalProducts = Math.max(staticProducts.length, allProducts.length);
+                        
+                        if (totalProducts > 0) break;
+                        
+                        await new Promise(resolve => setTimeout(resolve, 200));
+                        attempts++;
+                    }
+                    
+                    document.getElementById('total-products').textContent = totalProducts;
+                    
+                    if (totalProducts > 0) {
+                        this.updateTestStatus('products-loading', 'success', `${totalProducts} products loaded`,
+                            `Products available from various sources including Firebase and static data`);
+                    } else {
+                        this.updateTestStatus('products-loading', 'error', 'No products loaded');
+                        this.recommendations.push({
+                            type: 'high',
+                            title: 'Fix Product Loading',
+                            description: 'Products are not loading from any source. Check Firebase connection and data.',
+                            action: 'Run the Firebase database structure check'
+                        });
+                    }
+                    
+                } catch (error) {
+                    this.updateTestStatus('products-loading', 'error', 'Product loading test failed', error.message);
+                }
+            }
+
+            async testImagesDisplay() {
+                this.log('🖼️ Testing image display...');
+                
+                try {
+                    const products = window.products || [];
+                    if (products.length === 0) {
+                        this.updateTestStatus('images-display', 'warning', 'No products to test images');
+                        return;
+                    }
+                    
+                    const productsWithImages = products.filter(p => p.image && p.image !== '').slice(0, 5);
+                    if (productsWithImages.length === 0) {
+                        this.updateTestStatus('images-display', 'warning', 'No products have images to test');
+                        return;
+                    }
+                    
+                    let workingImages = 0;
+                    const imageTests = productsWithImages.map(product => {
+                        return new Promise(resolve => {
+                            const img = new Image();
+                            img.onload = () => {
+                                workingImages++;
+                                resolve(true);
+                            };
+                            img.onerror = () => resolve(false);
+                            img.src = product.image;
+                            
+                            setTimeout(() => resolve(false), 5000); // 5s timeout
+                        });
+                    });
+                    
+                    await Promise.all(imageTests);
+                    
+                    const successRate = Math.round((workingImages / productsWithImages.length) * 100);
+                    
+                    if (successRate >= 80) {
+                        this.updateTestStatus('images-display', 'success', `${successRate}% images loading correctly`,
+                            `${workingImages}/${productsWithImages.length} images loaded successfully`);
+                    } else if (successRate >= 50) {
+                        this.updateTestStatus('images-display', 'warning', `${successRate}% images loading correctly`,
+                            `${workingImages}/${productsWithImages.length} images loaded, some may need fixing`);
+                        this.recommendations.push({
+                            type: 'medium',
+                            title: 'Fix Broken Product Images',
+                            description: 'Some product images are not loading. Consider using fallback images.',
+                            action: 'Run the image loading test to identify and fix broken images'
+                        });
+                    } else {
+                        this.updateTestStatus('images-display', 'error', `Only ${successRate}% images loading`,
+                            `${workingImages}/${productsWithImages.length} images loaded successfully`);
+                        this.recommendations.push({
+                            type: 'high',
+                            title: 'Fix Broken Product Images',
+                            description: 'Most product images are broken. This severely impacts user experience.',
+                            action: 'Run the image loading test and implement proper fallback images'
+                        });
+                    }
+                    
+                } catch (error) {
+                    this.updateTestStatus('images-display', 'error', 'Image testing failed', error.message);
+                }
+            }
+
+            async testMainPages() {
+                this.log('📄 Testing main pages...');
+                
+                const mainPages = [
+                    { name: 'Home', url: 'index.html' },
+                    { name: 'Products', url: 'products.html' },
+                    { name: 'Marketplace', url: 'marketplace.html' }
+                ];
+                
+                let workingPages = 0;
+                
+                for (const page of mainPages) {
+                    try {
+                        const response = await fetch(page.url, { method: 'HEAD' });
+                        if (response.ok) {
+                            workingPages++;
+                        }
+                    } catch (error) {
+                        // Page not accessible
+                    }
+                }
+                
+                document.getElementById('pages-working').textContent = workingPages;
+                
+                if (workingPages === mainPages.length) {
+                    this.updateTestStatus('main-pages', 'success', 'All main pages accessible',
+                        `${workingPages}/${mainPages.length} pages are working correctly`);
+                } else if (workingPages > 0) {
+                    this.updateTestStatus('main-pages', 'warning', `${workingPages}/${mainPages.length} main pages accessible`,
+                        'Some pages may not be accessible or have issues');
+                } else {
+                    this.updateTestStatus('main-pages', 'error', 'Main pages not accessible');
+                    this.recommendations.push({
+                        type: 'critical',
+                        title: 'Fix Page Accessibility',
+                        description: 'Main website pages are not accessible. Check server configuration.',
+                        action: 'Verify that all HTML files are present and server is running'
+                    });
+                }
+            }
+
+            finalizeConsoleErrorsTest() {
+                const errorCount = this.consoleOutput.filter(e => e.type === 'error').length;
+                const warningCount = this.consoleOutput.filter(e => e.type === 'warning').length;
+                
+                if (errorCount === 0) {
+                    this.updateTestStatus('console-errors', 'success', 'No console errors detected',
+                        `${warningCount} warnings found (warnings are generally acceptable)`);
+                } else if (errorCount <= 2) {
+                    this.updateTestStatus('console-errors', 'warning', `${errorCount} console errors found`,
+                        `${errorCount} errors and ${warningCount} warnings detected`);
+                    this.recommendations.push({
+                        type: 'medium',
+                        title: 'Fix Console Errors',
+                        description: 'Some JavaScript errors are occurring. These may affect functionality.',
+                        action: 'Check the console output section for specific errors to fix'
+                    });
+                } else {
+                    this.updateTestStatus('console-errors', 'error', `${errorCount} console errors found`,
+                        `${errorCount} errors and ${warningCount} warnings detected - this may impact functionality`);
+                    this.recommendations.push({
+                        type: 'high',
+                        title: 'Fix Console Errors',
+                        description: 'Multiple JavaScript errors are occurring. This likely affects website functionality.',
+                        action: 'Review and fix the errors shown in the console output section'
+                    });
+                }
+            }
+
+            generateRecommendations() {
+                const container = document.getElementById('recommendations-container');
+                
+                if (this.recommendations.length === 0) {
+                    container.innerHTML = `
+                        <div class="recommendation">
+                            <h4>🎉 Great Job!</h4>
+                            <p>No critical issues found. Your website appears to be functioning well!</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // Sort recommendations by priority
+                const priorityOrder = { 'critical': 1, 'high': 2, 'medium': 3, 'low': 4 };
+                this.recommendations.sort((a, b) => priorityOrder[a.type] - priorityOrder[b.type]);
+                
+                let html = '';
+                this.recommendations.forEach(rec => {
+                    const priorityColor = {
+                        'critical': '#dc2626',
+                        'high': '#ea580c',
+                        'medium': '#d97706',
+                        'low': '#059669'
+                    }[rec.type];
+                    
+                    html += `
+                        <div class="recommendation" style="border-left-color: ${priorityColor};">
+                            <h4 style="color: ${priorityColor};">${rec.type.toUpperCase()}: ${rec.title}</h4>
+                            <p><strong>Issue:</strong> ${rec.description}</p>
+                            <p><strong>Action:</strong> ${rec.action}</p>
+                        </div>
+                    `;
+                });
+                
+                container.innerHTML = html;
+            }
+
+            log(message) {
+                console.log(`[Report] ${message}`);
+            }
+
+            // Quick action methods
+            async fixCommonIssues() {
+                alert('🔧 Auto-fix feature would implement common fixes like:\n- Adding fallback images\n- Creating sample products\n- Fixing Firebase connections\n\nThis is a demonstration feature.');
+            }
+
+            openWorkingPages() {
+                const workingPages = ['index.html', 'products.html', 'marketplace.html'];
+                workingPages.forEach(url => {
+                    window.open(url, '_blank');
+                });
+            }
+
+            exportReport() {
+                const report = {
+                    timestamp: new Date().toISOString(),
+                    tests: this.tests,
+                    consoleOutput: this.consoleOutput,
+                    recommendations: this.recommendations,
+                    summary: {
+                        totalTests: this.tests.length,
+                        passedTests: this.tests.filter(t => t.status === 'success').length,
+                        progress: this.progress
+                    }
+                };
+                
+                const dataStr = JSON.stringify(report, null, 2);
+                const dataBlob = new Blob([dataStr], {type: 'application/json'});
+                const url = URL.createObjectURL(dataBlob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `website-analysis-${new Date().toISOString().split('T')[0]}.json`;
+                link.click();
+            }
+
+            clearCache() {
+                if (confirm('⚠️ This will clear all cached data and reload the page. Continue?')) {
+                    localStorage.clear();
+                    sessionStorage.clear();
+                    location.reload(true);
+                }
+            }
+        }
+
+        // Start the comprehensive report when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                window.report = new ComprehensiveWebsiteReport();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

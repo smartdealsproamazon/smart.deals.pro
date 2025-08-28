@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Pages Products Display Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f7fa;
+        }
+        .section {
+            background: white;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #3b82f6;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .status.success { background: #d1fae5; color: #065f46; }
+        .status.error { background: #fee2e2; color: #991b1b; }
+        .status.warning { background: #fef3c7; color: #92400e; }
+        .status.info { background: #dbeafe; color: #1e40af; }
+        .page-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .page-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            overflow: hidden;
+            background: white;
+        }
+        .page-header {
+            background: #f9fafb;
+            padding: 15px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .page-header h3 {
+            margin: 0;
+            color: #1f2937;
+        }
+        .page-header .url {
+            font-family: monospace;
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 5px;
+        }
+        .page-content {
+            padding: 15px;
+        }
+        .page-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 10px 0;
+        }
+        .stat-item {
+            text-align: center;
+            padding: 10px;
+            background: #f3f4f6;
+            border-radius: 4px;
+        }
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #1f2937;
+        }
+        .stat-label {
+            font-size: 0.8rem;
+            color: #6b7280;
+        }
+        .page-preview {
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            margin: 10px 0;
+            max-height: 200px;
+            overflow: hidden;
+        }
+        .page-preview iframe {
+            width: 100%;
+            height: 200px;
+            border: none;
+            transform: scale(0.3);
+            transform-origin: top left;
+            width: 333.33%;
+            height: 666.67px;
+        }
+        .test-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 12px;
+        }
+        .test-btn:hover {
+            background: #2563eb;
+        }
+        .test-btn.success {
+            background: #10b981;
+        }
+        .test-btn.error {
+            background: #ef4444;
+        }
+        .logs {
+            background: #f9fafb;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            padding: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+        }
+        .summary-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .summary-card {
+            background: #f9fafb;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            padding: 15px;
+            text-align: center;
+        }
+        .summary-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #1f2937;
+        }
+        .summary-label {
+            font-size: 0.9rem;
+            color: #6b7280;
+            margin-top: 5px;
+        }
+        .issues-list {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .issue-item {
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 4px;
+            border-left: 4px solid #ef4444;
+        }
+    </style>
+</head>
+<body>
+    <h1>🌐 All Pages Products Display Test</h1>
+    <p>Comprehensive test of product display across all website pages</p>
+
+    <div class="section">
+        <h2>📊 Overall Test Results</h2>
+        <div id="overall-status" class="status info">Preparing to test all pages...</div>
+        <div class="summary-stats" id="summary-stats">
+            <div class="summary-card">
+                <div class="summary-number" id="total-pages">0</div>
+                <div class="summary-label">Total Pages</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-number" id="pages-working">0</div>
+                <div class="summary-label">Pages Working</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-number" id="total-products">0</div>
+                <div class="summary-label">Total Products Found</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-number" id="pages-with-products">0</div>
+                <div class="summary-label">Pages with Products</div>
+            </div>
+        </div>
+        <div id="issues-summary"></div>
+    </div>
+
+    <div class="section">
+        <h2>🎮 Test Controls</h2>
+        <button class="test-btn" onclick="pageTest.startAllTests()">🚀 Test All Pages</button>
+        <button class="test-btn" onclick="pageTest.testMainPagesOnly()">⚡ Test Main Pages Only</button>
+        <button class="test-btn" onclick="pageTest.retestFailedPages()">🔄 Retest Failed</button>
+        <button class="test-btn success" onclick="pageTest.openWorkingPages()">✅ Open Working Pages</button>
+        <button class="test-btn error" onclick="pageTest.showOnlyIssues()">❌ Show Only Issues</button>
+    </div>
+
+    <div class="section">
+        <h2>📄 Individual Page Results</h2>
+        <div id="pages-container" class="page-grid"></div>
+    </div>
+
+    <div class="section">
+        <h2>📝 Test Logs</h2>
+        <div id="test-logs" class="logs">Starting page testing...\n</div>
+    </div>
+
+    <script>
+        class AllPagesProductsTest {
+            constructor() {
+                this.pages = [
+                    // Main pages
+                    { name: 'Home', url: 'index.html', category: 'main', expectedProducts: true },
+                    { name: 'Products', url: 'products.html', category: 'main', expectedProducts: true },
+                    { name: 'Marketplace', url: 'marketplace.html', category: 'main', expectedProducts: true },
+                    
+                    // Category pages
+                    { name: 'Electronics', url: 'electronics.html', category: 'category', expectedProducts: true },
+                    { name: 'Fashion', url: 'fashion.html', category: 'category', expectedProducts: true },
+                    { name: 'Home & Garden', url: 'home-garden.html', category: 'category', expectedProducts: true },
+                    { name: 'Beauty', url: 'beauty.html', category: 'category', expectedProducts: true },
+                    { name: 'Gaming', url: 'gaming.html', category: 'category', expectedProducts: true },
+                    
+                    // Gender/age specific
+                    { name: 'Girls Fashion', url: 'girls-fashion.html', category: 'specific', expectedProducts: true },
+                    { name: 'Boys Fashion', url: 'boys-fashion.html', category: 'specific', expectedProducts: true },
+                    
+                    // Product specific
+                    { name: 'Small Electrical', url: 'small-electrical.html', category: 'specific', expectedProducts: true },
+                    
+                    // Platform pages
+                    { name: 'Amazon Products', url: 'platforms/amazon.html', category: 'platform', expectedProducts: true },
+                    { name: 'eBay Products', url: 'platforms/ebay.html', category: 'platform', expectedProducts: true },
+                    { name: 'Etsy Products', url: 'platforms/etsy.html', category: 'platform', expectedProducts: true },
+                    
+                    // Special pages
+                    { name: 'Deals', url: 'deals.html', category: 'special', expectedProducts: true },
+                    { name: 'Reviews', url: 'reviews.html', category: 'special', expectedProducts: true },
+                    
+                    // Info pages (no products expected)
+                    { name: 'About', url: 'about.html', category: 'info', expectedProducts: false },
+                    { name: 'Contact', url: 'contact.html', category: 'info', expectedProducts: false },
+                    { name: 'FAQ', url: 'faq.html', category: 'info', expectedProducts: false }
+                ];
+                
+                this.testResults = [];
+                this.totalStats = {
+                    totalPages: this.pages.length,
+                    pagesWorking: 0,
+                    totalProducts: 0,
+                    pagesWithProducts: 0,
+                    issues: []
+                };
+                
+                this.log('🚀 Initializing all pages products test...');
+                this.init();
+            }
+
+            log(message) {
+                const timestamp = new Date().toLocaleTimeString();
+                const logMessage = `[${timestamp}] ${message}`;
+                
+                const logsElement = document.getElementById('test-logs');
+                if (logsElement) {
+                    logsElement.textContent += logMessage + '\n';
+                    logsElement.scrollTop = logsElement.scrollHeight;
+                }
+                console.log(logMessage);
+            }
+
+            updateOverallStats() {
+                document.getElementById('total-pages').textContent = this.totalStats.totalPages;
+                document.getElementById('pages-working').textContent = this.totalStats.pagesWorking;
+                document.getElementById('total-products').textContent = this.totalStats.totalProducts;
+                document.getElementById('pages-with-products').textContent = this.totalStats.pagesWithProducts;
+            }
+
+            updateStatus(message, type = 'info') {
+                const statusElement = document.getElementById('overall-status');
+                if (statusElement) {
+                    statusElement.className = `status ${type}`;
+                    statusElement.textContent = message;
+                }
+            }
+
+            async init() {
+                this.log(`📋 Prepared to test ${this.pages.length} pages`);
+                this.updateOverallStats();
+                this.renderPageCards();
+                
+                // Auto-start testing main pages after a delay
+                setTimeout(() => {
+                    this.testMainPagesOnly();
+                }, 2000);
+            }
+
+            renderPageCards() {
+                const container = document.getElementById('pages-container');
+                container.innerHTML = '';
+
+                this.pages.forEach((page, index) => {
+                    const card = this.createPageCard(page, index);
+                    container.appendChild(card);
+                });
+            }
+
+            createPageCard(page, index) {
+                const card = document.createElement('div');
+                card.className = 'page-card';
+                card.id = `page-card-${index}`;
+                
+                const categoryColor = {
+                    'main': '#3b82f6',
+                    'category': '#10b981',
+                    'specific': '#f59e0b',
+                    'platform': '#8b5cf6',
+                    'special': '#ef4444',
+                    'info': '#6b7280'
+                }[page.category] || '#6b7280';
+
+                card.innerHTML = `
+                    <div class="page-header">
+                        <h3 style="color: ${categoryColor};">${page.name}</h3>
+                        <div class="url">${page.url}</div>
+                        <div style="font-size: 11px; color: #9ca3af; margin-top: 5px;">
+                            Category: ${page.category} | Products Expected: ${page.expectedProducts ? 'Yes' : 'No'}
+                        </div>
+                    </div>
+                    <div class="page-content">
+                        <div class="status info" id="status-${index}">Not tested yet</div>
+                        <div class="page-stats">
+                            <div class="stat-item">
+                                <div class="stat-number" id="products-${index}">-</div>
+                                <div class="stat-label">Products</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number" id="images-${index}">-</div>
+                                <div class="stat-label">Images</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number" id="errors-${index}">-</div>
+                                <div class="stat-label">Errors</div>
+                            </div>
+                        </div>
+                        <button class="test-btn" onclick="pageTest.testSinglePage(${index})">🔍 Test Page</button>
+                        <button class="test-btn" onclick="pageTest.openPage(${index})" style="background: #6b7280;">🔗 Open Page</button>
+                        <div id="details-${index}" style="margin-top: 10px; font-size: 12px; color: #6b7280;"></div>
+                    </div>
+                `;
+
+                return card;
+            }
+
+            async startAllTests() {
+                this.log('🚀 Starting tests for all pages...');
+                this.updateStatus('Testing all pages...', 'info');
+                
+                for (let i = 0; i < this.pages.length; i++) {
+                    await this.testSinglePage(i);
+                    // Small delay between tests to prevent overwhelming
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                }
+
+                this.completeAllTests();
+            }
+
+            async testMainPagesOnly() {
+                this.log('⚡ Testing main pages only...');
+                this.updateStatus('Testing main pages...', 'info');
+                
+                const mainPageIndices = this.pages
+                    .map((page, index) => ({ page, index }))
+                    .filter(item => item.page.category === 'main')
+                    .map(item => item.index);
+
+                for (const index of mainPageIndices) {
+                    await this.testSinglePage(index);
+                    await new Promise(resolve => setTimeout(resolve, 300));
+                }
+
+                this.log('⚡ Main pages testing completed');
+            }
+
+            async testSinglePage(pageIndex) {
+                const page = this.pages[pageIndex];
+                this.log(`🔍 Testing page: ${page.name} (${page.url})`);
+                
+                // Update status
+                const statusElement = document.getElementById(`status-${pageIndex}`);
+                statusElement.className = 'status info';
+                statusElement.textContent = 'Testing...';
+
+                const result = {
+                    page: page,
+                    pageIndex: pageIndex,
+                    exists: false,
+                    productsFound: 0,
+                    imagesWorking: 0,
+                    errors: [],
+                    loadTime: 0,
+                    hasProductContainer: false,
+                    hasFirebaseIntegration: false,
+                    status: 'testing'
+                };
+
+                const startTime = Date.now();
+
+                try {
+                    // Check if page exists by attempting to fetch it
+                    const response = await fetch(page.url, { method: 'HEAD' });
+                    result.exists = response.ok;
+                    result.loadTime = Date.now() - startTime;
+
+                    if (!result.exists) {
+                        result.errors.push('Page not found (404)');
+                        result.status = 'error';
+                    } else {
+                        // Page exists, now test it in an iframe to check for products
+                        await this.testPageContent(result);
+                    }
+
+                } catch (error) {
+                    result.errors.push(`Network error: ${error.message}`);
+                    result.status = 'error';
+                    this.log(`❌ ${page.name}: Network error - ${error.message}`);
+                }
+
+                // Update the card with results
+                this.updatePageCard(pageIndex, result);
+                this.testResults[pageIndex] = result;
+
+                return result;
+            }
+
+            async testPageContent(result) {
+                return new Promise((resolve) => {
+                    // Create a hidden iframe to load and test the page
+                    const iframe = document.createElement('iframe');
+                    iframe.style.display = 'none';
+                    iframe.src = result.page.url;
+                    
+                    const timeout = setTimeout(() => {
+                        result.errors.push('Page load timeout');
+                        result.status = 'timeout';
+                        document.body.removeChild(iframe);
+                        resolve(result);
+                    }, 10000);
+
+                    iframe.onload = () => {
+                        clearTimeout(timeout);
+                        
+                        try {
+                            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                            
+                            // Check for product containers
+                            const productContainers = [
+                                '#product-container',
+                                '#products-container', 
+                                '#featuredProductsGrid',
+                                '.product-grid',
+                                '.affiliate-product-card',
+                                '.product-card'
+                            ];
+
+                            let foundContainer = false;
+                            let totalProducts = 0;
+
+                            productContainers.forEach(selector => {
+                                const container = iframeDoc.querySelector(selector);
+                                if (container) {
+                                    foundContainer = true;
+                                    const products = container.querySelectorAll('.affiliate-product-card, .product-card, [data-product-id]');
+                                    totalProducts += products.length;
+                                }
+                            });
+
+                            result.hasProductContainer = foundContainer;
+                            result.productsFound = totalProducts;
+
+                            // Check for Firebase integration
+                            const hasFirebaseScripts = iframeDoc.querySelector('script[src*="firebase"]') !== null;
+                            const hasFirebaseConfig = iframeDoc.querySelector('script[src*="firebase-config"]') !== null;
+                            result.hasFirebaseIntegration = hasFirebaseScripts && hasFirebaseConfig;
+
+                            // Check for images
+                            const images = iframeDoc.querySelectorAll('img');
+                            let workingImages = 0;
+                            
+                            images.forEach(img => {
+                                if (img.complete && img.naturalHeight !== 0) {
+                                    workingImages++;
+                                }
+                            });
+                            
+                            result.imagesWorking = workingImages;
+
+                            // Determine status
+                            if (result.page.expectedProducts) {
+                                if (totalProducts > 0) {
+                                    result.status = 'success';
+                                } else if (foundContainer) {
+                                    result.status = 'warning';
+                                    result.errors.push('Product container found but no products displayed');
+                                } else {
+                                    result.status = 'error';
+                                    result.errors.push('No product containers found');
+                                }
+                            } else {
+                                result.status = 'success'; // Info pages don't need products
+                            }
+
+                            // Additional checks
+                            if (!result.hasFirebaseIntegration && result.page.expectedProducts) {
+                                result.errors.push('Missing Firebase integration');
+                            }
+
+                        } catch (error) {
+                            result.errors.push(`Content analysis error: ${error.message}`);
+                            result.status = 'error';
+                        }
+
+                        document.body.removeChild(iframe);
+                        resolve(result);
+                    };
+
+                    iframe.onerror = () => {
+                        clearTimeout(timeout);
+                        result.errors.push('Failed to load page content');
+                        result.status = 'error';
+                        document.body.removeChild(iframe);
+                        resolve(result);
+                    };
+
+                    document.body.appendChild(iframe);
+                });
+            }
+
+            updatePageCard(pageIndex, result) {
+                const statusElement = document.getElementById(`status-${pageIndex}`);
+                const productsElement = document.getElementById(`products-${pageIndex}`);
+                const imagesElement = document.getElementById(`images-${pageIndex}`);
+                const errorsElement = document.getElementById(`errors-${pageIndex}`);
+                const detailsElement = document.getElementById(`details-${pageIndex}`);
+
+                // Update status
+                const statusClass = result.status === 'success' ? 'success' :
+                                  result.status === 'warning' ? 'warning' : 'error';
+                statusElement.className = `status ${statusClass}`;
+                statusElement.textContent = result.status === 'success' ? '✅ Working' :
+                                           result.status === 'warning' ? '⚠️ Issues' :
+                                           result.status === 'timeout' ? '⏰ Timeout' : '❌ Error';
+
+                // Update stats
+                productsElement.textContent = result.productsFound;
+                imagesElement.textContent = result.imagesWorking;
+                errorsElement.textContent = result.errors.length;
+
+                // Update details
+                let details = `Load time: ${result.loadTime}ms`;
+                if (result.hasProductContainer) details += ' | Has product container';
+                if (result.hasFirebaseIntegration) details += ' | Firebase integrated';
+                if (result.errors.length > 0) {
+                    details += `\nErrors: ${result.errors.join(', ')}`;
+                }
+                detailsElement.textContent = details;
+
+                // Update overall stats
+                if (result.status === 'success') {
+                    this.totalStats.pagesWorking++;
+                }
+                if (result.productsFound > 0) {
+                    this.totalStats.pagesWithProducts++;
+                    this.totalStats.totalProducts += result.productsFound;
+                }
+                if (result.errors.length > 0) {
+                    this.totalStats.issues.push(...result.errors.map(error => 
+                        `${result.page.name}: ${error}`
+                    ));
+                }
+
+                this.updateOverallStats();
+            }
+
+            completeAllTests() {
+                const successRate = this.totalStats.totalPages > 0 ? 
+                    Math.round(this.totalStats.pagesWorking / this.totalStats.totalPages * 100) : 0;
+                
+                let statusType = 'success';
+                let statusMessage = `✅ All tests completed: ${successRate}% success rate`;
+                
+                if (successRate < 50) {
+                    statusType = 'error';
+                    statusMessage = `❌ Tests completed: ${successRate}% success rate (Many pages failing)`;
+                } else if (successRate < 80) {
+                    statusType = 'warning';
+                    statusMessage = `⚠️ Tests completed: ${successRate}% success rate (Some pages failing)`;
+                }
+
+                this.updateStatus(statusMessage, statusType);
+                this.log(`🏁 All pages testing completed`);
+                this.log(`📊 Results: ${this.totalStats.pagesWorking}/${this.totalStats.totalPages} pages working`);
+                this.log(`📦 Total products found: ${this.totalStats.totalProducts}`);
+                this.log(`📄 Pages with products: ${this.totalStats.pagesWithProducts}`);
+
+                // Show issues summary
+                if (this.totalStats.issues.length > 0) {
+                    this.showIssuesSummary();
+                }
+            }
+
+            showIssuesSummary() {
+                const issuesContainer = document.getElementById('issues-summary');
+                
+                let issuesHTML = '<div class="issues-list">';
+                issuesHTML += '<h4 style="margin-top: 0; color: #dc2626;">🚨 Issues Found:</h4>';
+                
+                this.totalStats.issues.forEach(issue => {
+                    issuesHTML += `<div class="issue-item">${issue}</div>`;
+                });
+                
+                issuesHTML += '</div>';
+                issuesContainer.innerHTML = issuesHTML;
+            }
+
+            retestFailedPages() {
+                this.log('🔄 Retesting failed pages...');
+                const failedIndices = this.testResults
+                    .map((result, index) => ({ result, index }))
+                    .filter(item => item.result && item.result.status === 'error')
+                    .map(item => item.index);
+
+                if (failedIndices.length === 0) {
+                    alert('✅ No failed pages to retest!');
+                    return;
+                }
+
+                failedIndices.forEach(async (index) => {
+                    await this.testSinglePage(index);
+                });
+                
+                this.log(`🔄 Retested ${failedIndices.length} failed pages`);
+            }
+
+            openWorkingPages() {
+                const workingPages = this.testResults
+                    .filter(result => result && result.status === 'success' && result.productsFound > 0)
+                    .map(result => result.page.url);
+
+                if (workingPages.length === 0) {
+                    alert('❌ No working pages with products found!');
+                    return;
+                }
+
+                workingPages.forEach(url => {
+                    window.open(url, '_blank');
+                });
+                
+                this.log(`✅ Opened ${workingPages.length} working pages`);
+            }
+
+            showOnlyIssues() {
+                const cards = document.querySelectorAll('.page-card');
+                cards.forEach((card, index) => {
+                    const result = this.testResults[index];
+                    const hasIssues = result && (result.status === 'error' || result.errors.length > 0);
+                    card.style.display = hasIssues ? 'block' : 'none';
+                });
+                this.log('👁️ Showing only pages with issues');
+            }
+
+            openPage(pageIndex) {
+                const page = this.pages[pageIndex];
+                window.open(page.url, '_blank');
+                this.log(`🔗 Opened page: ${page.name}`);
+            }
+        }
+
+        // Start the test when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                window.pageTest = new AllPagesProductsTest();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
