@@ -145,6 +145,42 @@ class ProductStateManager {
 
   // Normalize product data structure
   normalizeProduct(productData, id) {
+    const normalizeCategorySlug = (rawCategory) => {
+      const value = String(rawCategory || '').toLowerCase().trim();
+      if (!value) return 'uncategorized';
+      const cleaned = value
+        .replace(/&/g, ' and ')
+        .replace(/_/g, '-')
+        .replace(/\s+/g, '-')
+        .replace(/[^a-z0-9-]/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '');
+      const aliases = {
+        'women': 'girls-fashion',
+        'womens': 'girls-fashion',
+        "women-s": 'girls-fashion',
+        'ladies': 'girls-fashion',
+        'female': 'girls-fashion',
+        'girls': 'girls-fashion',
+        'men': 'boys-fashion',
+        'mens': 'boys-fashion',
+        "men-s": 'boys-fashion',
+        'male': 'boys-fashion',
+        'boys': 'boys-fashion',
+        'home': 'home-garden',
+        'garden': 'home-garden',
+        'home-and-garden': 'home-garden',
+        'home-garden': 'home-garden',
+        'small-appliances': 'small-electrical',
+        'appliances': 'small-electrical',
+        'small-electrical': 'small-electrical',
+        'usa-flash-sale': 'usa-discount',
+        'usa-deals': 'usa-discount',
+        'us-discount': 'usa-discount'
+      };
+      return aliases[cleaned] || cleaned;
+    };
+
     return {
       id: id,
       name: productData.name || productData.title || 'Untitled Product',
@@ -152,7 +188,7 @@ class ProductStateManager {
       price: productData.price || '$0.00',
       originalPrice: productData.originalPrice || productData.price || '$0.00',
       discount: productData.discount || 0,
-      category: productData.category || 'uncategorized',
+      category: normalizeCategorySlug(productData.category || 'uncategorized'),
       platform: productData.platform || 'Amazon',
       affiliate: productData.affiliate !== false,
       image: this.validateImageUrl(productData.image) || 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=300&h=300&fit=crop&crop=center&auto=format&q=80',
