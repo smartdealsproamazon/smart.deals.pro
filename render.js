@@ -1,5 +1,26 @@
 // Enhanced Product Rendering System for SmartDeals Pro
 
+// Normalize category string to a consistent slug used across the site
+function normalizeCategorySlugForRender(rawCategory) {
+  const value = String(rawCategory || '').toLowerCase().trim();
+  if (!value) return 'uncategorized';
+  const cleaned = value
+    .replace(/&/g, ' and ')
+    .replace(/_/g, '-')
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9-]/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
+  const aliases = {
+    'women': 'girls-fashion', 'womens': 'girls-fashion', "women-s": 'girls-fashion', 'ladies': 'girls-fashion', 'female': 'girls-fashion', 'girls': 'girls-fashion', 'fashion': 'girls-fashion',
+    'men': 'boys-fashion', 'mens': 'boys-fashion', "men-s": 'boys-fashion', 'male': 'boys-fashion', 'boys': 'boys-fashion',
+    'home': 'home-garden', 'garden': 'home-garden', 'home-and-garden': 'home-garden', 'home-garden': 'home-garden',
+    'small-appliances': 'small-electrical', 'appliances': 'small-electrical', 'electrical': 'small-electrical', 'small-electrical': 'small-electrical',
+    'usa-flash-sale': 'usa-discount', 'usa-deals': 'usa-discount', 'us-discount': 'usa-discount'
+  };
+  return aliases[cleaned] || cleaned;
+}
+
 // Main function to render products with enhanced features and real-time updates
 function renderProducts(filterCategory = null, containerId = 'product-container') {
   const container = document.getElementById(containerId);
@@ -57,10 +78,12 @@ function renderProducts(filterCategory = null, containerId = 'product-container'
   console.log(`Filtering products by category: ${filterCategory}`);
   console.log('Available products:', window.products.length);
   
-  const filteredProducts = filterCategory
+  const normalizedFilter = filterCategory ? normalizeCategorySlugForRender(filterCategory) : null;
+  const filteredProducts = normalizedFilter
     ? window.products.filter(p => {
-        console.log(`Product "${p.name}" has category: "${p.category}"`);
-        return p.category === filterCategory;
+        const productCategory = normalizeCategorySlugForRender(p.category);
+        console.log(`Product "${p.name}" has category: "${p.category}" => normalized: "${productCategory}"`);
+        return productCategory === normalizedFilter;
       })
     : window.products;
 
