@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Products Fix - SmartDeals Pro</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f5f7fa;
+    }
+    .test-section {
+      background: white;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .status {
+      padding: 10px;
+      border-radius: 4px;
+      margin: 10px 0;
+    }
+    .success { background: #d1fae5; border: 1px solid #10b981; color: #065f46; }
+    .error { background: #fef2f2; border: 1px solid #ef4444; color: #991b1b; }
+    .warning { background: #fffbeb; border: 1px solid #f59e0b; color: #92400e; }
+    .info { background: #eff6ff; border: 1px solid #3b82f6; color: #1e40af; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.5rem;
+      margin: 20px 0;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.07);
+      overflow: hidden;
+    }
+    .card img {
+      width: 100%;
+      height: 170px;
+      object-fit: cover;
+    }
+    .card-content {
+      padding: 1rem;
+    }
+    .btn {
+      background: #2563eb;
+      color: white;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .btn:hover {
+      background: #1d4ed8;
+    }
+  </style>
+</head>
+<body>
+  <h1>Products Loading Test - SmartDeals Pro</h1>
+  
+  <div class="test-section">
+    <h2>Test Status</h2>
+    <div id="firebase-status" class="status info">Testing Firebase connection...</div>
+    <div id="products-status" class="status info">Testing products loading...</div>
+    <div id="render-status" class="status info">Testing product rendering...</div>
+  </div>
+
+  <div class="test-section">
+    <h2>Sample Products Test</h2>
+    <p>This section will test product rendering with sample data:</p>
+    <button class="btn" onclick="testSampleProducts()">Test Sample Products</button>
+    <button class="btn" onclick="testFirebaseProducts()">Test Firebase Products</button>
+    <button class="btn" onclick="clearTest()">Clear Test</button>
+    
+    <div id="test-container" class="grid"></div>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"></script>
+
+  <!-- Firebase Services -->
+  <script src="firebase-config.js"></script>
+  <script src="firebase-products-service.js"></script>
+  <script src="firebase-auth-service.js"></script>
+  <script src="cache-refresh.js"></script>
+  <script src="demo-cleanup.js"></script>
+  <script src="products.js"></script>
+  <script src="render.js"></script>
+
+  <script>
+    function updateStatus(elementId, status, message) {
+      const element = document.getElementById(elementId);
+      element.className = `status ${status}`;
+      element.textContent = message;
+    }
+
+    // Sample products for testing
+    const sampleProducts = [
+      {
+        id: 'test-1',
+        name: 'Sample Wireless Headphones',
+        price: '$99.99',
+        category: 'electronics',
+        image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300&h=300&fit=crop',
+        description: 'High-quality wireless headphones with noise cancellation.',
+        link: 'https://example.com/headphones'
+      },
+      {
+        id: 'test-2',
+        name: 'Fashion Sneakers',
+        price: '$75.50',
+        category: 'fashion',
+        image: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=300&h=300&fit=crop',
+        description: 'Comfortable and stylish sneakers for everyday wear.',
+        link: 'https://example.com/sneakers'
+      },
+      {
+        id: 'test-3',
+        name: 'Smart Watch',
+        price: '$199.99',
+        category: 'electronics',
+        image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300&h=300&fit=crop',
+        description: 'Advanced smartwatch with health monitoring features.',
+        link: 'https://example.com/smartwatch'
+      }
+    ];
+
+    function testSampleProducts() {
+      console.log('Testing sample products...');
+      updateStatus('render-status', 'info', 'Rendering sample products...');
+      
+      const container = document.getElementById('test-container');
+      container.innerHTML = '';
+      
+      // Test if createProductCard function is available
+      if (typeof createProductCard === 'function') {
+        sampleProducts.forEach(product => {
+          const card = createProductCard(product);
+          container.appendChild(card);
+        });
+        updateStatus('render-status', 'success', `Successfully rendered ${sampleProducts.length} sample products`);
+      } else {
+        updateStatus('render-status', 'error', 'createProductCard function not available');
+      }
+    }
+
+    function testFirebaseProducts() {
+      console.log('Testing Firebase products...');
+      updateStatus('products-status', 'info', 'Testing Firebase products...');
+      
+      if (window.products && window.products.length > 0) {
+        const container = document.getElementById('test-container');
+        container.innerHTML = '';
+        
+        window.products.slice(0, 3).forEach(product => {
+          const card = createProductCard(product);
+          container.appendChild(card);
+        });
+        updateStatus('products-status', 'success', `Loaded ${window.products.length} products from Firebase`);
+      } else {
+        updateStatus('products-status', 'warning', 'No products loaded from Firebase yet');
+      }
+    }
+
+    function clearTest() {
+      document.getElementById('test-container').innerHTML = '';
+      updateStatus('render-status', 'info', 'Test area cleared');
+    }
+
+    // Run initial tests
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('Running initial tests...');
+      
+      // Test Firebase
+      setTimeout(() => {
+        if (window.firebaseService && window.firebaseService.isReady()) {
+          updateStatus('firebase-status', 'success', 'Firebase connected successfully');
+        } else {
+          updateStatus('firebase-status', 'warning', 'Firebase connection pending or failed');
+        }
+      }, 3000);
+
+      // Test products loading
+      setTimeout(() => {
+        if (window.products && window.products.length > 0) {
+          updateStatus('products-status', 'success', `${window.products.length} products loaded`);
+        } else {
+          updateStatus('products-status', 'warning', 'No products loaded yet (this is normal if Firebase is empty)');
+        }
+      }, 5000);
+
+      // Auto-test sample products
+      setTimeout(() => {
+        testSampleProducts();
+      }, 1000);
+    });
+
+    // Listen for Firebase events
+    window.addEventListener('firebase-ready', () => {
+      updateStatus('firebase-status', 'success', 'Firebase ready event received');
+    });
+
+    document.addEventListener('products-ready', () => {
+      updateStatus('products-status', 'success', 'Products ready event received');
+    });
+  </script>
+</body>
+</html>
