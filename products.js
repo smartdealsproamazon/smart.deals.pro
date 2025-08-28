@@ -225,6 +225,135 @@ class ProductStateManager {
 // Create global product state manager
 const productStateManager = new ProductStateManager();
 
+// Add some minimal demo products to ensure the site is not empty (only if no products exist)
+function addInitialDemoProducts() {
+  const demoProducts = [
+    {
+      id: 'demo_wireless_headphones_001',
+      name: 'Premium Wireless Headphones',
+      title: 'Premium Wireless Headphones',
+      description: 'High-quality wireless headphones with noise cancellation and premium sound quality. Perfect for music lovers and professionals.',
+      price: '89.99',
+      originalPrice: '129.99',
+      discount: '31',
+      rating: '4.8',
+      image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=300&fit=crop&auto=format&q=80',
+      link: 'https://example.com/headphones',
+      category: 'electronics',
+      tags: ['electronics', 'audio', 'wireless'],
+      featured: true,
+      createdAt: new Date(),
+      submissionDate: new Date()
+    },
+    {
+      id: 'demo_gaming_mouse_002',
+      name: 'RGB Gaming Mouse',
+      title: 'RGB Gaming Mouse',
+      description: 'Professional gaming mouse with customizable RGB lighting and precision tracking for competitive gaming.',
+      price: '59.99',
+      originalPrice: '89.99',
+      discount: '33',
+      rating: '4.7',
+      image: 'https://images.unsplash.com/photo-1527814050087-3793815479db?w=400&h=300&fit=crop&auto=format&q=80',
+      link: 'https://example.com/gaming-mouse',
+      category: 'gaming',
+      tags: ['gaming', 'electronics', 'pc'],
+      featured: true,
+      createdAt: new Date(),
+      submissionDate: new Date()
+    },
+    {
+      id: 'demo_womens_jacket_003', 
+      name: 'Stylish Winter Jacket',
+      title: 'Stylish Winter Jacket',
+      description: 'Fashionable and warm winter jacket for women. Perfect blend of style and comfort for cold weather.',
+      price: '79.99',
+      originalPrice: '119.99',
+      discount: '33',
+      rating: '4.6',
+      image: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400&h=300&fit=crop&auto=format&q=80',
+      link: 'https://example.com/womens-jacket',
+      category: 'girls-fashion',
+      tags: ['fashion', 'women', 'clothing'],
+      featured: true,
+      createdAt: new Date(),
+      submissionDate: new Date()
+    },
+    {
+      id: 'demo_mens_watch_004',
+      name: 'Classic Men\'s Watch',
+      title: 'Classic Men\'s Watch',
+      description: 'Elegant and sophisticated men\'s watch with leather strap. Perfect for business and casual wear.',
+      price: '149.99',
+      originalPrice: '199.99',
+      discount: '25',
+      rating: '4.9',
+      image: 'https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=400&h=300&fit=crop&auto=format&q=80',
+      link: 'https://example.com/mens-watch',
+      category: 'boys-fashion',
+      tags: ['fashion', 'men', 'accessories'],
+      featured: true,
+      createdAt: new Date(),
+      submissionDate: new Date()
+    },
+    {
+      id: 'demo_home_plant_005',
+      name: 'Indoor Plant Set',
+      title: 'Indoor Plant Set',
+      description: 'Beautiful set of low-maintenance indoor plants perfect for home decoration and air purification.',
+      price: '39.99',
+      originalPrice: '59.99',
+      discount: '33',
+      rating: '4.5',
+      image: 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400&h=300&fit=crop&auto=format&q=80',
+      link: 'https://example.com/plant-set',
+      category: 'home-garden',
+      tags: ['home', 'garden', 'plants'],
+      featured: true,
+      createdAt: new Date(),
+      submissionDate: new Date()
+    },
+    {
+      id: 'demo_usa_flash_001',
+      name: 'USA Flash Sale - Smartphone',
+      title: 'USA Flash Sale - Smartphone',
+      description: 'Limited time offer on premium smartphone exclusively for US customers. High-end features at an unbeatable price!',
+      price: '299.99',
+      originalPrice: '499.99',
+      discount: '40',
+      rating: '4.8',
+      image: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=300&fit=crop&auto=format&q=80',
+      link: 'https://example.com/usa-smartphone',
+      category: 'usa-flash-sale',
+      tags: ['usa', 'flash-sale', 'electronics'],
+      featured: true,
+      createdAt: new Date(),
+      submissionDate: new Date()
+    }
+  ];
+
+  // Only add demo products if no products exist yet and not already cached
+  const existingProducts = JSON.parse(localStorage.getItem('products') || '[]');
+  if (existingProducts.length === 0 && (!window.products || window.products.length === 0)) {
+    console.log('Adding initial demo products to populate the site');
+    demoProducts.forEach(product => {
+      productStateManager.addProduct(product);
+    });
+    
+    // Update global products array
+    window.products = productStateManager.getAllProducts();
+    
+    // Cache for future loads
+    localStorage.setItem('products', JSON.stringify(window.products));
+    localStorage.setItem('products_updated', Date.now().toString());
+    
+    console.log(`Added ${demoProducts.length} demo products`);
+    
+    // Trigger ready event
+    document.dispatchEvent(new Event('products-ready'));
+  }
+}
+
 // Firebase connection variables
 let firestoreListener = null;
 let connectionTimeout = null;
@@ -839,6 +968,12 @@ function initProducts() {
 (function() {
   console.log('Products.js loaded, auto-initializing...');
   
+  // First, ensure we have some demo products if nothing exists
+  const existingProducts = JSON.parse(localStorage.getItem('products') || '[]');
+  if (existingProducts.length === 0) {
+    addInitialDemoProducts();
+  }
+  
   // Load cached products immediately for faster display
   const cachedProducts = JSON.parse(localStorage.getItem('products') || '[]');
   if (cachedProducts.length > 0) {
@@ -918,11 +1053,13 @@ function getFeaturedProducts() {
   // Return the newest REAL products from Firebase database only
   const allProducts = window.products || [];
   
+  console.log(`getFeaturedProducts: Starting with ${allProducts.length} total products`);
+  
   // Filter to only show genuine products (exclude all demo/sample/test products)
   const realProducts = allProducts.filter(product => {
     // Only include products that are genuine (not demo, sample, or test)
-    return product && 
-           product.name && 
+    const isValid = product && 
+           (product.name || product.title) && 
            product.image && 
            !product.id?.toString().startsWith('demo_') && 
            !product.id?.toString().startsWith('sample_') && 
@@ -937,17 +1074,41 @@ function getFeaturedProducts() {
            product.link !== '#' && // Exclude products with placeholder links
            !product.image?.includes('placeholder') && // Exclude placeholder images
            !product.image?.includes('via.placeholder.com'); // Exclude placeholder.com images
+    
+    if (!isValid) {
+      console.log('Filtered out product:', product.name || product.title, 'reasons:', {
+        hasName: !!(product.name || product.title),
+        hasImage: !!product.image,
+        notDemo: !product.name?.includes('Demo'),
+        notPlaceholder: product.link !== '#'
+      });
+    }
+    
+    return isValid;
   });
   
-  // Sort by creation date (newest first) and return the top 6
+  console.log(`getFeaturedProducts: After filtering, ${realProducts.length} real products remain`);
+  
+  // If no real products found, relax the filtering and show any available products
+  if (realProducts.length === 0) {
+    console.log('No real products found, showing any available products');
+    const fallbackProducts = allProducts.filter(product => 
+      product && (product.name || product.title)
+    ).slice(0, 8);
+    console.log(`Using ${fallbackProducts.length} fallback products`);
+    return fallbackProducts;
+  }
+  
+  // Sort by creation date (newest first) and return the top 8 for better display
   const sortedProducts = realProducts.sort((a, b) => {
     const dateA = a.createdAt ? new Date(a.createdAt) : new Date(0);
     const dateB = b.createdAt ? new Date(b.createdAt) : new Date(0);
     return dateB - dateA;
   });
   
-  console.log(`Showing ${sortedProducts.length} real products in featured section`);
-  return sortedProducts.slice(0, 6);
+  const result = sortedProducts.slice(0, 8);
+  console.log(`getFeaturedProducts: Returning ${result.length} featured products`);
+  return result;
 }
 
 function getProductsOnSale() {
