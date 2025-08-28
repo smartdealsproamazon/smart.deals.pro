@@ -67,6 +67,64 @@ function renderProducts(filterCategory = null, containerId = 'product-container'
   console.log(`Filtered products count: ${filteredProducts.length}`);
 
   if (filteredProducts.length === 0) {
+    console.log(`No products found for category: ${filterCategory}, showing fallback options`);
+    
+    // FALLBACK LOGIC: If no products found for specific category, try broader matches
+    let fallbackProducts = [];
+    
+    if (filterCategory) {
+      // Try partial category matching (e.g., "boys" matches "boys-fashion", "boys-clothing", etc.)
+      const partialCategory = filterCategory.toLowerCase().split('-')[0]; // Get first part before dash
+      fallbackProducts = window.products.filter(p => {
+        const category = (p.category || '').toLowerCase();
+        return category.includes(partialCategory) || 
+               category.includes(filterCategory.toLowerCase()) ||
+               (p.tags && p.tags.some(tag => tag.toLowerCase().includes(partialCategory)));
+      });
+      
+      console.log(`Found ${fallbackProducts.length} products with partial category match for "${partialCategory}"`);
+    }
+    
+    // If still no products, show some general products
+    if (fallbackProducts.length === 0) {
+      fallbackProducts = window.products.slice(0, 6);
+      console.log(`No category match found, showing ${fallbackProducts.length} general products`);
+    }
+    
+    if (fallbackProducts.length > 0) {
+      console.log(`Rendering ${fallbackProducts.length} fallback products`);
+      // Render fallback products with a notice
+      const categoryName = filterCategory ? filterCategory.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase()) : 'this category';
+      
+      const noticeDiv = document.createElement('div');
+      noticeDiv.className = 'category-notice';
+      noticeDiv.innerHTML = `
+        <div style="background: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 1rem; margin-bottom: 2rem; text-align: center;">
+          <i class="fas fa-info-circle" style="color: #d97706; margin-right: 0.5rem;"></i>
+          <span style="color: #92400e;">No products specifically tagged as "${categoryName}" yet. Showing related products:</span>
+        </div>
+      `;
+      container.appendChild(noticeDiv);
+      
+      // Render the fallback products
+      fallbackProducts.forEach((product, index) => {
+        const productCard = createProductCard(product);
+        productCard.style.opacity = '0';
+        productCard.style.transform = 'translateY(20px)';
+        container.appendChild(productCard);
+        
+        // Stagger animation
+        setTimeout(() => {
+          productCard.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+          productCard.style.opacity = '1';
+          productCard.style.transform = 'translateY(0)';
+        }, index * 50);
+      });
+      
+      return;
+    }
+    
+    // No products at all - show empty state
     container.innerHTML = `
       <div class="no-products">
         <i class="fas fa-search" style="font-size: 3rem; color: #9ca3af; margin-bottom: 1rem;"></i>
@@ -265,9 +323,8 @@ function generateStars(rating) {
   return stars;
 }
 
-// Function to render featured products on homepage
+// Function to render featured products on homepage with intelligent fallbacks
 function renderFeaturedProducts() {
-  const featuredProducts = getFeaturedProducts();
   const container = document.getElementById('featuredProductsGrid');
   
   if (!container) return;
@@ -284,6 +341,29 @@ function renderFeaturedProducts() {
     `;
     return;
   }
+
+  // Get featured products with intelligent selection
+  let featuredProducts = getFeaturedProducts();
+
+  // If getFeaturedProducts returns empty, use fallback logic  
+  if (featuredProducts.length === 0) {
+    console.log('No featured products from getFeaturedProducts, using fallback logic');
+    
+    // FALLBACK 1: High-rated or discounted products
+    featuredProducts = window.products.filter(p => {
+      const rating = parseFloat(p.rating) || 0;
+      const discount = parseInt(p.discount) || 0;
+      return rating >= 4.0 || discount >= 15;
+    });
+
+    // FALLBACK 2: Any available products
+    if (featuredProducts.length === 0) {
+      console.log('No rated/discounted products, showing available products');
+      featuredProducts = window.products.slice(0, 8);
+    } else {
+      featuredProducts = featuredProducts.slice(0, 8);
+    }
+  }
   
   if (featuredProducts.length === 0) {
     container.innerHTML = `
@@ -296,6 +376,8 @@ function renderFeaturedProducts() {
     `;
     return;
   }
+  
+  console.log(`Rendering ${featuredProducts.length} featured products on homepage`);
   
   featuredProducts.forEach((product, index) => {
     const productCard = createProductCard(product);
@@ -439,10 +521,40 @@ function renderUSAFlashSaleProducts() {
   console.log('Filtering USA flash sale products...');
   console.log('Available products:', window.products.length);
   
-  // Only show products specifically tagged as usa-flash-sale
+  // Show products specifically tagged as usa-flash-sale, with intelligent fallbacks
   let usaProducts = window.products.filter(p => p.category === 'usa-flash-sale');
   
   console.log(`Found ${usaProducts.length} USA flash sale products`);
+
+  // FALLBACK 1: If no specific USA flash sale products, show high-discount products
+  if (usaProducts.length === 0) {
+    console.log('No usa-flash-sale products found, trying high-discount products...');
+    usaProducts = window.products.filter(p => {
+      const discount = parseInt(p.discount) || 0;
+      return discount >= 30; // Show products with 30%+ discount
+    }).slice(0, 8); // Limit to 8 products
+    
+    console.log(`Found ${usaProducts.length} high-discount products as fallback`);
+  }
+
+  // FALLBACK 2: If still no products, show featured/recent products  
+  if (usaProducts.length === 0) {
+    console.log('No high-discount products found, showing featured products...');
+    usaProducts = window.products.filter(p => 
+      p.featured === true || 
+      p.category === 'featured' ||
+      p.rating >= 4.5
+    ).slice(0, 8);
+    
+    console.log(`Found ${usaProducts.length} featured products as final fallback`);
+  }
+
+  // FALLBACK 3: Show any products if nothing else works
+  if (usaProducts.length === 0) {
+    console.log('No featured products found, showing first 8 available products...');
+    usaProducts = window.products.slice(0, 8);
+    console.log(`Using ${usaProducts.length} general products as last resort`);
+  }
 
   if (usaProducts.length === 0) {
     container.innerHTML = `
@@ -542,10 +654,12 @@ function autoRenderProducts() {
     console.log('Marketplace page detected - auto-rendering disabled (handled by marketplace.html)');
     return;
   } else if (filename.includes('boys-fashion')) {
-    console.log('Boys fashion page detected - auto-rendering disabled');
+    console.log('Boys fashion page detected - rendering boys products');
+    renderProducts('boys-fashion');
     return;
   } else if (filename.includes('girls-fashion')) {
-    console.log('Girls fashion page detected - auto-rendering disabled');
+    console.log('Girls fashion page detected - rendering girls products');
+    renderProducts('girls-fashion');
     return;
   } else if (filename.includes('smartwatch')) {
     console.log('Rendering smartwatch/boys fashion products (legacy)');
